@@ -10,11 +10,9 @@
 #ifndef _TILEMAP_CONTROLLER_H__
 #define _TILEMAP_CONTROLLER_H__
 
-// These are all in the same directory
 #include "TilemapModel.h"
 #include "TilemapView.h"
-// This is NOT in the same directory
-#include <source/Tile/MVCTileController.h>
+#include <source/Tile/TileController.h>
 
 namespace MVC {
 /**
@@ -62,31 +60,11 @@ public:
     void updatePosition(Vec2 position);
     
     /**
-     * Updates the model and view with the dimensions of the tilemap.
-     *
-     * Note this function will do nothing if any of the dimensions provided
-     * are negative.
-     *
-     * @param dimensions   The number of columns and rows in the tilemap
-     */
-    void updateDimensions(Vec2 dimensions);
-    
-    /**
      * Updates the model and view with the color of the tilemap.
      *
      * @param color    The color of the tilemap
      */
     void updateColor(Color4 color);
-    
-    /**
-     * Updates the size of all tiles in the tilemap.
-     *
-     * Note this function will do nothing if any of the sizes provided
-     * are negative.
-     *  
-     * @param tileSize  The width and height of a tile
-     */
-    void updateTileSize(Size tileSize);
     
 #pragma mark View Methods
 public:
@@ -120,33 +98,19 @@ public:
      * @param color The color of the tile.
      */
     void addTile(int col, int row, Color4 color);
-    
-    /**
-     * Modifies the current number of columns and rows by
-     *
-     * The values are modified by `colIncrement` and `rowIncrement`,
-     *  respectively. The values can be negative.
-     *
-     * @param colIncrement The number of columns to increment
-     * @param rowIncrement The number of rows to increment
-     */
-    void modifyDimensions(int colIncrement, int rowIncrement);
-    
-    /**
-     * Modifies the current width and height by `xFactor` and `yFactor`.
-     *
-     * @param xFactor The factor to multiply the current width by
-     * @param yFactor The factor to multiply the current height by
-     */
-    void modifyTileSize(float xFactor, float yFactor);
 
     /**
-     * Gets whether the tile at the given position is traversable.
+     * Returns whether the tile at the given position is traversable.
      *
      * @param mapPos the non-grid position on the map
+     * Map position is the position in pixels with origin at bottom left of the map
+     * So, bottom left of the map is (0,0).
+     * 
+     * @returns whether the tile at the given map position is traversable 
      */
-    void isTileTraversable(Vec2 mapPos) {
-      getTile(mapPos)->;
+    bool isTileTraversable(Vec2 mapPos) {
+      Vec2 gridPos(mapPosToGridPos(mapPos));
+      return _tilemap[gridPos.y][gridPos.x]->isTraversable();
     }
     
     /**
@@ -201,12 +165,11 @@ public:
     void initializeTilemap();
     
     /**
-     * Initializes the tilemap with empty tiles to match the current dimensions.
+     * Converts the map coordinate to grid coordinate.
      */
-    const TileController& getTile();
-
-
-
+    Vec2 mapPosToGridPos(Vec2 mapPos) {
+      return Vec2(mapPos.x/_model->tileSize.width, mapPos.y/_model->tileSize.height);
+    };
 };
 }
 

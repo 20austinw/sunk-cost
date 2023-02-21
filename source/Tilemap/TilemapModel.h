@@ -30,9 +30,6 @@ private:
     Size _tileSize;
     
 public:
-    /// Instead of writing getters for private states that need setters, you
-    /// can create constant references to force users of this class to modify
-    /// state through setters
     const Vec2& position;
     const Vec2& dimensions;
     const Color4& color;
@@ -71,7 +68,6 @@ public:
     dimensions(_dimensions), 
     color(_color), 
     tileSize(_tileSize) {
-        // TODO: Implement me
         setPosition(position);
         setDimensions(dimensions);
         setColor(color);
@@ -86,7 +82,6 @@ public:
      *  @param position Bottom left corner of the tilemap
      */
     void setPosition(Vec2 position) {
-        // TODO: Implement me
         _position = position;
     }
     
@@ -96,7 +91,6 @@ public:
      *  @param dimensions    The number of columns and rows in the tilemap
      */
     void setDimensions(Vec2 dimensions) {
-        // TODO: Implement me
         _dimensions = dimensions;
     }
     
@@ -106,7 +100,6 @@ public:
      *  @param color The color of the tilemap
      */
     void setColor(Color4 color) {
-        // TODO: Implement me
         _color = color;
     }
     
@@ -116,7 +109,6 @@ public:
      *  @param tileSize  The width and height of a tile
      */
     void setTileSize(Size tileSize) {
-        // TODO: Implement me
         _tileSize = tileSize;
     }
     

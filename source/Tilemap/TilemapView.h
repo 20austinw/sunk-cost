@@ -42,7 +42,6 @@ public:
      * @param tileSize      The width and height of a tile
      */
     TilemapView(Vec2 position, Vec2 dimensions, Color4 color, Size tileSize) {
-        // TODO: Implement me
         _node = scene2::PolygonNode::alloc();
         _node->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
         _node->setPolygon(Rect(position,tileSize*dimensions));
@@ -58,7 +57,6 @@ public:
      * @param scene The scene to add the view to
      */
     void addChildTo(const std::shared_ptr<cugl::Scene2>& scene) {
-        // TODO: Implement me
         scene->addChild(_node);
     }
     
@@ -68,13 +66,11 @@ public:
      * @param scene The scene to remove the view from
      */
     void removeChildFrom(const std::shared_ptr<cugl::Scene2>& scene) {
-        // TODO: Implement me
         scene->removeChild(_node);
     }
     
     /** Returns the main tilemap view */
     const std::shared_ptr<scene2::PolygonNode>& getNode() const {
-        // TODO: Implement me
         return _node;
     }
 
@@ -87,7 +83,6 @@ public:
      * @param position Bottom left corner of the tilemap
      */
     void setPosition(Vec2 position) {
-        // TODO: Implement me
         _node->setPosition(position);
     }
     
@@ -103,18 +98,7 @@ public:
      * @param size    The size of the tilemap based on its dimensions and tileSize
      */
     void setSize(Size size) {
-        // TODO: Implement me
         _node->setPolygon(Rect(Vec2(0,0),size));
-    }
-    
-    /**
-     * Sets the color of the tilemap.
-     *
-     * @param color The color of the tilemap
-     */
-    void setColor(Color4 color) {
-        // TODO: Implement me
-        _node->setColor(color);
     }
     
 };

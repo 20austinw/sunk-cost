@@ -32,7 +32,6 @@ TilemapController::TilemapController() {
  */
 TilemapController::TilemapController(Vec2 position, Vec2 dimensions,
                                      Color4 color, Size tileSize) {
-    // TODO: Implement me
     _model = std::make_unique<TilemapModel>(centerToBottomLeftPosition(position, tileSize*dimensions), dimensions, color, tileSize);
     _view = std::make_unique<TilemapView>(centerToBottomLeftPosition(position, tileSize*dimensions), dimensions, color, tileSize);
     initializeTilemap();
@@ -46,7 +45,6 @@ TilemapController::TilemapController(Vec2 position, Vec2 dimensions,
  *  @param position The center of the tilemap
  */
 void TilemapController::updatePosition(Vec2 position) {
-    // TODO: Implement me
     Vec2 newPos(centerToBottomLeftPosition(position, Size(_model->dimensions)*_model->tileSize));
     _model->setPosition(newPos);
     _view->setPosition(newPos);
@@ -58,7 +56,6 @@ void TilemapController::updatePosition(Vec2 position) {
  *  @param color    The color of the tilemap
  */
 void TilemapController::updateColor(Color4 color) {
-    // TODO: Implement me
     _model->setColor(color);
     _view->setColor(color);
 }
@@ -79,115 +76,9 @@ void TilemapController::updateColor(Color4 color) {
  * @param color The color of the tile.
  */
 void TilemapController::addTile(int col, int row, Color4 color) {
-    // TODO: Implement me
     Vec2 pos(_model->tileSize.width*(col), _model->tileSize.height*row);
     _tilemap[row][col] = std::move(std::make_unique<TileController>(pos,_model->tileSize,color));
     _tilemap[row][col]->addChildTo(_view->getNode());
-}
-
-/**
- * Inverts the color of the tilemap and it's tiles.
- *
- * Examples:
- *      Inverting white (255, 255, 255, 0) gives black (0, 0, 0, 0)
- *      Inverting red (255, 0, 0, 0) gives cyan (0, 255, 255, 0)
- *      Inverting light purple (150, 100, 200, 0) gives a dull green
- *          (105, 155, 55, 0)
- */
-void TilemapController::invertColor() {
-    // TODO: Implement me
-    Color4 invertedColor(Color4::WHITE - _model->color);
-    invertedColor.a = _model->color.a; 
-    _model->setColor(invertedColor);
-    _view->setColor(invertedColor);
-    for (int i = 0; i < _model->dimensions.y; i++) {
-      for (int j = 0; j < _model->dimensions.x; j++) {
-        if (_tilemap[i][j]) {
-          _tilemap[i][j]->invertColor();
-        }
-      }
-    }
-}
-
-/**
- * Modifies the current number of columns and rows by
- *
- * The values are modified by `colIncrement` and `rowIncrement`,
- *  respectively. The values can be negative.
- *
- * @param colIncrement The number of columns to increment
- * @param rowIncrement The number of rows to increment
- */
-void TilemapController::modifyDimensions(int colIncrement, int rowIncrement) {
-    // TODO: Implement me
-    Vec2 dim(colIncrement + _model->dimensions.x, rowIncrement + _model->dimensions.y);
-    updateDimensions(dim);
-}
-
-/**
- *  Modifies the current width and height by `xFactor` and `yFactor`.
- *
- *  @param xFactor The factor to multiply the current width by
- *  @param yFactor The factor to multiply the current height by
- */
-void TilemapController::modifyTileSize(float xFactor, float yFactor) {
-    // TODO: Implement me
-    updateTileSize(Size(xFactor,yFactor)*_model->tileSize);
-}
-
-/**
- *  Updates the model and view with the dimensions of the tilemap.
- *
- *  Note this function will do nothing if any of the dimensions provided
- *  are negative.
- *
- *  @param dimensions   The number of columns and rows in the tilemap
- */
-void TilemapController::updateDimensions(Vec2 dimensions) {
-  // TODO: Implement me
-  if (dimensions.x < 0 || dimensions.y < 0){
-    return;
-  }
-  Tilemap temp(std::move(_tilemap));
-  Vec2 initsize(_model->dimensions);
-  _model->setDimensions(dimensions);
-  _view->setSize(dimensions * _model->tileSize);
-  initializeTilemap();
-  for (int y = 0; y < initsize.y; y++) {
-    for (int x = 0; x < initsize.x; x++) {
-      if (y < dimensions.y && x < dimensions.x) {
-        _tilemap[y][x] = std::move(temp[y][x]);
-      }
-    }
-  }
-}
-
-/**
- * Updates the size of all tiles in the tilemap.
- *
- * Note this function will do nothing if any of the sizes provided
- * are negative.
- *
- * @param tileSize  The width and height of a tile
- */
-void TilemapController::updateTileSize(Size tileSize) {
-    // TODO: Implement me
-    if (tileSize.width < 0 || tileSize.height < 0){
-      return;
-    }   
-    Vec2 center(bottomLeftToCenterPosition(_model->position, _model->tileSize * _model->dimensions));
-    _model->setTileSize(tileSize);
-    _view->setSize(_model->dimensions * tileSize);
-    _model->setPosition(centerToBottomLeftPosition(center,tileSize * _model->dimensions));
-    _view->setPosition(centerToBottomLeftPosition(center,tileSize * _model->dimensions));
-    for(int i = 0; i < _model->dimensions.y; i++) {
-      for (int j = 0; j < _model->dimensions.x; j++) {
-        if (_tilemap[i][j]) {
-          _tilemap[i][j]->updateSize(tileSize);
-          _tilemap[i][j]->updatePosition(Vec2(j,i)*tileSize);
-        }
-      }
-    }
 }
 
 #pragma mark View Methods
@@ -197,7 +88,6 @@ void TilemapController::updateTileSize(Size tileSize) {
  * @param scene The scene to add the view to
  */
 void TilemapController::addChildTo(const std::shared_ptr<cugl::Scene2>& scene) {
-    // TODO: Implement me
     scene->addChild(_view->getNode());
 }
 
@@ -207,7 +97,6 @@ void TilemapController::addChildTo(const std::shared_ptr<cugl::Scene2>& scene) {
  * @param scene The scene to remove the view from
  */
 void TilemapController::removeChildFrom(const std::shared_ptr<cugl::Scene2>& scene) {
-    // TODO: Implement me
     scene->removeChild(_view->getNode());
 }
 

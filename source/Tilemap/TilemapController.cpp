@@ -75,9 +75,9 @@ void TilemapController::updateColor(Color4 color) {
  * @param row   The row to place the tile starting from bottom to top
  * @param color The color of the tile.
  */
-void TilemapController::addTile(int col, int row, Color4 color) {
+void TilemapController::addTile(int col, int row, Color4 color, bool traversable, const std::shared_ptr<Texture> &texture) {
     Vec2 pos(_model->tileSize.width*(col), _model->tileSize.height*row);
-    _tilemap[row][col] = std::move(std::make_unique<TileController>(pos,_model->tileSize,color));
+    _tilemap[row][col] = std::move(std::make_unique<TileController>(pos,_model->tileSize,color, traversable, texture));
     _tilemap[row][col]->addChildTo(_view->getNode());
 }
 

@@ -1,6 +1,6 @@
 ---
-name:   Ship Lab                    # The application display name
-short:  Ship                        # A shortened name for reference
+name:   SunkCost                   # The application display name
+short:  Sunk                        # A shortened name for reference
 appid:  edu.cornell.gdiac.code1     # Application identifier for Mac, iOS, Android
 suffix: GAE9CC0E
 
@@ -15,6 +15,8 @@ sources:                            # The list of the source code files
     - source/*.h
     - source/Tilemap/*.h
     - source/Tilemap/*.cpp
+    - source/Tile/*.cpp
+    - source/Tile/*.h
 
 # This must be one of portrait, landscape, portrait-flipped, landscape-flipped,
 targets:                        # The target platforms to build for

@@ -48,6 +48,15 @@ public:
         _node->setRelativeColor(false);
         _node->setColor(color);
     }
+
+    /**
+     * Deletes this TileView
+     *
+     * Upon destruction, you should remove the node from its parent.
+     */
+    ~TilemapView() {
+        _node->removeFromParent();
+    }
     
 #pragma mark Scene Methods
 public:

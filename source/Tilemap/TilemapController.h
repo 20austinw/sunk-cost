@@ -166,9 +166,14 @@ public:
     
     /**
      * Converts the map coordinate to grid coordinate.
+     * 
+     * Precondition: mapPos must be a valid position
+     * 
+     * @returns Grid position of the given map position or (-1,-1) if the given position is invalid.
      */
     Vec2 mapPosToGridPos(Vec2 mapPos) {
-      return Vec2(mapPos.x/_model->tileSize.width, mapPos.y/_model->tileSize.height);
+      Vec2 gridPos(mapPos.x/_model->tileSize.width, mapPos.y/_model->tileSize.height);
+      return gridPos;
     };
 };
 }

@@ -38,11 +38,19 @@ public:
      * @param color     The tile color
      */
     TileController(Vec2 position, Size size, Color4 color, bool traversable, const std::shared_ptr<Texture> &texture) {
-        // TODO: Implement me
         _model = std::make_unique<TileModel>(position, size, color, traversable); 
         _view = std::make_unique<TileView>(position, size, color, texture); 
     }
-    
+
+#pragma mark Get Methods
+public:
+    /**
+     *  Returns whether the tile is traversable
+     */
+    bool getTraversable() {
+        return _model->traversable;
+    }
+
 #pragma mark Update Methods
 public:
     /**
@@ -51,7 +59,6 @@ public:
      *  @param position  The bottom left corner of the tile
      */
     void updatePosition(Vec2 position) {
-        // TODO: Implement me
         _model->setPosition(position);
         _view->setPosition(position);
     }
@@ -62,7 +69,6 @@ public:
      *  @param size  The bottom left corner of the tile
      */
     void updateSize(Size size) {
-        // TODO: Implement me
         _model->setSize(size);
         _view->setSize(size);
     }
@@ -73,7 +79,6 @@ public:
      *  @param color The tile color
      */
     void updateColor(Color4 color) {
-        // TODO: Implement me
         _model->setColor(color);
         _view->setColor(color);
     }
@@ -84,7 +89,6 @@ public:
      *  @param traverse The tile traversability
      */
     void updateTraversable(bool traverse) {
-        // TODO: Implement me
         _model->setTraversable(traverse);
     }
     
@@ -96,7 +100,6 @@ public:
      * @param node The scenenode to add the view to
      */
     void addChildTo(std::shared_ptr<scene2::SceneNode> node) {
-        // TODO: Implement me
         _view->addChildTo(node);
     }
     
@@ -106,7 +109,6 @@ public:
      * @param node The scenenode to remove the view from
      */
     void removeChildFrom(std::shared_ptr<scene2::SceneNode> node) {
-        // TODO: Implement me
         _view->removeChildFrom(node);
     }
 };

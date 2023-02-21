@@ -40,7 +40,6 @@ public:
      * @param color The tile color tint
      */
     TileView(Vec2 position, Size size, Color4 color, const std::shared_ptr<Texture> &texture) {
-        // TODO: Implement me
         _node = scene2::TextureNode::alloc();
         _node->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
         _node->setTexture(texture);
@@ -54,7 +53,6 @@ public:
      * Upon destruction, you should remove the node from its parent.
      */
     ~TileView() {
-        // TODO: Implement me
         _node->removeFromParent();
     }
     
@@ -66,7 +64,6 @@ public:
      * @param sceneNode The scenenode to add the view to
      */
     void addChildTo(const std::shared_ptr<scene2::SceneNode>& sceneNode) {
-        // TODO: Implement me
         sceneNode->addChild(_node);
     }
     
@@ -76,7 +73,6 @@ public:
      * @param sceneNode The scenenode to remove the view from
      */
     void removeChildFrom(const std::shared_ptr<scene2::SceneNode>& sceneNode) {
-        // TODO: Implement me
         sceneNode->removeChild(_node);
     }
 
@@ -88,7 +84,6 @@ public:
      * @param position Bottom left corner of tile
      */
     void setPosition(Vec2 position) {
-        // TODO: Implement me
         _node->setPosition(position);
     }
     
@@ -102,8 +97,7 @@ public:
      * @param size Width and height of a single tile
      */
     void setSize(Size size) {
-        // TODO: Implement me
-        _node->setPolygon(Rect(Vec2::ZERO,size));
+        _node->setContentSize(size);
     }
     
     /**
@@ -112,7 +106,6 @@ public:
      *  @param color The color of the tile
      */
     void setColor(Color4 color) {
-        // TODO: Implement me
         _node->setColor(color);
     }
 };

@@ -49,7 +49,6 @@ public:
     TileModel(Vec2 position, Size size, Color4 color, bool traversable): 
     color(_color), 
     traversable(_traversable) {
-        // TODO: Implement me
         setPosition(position);
         setSize(size);
         setColor(color);
@@ -64,7 +63,6 @@ public:
      *  @param position Bottom left corner of tile
      */
     void setPosition(Vec2 position) {
-        // TODO: Implement me
         _position = position;
     }
     
@@ -74,7 +72,6 @@ public:
      *  @param size Width and height of a single tile
      */
     void setSize(Size size) {
-        // TODO: Implement me
         _size = size;
     }
     
@@ -84,7 +81,6 @@ public:
      *  @param color The color of the tile
      */
     void setColor(Color4 color) {
-        // TODO: Implement me
         _color = color;
     }
 
@@ -94,7 +90,6 @@ public:
      *  @param traversable The traversability of the tile
      */
     void setTraversable(bool traversable) {
-        // TODO: Implement me
         _traversable = traversable;
     }
     

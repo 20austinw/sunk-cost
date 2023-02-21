@@ -33,7 +33,7 @@ public:
     /** A public accessible, read-only version of the color */
     const Color4& color;
     /** A public accessible, read-only version of _traversable */
-    const bool& _traversable;
+    const bool& traversable;
     
     
 #pragma mark Main Functions

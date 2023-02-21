@@ -47,7 +47,7 @@ public:
     /**
      *  Returns whether the tile is traversable
      */
-    bool getTraversable() {
+    bool isTraversable() {
         return _model->traversable;
     }
 

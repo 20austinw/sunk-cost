@@ -13,6 +13,8 @@ orientation: landscape              # The orientation for mobile devices
 sources:                            # The list of the source code files
     - source/*.cpp
     - source/*.h
+    - source/Camera/*.cpp
+    - source/Camera/*.h
     - source/Input/*.cpp
     - source/Input/*.h
     - source/Tilemap/*.h

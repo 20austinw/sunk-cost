@@ -23,7 +23,7 @@ class PortraitSet {
      * Constructor for Camera Controller
      */
     PortraitSet():
-    _idx{-1}{}
+    _index{-1}{}
     
   #pragma mark Getters
   public:
@@ -31,7 +31,7 @@ class PortraitSet {
      * Getter for index of current portrait
      */    
     int getIndex() {
-      return index;
+      return _index;
     }
 
   #pragma mark Setters

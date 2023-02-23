@@ -13,7 +13,7 @@
 
 #include <cugl/cugl.h>
 #include "SpiritModel.h"
-#include "source/Camera/PortraitSetController.h"
+#include "../Camera/PortraitSetController.h"
 
 using namespace cugl;
 
@@ -113,33 +113,27 @@ class SpiritController {
     /**
      * Updates remaining camera cooldown time for this spirit
      *
-     * Resets the cooltime if value not provided
-     *
      * @param cameraCool the new remaining cooltime
      */
-    void updateCameraCoolDown(float cameraCool = _cameraCool) {
+    void updateCameraCoolDown(float cameraCool) {
       _model->setCameraCooldown(cameraCool);
     }
 
     /**
      * Updates remaining place clam cooldown time for this spirit
      *
-     * Resets the cooltime if value not provided
-     *
      * @param clamCool the new remaining cooltime
      */
-    void updateClamCooldown(float clamCool = _clamCool) {
+    void updateClamCooldown(float clamCool) {
       _model->setClamCooldown(clamCool);
     }
 
     /**
      * Updates remaining close door cooldown time for this spirit
      *
-     * Resets the cooltime if value not provided
-     *
      * @param doorCool the new remaining cooltime
      */
-    void updateDoorCooldown(float doorCool = _doorCool) {
+    void updateDoorCooldown(float doorCool) {
       _model->setDoorCooldown(doorCool);
     }
 };

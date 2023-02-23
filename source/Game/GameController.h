@@ -7,7 +7,7 @@
 //  is a legitimate design choice.
 //
 //  Authors of Referenced File: Walker White and Gonzalo Gonzalez
-//  Version: 2/21/23
+//  Version: 2/22/23
 //
 #ifndef __GAME_CONTROLLER_H__
 #define __GAME_CONTROLLER_H__
@@ -17,7 +17,6 @@
 #include <cugl/cugl.h>
 using namespace cugl;
 #include <source/Tilemap/TilemapController.h>
-
 
 
 /**
@@ -37,6 +36,10 @@ private:
 
 #pragma mark External References
 private:
+    /** The tilemap to procedurally generate */
+    std::unique_ptr<TilemapController> _tilemap;
+    /** The tilemap to procedurally generate */
+    std::unique_ptr<HunterController> _tilemap;
     /** The tilemap to procedurally generate */
     std::unique_ptr<TilemapController> _tilemap;
 

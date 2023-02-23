@@ -19,7 +19,11 @@ class CameraModel {
   #pragma mark State
   private: 
     /** Portrait or Viewpoint or Default */
+<<<<<<< HEAD
     int _type;
+=======
+    CameraType _type;
+>>>>>>> merged
     /** Limits on angles for the camera. [d.x,d.y] should be the range of possible values for angle. */
     Vec2 _directionLimits;
     /** Camera ID, for ordering purpose in Portrait Set */

@@ -28,7 +28,7 @@
 //  Version: 1/20/22
 
 // Include your application class
-#include "SLApp.h"
+#include "SCApp.h"
 
 using namespace cugl;
 

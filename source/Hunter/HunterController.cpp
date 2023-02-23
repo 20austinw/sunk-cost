@@ -13,7 +13,12 @@
  * TODO: Implement Me
  * The constructor should set up the model, view, and camera controller
  */
-HunterController::HunterController() {}
+HunterController::HunterController() {
+    _model = std::make_unique<HunterModel>();
+    _view = std::make_unique<HunterView>();
+    _camera = std::make_unique<CameraController>();
+    _hideCool = 0.0;
+}
 
 /**
  * TODO: Implement Me
@@ -29,6 +34,10 @@ void HunterController::render() {}
  * (1) detect camera change
  * (2) modify camera to reflect the change
  */
-void HunterController::update() {}
+void HunterController::update() {
+    _input.readInput();
+    
+    
+}
 
 

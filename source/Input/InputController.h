@@ -39,6 +39,11 @@ private:
     Uint32 _kkey;
     /** The unique key for the mouse listeners */
     Uint32 _mkey;
+    
+    /** How much forward are we going? */
+    float _forward;
+    /** How much are we turning? */
+    float _rightward;
 
 #pragma mark External References
 private:
@@ -85,6 +90,39 @@ public:
      * @param dt  The amount of time (in seconds) since the last frame
      */
     void update(float dt);
+    
+    /**
+     * Reads the input for this player and converts the result into game logic.
+     *
+     * This is an example of polling input.  Instead of registering a listener,
+     * we ask the controller about its current state.  When the game is running,
+     * it is typically best to poll input instead of using listeners.  Listeners
+     * are more appropriate for menus and buttons (like the loading screen).
+     */
+    void readInput();
+    
+    
+    /**
+     * Returns the amount of forward movement.
+     *
+     * -1 = backward, 1 = forward, 0 = still
+     *
+     * @return amount of forward movement.
+     */
+    float getForward() const {
+        return _forward;
+    }
+
+    /**
+     * Returns the amount to turn the ship.
+     *
+     * -1 = clockwise, 1 = counter-clockwise, 0 = still
+     *
+     * @return amount to turn the ship.
+     */
+    float getRight() const {
+        return _rightward;
+    }
 
     /**
      * Returns the amount of forward movement.

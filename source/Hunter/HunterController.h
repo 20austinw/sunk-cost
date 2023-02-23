@@ -13,6 +13,7 @@
 #include "HunterModel.h"
 #include "HunterView.h"
 #include "../Camera/CameraController.h"
+#include "../Input/InputController.h"
 
 using namespace cugl;
 
@@ -28,6 +29,8 @@ private:
 private:
     /** Camera reference */
     std::unique_ptr<CameraController> _camera;
+    /** The controller to manage the ship */
+    InputController _input;
     
 #pragma mark Constants
 private:

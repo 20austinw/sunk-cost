@@ -1,21 +1,19 @@
 {
 	"textures": {
 		"background": {
-            "file":  "textures/ice.png",
-            "wrapS": "repeat",
-            "wrapT": "repeat"
+            "file":  "textures/black.png"
         },
-        "photon": {
-            "file":  "textures/photon.png"
+        "red": {
+            "file":  "textures/red.png"
         },
-        "ship": {
-            "file":  "textures/ships.png"
+        "black": {
+            "file":  "textures/black.png"
         },
-        "asteroid1": {
-            "file":  "textures/asteroid1.png"
+        "green": {
+            "file":  "textures/green.png"
         },
-        "asteroid2": {
-            "file":  "textures/asteroid2.png"
+        "blue": {
+            "file":  "textures/blue.png"
         }
 	},
     "fonts": {

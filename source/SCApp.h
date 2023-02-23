@@ -10,8 +10,8 @@
 //  Author of Referenced File: Walker White
 //  Version: 2/22/23
 //
-#ifndef __SL_APP_H__
-#define __SL_APP_H__
+#ifndef _SC_APP_H__
+#define _SC_APP_H__
 #include <cugl/cugl.h>
 #include "GameScene.h"
 #include "LoadingScene.h"
@@ -133,4 +133,4 @@ public:
     virtual void draw() override;
 };
 
-#endif /* __SL_APP_H__ */
+#endif /* _SC_APP_H__ */

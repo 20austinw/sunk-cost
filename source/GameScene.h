@@ -15,6 +15,7 @@
 #include <cugl/cugl.h>
 #include <vector>
 #include <unordered_set>
+#include "LevelModel.h"
 #include "Input/InputController.h"
 
 
@@ -38,6 +39,8 @@ protected:
     /** The JSON value with all of the constants */
     std::shared_ptr<cugl::JsonValue> _constants;
 
+    /** The level model */
+    std::shared_ptr<LevelModel> _level;
     
     // VIEW items are going to be individual variables
     // In the future, we will replace this with the scene graph

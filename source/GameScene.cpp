@@ -13,9 +13,8 @@
 #include <cugl/cugl.h>
 #include <iostream>
 #include <sstream>
-
 #include "GameScene.h"
-//#include "GLCollisionController.h"
+#include "LevelConstants.h"
 
 using namespace cugl;
 using namespace std;
@@ -94,14 +93,47 @@ void GameScene::reset() {
  */
 void GameScene::update(float timestep) {
     // Read the keyboard for each controller.
-//    _input.readInput();
-//    if (_input.didPressReset()) {
-//        reset();
-//    }
+    _input.readInput();
+    if (_input.didPressReset()) {
+        reset();
+    }
+  if (_level == nullptr) {
+    return;
+  }
 
-    // Update the health meter
+  // Check to see if new level loaded yet
+  if (_assets->complete()) {
+    _level = nullptr;
 
-    _text->layout();
+    // Access and initialize level
+    _level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
+    _level->setAssets(_assets);;
+
+  }
+  else {
+    // Level is not loaded yet; refuse input
+    return;
+  }
+  _input.update(timestep);
+
+  if (_input.didPressReset()) {
+    // Unload the level but keep in memory temporarily
+    _assets->unload<LevelModel>(LEVEL_ONE_KEY);
+
+    _assets->load<LevelModel>(LEVEL_ONE_KEY, LEVEL_ONE_FILE);
+    return;
+  }
+  if (_input.didPressReset()) {
+    CULog("Shutting down");
+    Application::get()->quit();
+  }
+
+    //TODO: For hunters and spirit teams, Set Camera Here Like this
+//    _camera.setTarget(_level->getRocket()->getShipNode());
+  }
+
+    //TODO : Implement me -> Game loop
+
 }
 
 /**

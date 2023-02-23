@@ -2,8 +2,9 @@
 //  SCApp.cpp
 //  Sunk Cost
 //
-//  This is the root class for your game.  The file main.cpp accesses this class
-//  to run the application.  While you could put most of your game logic in
+//  This is the root class for the game.  The file main.cpp accesses this class
+//  to run the application.
+//  While we could put most of your game logic in
 //  this class, we prefer to break the game up into player modes and have a
 //  class for each mode.
 //
@@ -11,6 +12,8 @@
 //  Version: 2/22/23
 //
 #include "SCApp.h"
+#include "LevelConstants.h"
+#include "LevelModel.h"
 
 using namespace cugl;
 
@@ -30,7 +33,6 @@ using namespace cugl;
 void SCApp::onStartup() {
     _assets = AssetManager::alloc();
     _batch  = SpriteBatch::alloc();
-
     
     // Start-up basic input (DESKTOP ONLY)
     Input::activate<Mouse>();
@@ -41,6 +43,7 @@ void SCApp::onStartup() {
     _assets->attach<Font>(FontLoader::alloc()->getHook());
     _assets->attach<JsonValue>(JsonLoader::alloc()->getHook());
     _assets->attach<scene2::SceneNode>(Scene2Loader::alloc()->getHook()); // Needed for loading screen
+    _assets->attach<LevelModel>(GenericLoader<LevelModel>::alloc()->getHook());
 
     // Create a "loading" screen
     _loaded = false;
@@ -48,6 +51,7 @@ void SCApp::onStartup() {
     
     // Queue up the other assets
     _assets->loadDirectoryAsync("json/assets.json",nullptr);
+    _assets->loadAsync<LevelModel>(LEVEL_ONE_KEY,LEVEL_ONE_FILE,nullptr);
     
     AudioEngine::start();
     Application::onStartup(); // YOU MUST END with call to parent
@@ -64,7 +68,7 @@ void SCApp::onStartup() {
  * very last line.  This ensures that the state will transition to NONE,
  * causing the application to be deleted.
  */
-void ShipApp::onShutdown() {
+void SCApp::onShutdown() {
     _loading.dispose();
     _gameplay.dispose();
     _assets = nullptr;
@@ -89,7 +93,7 @@ void ShipApp::onShutdown() {
  * Otherwise, the audio thread may persist while the application is in
  * the background.
  */
-void ShipApp::onSuspend() {
+void SCApp::onSuspend() {
     AudioEngine::get()->pause();
 }
 
@@ -103,7 +107,7 @@ void ShipApp::onSuspend() {
  * If you are using audio, you should use this method to resume any audio
  * paused before app suspension.
  */
-void ShipApp::onResume() {
+void SCApp::onResume() {
     AudioEngine::get()->resume();
 }
 
@@ -118,7 +122,7 @@ void ShipApp::onResume() {
  *
  * @param timestep  The amount of time (in seconds) since the last frame
  */
-void ShipApp::update(float timestep) {
+void SCApp::update(float timestep) {
     if (!_loaded && _loading.isActive()) {
         _loading.update(0.01f);
     } else if (!_loaded) {
@@ -139,7 +143,7 @@ void ShipApp::update(float timestep) {
  * When overriding this method, you do not need to call the parent method
  * at all. The default implmentation does nothing.
  */
-void ShipApp::draw() {
+void SCApp::draw() {
     if (!_loaded) {
         _loading.render(_batch);
     } else {

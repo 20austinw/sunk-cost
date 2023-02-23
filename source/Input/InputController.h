@@ -47,6 +47,20 @@ private:
     /** Mouse reference */
     Mouse *_mouse;
 
+#pragma mark State
+private:
+    /** How much forward are we going? */
+    float _forward;
+
+    /** How much are we turning? */
+    float _turning;
+
+    /** Did we press the exit button? */
+    bool _didExit;
+
+    /** Did we press the reset button? */
+    bool _didReset;
+
 #pragma mark Main Functions
 public:
     /**
@@ -69,6 +83,56 @@ public:
      * @param dt  The amount of time (in seconds) since the last frame
      */
     void update(float dt);
+
+    /**
+     * Returns the amount of forward movement.
+     *
+     * -1 = backward, 1 = forward, 0 = still
+     *
+     * @return amount of forward movement.
+     */
+    float getForward() const {
+      return _forward;
+    }
+
+    /**
+     * Returns the amount to turn the ship.
+     *
+     * -1 = clockwise, 1 = counter-clockwise, 0 = still
+     *
+     * @return amount to turn the ship.
+     */
+    float getTurn() const {
+      return _turning;
+    }
+
+    /**
+     * Returns whether the exit button was pressed.
+     *
+     * @return whether the exit button was pressed.
+     */
+    bool didPressExit() const {
+      return _didExit;
+    }
+
+    /**
+     * Returns whether the reset button was pressed.
+     *
+     * @return whether the reset button was pressed.
+     */
+    bool didPressReset() const {
+      return _didReset;
+    }
+
+    /**
+     * Reads the input for this player and converts the result into game logic.
+     *
+     * This is an example of polling input.  Instead of registering a listener,
+     * we ask the controller about its current state.  When the game is running,
+     * it is typically best to poll input instead of using listeners.  Listeners
+     * are more appropriate for menus and buttons (like the loading screen).
+     */
+    void readInput();
 
 #pragma mark Mouse Callbacks
 private:

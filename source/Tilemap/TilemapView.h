@@ -85,6 +85,14 @@ public:
 
 #pragma mark Setters
 public:
+    /**
+     * Sets the color of the tilemap.
+     *
+     * @param color    The coor of the tilemap
+     */
+    void setColor(Color4 color) {
+        _node->setColor(color);
+    }
     
     /**
      * Sets the bottom left corner of the tilemap

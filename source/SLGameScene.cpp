@@ -111,10 +111,10 @@ void GameScene::reset() {
  */
 void GameScene::update(float timestep) {
     // Read the keyboard for each controller.
-    _input.readInput();
-    if (_input.didPressReset()) {
-        reset();
-    }
+//    _input.readInput();
+//    if (_input.didPressReset()) {
+//        reset();
+//    }
 
     // Move the ships and photons forward (ignoring collisions)
     _ship->move( _input.getForward(),  _input.getTurn(), getSize());

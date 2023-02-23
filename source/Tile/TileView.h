@@ -25,7 +25,7 @@ class TileView {
 #pragma mark Internal References
 private:
     /** Main tile view */
-    std::shared_ptr<scene2::TextureNode> _node;
+    std::shared_ptr<scene2::PolygonNode> _node;
     
 #pragma mark Main Functions
 public:
@@ -40,7 +40,7 @@ public:
      * @param color The tile color tint
      */
     TileView(Vec2 position, Size size, Color4 color, const std::shared_ptr<Texture> &texture) {
-        _node = scene2::TextureNode::alloc();
+        _node = scene2::PolygonNode::alloc();
         _node->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
         _node->setTexture(texture);
         _node->setPosition(position);
@@ -97,7 +97,7 @@ public:
      * @param size Width and height of a single tile
      */
     void setSize(Size size) {
-        _node->setContentSize(size);
+        _node->setPolygon(Rect(Vec2::ZERO, size));
     }
     
     /**

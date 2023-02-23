@@ -57,6 +57,15 @@ class SpiritController {
     Vec2 placeTraps();
 
     /**
+     * Gets the viewpoint for current portrait
+     *
+     * @return rectangle that should be drawn
+     */
+    const Rect getCameraView() {
+      _portraits->getViewPort();
+    };
+
+    /**
      * TODO: Implement Me
      * This function should
      * (1) get the view from portraitsetcontroller

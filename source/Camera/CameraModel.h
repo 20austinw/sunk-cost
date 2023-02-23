@@ -3,7 +3,7 @@
 //  Sunk Cost
 //
 //  Author:  Soon Jae Park
-//  Version: 2/21/23
+//  Version: 2/22/23
 //
 #ifndef __CAMERA_MODEL_H__
 #define __CAMERA_MODEL_H__
@@ -16,31 +16,35 @@ using namespace cugl;
  * A camera is an object that can provide a viewpoint, so it includes portraits and hunter viewpoint as well as default viewpoint
  */
 class CameraModel {
-  
-  #pragma mark Internal References
-  private: 
-    
-    
-
   #pragma mark State
   private: 
     /** Portrait or Viewpoint or Default */
     CameraType _type; 
     /** Limits on angles for the camera. [d.x,d.y] should be the range of possible values for angle. */
     Vec2 _directionLimits;
+    /** Camera ID, for ordering purpose in Portrait Set */
+    int _id;
 
+  #pragma mark External References
   public:
+    /** A public accessible, read-only version of the camera type */
     CameraType& type;
+    /** A public accessible, read-only version of the direction limits */
     Vec2& directionLimits;
+    /** A public accessible, read-only version of the camera id */
+    int& id;
 
   #pragma mark Main Functions
   public:
     /** 
      * Default Constructor for Camera Model
      */
-    Camera() :
-    type(_type),
-    directionLimits(_directionLimits) {
+    Camera(int id) :
+    id(_id)
+    directionLimits(_directionLimits),
+    type(_type)
+     {
+      setId(id);
       setDirectionLimits(Vec2::ZERO);
       setType(0);
     }

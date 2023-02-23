@@ -3,7 +3,7 @@
 //  Sunk Cost
 //
 //  Author:  Soon Jae Park
-//  Version: 2/21/23
+//  Version: 2/22/23
 //
 #ifndef __CAMERA_CONTROLLER_H__
 #define __CAMERA_CONTROLLER_H__
@@ -16,6 +16,7 @@ using namespace cugl;
 enum CameraType {Default = 0, Player = 1, Portrait = 2};
 
 class CameraController {
+  #pragma mark Internal References
   private:
     /** The Camera object */
     std::shared_ptr<Camera> _camera;
@@ -27,15 +28,29 @@ class CameraController {
     /**
      * Constructor for Camera Controller
      */
-    CameraController() :
-    _camera{std::make_shared<Camera>()},
-    _model{std::make_unique<CameraModel>()}{}
+    CameraController(int id) :
+    // Need to test out orthographic camera vs perspective
+    // Orthographic sounds like the better option
+    _camera{std::make_shared<OrthographicCamera>()},
+    _model{std::make_unique<CameraModel>(int id)}{}
 
     /**
-     * @param angle is all we need
-     * */ 
+     * Rotates the camera by angle
+     * 
+     * @param angle how much the camera will be rotated by
+     */ 
     void rotate(float angle) {
       _camera->rotate(angle);
+    }
+
+    /**
+     * Modifies the camera to look at the given target
+     * 
+     * @param target the point to look at
+     */
+    void lookAt(const Vec3 target) {
+      _camera->normalizeUp();
+      _camera->lookAt(target);
     }
 
   #pragma mark Getters

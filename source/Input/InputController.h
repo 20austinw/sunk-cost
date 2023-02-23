@@ -114,11 +114,11 @@ public:
     }
 
     /**
-     * Returns the amount to turn the ship.
+     * Returns the amount to turn the hunter.
      *
      * -1 = clockwise, 1 = counter-clockwise, 0 = still
      *
-     * @return amount to turn the ship.
+     * @return amount to turn the hunter.
      */
     float getRight() const {
         return _rightward;

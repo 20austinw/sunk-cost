@@ -30,7 +30,13 @@ public:
      * @param size The width and height of a tile
      * @param color The tile color tint
      */
-    HunterView();
+    HunterView(Vec2 position, Size size){
+        _node = scene2::PolygonNode::alloc();
+        _node->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+        _node->setPosition(position);
+        _node->setPolygon(Rect(Vec2::ZERO, size));
+    };
+    
     
     /** Deletes this HunterView */
     ~HunterView() {

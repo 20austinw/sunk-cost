@@ -8,6 +8,7 @@
 #ifndef __PORTRAIT_SET_CONTROLLER_H__
 #define __PORTRAIT_SET_CONTROLLER_H__
 #include <cugl/cugl.h>
+#include <memory>
 #include "PortraitSet.h"
 #include "CameraController.h"
 
@@ -28,7 +29,7 @@ class PortraitSetController {
      * Constructor for Camera Controller
      */
     PortraitSetController(int id = 0) {
-      _model = std::make_unique<CameraController>(id);
+      _model = std::make_unique<PortraitSet>();
       initializePortraitSet();
     }
 
@@ -43,8 +44,7 @@ class PortraitSetController {
      * default camera is camera that is viewing a black screen
      */ 
     void addPortrait(int id, Vec3 position, Vec3 direction, Vec2 directionLimits, int type = 2) {
-      std::unique_ptr<CameraController> camera = std::move(makePortrait(id, position, direction, directionLimits, type));
-      _portraits->push_back(camera);
+      _portraits.push_back(std::move(makePortrait(id, position, direction, directionLimits, type)));
     }
 
     /**
@@ -58,8 +58,7 @@ class PortraitSetController {
      * default camera is camera that is viewing a black screen
      */ 
     void insertPortraitTo(int index, int id, Vec3 position, Vec3 direction, Vec2 directionLimits, int type = 2) {
-      std::unique_ptr<CameraController> camera = std::move(makePortrait(id, position, direction, directionLimits, type));
-      _portraits->insert(index, camera);
+      _portraits.insert(getIteratorForIndex(index), std::move(makePortrait(id, position, direction, directionLimits, type)));
     }
 
     /**
@@ -73,8 +72,7 @@ class PortraitSetController {
      * default camera is camera that is viewing a black screen
      */ 
     void initializePortraitSet(int id = 0, Vec3 position = Vec2::ZERO, Vec3 direction = Vec3::ZERO, Vec2 directionLimits = Vec2::ZERO, int type = 2) {
-      std::unique_ptr<CameraController> camera = std::move(makePortrait(id, position, direction, directionLimits, type));
-      _portraits->push_back(camera);
+      _portraits.push_back(std::move(makePortrait(id, position, direction, directionLimits, type)));
       _model->setIndex(0);
     }
 
@@ -82,7 +80,7 @@ class PortraitSetController {
      * Adds a new portrait to the portraitset
      */ 
     void clearPortraitSet() {
-      _portraits->clear();
+      _portraits.clear();
       _model->setIndex(-1);
     }
 
@@ -113,36 +111,36 @@ class PortraitSetController {
      * 
      * @return viewport
      */
-    void updatePositionIndex(Vec3 position, int index = _model->getIndex()) {
+    void updatePositionIndex(Vec3 position, int index) {
       _portraits[index]->updatePosition(position);
     }
 
     /** 
      * Updates direction of the camera
      */
-    void updateDirectionIndex(Vec3 direction, int index = _model->getIndex()) {
+    void updateDirectionIndex(Vec3 direction, int index) {
       _portraits[index]->updateDirection(direction);
     }
 
     /** 
-     * Updates camera directoin limits. [d.x,d.y] should be the range of possible values for angle.
+     * Updates camera direction limits. [d.x,d.y] should be the range of possible values for angle.
      */
-    void updateDirectionLimitsIndex(Vec2 directionLimits, int index = _model->getIndex()) {
+    void updateDirectionLimitsIndex(Vec2 directionLimits, int index) {
       _portraits[index]->updateDirectionLimits(directionLimits);
     }
 
     /** 
-     * Updates camera type
+     * Updates camera type for the camera at the given index
      */
-    void updateTypeIndex(CameraType type, int index = _model->getIndex()) {
+    void updateTypeIndex(CameraType type, int index) {
       _portraits[index]->updateType(type);
     }
 
-    /** 
-     * Updates camera that is being viewed right now
+    /**
+     * Updates camera type for the current camera
      */
-    void updateTypeIndex(int index) {
-      _model->setIndex(index);
+    void updateType(CameraType type) {
+      _portraits[_model->getIndex()]->updateType(type);
     }
 
     /**
@@ -151,7 +149,7 @@ class PortraitSetController {
      * @param angle how much the camera will be rotated by
      */ 
     void rotate(float angle) {
-      _portraits[index]->rotate(angle);
+      _portraits[_model->getIndex()]->rotate(angle);
     }
 
     /**
@@ -160,7 +158,7 @@ class PortraitSetController {
      * @param target the point to look at
      */
     void lookAt(const Vec3 target) {
-      _portraits[index]->lookAt(target);
+      _portraits[_model->getIndex()]->lookAt(target);
     }
 
   #pragma mark Helpers
@@ -170,11 +168,11 @@ class PortraitSetController {
       camera->updatePosition(position);
       camera->updateDirection(direction);
       camera->updateDirectionLimits(directionLimits);
-      camera->updateType(0);
+      camera->updateType(CameraType(0));
       return camera;
     }
 
-    auto getIteratorForIndex(int idx) {
+    std::vector<std::unique_ptr<CameraController>>::iterator getIteratorForIndex(int idx) {
       return _portraits.begin() + idx;
     }
 }

@@ -12,9 +12,9 @@
 
 #include "TilemapModel.h"
 #include "TilemapView.h"
-#include <source/Tile/TileController.h>
+#include <memory>
+#include "../Tile/TileController.h"
 
-namespace MVC {
 /**
  * A class communicating between the model and the view. It controls
  * the entire tile map.
@@ -97,7 +97,7 @@ public:
      * @param row   The row to place the tile starting from bottom to top
      * @param color The color of the tile.
      */
-    void addTile(int col, int row, Color4 color);
+    void addTile(int col, int row, Color4 color, bool traversable, const std::shared_ptr<Texture> &texture);
 
     /**
      * Returns whether the tile at the given position is traversable.
@@ -176,6 +176,5 @@ public:
       return gridPos;
     };
 };
-}
 
 #endif /* _TILEMAP_CONTROLLER_H__ */

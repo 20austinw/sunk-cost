@@ -1,35 +1,26 @@
 //
-//  TileView.h
+//  HunterView.h
 //  Sunk Cost
 //
-//  This module provides the TileView class.
+//  Created by Chloe Chu
+//  Version: 2/22/23.
 //
-//  Author of Referenced File: Gonzalo Gonzalez
-//  Version: 2/21/23.
-//
-#ifndef _TILE_VIEW_H__
-#define _TILE_VIEW_H__
+
+#ifndef _HUNTER_VIEW_H
+#define _HUNTER_VIEW_H
 #include <cugl/cugl.h>
+
 using namespace cugl;
 
-/**
- * A class representing the interface for a single tile view.
- * 
- * There is very little that this class does that a SceneNode (or
- * PolygonNode) does not already do. So technically we could use
- * one of those classes for the view. But by pulling it out as its
- * own class, we make the relationship explicit.
- */
-class TileView {
-    
+class HunterView {
 #pragma mark Internal References
 private:
-    /** Main tile view */
     std::shared_ptr<scene2::PolygonNode> _node;
-    
+
 #pragma mark Main Functions
 public:
     /**
+     * TODO: Implement Me
      * Creates the view.
      *
      * In addition to the passed arguments, the node's anchor is set to the
@@ -39,20 +30,10 @@ public:
      * @param size The width and height of a tile
      * @param color The tile color tint
      */
-    TileView(Vec2 position, Size size, Color4 color, const std::shared_ptr<Texture> &texture) {
-        _node = scene2::PolygonNode::alloc();
-        _node->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-        _node->setTexture(texture);
-        _node->setPosition(position);
-        _node->setColor(color);
-    }
+    HunterView();
     
-    /**
-     * Deletes this TileView
-     *
-     * Upon destruction, you should remove the node from its parent.
-     */
-    ~TileView() {
+    /** Deletes this HunterView */
+    ~HunterView() {
         _node->removeFromParent();
     }
     
@@ -75,9 +56,8 @@ public:
     void removeChildFrom(const std::shared_ptr<scene2::SceneNode>& sceneNode) {
         sceneNode->removeChild(_node);
     }
-
+    
 #pragma mark Setters
-public:
     /**
      * Sets the position of the bottom left corner of the tile.
      *
@@ -97,7 +77,7 @@ public:
      * @param size Width and height of a single tile
      */
     void setSize(Size size) {
-        _node->setPolygon(Rect(Vec2::ZERO, size));
+        _node->setContentSize(size);
     }
     
     /**
@@ -110,4 +90,4 @@ public:
     }
 };
 
-#endif /* _TILE_VIEW_H__ */
+#endif /* _HUNTER_VIEW_H__ */

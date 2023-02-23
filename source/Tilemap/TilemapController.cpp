@@ -9,8 +9,6 @@
 //
 #include "TilemapController.h"
 
-using namespace MVC;
-
 #pragma mark Main Functions
 /** Creates the default model, view and tilemap vector. */
 TilemapController::TilemapController() {

@@ -17,6 +17,8 @@ sources:                            # The list of the source code files
     - source/Camera/*.h
     - source/Input/*.cpp
     - source/Input/*.h
+    - source/Spirit/*.cpp
+    - source/Spirit/*.h
     - source/Tilemap/*.h
     - source/Tilemap/*.cpp
     - source/Tile/*.cpp

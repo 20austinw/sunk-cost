@@ -19,7 +19,7 @@ class CameraModel {
   #pragma mark State
   private: 
     /** Portrait or Viewpoint or Default */
-    CameraType _type; 
+    int _type;
     /** Limits on angles for the camera. [d.x,d.y] should be the range of possible values for angle. */
     Vec2 _directionLimits;
     /** Camera ID, for ordering purpose in Portrait Set */
@@ -28,7 +28,7 @@ class CameraModel {
   #pragma mark External References
   public:
     /** A public accessible, read-only version of the camera type */
-    CameraType& type;
+    int& type;
     /** A public accessible, read-only version of the direction limits */
     Vec2& directionLimits;
     /** A public accessible, read-only version of the camera id */
@@ -39,8 +39,8 @@ class CameraModel {
     /** 
      * Default Constructor for Camera Model
      */
-    Camera(int id) :
-    id(_id)
+    CameraModel(int id) :
+    id(_id),
     directionLimits(_directionLimits),
     type(_type)
      {
@@ -52,6 +52,13 @@ class CameraModel {
   #pragma mark Setters
   // Note: Call update after updating camera
   public:
+    /**
+     * Setter for camera id
+     */
+    void setId(int id) {
+        _id = id;
+    }
+    
     /** 
      * Setter for camera angle bounds
      */
@@ -64,11 +71,7 @@ class CameraModel {
      */
     void setType(int type) {
       _type = type;
-    }
-}
-
-
-
-
+    };
+};
 
 #endif /* __CAMERA_MODEL_H__ */

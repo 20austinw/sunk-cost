@@ -32,7 +32,7 @@ class CameraController {
     // Need to test out orthographic camera vs perspective
     // Orthographic sounds like the better option
     _camera{std::make_shared<OrthographicCamera>()},
-    _model{std::make_unique<CameraModel>(int id)}{}
+    _model{std::make_unique<CameraModel>(id)}{}
 
     /**
      * Rotates the camera by angle
@@ -61,7 +61,7 @@ class CameraController {
      * @return Rectangle that contains the camera viewpoint
      */
     const Rect getViewPort() {
-      _camera->getViewPort();
+        return _camera->getViewport();
     }
     
 
@@ -96,6 +96,6 @@ class CameraController {
     void updateType(CameraType type) {
       _model->setType(type);
     }
-}
+};
 
 #endif /* __CAMERA_CONTROLLER_H__ */

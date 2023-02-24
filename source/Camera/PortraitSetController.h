@@ -92,7 +92,7 @@ class PortraitSetController {
      * @return Rectangle that contains the camera viewpoint
      */
     const Rect getViewPortrait() {
-      _portraits[_model->getIndex()]->getViewPort();
+      return _portraits[_model->getIndex()]->getViewPort();
     }
 
     /** 
@@ -175,7 +175,7 @@ class PortraitSetController {
     std::vector<std::unique_ptr<CameraController>>::iterator getIteratorForIndex(int idx) {
       return _portraits.begin() + idx;
     }
-}
+};
 
 
 

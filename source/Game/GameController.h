@@ -16,7 +16,7 @@
 
 #include <cugl/cugl.h>
 using namespace cugl;
-#include <source/Tilemap/TilemapController.h>
+#include "TilemapController.h"
 
 
 /**
@@ -39,9 +39,7 @@ private:
     /** The tilemap to procedurally generate */
     std::unique_ptr<TilemapController> _tilemap;
     /** The tilemap to procedurally generate */
-    std::unique_ptr<HunterController> _tilemap;
-    /** The tilemap to procedurally generate */
-    std::unique_ptr<TilemapController> _tilemap;
+//    std::unique_ptr<HunterController> _tilemap;
 
 
 #pragma mark Main Methods

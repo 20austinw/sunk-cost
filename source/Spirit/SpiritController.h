@@ -62,7 +62,7 @@ class SpiritController {
      * @return rectangle that should be drawn
      */
     const Rect getCameraView() {
-      _portraits->getViewPort();
+      return _portraits->getViewPortrait();
     };
 
     /**

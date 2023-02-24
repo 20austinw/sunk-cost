@@ -11,7 +11,7 @@
 /**
 * Creates a new, empty level.
 */
-LevelModel::LevelModel(void) : Asset(),
+LevelModel::LevelModel() : Asset()
 {
   _bounds.size.set(1.0f, 1.0f);
 }

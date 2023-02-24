@@ -50,8 +50,8 @@ void SCApp::onStartup() {
     _loading.init(_assets);
     
     // Queue up the other assets
-//    _assets->loadDirectoryAsync("json/assets.json",nullptr);
-//    _assets->loadAsync<LevelModel>(LEVEL_ONE_KEY,LEVEL_ONE_FILE,nullptr);
+    _assets->loadDirectoryAsync("json/assets.json", nullptr);
+    _assets->loadAsync<LevelModel>(LEVEL_ONE_KEY, LEVEL_ONE_FILE, nullptr);
     
     AudioEngine::start();
     Application::onStartup(); // YOU MUST END with call to parent

@@ -22,33 +22,45 @@
  */
 InputController::InputController():
 _model(std::make_unique<InputModel>()),
-_keyboard(Input::get<Keyboard>()),
-_mouse(Input::get<Mouse>()),
 _forward(0),
 _turning(0)
-{
-    _kkey = _keyboard->acquireKey();
-    bool addedKey = _keyboard->addKeyDownListener(_kkey,
-        [this](const KeyEvent& event, bool focus) {
+{}
+
+bool InputController::initListeners() {
+    _keyboard = Input::get<Keyboard>();
+    _mouse = Input::get<Mouse>();
+    
+    if (_keyboard) {
+        _kkey = _keyboard->acquireKey();
+        bool addedKey = _keyboard->addKeyDownListener(_kkey,
+                                                      [this](const KeyEvent& event, bool focus) {
             _current.emplace(event.keycode);
         });
-    CUAssertLog(addedKey, "failed adding key listener");
+        CUAssertLog(addedKey, "failed adding key listener");
+    } else {
+        return false;
+    }
 
-    _mkey = _mouse->acquireKey();
-    _mouse->setPointerAwareness(Mouse::PointerAwareness::DRAG);
-    bool addedPress = _mouse->addPressListener(_mkey, [this](const MouseEvent &event, Uint8 clicks, bool focus) { buttonDownCB(event, clicks, focus);
-    });
-    CUAssertLog(addedPress, "failed adding press listener");
-
-    bool addedDrag = _mouse->addDragListener(_mkey, [this](const MouseEvent& event, const Vec2 previous, bool focus) {
-        buttonHeldCB(event, previous, focus);
-    });
-    CUAssertLog(addedDrag, "failed adding drag listener");
-
-    bool addedRelease = _mouse->addReleaseListener(_mkey, [this](const MouseEvent &event, Uint8 clicks, bool focus) {
-        buttonUpCB(event, clicks, focus);
-    });
-    CUAssertLog(addedRelease, "failed adding release listener");
+    if (_mouse) {
+        _mkey = _mouse->acquireKey();
+        _mouse->setPointerAwareness(Mouse::PointerAwareness::DRAG);
+        bool addedPress = _mouse->addPressListener(_mkey, [this](const MouseEvent &event, Uint8 clicks, bool focus) { buttonDownCB(event, clicks, focus);
+        });
+        CUAssertLog(addedPress, "failed adding press listener");
+        
+        bool addedDrag = _mouse->addDragListener(_mkey, [this](const MouseEvent& event, const Vec2 previous, bool focus) {
+            buttonHeldCB(event, previous, focus);
+        });
+        CUAssertLog(addedDrag, "failed adding drag listener");
+        
+        bool addedRelease = _mouse->addReleaseListener(_mkey, [this](const MouseEvent &event, Uint8 clicks, bool focus) {
+            buttonUpCB(event, clicks, focus);
+        });
+        CUAssertLog(addedRelease, "failed adding release listener");
+    } else {
+        return false;
+    }
+    return true;
 }
 
 /** Returns a singleton instance of InputController. */
@@ -74,7 +86,6 @@ void InputController::readInput() {
   KeyCode down  = KeyCode::ARROW_DOWN;
   KeyCode left  = KeyCode::ARROW_LEFT;
   KeyCode right = KeyCode::ARROW_RIGHT;
-  KeyCode shoot = KeyCode::SPACE;
   KeyCode reset = KeyCode::R;
 
   // Convert keyboard state into game commands

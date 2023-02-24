@@ -74,6 +74,8 @@ public:
      */
     InputController();
     
+    bool initListeners();
+    
     /** Returns a singleton instance of InputController. */
     static std::shared_ptr<InputController> getInstance();
     

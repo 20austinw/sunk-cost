@@ -36,6 +36,7 @@ LevelModel::~LevelModel(void) {
  */
 bool LevelModel::preload(const std::string& file) {
   std::shared_ptr<JsonReader> reader = JsonReader::allocWithAsset(file);
+    
   return preload(reader->readJson());
 }
 
@@ -49,27 +50,29 @@ bool LevelModel::preload(const std::string& file) {
  * @return true if successfully loaded the asset from a file
  */
 bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
-  if (json == nullptr) {
-    CUAssertLog(false, "Failed to load level file");
-    return false;
-  }
-  // Initial geometry
-  float w = json->get(WIDTH_FIELD)->asFloat();
-  float h = json->get(HEIGHT_FIELD)->asFloat();
-  float g = json->get("properties")->get(0)->getFloat("value", -4.9);
-  _bounds.size.set(w, h);
-
-  // Get each object in each layer, then decide what to do based off of what
-  // type the object is.
-  for (int i = 0; i < json->get("layers")->size(); i++) {
-    // Get the objects per layer
-    auto objects = json->get("layers")->get(i)->get("objects");
-    for (int j = 0; j < objects->size(); j++) {
-      // For each object, determine what it is and load it
-      loadObject(objects->get(j));
+    if (json == nullptr) {
+        CUAssertLog(false, "Failed to load level file");
+        return false;
     }
-  }
-  return true;
+    // Initial geometry
+    float w = json->get(WIDTH_FIELD)->asFloat();
+    float h = json->get(HEIGHT_FIELD)->asFloat();
+    _bounds.size.set(w, h);
+    
+    // Get each object in each layer, then decide what to do based off of what
+    // type the object is.
+    auto objects = json->get("layers")->get(0);
+    loadObject(objects);
+    for (int i = 1; i < json->get("layers")->size(); i++) {
+        // Get the objects per layer
+        objects = json->get("layers")->get(i)->get("objects");
+        
+        for (int j = 0; j < objects->size(); j++) {
+            // For each object, determine what it is and load it
+            loadObject(objects->get(j));
+        }
+    }
+    return true;
 }
 
 /**
@@ -160,11 +163,10 @@ bool LevelModel::loadTiles(const std::shared_ptr<JsonValue>& json) {
 * @return true if the exit door was successfully loaded
 */
 bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue>& json) {
-  auto player = json->get("objects")->get(0);
-  bool success = player->get("x") != nullptr;
+  bool success = json->get("x") != nullptr;
   if (success) {
-    float x = player->getFloat("x");
-    float y = player->getFloat("y");
+    float x = json->getFloat("x");
+    float y = json->getFloat("y");
     _player = Vec2(x,y);
   }
   return success;

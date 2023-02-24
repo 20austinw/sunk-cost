@@ -46,8 +46,8 @@ int main(int argc, char * argv[]) {
     SCApp app;
     
     // Set the properties of your application
-    app.setName("Ship Lab");
-    app.setOrganization("GDIAC");
+    app.setName("Sunk Cost");
+    app.setOrganization("Risky Biscuitz");
     app.setHighDPI(true);
     app.setFPS(60.0f);
 

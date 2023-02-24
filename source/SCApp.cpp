@@ -37,7 +37,7 @@ void SCApp::onStartup() {
     // Start-up basic input (DESKTOP ONLY)
     Input::activate<Mouse>();
     Input::activate<Keyboard>();
-
+    
     _assets->attach<Texture>(TextureLoader::alloc()->getHook());
     _assets->attach<Sound>(SoundLoader::alloc()->getHook());
     _assets->attach<Font>(FontLoader::alloc()->getHook());
@@ -50,8 +50,8 @@ void SCApp::onStartup() {
     _loading.init(_assets);
     
     // Queue up the other assets
-    _assets->loadDirectoryAsync("json/assets.json",nullptr);
-    _assets->loadAsync<LevelModel>(LEVEL_ONE_KEY,LEVEL_ONE_FILE,nullptr);
+    _assets->loadDirectoryAsync("json/assets.json", nullptr);
+    _assets->loadAsync<LevelModel>(LEVEL_ONE_KEY, LEVEL_ONE_FILE, nullptr);
     
     AudioEngine::start();
     Application::onStartup(); // YOU MUST END with call to parent

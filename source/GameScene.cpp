@@ -56,8 +56,6 @@ bool GameScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
 
     // Temporary Code
 //    _level = assets->get<JsonValue>("level1");
-    
-    _text->layout();
 
     reset();
     return true;
@@ -94,38 +92,38 @@ void GameScene::update(float timestep) {
     // Read the keyboard for each controller.
     _input.readInput();
     if (_input.didPressReset()) {
+        CULog("reset");
         reset();
     }
-  if (_level == nullptr) {
-    return;
-  }
-
-  // Check to see if new level loaded yet
-  if (_assets->complete()) {
-    _level = nullptr;
-
-    // Access and initialize level
-    _level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
-    _level->setAssets(_assets);;
-
-  }
-  else {
-    // Level is not loaded yet; refuse input
-    return;
-  }
-  _input.update(timestep);
-
-  if (_input.didPressReset()) {
-    // Unload the level but keep in memory temporarily
-    _assets->unload<LevelModel>(LEVEL_ONE_KEY);
-
-    _assets->load<LevelModel>(LEVEL_ONE_KEY, LEVEL_ONE_FILE);
-    return;
-  }
-  if (_input.didPressReset()) {
-    CULog("Shutting down");
-    Application::get()->quit();
-  }
+    if (_level == nullptr) {
+        return;
+    }
+    
+    // Check to see if new level loaded yet
+    if (_assets->complete()) {
+        _level = nullptr;
+        
+        // Access and initialize level
+        _level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
+        _level->setAssets(_assets);;
+    }
+    else {
+        // Level is not loaded yet; refuse input
+        return;
+    }
+    _input.update(timestep);
+    
+    if (_input.didPressReset()) {
+        // Unload the level but keep in memory temporarily
+        _assets->unload<LevelModel>(LEVEL_ONE_KEY);
+        
+        _assets->load<LevelModel>(LEVEL_ONE_KEY, LEVEL_ONE_FILE);
+        return;
+    }
+    if (_input.didPressReset()) {
+        CULog("Shutting down");
+        Application::get()->quit();
+    }
 
     //TODO: For hunters and spirit teams, Set Camera Here Like this
 //    _camera.setTarget(_level->getRocket()->getShipNode());
@@ -148,10 +146,6 @@ void GameScene::render(const std::shared_ptr<cugl::SpriteBatch>& batch) {
     batch->begin(getCamera()->getCombined());
     
     batch->draw(_background,Rect(Vec2::ZERO,getSize()));
-    
-    batch->setColor(Color4::BLACK);
-    batch->drawText(_text,Vec2(10,getSize().height-_text->getBounds().size.height));
-    batch->setColor(Color4::WHITE);
     
     batch->end();
 }

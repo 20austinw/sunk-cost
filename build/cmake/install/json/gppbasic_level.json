@@ -1,0 +1,113 @@
+{ "class":"tiles",
+ "compressionlevel":-1,
+ "height":14,
+ "infinite":false,
+ "layers":[
+        {
+         "class":"tiles",
+         "data":[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+            1, 31, 31, 31, 31, 31, 31, 31, 1, 1, 36, 36, 36, 36, 36, 36, 36, 1,
+            1, 31, 31, 31, 31, 31, 31, 31, 1, 1, 36, 36, 36, 36, 36, 36, 36, 1,
+            1, 31, 31, 31, 31, 31, 31, 31, 31, 36, 36, 36, 36, 36, 36, 36, 36, 1,
+            1, 31, 31, 31, 31, 31, 31, 31, 31, 36, 36, 36, 36, 36, 36, 36, 36, 1,
+            1, 31, 31, 31, 31, 31, 31, 31, 1, 1, 36, 36, 36, 36, 36, 36, 36, 1,
+            1, 31, 31, 31, 31, 31, 31, 31, 1, 1, 36, 36, 36, 36, 36, 36, 36, 1,
+            1, 1, 1, 31, 31, 31, 1, 1, 1, 1, 1, 1, 36, 36, 36, 1, 1, 1,
+            1, 1, 1, 6, 6, 6, 1, 1, 1, 1, 1, 1, 6, 6, 6, 1, 1, 1,
+            1, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 1,
+            1, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 1,
+            1, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 1,
+            1, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 1,
+            1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+         "height":14,
+         "id":1,
+         "name":"Tile Layer",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":18,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "class":"portraits",
+         "draworder":"topdown",
+         "id":2,
+         "name":"Portrait Layer",
+         "objects":[
+                {
+                 "class":"portrait",
+                 "height":0,
+                 "id":1,
+                 "name":"",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"direction",
+                         "type":"int",
+                         "value":180
+                        }],
+                 "rotation":0,
+                 "visible":false,
+                 "width":0,
+                 "x":547.163029525032,
+                 "y":127.178433889602
+                }, 
+                {
+                 "class":"portrait",
+                 "height":0,
+                 "id":2,
+                 "name":"",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"direction",
+                         "type":"int",
+                         "value":270
+                        }],
+                 "rotation":0,
+                 "visible":false,
+                 "width":0,
+                 "x":141.966623876765,
+                 "y":31.0551989730424
+                }, 
+                {
+                 "class":"portrait",
+                 "height":0,
+                 "id":3,
+                 "name":"",
+                 "point":true,
+                 "properties":[
+                        {
+                         "name":"direction",
+                         "type":"int",
+                         "value":90
+                        }],
+                 "rotation":0,
+                 "visible":false,
+                 "width":0,
+                 "x":286.890885750963,
+                 "y":417.026957637997
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }],
+ "nextlayerid":3,
+ "nextobjectid":4,
+ "orientation":"orthogonal",
+ "renderorder":"right-down",
+ "tiledversion":"1.9.2",
+ "tileheight":32,
+ "tilesets":[
+        {
+         "firstgid":1,
+         "source":"RGBB.tsx"
+        }],
+ "tilewidth":32,
+ "type":"map",
+ "version":"1.9",
+ "width":18
+}

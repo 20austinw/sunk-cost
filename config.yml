@@ -15,6 +15,8 @@ sources:                            # The list of the source code files
     - source/*.h
     - source/Camera/*.cpp
     - source/Camera/*.h
+    - source/Game/*.cpp
+    - source/Game/*.h
     - source/Input/*.cpp
     - source/Input/*.h
     - source/Spirit/*.cpp

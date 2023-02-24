@@ -56,8 +56,6 @@ bool GameScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
 
     // Temporary Code
 //    _level = assets->get<JsonValue>("level1");
-    
-    _text->layout();
 
     reset();
     return true;
@@ -148,10 +146,6 @@ void GameScene::render(const std::shared_ptr<cugl::SpriteBatch>& batch) {
     batch->begin(getCamera()->getCombined());
     
     batch->draw(_background,Rect(Vec2::ZERO,getSize()));
-    
-    batch->setColor(Color4::BLACK);
-    batch->drawText(_text,Vec2(10,getSize().height-_text->getBounds().size.height));
-    batch->setColor(Color4::WHITE);
     
     batch->end();
 }

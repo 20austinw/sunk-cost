@@ -36,6 +36,7 @@ LevelModel::~LevelModel(void) {
  */
 bool LevelModel::preload(const std::string& file) {
   std::shared_ptr<JsonReader> reader = JsonReader::allocWithAsset(file);
+    
   return preload(reader->readJson());
 }
 

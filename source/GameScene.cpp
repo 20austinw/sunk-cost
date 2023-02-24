@@ -56,8 +56,7 @@ bool GameScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
 
     // Temporary Code
 //    _level = assets->get<JsonValue>("level1");
-
-    _text = TextLayout::allocWithText(msg, assets->get<Font>("pixel32"));
+    
     _text->layout();
 
     reset();
@@ -130,11 +129,9 @@ void GameScene::update(float timestep) {
 
     //TODO: For hunters and spirit teams, Set Camera Here Like this
 //    _camera.setTarget(_level->getRocket()->getShipNode());
-  }
+}
 
     //TODO : Implement me -> Game loop
-
-}
 
 /**
  * Draws all this scene to the given SpriteBatch.

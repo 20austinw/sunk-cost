@@ -46,6 +46,6 @@ class PortraitSet {
       _index = index;
     }
   
-}
+};
 
 #endif /* __PORTRAIT_SET_H__ */

@@ -22,14 +22,14 @@
    * TODO: Implement Me (Not for Gameplay Prototype)
    */
   Vec2 SpiritController::closeDoors() {
-
+      return Vec2::ZERO;
   }
 
   /**
    * TODO: Implement Me (Not for Gameplay Prototype)
    */
   Vec2 SpiritController::placeTraps() {
-
+      return Vec2::ZERO;
   }
 
   /**
@@ -38,7 +38,7 @@
      * (1) get the view from portraitsetcontroller
      * (2) attach the viewport to the scene
      */
-  void SpiritController::render();
+void SpiritController::render() {}
 
   /**
    * TODO: Implement Me
@@ -46,5 +46,5 @@
    * (1) detect camera change
    * (2) modify portraitsetcontroller to reflect the change
    */
-  void SpiritController::update();
+void SpiritController::update() {}
 

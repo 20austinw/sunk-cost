@@ -14,7 +14,7 @@ using namespace cugl;
 
 #pragma mark -
 #pragma mark Level Model
-class LevelModel : Asset {
+class LevelModel : public Asset {
   /** The bounds of this level in physics coordinates */
   Rect _bounds;
 

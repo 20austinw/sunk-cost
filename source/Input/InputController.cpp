@@ -96,11 +96,6 @@ void InputController::readInput() {
     _turning = 1;
   }
 
-  // Shooting
-  if (keys->keyDown(shoot)) {
-    _didFire = true;
-  }
-
   // Reset the game
   if (keys->keyDown(reset)) {
     _didReset = true;

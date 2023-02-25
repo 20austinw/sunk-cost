@@ -88,7 +88,7 @@ void LevelModel::unload() {
   _dimensions = Size::ZERO;
   _tileSize = Size::ZERO;
   _defaultcam = Vec2::ZERO;
-  _portraits.clear();
+  _portraitPositions.clear();
   _player = Vec2::ZERO;
   _mapSize = Size::ZERO;
   _assets = nullptr;
@@ -190,7 +190,7 @@ bool LevelModel::loadPortraitSetAndDefault(const std::shared_ptr<JsonValue>& jso
     for (int i = 0; i < numPortraits; i++) {
       auto portrait = portraits->get(i);
       if (portrait->get("properties") != nullptr){
-        _portraits.push_back(Vec2(portrait->getFloat("x"),portrait->getFloat("y")));
+        _portraitPositions.push_back(Vec2(portrait->getFloat("x"),portrait->getFloat("y")));
       } else {
         _defaultcam = Vec2(portrait->getFloat("x"),portrait->getFloat("y"));
       }

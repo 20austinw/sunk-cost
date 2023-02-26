@@ -37,7 +37,7 @@ using namespace cugl;
 class GameController{
     
 #pragma mark Internal References
-protected:
+private:
     /** The Game scene */
     std::shared_ptr<cugl::Scene2> _scene;
     /** The asset manager for this game mode. */
@@ -72,9 +72,6 @@ protected:
 private:
     /** The tilemap to procedurally generate */
     std::unique_ptr<TilemapController> _tilemap;
-    /** The tilemap to procedurally generate */
-    //    std::unique_ptr<HunterController> _tilemap;
-    
     
 #pragma mark Main Methods
 public:

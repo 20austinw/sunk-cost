@@ -44,14 +44,14 @@ public:
      * @param direction the hunter's direction
      * @param speed the hunter's movement speed
      */
-    HunterModel() :
+    HunterModel(Vec2 position, Vec2 direction) :
     position(_position),
     direction(_direction),
     speed(_speed),
     hideCool(_hideCool) {
         setPosition(position);
         setDirection(direction);
-        setSpeed(speed);
+        setSpeed(0);
         setHideCooldown(0);
     }
 #pragma mark Setters

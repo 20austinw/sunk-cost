@@ -9,39 +9,43 @@
 #include <vector>
 #include <cugl/assets/CUAsset.h>
 #include <cugl/io/CUJsonReader.h>
+#include "HunterModel.h"
+#include "SpiritModel.h"
+#include "PortraitSet.h"
+#include "TileModel.h"
 
 using namespace cugl;
 
 #pragma mark -
 #pragma mark Level Model
 class LevelModel : public Asset {
-  /** The bounds of this level in physics coordinates */
-  Rect _bounds;
-
-  /** Vector of textures for tiles */
-  std::vector<std::vector<std::string>> _tiles;
-
-  /** Dimenisons of this tilemap */
-  Size _dimensions;
-
-  /** Tile Size of this tilemap */
-  Size _tileSize;
-
-  /** Position of the default camera */
-  Vec2 _defaultcam;
-
-  /** Vector of positions of portraits */
-  std::vector<Vec2> _portraits;
-
-  /** Position data of player */
-  Vec2 _player;
-
-  /** Reference to vector of tiles */
-  Size _mapSize;
-
-  /** The AssetManager for the game mode */
-  std::shared_ptr<cugl::AssetManager> _assets;
-
+    /** The bounds of this level in physics coordinates */
+    Rect _bounds;
+    
+    /** Vector of textures for tiles */
+    std::vector<std::vector<std::string>> _tiles;
+    
+    /** Dimenisons of this tilemap */
+    Size _dimensions;
+    
+    /** Tile Size of this tilemap */
+    Size _tileSize;
+    
+    /** Position of the default camera */
+    Vec2 _defaultcam;
+    
+    /** Vector of positions of portraits */
+    std::vector<Vec2> _portraits;
+    
+    /** Position data of player */
+    Vec2 _player;
+    
+    /** Reference to vector of tiles */
+    Size _mapSize;
+    
+    /** The AssetManager for the game mode */
+    std::shared_ptr<cugl::AssetManager> _assets;
+    
 public:
 #pragma mark Static Constructors
   /**
@@ -69,7 +73,37 @@ public:
     std::shared_ptr<LevelModel> result = std::make_shared<LevelModel>();
     return (result->init(file) ? result : nullptr);
   }
-
+    
+#pragma mark Getters
+    
+    std::vector<std::vector<std::string>> getTileTextures() {
+        return _tiles;
+    }
+    
+    Size getDimensions() {
+        return _dimensions;
+    }
+    
+    Size getTileSize() {
+        return _tileSize;
+    }
+    
+    Vec2 getDefaultCamPosition() {
+        return _defaultcam;
+    }
+    
+    std::vector<Vec2> getPortaits() {
+        return _portraits;
+    }
+    
+    Vec2 getPlayerPosition() {
+        return _player;
+    }
+    
+    Size getMapSize() {
+        return _mapSize;
+    }
+    
 #pragma mark Physics Attributes
   /**
    * Returns the bounds of this level in physics coordinates
@@ -83,7 +117,7 @@ public:
    *
    * @param assets the loaded assets for this game level
    */
-  void setAssets(const std::shared_ptr<AssetManager>& assets) { _assets = assets;  }
+  void setAssets(const std::shared_ptr<AssetManager>& assets) { _assets = assets; }
 
 #pragma mark -
 #pragma mark Asset Loading

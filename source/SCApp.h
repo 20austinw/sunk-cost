@@ -13,7 +13,7 @@
 #ifndef _SC_APP_H__
 #define _SC_APP_H__
 #include <cugl/cugl.h>
-#include "GameScene.h"
+#include "GameController.h"
 #include "LoadingScene.h"
 
 /**
@@ -28,7 +28,7 @@ protected:
 
     // Player modes
     /** The primary controller for the game world */
-    GameScene _gameplay;
+    GameController _gameplay;
     /** The controller for the loading screen */
     LoadingScene _loading;
 

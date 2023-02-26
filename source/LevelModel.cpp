@@ -163,13 +163,13 @@ bool LevelModel::loadTiles(const std::shared_ptr<JsonValue>& json) {
 * @return true if the exit door was successfully loaded
 */
 bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue>& json) {
-  bool success = json->get("x") != nullptr;
-  if (success) {
-    float x = json->getFloat("x");
-    float y = json->getFloat("y");
-    _player = Vec2(x,y);
-  }
-  return success;
+    bool success = json->get("x") != nullptr;
+    if (success) {
+        float x = json->getFloat("x");
+        float y = json->getFloat("y");
+        _player = Vec2(x,y);
+    }
+    return success;
 }
 
 /**

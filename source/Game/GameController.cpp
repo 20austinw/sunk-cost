@@ -31,6 +31,7 @@ _assets(assets){
 
     _level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
     if (_level == nullptr) {
+        _levelLoaded = false;
         CULog("Fail!");
     }
 }
@@ -44,23 +45,37 @@ void GameController::reset() {
     CULog("reset");
 }
 
-bool GameController::checkLevelLoaded() {
+void GameController::checkLevelLoaded() {
     _level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
     if (_level == nullptr) {
-        return false;
+        _levelLoaded = false;
     }
-    
+
     // Check to see if new level loaded yet
-    if (_assets->complete()) {
+    if (!_levelLoaded && _assets->complete()) {
         _level = nullptr;
         
         // Access and initialize level
         _level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
         _level->setAssets(_assets);
-        return true;
+        
+        // Initialize HunterController
+        _hunter = HunterController();
+        _hunter.updatePosition(_level->getPlayerPosition());
+        
+        // Initialize SpiritController
+        _spirit = SpiritController();
+        
+        // Initialize PortraitSetController
+        _portraits = PortraitSetController();
+        
+        // TODO: implement direction and direction limits
+        for(int i = 0; i < _level->getPortaits().size(); i++) {
+            _portraits.addPortrait(i + 1, _level->getPortaits()[i], Vec2::ZERO, Vec2::ZERO);
+        }
+        
+        _levelLoaded = true;
     }
-    // Level is not loaded yet; refuse input
-    return false;
 }
 
 /**
@@ -72,9 +87,8 @@ bool GameController::checkLevelLoaded() {
  * @param dt  The amount of time (in seconds) since the last frame
  */
 void GameController::update(float dt) {
-    if (checkLevelLoaded()) {
-        _hunter = std::shared_ptr<HunterController>();
-        _spirit = std::shared_ptr<SpiritController>();
+    if (!_levelLoaded) {
+        checkLevelLoaded();
     }
     
     _input.readInput();
@@ -82,6 +96,12 @@ void GameController::update(float dt) {
     if (_input.didPressReset()) {
         reset();
     }
+    
+    // Will crash the program because the constructor doesn't set up the model/view yet (delete this comment later)
+    _hunter.update();
+    _spirit.update();
+    // TODO: update direction index for portraits on spirit control
+//    _portraits->updateDirectionIndex(<#Vec3 direction#>, <#int index#>)
 }
 
 /**

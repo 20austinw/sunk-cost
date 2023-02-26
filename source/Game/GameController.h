@@ -47,16 +47,15 @@ protected:
     /** The controller to manage the ship */
     InputController _input;
     
+    HunterController _hunter;
+    
+    SpiritController _spirit;
+    
+    PortraitSetController _portraits;
+    
     // MODELS should be shared pointers or a data structure of shared pointers
-    /** The JSON value with all of the constants */
-    std::shared_ptr<cugl::JsonValue> _constants;
     
-    std::shared_ptr<HunterController> _hunter;
-    
-    std::shared_ptr<SpiritController> _spirit;
-    
-    std::vector<std::shared_ptr<PortraitSetController>> _portraits;
-    
+
     /** The level model */
     std::shared_ptr<LevelModel> _level;
     
@@ -66,6 +65,8 @@ protected:
     std::shared_ptr<cugl::Texture> _background;
     /** The text with the current health */
     std::shared_ptr<cugl::TextLayout> _text;
+    
+    bool _levelLoaded;
     
 #pragma mark External References
 private:
@@ -96,7 +97,7 @@ public:
      */
     void reset();
     
-    bool checkLevelLoaded();
+    void checkLevelLoaded();
     
     /**
      * Responds to the keyboard commands.

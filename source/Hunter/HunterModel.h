@@ -51,7 +51,7 @@ public:
     hideCool(_hideCool) {
         setPosition(position);
         setDirection(direction);
-        setSpeed(speed);
+        setSpeed(0);
         setHideCooldown(0);
     }
 #pragma mark Setters

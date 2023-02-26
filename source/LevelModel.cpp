@@ -88,7 +88,7 @@ void LevelModel::unload() {
   _dimensions = Size::ZERO;
   _tileSize = Size::ZERO;
   _defaultcam = Vec2::ZERO;
-  _portraitPositions.clear();
+  _portraits.clear();
   _player = Vec2::ZERO;
   _mapSize = Size::ZERO;
   _assets = nullptr;
@@ -163,13 +163,13 @@ bool LevelModel::loadTiles(const std::shared_ptr<JsonValue>& json) {
 * @return true if the exit door was successfully loaded
 */
 bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue>& json) {
-  bool success = json->get("x") != nullptr;
-  if (success) {
-    float x = json->getFloat("x");
-    float y = json->getFloat("y");
-    _player = Vec2(x,y);
-  }
-  return success;
+    bool success = json->get("x") != nullptr;
+    if (success) {
+        float x = json->getFloat("x");
+        float y = json->getFloat("y");
+        _player = Vec2(x,y);
+    }
+    return success;
 }
 
 /**
@@ -190,7 +190,7 @@ bool LevelModel::loadPortraitSetAndDefault(const std::shared_ptr<JsonValue>& jso
     for (int i = 0; i < numPortraits; i++) {
       auto portrait = portraits->get(i);
       if (portrait->get("properties") != nullptr){
-        _portraitPositions.push_back(Vec2(portrait->getFloat("x"),portrait->getFloat("y")));
+        _portraits.push_back(Vec2(portrait->getFloat("x"),portrait->getFloat("y")));
       } else {
         _defaultcam = Vec2(portrait->getFloat("x"),portrait->getFloat("y"));
       }

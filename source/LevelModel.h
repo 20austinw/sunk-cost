@@ -35,7 +35,7 @@ class LevelModel : public Asset {
     Vec2 _defaultcam;
     
     /** Vector of positions of portraits */
-    std::vector<Vec2> _portraitPositions;
+    std::vector<Vec2> _portraits;
     
     /** Position data of player */
     Vec2 _player;
@@ -45,12 +45,6 @@ class LevelModel : public Asset {
     
     /** The AssetManager for the game mode */
     std::shared_ptr<cugl::AssetManager> _assets;
-    
-    std::shared_ptr<HunterModel> _hunter;
-    
-    std::shared_ptr<SpiritModel> _spirit;
-    
-    std::shared_ptr<PortraitSet> _portraits;
     
 public:
 #pragma mark Static Constructors
@@ -81,18 +75,35 @@ public:
   }
     
 #pragma mark Getters
-    std::shared_ptr<HunterModel> getHunters() {
-        return _hunter;
+    
+    std::vector<std::vector<std::string>> getTileTextures() {
+        return _tiles;
     }
     
-    std::shared_ptr<SpiritModel> getSpirit() {
-        return _spirit;
+    Size getDimensions() {
+        return _dimensions;
     }
     
-    std::vector<Vec2> getPortaitPositions() {
-        return _portraitPositions;
+    Size getTileSize() {
+        return _tileSize;
     }
-
+    
+    Vec2 getDefaultCamPosition() {
+        return _defaultcam;
+    }
+    
+    std::vector<Vec2> getPortaits() {
+        return _portraits;
+    }
+    
+    Vec2 getPlayerPosition() {
+        return _player;
+    }
+    
+    Size getMapSize() {
+        return _mapSize;
+    }
+    
 #pragma mark Physics Attributes
   /**
    * Returns the bounds of this level in physics coordinates

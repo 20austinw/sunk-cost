@@ -44,7 +44,7 @@ public:
      * @param direction the hunter's direction
      * @param speed the hunter's movement speed
      */
-    HunterModel(Vec2 position, Vec2 direction) :
+    HunterModel() :
     position(_position),
     direction(_direction),
     speed(_speed),

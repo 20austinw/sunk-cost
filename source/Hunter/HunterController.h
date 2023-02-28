@@ -13,6 +13,7 @@
 #include "HunterModel.h"
 #include "HunterView.h"
 #include "../Camera/CameraController.h"
+#include "../Input/InputController.h"
 
 using namespace cugl;
 
@@ -24,10 +25,23 @@ private:
     /** View reference */
     std::unique_ptr<HunterView> _view;
     
+    /** Position of the hunter */
+    cugl::Vec2 _pos;
+    /** Velocity of the hunter */
+    cugl::Vec2 _vel;
+        
+    // The following are protected, because they have no accessors
+    /** Current angle of the hunter */
+    float _ang;
+    /** Accumulator variable to turn faster as key is held down */
+    float _dAng;
+    
 #pragma mark External References
 private:
     /** Camera reference */
     std::unique_ptr<CameraController> _camera;
+    /** The controller to manage the hunter */
+    InputController _input;
     
 #pragma mark Constants
 private:
@@ -87,5 +101,24 @@ public:
     void updateHideCooldown(float hideCool) {
         _model->setHideCooldown(hideCool);
     }
+    
+    /**
+     * Sets the angle that this hunter is facing.
+     *
+     * The angle is specified in radians. The angle is counter clockwise
+     * from the line facing east.
+     *
+     * @param value the angle of the hunter
+     */
+    void setAngle(float value) { _ang = value; }
+    
+    /**
+     * Moves the hunter by the specified amount.
+     *
+     * @param forward   Amount to move forward
+     * @param rightward   Amount to move the hunter rightwards
+     */
+    void move(float forward, float rightward);
+    
 };
 #endif /* _HUNTER_CONTROLLER_H__ */

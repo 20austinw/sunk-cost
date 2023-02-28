@@ -39,6 +39,7 @@ private:
     Uint32 _kkey;
     /** The unique key for the mouse listeners */
     Uint32 _mkey;
+    
 
 #pragma mark External References
 private:
@@ -51,9 +52,8 @@ private:
 private:
     /** How much forward are we going? */
     float _forward;
-
     /** How much are we turning? */
-    float _turning;
+    float _rightward;
 
     /** Did we press the exit button? */
     bool _didExit;
@@ -85,7 +85,8 @@ public:
      * @param dt  The amount of time (in seconds) since the last frame
      */
     void update(float dt);
-
+    
+    
     /**
      * Returns the amount of forward movement.
      *
@@ -94,19 +95,20 @@ public:
      * @return amount of forward movement.
      */
     float getForward() const {
-      return _forward;
+        return _forward;
     }
 
     /**
-     * Returns the amount to turn the ship.
+     * Returns the amount to turn the hunter.
      *
      * -1 = clockwise, 1 = counter-clockwise, 0 = still
      *
-     * @return amount to turn the ship.
+     * @return amount to turn the hunter.
      */
-    float getTurn() const {
-      return _turning;
+    float getRight() const {
+        return _rightward;
     }
+
 
     /**
      * Returns whether the exit button was pressed.

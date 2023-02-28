@@ -37,7 +37,7 @@ class CameraModel {
   #pragma mark Main Functions
   public:
     /** 
-     * Default Constructor for Camera Model
+     * Constructor for Camera Model
      */
     CameraModel(int id) :
     id(_id),

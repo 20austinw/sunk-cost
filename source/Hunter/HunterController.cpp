@@ -5,7 +5,8 @@
 //  Created by Chloe Chu
 //  Version: 2/22/23.
 //
-
+#include "HunterModel.h"
+#include "HunterView.h"
 #include "HunterController.h"
 
 #pragma mark Main Functions
@@ -15,8 +16,9 @@
  */
 HunterController::HunterController() {
     _model = std::make_unique<HunterModel>();
-    _view = std::make_unique<HunterView>();
-    _camera = std::make_unique<CameraController>();
+    _view = std::make_unique<HunterView>(Vec2::ZERO, Vec2(1,1));
+    //A default camera ID = 1 if not specified
+    _camera = std::make_unique<CameraController>(1);
     _hideCool = 0.0;
     _pos = _model->position;
     _ang  = 0;

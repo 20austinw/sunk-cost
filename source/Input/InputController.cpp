@@ -23,7 +23,7 @@
 InputController::InputController():
 _model(std::make_unique<InputModel>()),
 _forward(0),
-_turning(0)
+_rightward(0)
 {}
 
 bool InputController::initListeners() {
@@ -89,9 +89,10 @@ void InputController::readInput() {
   KeyCode reset = KeyCode::R;
 
   // Convert keyboard state into game commands
-  _forward = _turning = 0;
+  _forward = _rightward = 0;
   _didReset = false;
 
+    
   // Movement forward/backward
   Keyboard* keys = Input::get<Keyboard>();
   if (keys->keyDown(up) && !keys->keyDown(down)) {
@@ -102,9 +103,9 @@ void InputController::readInput() {
 
   // Movement left/right
   if (keys->keyDown(left) && !keys->keyDown(right)) {
-    _turning = -1;
+    _rightward = -1;
   } else if (keys->keyDown(right) && !keys->keyDown(left)) {
-    _turning = 1;
+    _rightward = 1;
   }
 
   // Reset the game
@@ -130,28 +131,6 @@ void InputController::update(float dt) {
     _model->isMouseHeld = _model->didHoldMouse;
 }
 
-void InputController::readInput(){
-    KeyCode up    = KeyCode::ARROW_UP;
-    KeyCode down  = KeyCode::ARROW_DOWN;
-    KeyCode left  = KeyCode::ARROW_LEFT;
-    KeyCode right = KeyCode::ARROW_RIGHT;
-    KeyCode shoot = KeyCode::SPACE;
-    KeyCode reset = KeyCode::R;
-    
-    Keyboard* keys = Input::get<Keyboard>();
-        if (keys->keyDown(up) && !keys->keyDown(down)) {
-            _forward = 1;
-        } else if (keys->keyDown(down) && !keys->keyDown(up)) {
-            _forward = -1;
-        }
-        
-        // Movement left/right
-        if (keys->keyDown(left) && !keys->keyDown(right)) {
-            _rightward = -1;
-        } else if (keys->keyDown(right) && !keys->keyDown(left)) {
-            _rightward = 1;
-        }
-}
 
 #pragma mark -
 #pragma mark Mouse Callbacks

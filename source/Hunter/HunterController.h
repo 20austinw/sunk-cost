@@ -34,7 +34,7 @@ private:
     /** Current angle of the hunter */
     float _ang;
     /** Accumulator variable to turn faster as key is held down */
-    float _dang;
+    float _dAng;
     
 #pragma mark External References
 private:

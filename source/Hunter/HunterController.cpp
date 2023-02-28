@@ -22,7 +22,7 @@ HunterController::HunterController() {
     _hideCool = 0.0;
     _pos = _model->position;
     _ang  = 0;
-    _dang = 0;
+    _dAng = 0;
 }
 
 /**
@@ -70,7 +70,7 @@ void HunterController::move(float forward, float rightward) {
 
     // Move the hunter, updating it.
     // Adjust the angle by the change in angle
-    setAngle(_ang+_dang);
+    setAngle(_ang+_dAng);
     
     // INVARIANT: 0 <= ang < 360
     if (_ang > 360)

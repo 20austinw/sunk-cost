@@ -94,8 +94,6 @@ public:
      */
     void reset();
     
-    void checkLevelLoaded();
-    
     /**
      * Responds to the keyboard commands.
      *
@@ -112,6 +110,11 @@ public:
      * @param batch The SpriteBatch used to render this scene
      */
     void render(std::shared_ptr<SpriteBatch>& batch);
+    
+private:
+    void checkLevelLoaded();
+    
+    void generateLevel();
     
 };
 

@@ -45,6 +45,7 @@ public:
         _node->setTexture(texture);
         _node->setPosition(position);
         _node->setColor(color);
+        _node->setPolygon(Rect(Vec2::ZERO, size));
     }
     
     /**

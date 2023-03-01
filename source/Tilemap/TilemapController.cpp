@@ -49,6 +49,31 @@ void TilemapController::updatePosition(Vec2 position) {
 }
 
 /**
+ *  Updates the model and view with the dimensions of the tilemap.
+ *
+ *  Note this function will do nothing if any of the dimensions provided
+ *  are negative.
+ *
+ *  @param dimensions   The number of columns and rows in the tilemap
+ */
+void TilemapController::updateDimensions(Vec2 dimensions) {
+    if (dimensions.x >= 0 && dimensions.y >= 0) {
+        Vec2 currDimensions = _model->dimensions;
+        Tilemap currTileMap = std::move(_tilemap);
+        _model->setDimensions(dimensions);
+        _view->setSize(dimensions * _model->tileSize);
+        initializeTilemap();
+        for(int c = 0; c < currDimensions.x; c++) {
+            for(int r = 0; r < currDimensions.y; r++) {
+                if (r < dimensions.y && c < dimensions.x) {
+                    _tilemap[r][c] = std::move(currTileMap[r][c]);
+                }
+            }
+        }
+    }
+}
+
+/**
  *  Updates the model and view with the color of the tilemap.
  *
  *  @param color    The color of the tilemap
@@ -56,6 +81,33 @@ void TilemapController::updatePosition(Vec2 position) {
 void TilemapController::updateColor(Color4 color) {
     _model->setColor(color);
     _view->setColor(color);
+}
+
+/**
+ * Updates the size of all tiles in the tilemap.
+ *
+ * Note this function will do nothing if any of the sizes provided
+ * are negative.
+ *
+ * @param tileSize  The width and height of a tile
+ */
+void TilemapController::updateTileSize(Size tileSize) {
+    // TODO: Implement me
+    if (tileSize.width >= 0 && tileSize.height >= 0) {
+        Vec2 center = bottomLeftToCenterPosition(_model->position, _model->dimensions * _model->tileSize);
+        _model->setTileSize(tileSize);
+        _view->setSize(_model->dimensions * tileSize);
+        for(int c = 0; c < _model->dimensions.x; c++) {
+            for(int r = 0; r < _model->dimensions.y; r++) {
+                if (_tilemap[r][c]) {
+                    _tilemap[r][c]->updateSize(tileSize);
+                    _tilemap[r][c]->updatePosition(Vec2(c * tileSize.width, r * tileSize.height));
+                }
+            }
+        }
+        _model->setPosition(centerToBottomLeftPosition(center, _model->dimensions * tileSize));
+        _view->setPosition(_model->position);
+    }
 }
 
 #pragma mark -

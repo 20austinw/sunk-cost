@@ -76,7 +76,8 @@ private:
 #pragma mark Main Methods
 public:
     
-    GameController() {};
+    GameController();
+
     /**
      * Creates the game controller.
      *

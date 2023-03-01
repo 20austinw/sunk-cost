@@ -14,6 +14,16 @@
 #include "LevelConstants.h"
 
 #pragma mark Main Methods
+GameController::GameController(){
+    _hunter = HunterController();
+    
+    // Initialize SpiritController
+    _spirit = SpiritController();
+    
+    // Initialize PortraitSetController
+    _portraits = PortraitSetController();
+}
+
 /**
  * Creates the game controller.
  *

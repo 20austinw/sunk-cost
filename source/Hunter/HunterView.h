@@ -31,10 +31,15 @@ public:
      * @param color The tile color tint
      */
     HunterView(Vec2 position, Size size){
-//        _node = scene2::PolygonNode::alloc();
-        _node->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-        _node->setPosition(position);
-        _node->setPolygon(Rect(Vec2::ZERO, size));
+
+//        _node = scene2::PolygonNode::allocWithPoly(Rect(Vec2::ZERO, size));
+        _node = scene2::PolygonNode::alloc();
+//        const Rect a(Rect(Vec2::ZERO, size));
+//        _node->initWithPoly(a);
+//        _node->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+//        _node->setPosition(position);
+//        _node->setPolygon(Rect(Vec2::ZERO, size));
+
     };
     
     

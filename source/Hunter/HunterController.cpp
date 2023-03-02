@@ -15,14 +15,14 @@
  * The constructor should set up the model, view, and camera controller
  */
 HunterController::HunterController() {
-    _model = std::make_unique<HunterModel>();
-    _view = std::make_unique<HunterView>(Vec2::ZERO, Vec2(1,1));
-    //A default camera ID = 1 if not specified
-    _camera = std::make_unique<CameraController>(1);
-    _hideCool = 0.0;
-    _pos = _model->position;
-    _ang  = 0;
-    _dAng = 0;
+//    _model = std::make_unique<HunterModel>();
+//    _view = std::make_unique<HunterView>(Vec2::ZERO, Vec2(1,1));
+//    //A default camera ID = 1 if not specified
+//    _camera = std::make_unique<CameraController>(1);
+//    _hideCool = 0.0;
+//    _pos = _model->position;
+//    _ang  = 0;
+//    _dAng = 0;
 }
 
 /**

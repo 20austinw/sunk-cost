@@ -15,7 +15,12 @@
    * The Constructor should set up the preset cooltimes as well as all other class variables.
    */
   SpiritController::SpiritController() {
-
+      // Placeholder values
+      _cameraCool = 5;
+      _clamCool = 20;
+      _doorCool = 20;
+      _model = std::make_unique<SpiritModel>(NUM_CLAMS, NUM_DOORS, INITIAL_ENERGY);
+      _portraits = std::make_unique<PortraitSetController>(NUM_ROOMS);
   }
 
   /**
@@ -38,7 +43,9 @@
      * (1) get the view from portraitsetcontroller
      * (2) attach the viewport to the scene
      */
-void SpiritController::render() {}
+void SpiritController::render(Scene2 &scene) {
+    scene.addChild(scene2::PolygonNode::allocWithPoly(getCameraView()));
+}
 
   /**
    * TODO: Implement Me
@@ -46,5 +53,7 @@ void SpiritController::render() {}
    * (1) detect camera change
    * (2) modify portraitsetcontroller to reflect the change
    */
-void SpiritController::update() {}
+void SpiritController::update() {
+    
+}
 

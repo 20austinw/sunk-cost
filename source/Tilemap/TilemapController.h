@@ -60,11 +60,31 @@ public:
     void updatePosition(Vec2 position);
     
     /**
+     * Updates the model and view with the dimensions of the tilemap.
+     *
+     * Note this function will do nothing if any of the dimensions provided
+     * are negative.
+     *
+     * @param dimensions   The number of columns and rows in the tilemap
+     */
+    void updateDimensions(Vec2 dimensions);
+    
+    /**
      * Updates the model and view with the color of the tilemap.
      *
      * @param color    The color of the tilemap
      */
     void updateColor(Color4 color);
+    
+    /**
+     * Updates the size of all tiles in the tilemap.
+     *
+     * Note this function will do nothing if any of the sizes provided
+     * are negative.
+     *
+     * @param tileSize  The width and height of a tile
+     */
+    void updateTileSize(Size tileSize);
     
 #pragma mark View Methods
 public:

@@ -28,6 +28,7 @@ _scene(cugl::Scene2::alloc(displaySize)),
 _assets(assets){
     /// Initialize the tilemap and add it to the scene
     _tilemap = std::make_unique<TilemapController>();
+    _tilemap->addChildTo(_scene);
 
     _level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
     if (_level == nullptr) {
@@ -43,39 +44,6 @@ _assets(assets){
  */
 void GameController::reset() {
     CULog("reset");
-}
-
-void GameController::checkLevelLoaded() {
-    _level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
-    if (_level == nullptr) {
-        _levelLoaded = false;
-    }
-
-    // Check to see if new level loaded yet
-    if (!_levelLoaded && _assets->complete()) {
-        _level = nullptr;
-        
-        // Access and initialize level
-        _level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
-        _level->setAssets(_assets);
-        
-        // Initialize HunterController
-        _hunter = HunterController();
-        _hunter.updatePosition(_level->getPlayerPosition());
-        
-        // Initialize SpiritController
-        _spirit = SpiritController();
-        
-        // Initialize PortraitSetController
-        _portraits = PortraitSetController();
-        
-        // TODO: implement direction and direction limits
-        for(int i = 0; i < _level->getPortaits().size(); i++) {
-            _portraits.addPortrait(i + 1, _level->getPortaits()[i], Vec2::ZERO, Vec2::ZERO);
-        }
-        
-        _levelLoaded = true;
-    }
 }
 
 /**
@@ -98,8 +66,8 @@ void GameController::update(float dt) {
     }
     
     // Will crash the program because the constructor doesn't set up the model/view yet (delete this comment later)
-    _hunter.update();
-    _spirit.update();
+//    _hunter.update();
+//    _spirit.update();
     // TODO: update direction index for portraits on spirit control
 //    _portraits->updateDirectionIndex(<#Vec3 direction#>, <#int index#>)
 }
@@ -117,5 +85,59 @@ void GameController::render(std::shared_ptr<cugl::SpriteBatch>& batch) {
     _scene->render(batch);
 }
 
+void GameController::checkLevelLoaded() {
+    _level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
+    if (_level == nullptr) {
+        _levelLoaded = false;
+    }
 
+    // Check to see if new level loaded yet
+    if (!_levelLoaded && _assets->complete()) {
+        _level = nullptr;
+        
+        // Access and initialize level
+        _level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
+        _level->setAssets(_assets);
+
+        // Initialize HunterController
+        _hunter = HunterController();
+        _hunter.updatePosition(_level->getPlayerPosition());
+
+        // Initialize SpiritController
+        _spirit = SpiritController();
+        
+        // Initialize PortraitSetController
+        _portraits = PortraitSetController();
+        
+        // TODO: implement direction and direction limits
+//        for(int i = 0; i < _level->getPortaits().size(); i++) {
+//            _portraits.addPortrait(i + 1, _level->getPortaits()[i], Vec2::ZERO, Vec2::ZERO);
+//        }
+        _tilemap->updatePosition(_scene->getSize() / 2);
+        std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
+        _tilemap->updateDimensions(Vec2(tiles[0].size(), tiles.size()));
+        _tilemap->updateColor(Color4::WHITE);
+        _tilemap->updateTileSize(Size(45, 45));
+        for (int i = 0; i < tiles.size() * tiles[0].size(); ++i){
+            int c = i%tiles[0].size();
+            int r = i/tiles[0].size();
+            if (tiles[r][c] == "red") {
+                _tilemap->addTile(c, r, Color4::RED, true, _assets->get<Texture>("red"));
+            } else if (tiles[r][c] == "black") {
+                _tilemap->addTile(c, r, Color4::BLACK, false, _assets->get<Texture>("black"));
+            } else if (tiles[r][c] == "green") {
+                _tilemap->addTile(c, r, Color4::GREEN, true, _assets->get<Texture>("green"));
+            } else if (tiles[r][c] == "blue") {
+                _tilemap->addTile(c, r, Color4::BLUE, true, _assets->get<Texture>("blue"));
+            }
+        }
+        
+        _levelLoaded = true;
+    }
+}
+
+void GameController::generateLevel() {
+    _tilemap->updateDimensions(_level->getDimensions());
+    
+}
 

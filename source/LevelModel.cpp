@@ -127,27 +127,25 @@ bool LevelModel::loadTiles(const std::shared_ptr<JsonValue>& json) {
   int height = json->get("height")->asInt();
   _dimensions = Size(width, height);
   for (int i = 0; i < height; ++i) {
-    std::vector<std::string> vec(width);
+    std::vector<std::string> vec;
     _tiles.push_back(vec);
   }
   bool success = tiles->get(0) != nullptr;
   if (success){
-    for (int r = 0; r < height; ++r) {
-      for (int c = 0; c < width; ++c) {
-        Vec2 pos(c,r);
-        int type = tiles->get(c + r*width)->asInt();
-        std::string texture;
-        if (type < 9) {
-          _tiles[r].push_back("black");
-        } else if (type > 24 && type < 27) {
-          _tiles[r].push_back("green");
-        } else if (type == 29) {
-          _tiles[r].push_back("blue");
-        } else if (type == 11) {
-          _tiles[r].push_back("red");
-        }
+      for (int i = 0; i < width*height; ++i){
+          int c = i%width;
+          int r = i/width;
+          int type = tiles->get(c + r*width)->asInt();
+          if (type < 9) {
+            _tiles[r].push_back("black");
+          } else if (type > 24 && type < 27) {
+            _tiles[r].push_back("green");
+          } else if (type == 29) {
+            _tiles[r].push_back("blue");
+          } else if (type == 11) {
+            _tiles[r].push_back("red");
+          }
       }
-    }
   }
   return success;
 }

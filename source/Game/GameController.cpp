@@ -101,7 +101,7 @@ void GameController::checkLevelLoaded() {
 
         // Initialize HunterController
         _hunter = HunterController();
-//        _hunter.updatePosition(_level->getPlayerPosition());
+        _hunter.updatePosition(_level->getPlayerPosition());
 
         // Initialize SpiritController
         _spirit = SpiritController();

@@ -23,12 +23,6 @@ class SpiritController {
   private:
     /** The model for Spirit */
     std::unique_ptr<SpiritModel> _model;
-    /** Button for map view */
-    std::unique_ptr<cugl::scene2::Button> map_button;
-    /** Button for locking door */
-    std::unique_ptr<cugl::scene2::Button> door_button;
-    /** Button for setting traps */
-    std::unique_ptr<cugl::scene2::Button> trap_button;
 
   #pragma mark External References
   private:
@@ -43,14 +37,6 @@ class SpiritController {
     float _clamCool;
     /** The preset cooltime for close doors */
     float _doorCool;
-    /** Number of clams for SpiritModel */
-    int NUM_CLAMS;
-    /** Number of doors for SpiritModel */
-    int NUM_DOORS;
-    /** Amount of energy for SpiritModel  */
-    int INITIAL_ENERGY;
-    /** Number of rooms in the map */
-    int NUM_ROOMS;
 
   #pragma mark Main Functions
   public:
@@ -85,7 +71,7 @@ class SpiritController {
      * (1) get the view from portraitsetcontroller
      * (2) attach the viewport to the scene
      */
-    void render(Scene2 &scene);
+    void render();
 
     /**
      * TODO: Implement Me

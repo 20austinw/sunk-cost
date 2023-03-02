@@ -44,13 +44,13 @@ class SpiritController {
     /** The preset cooltime for close doors */
     float _doorCool;
     /** Number of clams for SpiritModel */
-    int NUM_CLAMS;
+    int NUM_CLAMS = 3;
     /** Number of doors for SpiritModel */
-    int NUM_DOORS;
+    int NUM_DOORS = 3;
     /** Amount of energy for SpiritModel  */
-    int INITIAL_ENERGY;
+    int INITIAL_ENERGY = 10;
     /** Number of rooms in the map */
-    int NUM_ROOMS;
+    int NUM_ROOMS = 3;
 
   #pragma mark Main Functions
   public:

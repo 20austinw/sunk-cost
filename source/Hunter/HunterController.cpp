@@ -27,6 +27,7 @@ HunterController::HunterController(const std::shared_ptr<cugl::AssetManager>& as
     _pos = _model->position;
     _ang  = 0;
     _dAng = 0;
+    _vel = Vec2(10,10);
    
 }
 
@@ -58,6 +59,7 @@ void HunterController::render(const std::shared_ptr<cugl::SpriteBatch>& batch) {
  */
 void HunterController::update() {
     _input.readInput();
+    move(_input.getForward(),_input.getRight());
     
 }
 
@@ -72,32 +74,60 @@ void HunterController::update() {
  * @param forward    Amount to move forward
  * @param rightward        Amount to move the hunter rightward
  */
+//void HunterController::move(float forward, float rightward) {
+//    // Process the hunter thrust.
+//    if (forward != 0.0f) {
+//        // Thrust key pressed; increase the hunters velocity.
+//        float rads = M_PI*_ang/180.0f+M_PI_2;
+//        Vec2 dir(cosf(rads),sinf(rads));
+//        _vel += dir * forward;
+//    }
+//    if (_vel.length() > 10.f) {
+//        _vel.normalize();
+//        _vel = 10.0f*_vel;
+//    }
+//
+//    // Move the hunter, updating it.
+//    // Adjust the angle by the change in angle
+//    setAngle(_ang+_dAng);
+//
+//    // INVARIANT: 0 <= ang < 360
+//    if (_ang > 360)
+//        _ang -= 360;
+//    if (_ang < 0)
+//        _ang += 360;
+//
+//    // Move the hunter position by the hunter velocity
+//    _pos += _vel;
+//
+//}
 void HunterController::move(float forward, float rightward) {
     // Process the hunter thrust.
-    if (forward != 0.0f) {
+    _pos+=Vec2(rightward*_vel,forward*_vel);
+//    CULog("possss x %f", _model->getPosition().x);
+//    CULog("pos %f", _model->getPosition().y);
+    _model->setPosition(_pos);
+    
+    if (forward == 1 && rightward == 1) {
         // Thrust key pressed; increase the hunters velocity.
-        float rads = M_PI*_ang/180.0f+M_PI_2;
-        Vec2 dir(cosf(rads),sinf(rads));
-        _vel += dir * forward;
+        setAngle(45);
+        
+    }else if (forward == 1 && rightward == 0){
+        setAngle(0);
+    }else if (forward == 1 && rightward == -1){
+        setAngle(315);
+    }else if (forward == 0 && rightward == -1){
+        setAngle(270);
+    }else if (forward == 0 && rightward == 1){
+        setAngle(90);
+    }else if (forward == -1 && rightward == 1){
+        setAngle(135);
+    }else if (forward == -1 && rightward == 0){
+        setAngle(180);
+    }else if (forward == -1 && rightward == -1){
+        setAngle(225);
     }
-    if (_vel.length() > 10.f) {
-        _vel.normalize();
-        _vel = 10.0f*_vel;
-    }
-
-    // Move the hunter, updating it.
-    // Adjust the angle by the change in angle
-    setAngle(_ang+_dAng);
     
-    // INVARIANT: 0 <= ang < 360
-    if (_ang > 360)
-        _ang -= 360;
-    if (_ang < 0)
-        _ang += 360;
-    
-    // Move the hunter position by the hunter velocity
-    _pos += _vel;
-
 }
 
 Vec2 HunterController::getPosition() {

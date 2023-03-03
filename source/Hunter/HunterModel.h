@@ -54,6 +54,8 @@ public:
         setSpeed(0);
         setHideCooldown(0);
     }
+    
+
 #pragma mark Setters
 public:
     /**
@@ -91,6 +93,7 @@ public:
     void setHideCooldown(float hideCool) {
         _hideCool = hideCool;
     }
+    
 };
 
 

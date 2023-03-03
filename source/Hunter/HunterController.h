@@ -50,11 +50,14 @@ private:
     
 #pragma mark Main Functions
 public:
+    
+    HunterController() {}
+    
     /**
      * TODO: Implement Me
      * The constructor should set up the model, view, and camera controller
      */
-    HunterController();
+    HunterController(const std::shared_ptr<cugl::AssetManager>& assets);
     
     /**
      * Gets the viewpoint for the hunter's camera
@@ -71,7 +74,7 @@ public:
      * (1) get the view from CameraController
      * (2) attach the viewport to the scene
      */
-    void render();
+    void render(const std::shared_ptr<cugl::SpriteBatch>& batch);
     
     /**
      * TODO: Implement Me
@@ -119,6 +122,25 @@ public:
      * @param rightward   Amount to move the hunter rightwards
      */
     void move(float forward, float rightward);
+    
+#pragma mark View Methods
+/**
+ * Adds the TilemapView as a child to the given `scene`.
+ *
+ * The TilemapView is the view reference held within the model.
+ *
+ * @param scene The scene to add the view to
+ */
+    void addChildTo(const std::shared_ptr<cugl::Scene2>& scene);
+
+/**
+ * Removes the TilemapView child from the given `scene`.
+ *
+ * The TilemapView is the view reference held within the model.
+ *
+ * @param scene The scene to remove the view from
+ */
+    void removeChildFrom(const std::shared_ptr<cugl::Scene2>& scene);
     
 };
 #endif /* _HUNTER_CONTROLLER_H__ */

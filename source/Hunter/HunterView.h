@@ -30,15 +30,18 @@ public:
      * @param size The width and height of a tile
      * @param color The tile color tint
      */
-    HunterView(Vec2 position, Size size){
 
+    HunterView(const std::shared_ptr<cugl::AssetManager>& assets, Vec2 position, Size size){
 //        _node = scene2::PolygonNode::allocWithPoly(Rect(Vec2::ZERO, size));
-        _node = scene2::PolygonNode::alloc();
+//        _node = scene2::PolygonNode::alloc();
+        _node = scene2::PolygonNode::allocWithTexture(assets->get<Texture>("hunter"));
 //        const Rect a(Rect(Vec2::ZERO, size));
 //        _node->initWithPoly(a);
-//        _node->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-//        _node->setPosition(position);
-//        _node->setPolygon(Rect(Vec2::ZERO, size));
+
+        _node->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+        _node->setPosition(position);
+        _node->setPolygon(Rect(Vec2::ZERO, size));
+        CULog("possssss %s", _node->getPosition());
 
     };
     
@@ -48,6 +51,7 @@ public:
         _node->removeFromParent();
     }
     
+    
 #pragma mark Scene Methods
 public:
     /**
@@ -55,8 +59,9 @@ public:
      *
      * @param sceneNode The scenenode to add the view to
      */
-    void addChildTo(const std::shared_ptr<scene2::SceneNode>& sceneNode) {
-        sceneNode->addChild(_node);
+    void addChildTo(const std::shared_ptr<cugl::Scene2>& scene) {
+        // TODO: Implement me
+        scene->addChild(_node);
     }
     
     /**
@@ -64,8 +69,15 @@ public:
      *
      * @param sceneNode The scenenode to remove the view from
      */
-    void removeChildFrom(const std::shared_ptr<scene2::SceneNode>& sceneNode) {
-        sceneNode->removeChild(_node);
+    void removeChildFrom(const std::shared_ptr<cugl::Scene2>& scene) {
+        scene->removeChild(_node);
+    }
+#pragma mark Getters
+public:
+    /** Returns the TileView */
+    const std::shared_ptr<scene2::PolygonNode> getNode() const {
+        // TODO: Implement me
+        return _node;
     }
     
 #pragma mark Setters
@@ -99,6 +111,32 @@ public:
     void setColor(Color4 color) {
         _node->setColor(color);
     }
+    
+
+    
+    /**
+     * Sets the texture for this ship.
+     *
+     * The texture should be formated as a sprite sheet, and the size and
+     * layout of the sprite sheet should already be specified in the
+     * initializing JSON. If so, this method will construct a sprite sheet
+     * from this texture. Otherwise, the texture will be ignored.
+     *
+     * @param texture   The texture for the sprite sheet
+     */
+//    void setTexture(const std::shared_ptr<cugl::Texture>& texture) {
+//        if (_framecols > 0) {
+//            int rows = _framesize/_framecols;
+//            if (_framesize % _framecols != 0) {
+//                rows++;
+//            }
+//            _sprite = SpriteSheet::alloc(texture, rows, _framecols, _framesize);
+//            _sprite->setFrame(_frameflat);
+//            _radius = std::max(_sprite->getFrameSize().width, _sprite->getFrameSize().height)/2;
+//            _sprite->setOrigin(_sprite->getFrameSize()/2);
+//        }
+//    }
 };
+
 
 #endif /* _HUNTER_VIEW_H__ */

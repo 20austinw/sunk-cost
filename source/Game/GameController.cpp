@@ -38,6 +38,7 @@ _scene(cugl::Scene2::alloc(displaySize)),
 _assets(assets){
     /// Initialize the tilemap and add it to the scene
     _tilemap = std::make_unique<TilemapController>();
+
     _tilemap->addChildTo(_scene);
 
     _level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
@@ -121,8 +122,10 @@ void GameController::checkLevelLoaded() {
         _level->setAssets(_assets);
 
         // Initialize HunterController
-        _hunter = HunterController();
-//        _hunter.updatePosition(_level->getPlayerPosition());
+
+        _hunter = HunterController(_assets);
+        _hunter.addChildTo(_scene);
+        _hunter.updatePosition(_level->getPlayerPosition());
 
         // Initialize SpiritController
         _spirit = SpiritController();

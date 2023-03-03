@@ -16,8 +16,8 @@
  */
 HunterController::HunterController(const std::shared_ptr<cugl::AssetManager>& assets) {
     _model = std::make_unique<HunterModel>();
-    _model->setPosition(Vec2::ZERO);
-    _view = std::make_unique<HunterView>(assets, Vec2::ZERO, Vec2(350,600));
+    _model->setPosition(Vec2(400,400));
+    _view = std::make_unique<HunterView>(assets, Vec2(400,400), Vec2(40,40));
     
     //A default camera ID = 1 if not specified
     _camera = std::make_unique<CameraController>(1);
@@ -103,15 +103,38 @@ void HunterController::update() {
 //}
 void HunterController::move(float forward, float rightward) {
     // Process the hunter thrust.
-    _pos+=Vec2(rightward*_vel,forward*_vel);
-//    CULog("possss x %f", _model->getPosition().x);
-//    CULog("pos %f", _model->getPosition().y);
-    _model->setPosition(_pos);
+//    float pos.x+=rightward*_vel;
+//    _pos.y += forward*_vel;
+    Vec2 pos = _model->getPosition();
+    int posx;
+    int posy;
+    Vec3 currPos = (pos-Vec2(280,90));
+    posx =(int) (currPos.x)/45;
+    posy=(int)((currPos.y))/45;
+    
+    if(posx>15 ){
+        pos.x-=12;
+        
+    }else if(posx<=0 ){
+        pos.x+=12;
+        
+    }
+    else if(posy>11 ){
+        pos.y -= 12;
+    }else if(posy<=-0){
+        pos.y+=12;
+    }
+    else{
+        pos.x+=rightward*_vel.x;
+        pos.y += forward*_vel.y;
+    }
+    _model->setPosition(pos);
+    _view->setPosition(pos);
     
     if (forward == 1 && rightward == 1) {
         // Thrust key pressed; increase the hunters velocity.
         setAngle(45);
-        
+
     }else if (forward == 1 && rightward == 0){
         setAngle(0);
     }else if (forward == 1 && rightward == -1){

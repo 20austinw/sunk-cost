@@ -38,7 +38,7 @@ public:
 //        const Rect a(Rect(Vec2::ZERO, size));
 //        _node->initWithPoly(a);
 
-        _node->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+        _node->setAnchor(Vec2::ANCHOR_CENTER);
         _node->setPosition(position);
         _node->setPolygon(Rect(Vec2::ZERO, size));
 

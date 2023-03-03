@@ -122,6 +122,7 @@ public:
     void render(std::shared_ptr<SpriteBatch>& batch);
     
     void initCamera();
+    void updateCamera(float timestep);
     
 //    void updateCamera();
 private:

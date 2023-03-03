@@ -40,7 +40,8 @@ _assets(assets){
 //    SCENE_WIDTH = 1024;
 //    SCENE_HEIGHT = 576;
     _dimen = Application::get()->getDisplaySize();
-    _offset = Vec3((_dimen.width)/2.0f,(_dimen.height)/2.0f,50);
+//    _offset = Vec3((_dimen.width)/2.0f,(_dimen.height)/2.0f,50);
+    _offset = Vec3(0,0,50);
     _tilemap = std::make_unique<TilemapController>();
 
     _tilemap->addChildTo(_scene);
@@ -102,9 +103,34 @@ void GameController::update(float dt) {
     
     // Will crash the program because the constructor doesn't set up the model/view yet (delete this comment later)
 
-    _hunter.update();
+//    _hunter.update();
 //    _spirit.update();
-//    updateCamera();
+    
+    std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
+    int posx;
+    int posy;
+    Vec3 currPos = (_hunter.getPosition()-Vec2(280,90));
+    posx =(int) (currPos.x)/45;
+    posy=(int)((currPos.y))/45;
+
+    
+//    if((posx<17 && posx>0) && (posy<12 && posy>0)){
+//        _hunter.update();
+//    }
+    _hunter.update();
+    
+    
+    
+//    if (tiles[posx][posy]!= "black"){
+//        _hunter.update();
+//    }
+
+    
+//    if(_tilemap->isTileTraversable(_hunter.getPosition())){
+//            _hunter.updatePosition(_level->getPlayerPosition());
+//        _hunter.update();
+//    }
+    updateCamera(dt);
 
     // TODO: update direction index for portraits on spirit control
 //    _portraits->updateDirectionIndex(<#Vec3 direction#>, <#int index#>)
@@ -139,12 +165,6 @@ void GameController::checkLevelLoaded() {
         _level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
         _level->setAssets(_assets);
 
-        // Initialize HunterController
-
-        _hunter = HunterController(_assets);
-        _hunter.addChildTo(_scene);
-        _hunter.updatePosition(_level->getPlayerPosition());
-
         // Initialize SpiritController
         _spirit = SpiritController();
         
@@ -165,6 +185,7 @@ void GameController::checkLevelLoaded() {
             int r = i/tiles[0].size();
             if (tiles[r][c] == "red") {
                 _tilemap->addTile(c, r, Color4::RED, true, _assets->get<Texture>("red"));
+                
             } else if (tiles[r][c] == "black") {
                 _tilemap->addTile(c, r, Color4::BLACK, false, _assets->get<Texture>("black"));
             } else if (tiles[r][c] == "green") {
@@ -173,6 +194,13 @@ void GameController::checkLevelLoaded() {
                 _tilemap->addTile(c, r, Color4::BLUE, true, _assets->get<Texture>("blue"));
             }
         }
+        
+        // Initialize HunterController
+        _hunter = HunterController(_assets);
+        _hunter.addChildTo(_scene);
+
+        
+        
         
         _levelLoaded = true;
     }
@@ -184,9 +212,8 @@ void GameController::checkLevelLoaded() {
 void GameController::initCamera() {
     
     Vec3 curr = _scene->getCamera()->getPosition();
-    CULog("camera pos %f", _scene->getCamera()->getPosition().y);
     Vec3 next = _offset
-    + (Vec3(_hunter.getPosition().x, _hunter.getPosition().y, 1)*0.5);
+    + (Vec3(_hunter.getPosition().x, _hunter.getPosition().y, 1));
     _scene->getCamera()->translate(next - curr);
     
 //    _scene->getCamera()->lookAt(Vec3(_hunter.getPosition().x, _hunter.getPosition().y, 1));
@@ -197,18 +224,14 @@ void GameController::initCamera() {
 /**
  * Updates camera based on the position of the controlled player
  */
-//void GameController::updateCamera(float timestep) {
-//    shared_ptr<PlayerModel> player = _isThief
-//        ? (shared_ptr<PlayerModel>) _game->getThief()
-//        : (shared_ptr<PlayerModel>) _game->getCop(_playerNumber);
-//    float lead = _isThief ? THIEF_LEAD_FACTOR : COP_LEAD_FACTOR;
-//    Vec2 curr = _camera->getPosition();
-//    Vec2 next = _offset
-//        + (player->getPosition() * _scale)
-//        + (player->getVelocity() * _scale * lead);
-//    _camera->translate((next - curr) * timestep * LERP_FACTOR);
-//    _camera->update();
-//}
+void GameController::updateCamera(float timestep) {
+    
+    Vec2 curr = _scene->getCamera()->getPosition();
+    Vec2 next = _offset
+        + ((Vec3(_hunter.getPosition().x, _hunter.getPosition().y, 1)));
+    _scene->getCamera()->translate((next - curr) * timestep);
+    _scene->getCamera()->update();
+}
 
 void GameController::generateLevel() {
     _tilemap->updateDimensions(_level->getDimensions());

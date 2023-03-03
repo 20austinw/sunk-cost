@@ -62,6 +62,10 @@ private:
     
     PortraitSetController _portraits;
     
+    std::shared_ptr<scene2::PolygonNode> _filter;
+    
+    
+    
     // MODELS should be shared pointers or a data structure of shared pointers
     
 
@@ -72,6 +76,9 @@ private:
     // In the future, we will replace this with the scene graph
     /** The backgrounnd image */
     std::shared_ptr<cugl::Texture> _background;
+    
+    
+    std::shared_ptr<cugl::Texture> _filterTexture;
     /** The text with the current health */
     std::shared_ptr<cugl::TextLayout> _text;
     

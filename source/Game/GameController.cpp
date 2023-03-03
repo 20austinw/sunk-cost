@@ -59,6 +59,7 @@ _assets(assets){
         _levelLoaded = false;
         CULog("Fail!");
     }
+    
     initCamera();
 }
 
@@ -164,6 +165,7 @@ void GameController::checkLevelLoaded() {
         // Access and initialize level
         _level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
         _level->setAssets(_assets);
+        
 
         // Initialize SpiritController
         _spirit = SpiritController();
@@ -180,9 +182,19 @@ void GameController::checkLevelLoaded() {
         _tilemap->updateDimensions(Vec2(tiles[0].size(), tiles.size()));
         _tilemap->updateColor(Color4::WHITE);
         _tilemap->updateTileSize(Size(45, 45));
+        
+        _filterTexture = _assets->get<Texture>("filter");
+        _filter = scene2::PolygonNode::allocWithTexture(_filterTexture);
+        _filter->setPosition(_scene->getCamera()->getPosition());
+      
+        _filter->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+        _filter->setPolygon(Rect( Vec2::ZERO, Vec2(1280,720)));
+        _scene->addChild(_filter);
+        
         for (int i = 0; i < tiles.size() * tiles[0].size(); ++i){
             int c = i%tiles[0].size();
             int r = i/tiles[0].size();
+            
             if (tiles[r][c] == "red") {
                 _tilemap->addTile(c, r, Color4::RED, true, _assets->get<Texture>("red"));
                 
@@ -216,6 +228,7 @@ void GameController::initCamera() {
     + (Vec3(_hunter.getPosition().x, _hunter.getPosition().y, 1));
     _scene->getCamera()->translate(next - curr);
     
+    
 //    _scene->getCamera()->lookAt(Vec3(_hunter.getPosition().x, _hunter.getPosition().y, 1));
     _scene->getCamera()->update();
     
@@ -227,10 +240,13 @@ void GameController::initCamera() {
 void GameController::updateCamera(float timestep) {
     
     Vec2 curr = _scene->getCamera()->getPosition();
+    _filter->setPosition(_scene->getCamera()->getPosition());
+    _filter->setAnchor(Vec2::ANCHOR_CENTER);
     Vec2 next = _offset
         + ((Vec3(_hunter.getPosition().x, _hunter.getPosition().y, 1)));
     _scene->getCamera()->translate((next - curr) * timestep);
     _scene->getCamera()->update();
+   
 }
 
 void GameController::generateLevel() {

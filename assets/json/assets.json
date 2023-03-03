@@ -17,6 +17,9 @@
         },
         "hunter":{
             "file":  "textures/hunter.png"
+        },
+        "filter":{
+            "file":  "textures/filter.png"
         }
         
 	},

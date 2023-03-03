@@ -37,15 +37,28 @@ GameController::GameController(const Size displaySize, const std::shared_ptr<cug
 _scene(cugl::Scene2::alloc(displaySize)),
 _assets(assets){
     /// Initialize the tilemap and add it to the scene
+//    SCENE_WIDTH = 1024;
+//    SCENE_HEIGHT = 576;
+    _dimen = Application::get()->getDisplaySize();
+    _offset = Vec3((_dimen.width)/2.0f,(_dimen.height)/2.0f,50);
     _tilemap = std::make_unique<TilemapController>();
 
     _tilemap->addChildTo(_scene);
 
+    _hunter = HunterController(assets);
+    
+    // Initialize SpiritController
+    _spirit = SpiritController();
+    
+    // Initialize PortraitSetController
+    _portraits = PortraitSetController();
+    
     _level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
     if (_level == nullptr) {
         _levelLoaded = false;
         CULog("Fail!");
     }
+    initCamera();
 }
 
 #pragma mark Gameplay Handling
@@ -88,8 +101,11 @@ void GameController::update(float dt) {
     }
     
     // Will crash the program because the constructor doesn't set up the model/view yet (delete this comment later)
-//    _hunter.update();
+
+    _hunter.update();
 //    _spirit.update();
+//    updateCamera();
+
     // TODO: update direction index for portraits on spirit control
 //    _portraits->updateDirectionIndex(<#Vec3 direction#>, <#int index#>)
 }
@@ -107,11 +123,13 @@ void GameController::render(std::shared_ptr<cugl::SpriteBatch>& batch) {
     _scene->render(batch);
 }
 
+
 void GameController::checkLevelLoaded() {
     _level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
     if (_level == nullptr) {
         _levelLoaded = false;
     }
+
 
     // Check to see if new level loaded yet
     if (!_levelLoaded && _assets->complete()) {
@@ -159,6 +177,38 @@ void GameController::checkLevelLoaded() {
         _levelLoaded = true;
     }
 }
+
+/**
+ *
+ */
+void GameController::initCamera() {
+    
+    Vec3 curr = _scene->getCamera()->getPosition();
+    CULog("camera pos %f", _scene->getCamera()->getPosition().y);
+    Vec3 next = _offset
+    + (Vec3(_hunter.getPosition().x, _hunter.getPosition().y, 1)*0.5);
+    _scene->getCamera()->translate(next - curr);
+    
+//    _scene->getCamera()->lookAt(Vec3(_hunter.getPosition().x, _hunter.getPosition().y, 1));
+    _scene->getCamera()->update();
+    
+}
+
+/**
+ * Updates camera based on the position of the controlled player
+ */
+//void GameController::updateCamera(float timestep) {
+//    shared_ptr<PlayerModel> player = _isThief
+//        ? (shared_ptr<PlayerModel>) _game->getThief()
+//        : (shared_ptr<PlayerModel>) _game->getCop(_playerNumber);
+//    float lead = _isThief ? THIEF_LEAD_FACTOR : COP_LEAD_FACTOR;
+//    Vec2 curr = _camera->getPosition();
+//    Vec2 next = _offset
+//        + (player->getPosition() * _scale)
+//        + (player->getVelocity() * _scale * lead);
+//    _camera->translate((next - curr) * timestep * LERP_FACTOR);
+//    _camera->update();
+//}
 
 void GameController::generateLevel() {
     _tilemap->updateDimensions(_level->getDimensions());

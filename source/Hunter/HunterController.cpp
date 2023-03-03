@@ -16,15 +16,18 @@
  */
 HunterController::HunterController(const std::shared_ptr<cugl::AssetManager>& assets) {
     _model = std::make_unique<HunterModel>();
-
-    _view = std::make_unique<HunterView>(assets, Vec2::ZERO, Vec2(10,10));
+    _model->setPosition(Vec2::ZERO);
+    _view = std::make_unique<HunterView>(assets, Vec2::ZERO, Vec2(350,600));
     
     //A default camera ID = 1 if not specified
     _camera = std::make_unique<CameraController>(1);
+    _camera->updatePosition(Vec3(5,0,15));
+
     _hideCool = 0.0;
     _pos = _model->position;
     _ang  = 0;
     _dAng = 0;
+   
 }
 
 /**
@@ -34,7 +37,17 @@ HunterController::HunterController(const std::shared_ptr<cugl::AssetManager>& as
  * (2) attach the viewport to the scene
  */
 void HunterController::render(const std::shared_ptr<cugl::SpriteBatch>& batch) {
+    // Set the viewport as the rendering target
+    batch->begin();
+    batch->setPerspective(_camera->getView());
     
+    batch->end();
+//        // Render the scene
+//        scene->render(cugl::Application::get()->getAssets()->getRenderer());
+//
+//        // End rendering to the viewport
+//        cugl::Application::get()->getAssets()->getRenderer()->drawEnd();
+
 }
 
 /**
@@ -87,6 +100,10 @@ void HunterController::move(float forward, float rightward) {
 
 }
 
+Vec2 HunterController::getPosition() {
+    return _model->getPosition();
+}
+
 #pragma mark View Methods
 /**
  * Adds the TilemapView as a child to the given `scene`.
@@ -99,6 +116,7 @@ void HunterController::addChildTo(const std::shared_ptr<cugl::Scene2>& scene) {
     scene->addChild(_view->getNode());
 }
 
+
 /**
  * Removes the TilemapView child from the given `scene`.
  *
@@ -110,6 +128,8 @@ void HunterController::removeChildFrom(const std::shared_ptr<cugl::Scene2>& scen
     // TODO: Implement me
     scene->removeChild(_view->getNode());
 }
+
+
 
 
 

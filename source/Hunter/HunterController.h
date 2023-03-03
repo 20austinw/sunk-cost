@@ -122,7 +122,7 @@ public:
      * @param rightward   Amount to move the hunter rightwards
      */
     void move(float forward, float rightward);
-    
+    Vec2 getPosition();
 #pragma mark View Methods
 /**
  * Adds the TilemapView as a child to the given `scene`.

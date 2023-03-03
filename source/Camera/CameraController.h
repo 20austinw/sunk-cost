@@ -64,6 +64,15 @@ class CameraController {
         return _camera->getViewport();
     }
     
+    /**
+     * Getter for view of this camera
+     *
+     * @return Rectangle that contains the camera view
+     */
+    const Mat4 & getView() {
+        return _camera->getView();
+    }
+    
 
   #pragma mark Setters
   public:

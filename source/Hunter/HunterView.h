@@ -41,7 +41,6 @@ public:
         _node->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
         _node->setPosition(position);
         _node->setPolygon(Rect(Vec2::ZERO, size));
-        CULog("possssss %s", _node->getPosition());
 
     };
     

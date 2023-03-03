@@ -43,6 +43,15 @@ private:
     /** The asset manager for this game mode. */
     std::shared_ptr<cugl::AssetManager> _assets;
     
+    /** The amount to move the world node by to center it in the scene */
+    cugl::Vec3 _offset;
+    
+    /** The locked size of the display. */
+    cugl::Size _dimen;
+    
+    /** The scale between the physics world and the screen (SCREEN UNITS / BOX2D WORLD UNITS) */
+    float _scale;
+    
     // CONTROLLERS are attached directly to the scene (no pointers)
     /** The controller to manage the ship */
     InputController _input;
@@ -112,10 +121,14 @@ public:
      */
     void render(std::shared_ptr<SpriteBatch>& batch);
     
+    void initCamera();
+    
+//    void updateCamera();
 private:
     void checkLevelLoaded();
     
     void generateLevel();
+
     
 };
 

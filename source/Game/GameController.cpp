@@ -107,27 +107,55 @@ void GameController::update(float dt) {
 //    _hunter.update();
 //    _spirit.update();
     
-  std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
+    std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
     int posx;
+    int posxup;
+    int posyup;
     int posy;
+    
+    int midx;
+    int midy;
+    
     Vec3 currPos = (_hunter.getPosition());
-    posx =(int) (currPos.x)/45;
-    posy=(int)((currPos.y))/45;
+    posx =(int) (currPos.x)/_tileWidth;
+    posy=(int)((currPos.y))/_tileHeight;
+    
+    posxup =(int) (currPos.x+40)/_tileWidth;
+    posyup=(int)((currPos.y+40))/_tileHeight;
+    
+    midx =(int) (currPos.x+20)/_tileWidth;
+    midy=(int)((currPos.y+20))/_tileHeight;
+    
+    int forward = _input.getForward();
+    int rightward = _input.getRight();
+    std::string left = tiles[midy][posx];
+    std::string up = tiles[posyup][midx];
+    std::string bottom =tiles[posy][midx];
+    std::string right =tiles[midy][posxup];
+    
+    if (left == "black"){
+        if (rightward==-1 ){
+            rightward = 0;
+        }
+    }
+    if (right == "black"){
+        if (rightward==1 ){
+            rightward = 0;
+        }
+    }
+    if (up == "black"){
+        if (forward==1 ){
+            forward = 0;
+        }
+    }
+    if (bottom == "black"){
+        if (forward==-1 ){
+            forward = 0;
+        }
+    }
+    _hunter.move(forward,rightward);
+    
 
-    
-//    if((posx<17 && posx>0) && (posy<12 && posy>0)){
-//        _hunter.update();
-//    }
-  //  _hunter.update();
-    
-    
-    
-    if (tiles[posy][posx]!= "black"){
-        _hunter.update();
-    }
-    else{
-        _hunter.updatePosition(Vec2(400,300));
-    }
 
     
 //    if(_tilemap->isTileTraversable(_hunter.getPosition())){
@@ -176,6 +204,9 @@ void GameController::checkLevelLoaded() {
         // Initialize PortraitSetController
         _portraits = PortraitSetController();
         
+        _tileHeight=100;
+        _tileWidth=100;
+        
         // TODO: implement direction and direction limits
         for(int i = 0; i < _level->getPortaits().size(); i++) {
             _portraits.addPortrait(i + 1, _level->getPortaits()[i], Vec3(0, 0, -1), Vec2::ZERO);
@@ -184,7 +215,7 @@ void GameController::checkLevelLoaded() {
         std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
         _tilemap->updateDimensions(Vec2(tiles[0].size(), tiles.size()));
         _tilemap->updateColor(Color4::WHITE);
-        _tilemap->updateTileSize(Size(45, 45));
+        _tilemap->updateTileSize(Size(_tileWidth, _tileHeight));
         
         _filterTexture = _assets->get<Texture>("filter");
         _filter = scene2::PolygonNode::allocWithTexture(_filterTexture);

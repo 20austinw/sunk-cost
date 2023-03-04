@@ -107,10 +107,10 @@ void GameController::update(float dt) {
 //    _hunter.update();
 //    _spirit.update();
     
-    std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
+  std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
     int posx;
     int posy;
-    Vec3 currPos = (_hunter.getPosition()-Vec2(280,90));
+    Vec3 currPos = (_hunter.getPosition());
     posx =(int) (currPos.x)/45;
     posy=(int)((currPos.y))/45;
 
@@ -118,13 +118,16 @@ void GameController::update(float dt) {
 //    if((posx<17 && posx>0) && (posy<12 && posy>0)){
 //        _hunter.update();
 //    }
-    _hunter.update();
+  //  _hunter.update();
     
     
     
-//    if (tiles[posx][posy]!= "black"){
-//        _hunter.update();
-//    }
+    if (tiles[posy][posx]!= "black"){
+        _hunter.update();
+    }
+    else{
+        _hunter.updatePosition(Vec2(400,300));
+    }
 
     
 //    if(_tilemap->isTileTraversable(_hunter.getPosition())){

@@ -66,7 +66,6 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
     for (int i = 1; i < json->get("layers")->size(); i++) {
         // Get the objects per layer
         objects = json->get("layers")->get(i)->get("objects");
-        
         for (int j = 0; j < objects->size(); j++) {
             // For each object, determine what it is and load it
             loadObject(objects->get(j));
@@ -98,7 +97,7 @@ void LevelModel::unload() {
 #pragma mark Individual Loaders
 
 bool LevelModel::loadObject(const std::shared_ptr<JsonValue>& json) {
-  auto type = json->get("class")->asString();
+    auto type = json->get("class")->asString();
   if (type == TILE_FIELD) {
     return loadTiles(json);
   }
@@ -181,19 +180,7 @@ bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue>& json) {
 * @return true if the exit door was successfully loaded
 */
 bool LevelModel::loadPortraitSetAndDefault(const std::shared_ptr<JsonValue>& json) {
-  auto portraits = json->get("objects");
-  bool success = portraits != nullptr;
-  if (success) {
-    int numPortraits = portraits->size();
-    for (int i = 0; i < numPortraits; i++) {
-      auto portrait = portraits->get(i);
-      if (portrait->get("properties") != nullptr){
-        _portraits.push_back(Vec2(portrait->getFloat("x"),portrait->getFloat("y")));
-      } else {
-        _defaultcam = Vec2(portrait->getFloat("x"),portrait->getFloat("y"));
-      }
-    }
-  }
-  return success;
+    _portraits.push_back(Vec2(json->getFloat("x"),json->getFloat("y")));
+    return true;
 }
 

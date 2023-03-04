@@ -35,7 +35,7 @@
          "name":"Portrait Layer",
          "objects":[
                 {
-                 "class":"",
+                 "class":"portrait",
                  "height":0,
                  "id":1,
                  "name":"",
@@ -47,7 +47,7 @@
                  "y":161.358234295416
                 }, 
                 {
-                 "class":"",
+                 "class":"portrait",
                  "height":0,
                  "id":2,
                  "name":"",
@@ -59,7 +59,7 @@
                  "y":319.922386611691
                 }, 
                 {
-                 "class":"",
+                 "class":"portrait",
                  "height":0,
                  "id":3,
                  "name":"",
@@ -71,7 +71,7 @@
                  "y":159.26267281106
                 }, 
                 {
-                 "class":"",
+                 "class":"portrait",
                  "height":0,
                  "id":4,
                  "name":"",

@@ -52,6 +52,12 @@ private:
     /** The scale between the physics world and the screen (SCREEN UNITS / BOX2D WORLD UNITS) */
     float _scale;
     
+    int _tileWidth;
+    
+    int _tileHeight;
+    
+    cugl::Vec2 old_place;
+    
     // CONTROLLERS are attached directly to the scene (no pointers)
     /** The controller to manage the ship */
     InputController _input;

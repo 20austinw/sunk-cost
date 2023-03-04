@@ -27,7 +27,7 @@ HunterController::HunterController(const std::shared_ptr<cugl::AssetManager>& as
     _pos = _model->position;
     _ang  = 0;
     _dAng = 0;
-    _vel = Vec2(10,10);
+    _vel = Vec2(7,7);
    
 }
 

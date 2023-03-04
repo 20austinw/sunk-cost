@@ -101,7 +101,7 @@ void GameController::checkLevelLoaded() {
 
         // Initialize HunterController
         _hunter = HunterController();
-        _hunter.updatePosition(_level->getPlayerPosition());
+//        _hunter.updatePosition(_level->getPlayerPosition());
 
         // Initialize SpiritController
         _spirit = SpiritController();
@@ -110,9 +110,9 @@ void GameController::checkLevelLoaded() {
         _portraits = PortraitSetController();
         
         // TODO: implement direction and direction limits
-//        for(int i = 0; i < _level->getPortaits().size(); i++) {
-//            _portraits.addPortrait(i + 1, _level->getPortaits()[i], Vec2::ZERO, Vec2::ZERO);
-//        }
+        for(int i = 0; i < _level->getPortaits().size(); i++) {
+            _portraits.addPortrait(i + 1, _level->getPortaits()[i], Vec2::ZERO, Vec2::ZERO);
+        }
         _tilemap->updatePosition(_scene->getSize() / 2);
         std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
         _tilemap->updateDimensions(Vec2(tiles[0].size(), tiles.size()));

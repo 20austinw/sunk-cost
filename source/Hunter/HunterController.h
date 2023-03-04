@@ -90,7 +90,7 @@ public:
      */
     void updatePosition(cugl::Vec2 position) {
         _model->setPosition(position);
-        _view->setPosition(position);
+//        _view->setPosition(position);
     }
     
     /**

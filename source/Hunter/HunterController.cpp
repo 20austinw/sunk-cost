@@ -16,7 +16,7 @@
  */
 HunterController::HunterController() {
     _model = std::make_unique<HunterModel>();
-    _view = std::make_unique<HunterView>(Vec2::ZERO, Vec2(1,1));
+//    _view = std::make_unique<HunterView>(Vec2::ZERO, Vec2(1,1));
     //A default camera ID = 1 if not specified
     _camera = std::make_unique<CameraController>(1);
     _hideCool = 0.0;

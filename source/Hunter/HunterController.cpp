@@ -106,28 +106,28 @@ void HunterController::move(float forward, float rightward) {
 //    float pos.x+=rightward*_vel;
 //    _pos.y += forward*_vel;
     Vec2 pos = _model->getPosition();
-    int posx;
-    int posy;
-    Vec3 currPos = (pos-Vec2(280,90));
-    posx =(int) (currPos.x)/45;
-    posy=(int)((currPos.y))/45;
+//     int posx;
+//     int posy;
+//     Vec3 currPos = (pos-Vec2(280,90));
+//     posx =(int) (currPos.x)/45;
+//     posy=(int)((currPos.y))/45;
     
-    if(posx>15 ){
-        pos.x-=12;
+//     if(posx>15 ){
+//         pos.x-=12;
         
-    }else if(posx<=0 ){
-        pos.x+=12;
+//     }else if(posx<=0 ){
+//         pos.x+=12;
         
-    }
-    else if(posy>11 ){
-        pos.y -= 12;
-    }else if(posy<=-0){
-        pos.y+=12;
-    }
-    else{
+//     }
+//     else if(posy>11 ){
+//         pos.y -= 12;
+//     }else if(posy<=-0){
+//         pos.y+=12;
+//     }
+//     else{
         pos.x+=rightward*_vel.x;
         pos.y += forward*_vel.y;
-    }
+ //   }
     _model->setPosition(pos);
     _view->setPosition(pos);
     

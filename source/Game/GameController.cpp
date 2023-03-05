@@ -58,11 +58,22 @@ void GameController::update(float dt) {
     if (!_levelLoaded) {
         checkLevelLoaded();
     }
-    
-    _input.readInput();
-    _input.update(dt);
-    if (_input.didPressReset()) {
+    auto inputController = InputController::getInstance();
+    inputController->update(dt);
+    if (inputController->didPressReset()) {
         reset();
+    }
+    if(inputController->isKeyPressed(KeyCode::NUM_1)) {
+        CULog("NUM_1");
+    }
+    if(inputController->isKeyPressed(KeyCode::NUM_2)) {
+        CULog("NUM_2");
+    }
+    if(inputController->isKeyPressed(KeyCode::NUM_3)) {
+        CULog("NUM_3");
+    }
+    if(inputController->isKeyPressed(KeyCode::NUM_4)) {
+        CULog("NUM_4");
     }
     
     // Will crash the program because the constructor doesn't set up the model/view yet (delete this comment later)
@@ -111,7 +122,7 @@ void GameController::checkLevelLoaded() {
         
         // TODO: implement direction and direction limits
         for(int i = 0; i < _level->getPortaits().size(); i++) {
-            _portraits.addPortrait(i + 1, _level->getPortaits()[i], Vec2::ZERO, Vec2::ZERO);
+            _portraits.addPortrait(i + 1, _level->getPortaits()[i], Vec3(0, 0, -1), Vec2::ZERO);
         }
         _tilemap->updatePosition(_scene->getSize() / 2);
         std::vector<std::vector<std::string>> tiles = _level->getTileTextures();

@@ -68,6 +68,7 @@ std::shared_ptr<InputController> InputController::getInstance() {
     static std::shared_ptr<InputController> inputController;
     if (inputController == nullptr) {
         inputController = std::make_shared<InputController>();
+        inputController->initListeners();
     }
     return inputController;
 }

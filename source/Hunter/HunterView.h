@@ -86,7 +86,7 @@ public:
      * @param position Bottom left corner of tile
      */
     void setPosition(Vec2 position) {
-//        _node->setPosition(position);
+        _node->setPosition(position);
     }
     
     /**

@@ -84,7 +84,9 @@ void GameController::update(float dt) {
     if (!_levelLoaded) {
         checkLevelLoaded();
     }
+    
     auto inputController = InputController::getInstance();
+    inputController->readInput();
     inputController->update(dt);
     if (inputController->didPressReset()) {
         reset();
@@ -126,8 +128,8 @@ void GameController::update(float dt) {
     midx =(int) (currPos.x+20)/_tileWidth;
     midy=(int)((currPos.y+20))/_tileHeight;
     
-    int forward = _input.getForward();
-    int rightward = _input.getRight();
+    int forward = inputController->getForward();
+    int rightward = inputController->getRight();
     std::string left = tiles[midy][posx];
     std::string up = tiles[posyup][midx];
     std::string bottom =tiles[posy][midx];

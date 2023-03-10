@@ -44,8 +44,8 @@ TilemapController::TilemapController(Vec2 position, Vec2 dimensions,
  */
 void TilemapController::updatePosition(Vec2 position) {
     Vec2 newPos(centerToBottomLeftPosition(position, Size(_model->dimensions)*_model->tileSize));
-    _model->setPosition(newPos);
-    _view->setPosition(newPos);
+    _model->setPosition(Vec2::ZERO);
+    _view->setPosition(Vec2::ZERO);
 }
 
 /**
@@ -105,8 +105,8 @@ void TilemapController::updateTileSize(Size tileSize) {
                 }
             }
         }
-        _model->setPosition(centerToBottomLeftPosition(center, _model->dimensions * tileSize));
-        _view->setPosition(_model->position);
+        _model->setPosition(Vec2::ZERO);
+        _view->setPosition(Vec2::ZERO);
     }
 }
 

@@ -192,7 +192,7 @@ public:
      * @returns Grid position of the given map position or (-1,-1) if the given position is invalid.
      */
     Vec2 mapPosToGridPos(Vec2 mapPos) {
-      Vec2 gridPos(mapPos.x/_model->tileSize.width, mapPos.y/_model->tileSize.height);
+      Vec2 gridPos((int)mapPos.x/_model->tileSize.width, (int)mapPos.y/_model->tileSize.height);
       return gridPos;
     };
 };

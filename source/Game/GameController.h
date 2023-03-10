@@ -43,6 +43,21 @@ private:
     /** The asset manager for this game mode. */
     std::shared_ptr<cugl::AssetManager> _assets;
     
+    /** The amount to move the world node by to center it in the scene */
+    cugl::Vec3 _offset;
+    
+    /** The locked size of the display. */
+    cugl::Size _dimen;
+    
+    /** The scale between the physics world and the screen (SCREEN UNITS / BOX2D WORLD UNITS) */
+    float _scale;
+    
+    int _tileWidth;
+    
+    int _tileHeight;
+    
+    cugl::Vec2 old_place;
+    
     // CONTROLLERS are attached directly to the scene (no pointers)
     /** The controller to manage the ship */
     InputController _input;
@@ -52,6 +67,10 @@ private:
     SpiritController _spirit;
     
     PortraitSetController _portraits;
+    
+    std::shared_ptr<scene2::PolygonNode> _filter;
+    
+    
     
     // MODELS should be shared pointers or a data structure of shared pointers
     
@@ -63,6 +82,9 @@ private:
     // In the future, we will replace this with the scene graph
     /** The backgrounnd image */
     std::shared_ptr<cugl::Texture> _background;
+    
+    
+    std::shared_ptr<cugl::Texture> _filterTexture;
     /** The text with the current health */
     std::shared_ptr<cugl::TextLayout> _text;
     
@@ -76,7 +98,8 @@ private:
 #pragma mark Main Methods
 public:
     
-    GameController() {};
+    GameController();
+
     /**
      * Creates the game controller.
      *
@@ -111,10 +134,15 @@ public:
      */
     void render(std::shared_ptr<SpriteBatch>& batch);
     
+    void initCamera();
+    void updateCamera(float timestep);
+    
+//    void updateCamera();
 private:
     void checkLevelLoaded();
     
     void generateLevel();
+
     
 };
 

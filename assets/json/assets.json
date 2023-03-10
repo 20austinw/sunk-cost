@@ -14,7 +14,14 @@
         },
         "blue": {
             "file":  "textures/blue.png"
+        },
+        "hunter":{
+            "file":  "textures/hunter.png"
+        },
+        "filter":{
+            "file":  "textures/filter.png"
         }
+        
 	},
     "fonts": {
         "pixel32": {

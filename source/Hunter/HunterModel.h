@@ -54,6 +54,18 @@ public:
         setSpeed(0);
         setHideCooldown(0);
     }
+    
+#pragma mark Getters
+public:
+    /**
+     * Updates  position of the hunter
+     *
+     * @param position  hunter's new position
+     */
+    Vec2 getPosition() {
+        return _position;
+    }
+
 #pragma mark Setters
 public:
     /**
@@ -91,6 +103,7 @@ public:
     void setHideCooldown(float hideCool) {
         _hideCool = hideCool;
     }
+    
 };
 
 

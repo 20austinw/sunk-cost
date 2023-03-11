@@ -34,7 +34,7 @@ using namespace cugl;
  * class shows, this is not necessary. You could have the scene as
  * an attribute of a more general class.
  */
-class GameController{
+class HGameController{
     
 #pragma mark Internal References
 private:
@@ -98,7 +98,7 @@ private:
 #pragma mark Main Methods
 public:
     
-    GameController();
+    HGameController();
 
     /**
      * Creates the game controller.
@@ -109,7 +109,7 @@ public:
      * @param displaySize   The display size of the game window
      * @param randoms		Reference to the random number generator
      */
-    GameController(const Size displaySize, const std::shared_ptr<AssetManager>& assets);
+    HGameController(const Size displaySize, const std::shared_ptr<AssetManager>& assets);
     
 #pragma mark Gameplay Handling
     /**

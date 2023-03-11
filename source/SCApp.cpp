@@ -53,7 +53,7 @@ void SCApp::onStartup() {
     _assets->loadDirectoryAsync("json/assets.json", nullptr);
     _assets->loadAsync<LevelModel>(LEVEL_ONE_KEY, LEVEL_ONE_FILE, nullptr);
     
-    _gameplay = GameController(getDisplaySize(), _assets);
+    _gameplay = HGameController(getDisplaySize(), _assets);
     
     AudioEngine::start();
     Application::onStartup(); // YOU MUST END with call to parent

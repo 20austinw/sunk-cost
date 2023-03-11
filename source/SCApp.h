@@ -14,6 +14,7 @@
 #define _SC_APP_H__
 #include <cugl/cugl.h>
 #include "HGameController.h"
+#include "SGameController.hpp"
 #include "LoadingScene.h"
 
 /**
@@ -27,8 +28,10 @@ protected:
     std::shared_ptr<cugl::AssetManager> _assets;
 
     // Player modes
-    /** The primary controller for the game world */
-    HGameController _gameplay;
+    /** The primary controller for the hunter game world */
+    HGameController _hunterGameplay;
+    /** The primary controller for the spirit game world*/
+    SGameController _spiritGameplay;
     /** The controller for the loading screen */
     LoadingScene _loading;
 

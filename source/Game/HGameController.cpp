@@ -16,12 +16,8 @@
 #pragma mark Main Methods
 HGameController::HGameController(){
     _hunter = HunterController();
-    
     // Initialize SpiritController
     _spirit = SpiritController();
-    
-    // Initialize PortraitSetController
-    _portraits = PortraitSetController();
 }
 
 /**
@@ -46,13 +42,11 @@ _assets(assets){
 
     _tilemap->addChildTo(_scene);
 
-    _hunter = HunterController(assets);
+    CULog("%f, %f", displaySize.width, displaySize.height);
+    _hunter = HunterController(assets, displaySize);
     
     // Initialize SpiritController
     _spirit = SpiritController();
-    
-    // Initialize PortraitSetController
-    _portraits = PortraitSetController();
     
     _level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
     if (_level == nullptr) {
@@ -203,16 +197,11 @@ void HGameController::checkLevelLoaded() {
         // Initialize SpiritController
         _spirit = SpiritController();
         
-        // Initialize PortraitSetController
-        _portraits = PortraitSetController();
         
         _tileHeight=100;
         _tileWidth=100;
         
         // TODO: implement direction and direction limits
-        for(int i = 0; i < _level->getPortaits().size(); i++) {
-            _portraits.addPortrait(i + 1, _level->getPortaits()[i], Vec3(0, 0, -1), Vec2::ZERO);
-        }
         _tilemap->updatePosition(_scene->getSize() / 2);
         std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
         _tilemap->updateDimensions(Vec2(tiles[0].size(), tiles.size()));
@@ -244,7 +233,7 @@ void HGameController::checkLevelLoaded() {
         }
         
         // Initialize HunterController
-        _hunter = HunterController(_assets);
+        _hunter = HunterController(_assets, _scene->getSize());
         _hunter.addChildTo(_scene);
 
         

@@ -19,7 +19,7 @@ class CameraController {
   #pragma mark Internal References
   private:
     /** The Camera object */
-    std::shared_ptr<Camera> _camera;
+    std::shared_ptr<OrthographicCamera> _camera;
     /** Camera Model */
     std::unique_ptr<CameraModel> _model;
       
@@ -28,24 +28,26 @@ class CameraController {
     /**
      * Constructor for Camera Controller
      */
-    CameraController(int id) :
+    CameraController(int id, Size viewportSize) :
     // Need to test out orthographic camera vs perspective
     // Orthographic sounds like the better option
-    _camera{std::make_shared<OrthographicCamera>()},
-    _model{std::make_unique<CameraModel>(id)}{}
+    _model{std::make_unique<CameraModel>(id)}{
+        _camera = OrthographicCamera::alloc(viewportSize);
+        _camera->setZoom(2);
+    }
 
     /**
      * Rotates the camera by angle
-     * 
+     *
      * @param angle how much the camera will be rotated by
-     */ 
+     */
     void rotate(float angle) {
       _camera->rotate(angle);
     }
 
     /**
      * Modifies the camera to look at the given target
-     * 
+     *
      * @param target the point to look at
      */
     void lookAt(const Vec3 target) {
@@ -55,51 +57,55 @@ class CameraController {
 
   #pragma mark Getters
   public:
-    /** 
-     * Getter for viewport of this camera 
-     * 
+    /**
+     * Getter for viewport of this camera
+     *
      * @return Rectangle that contains the camera viewpoint
      */
     const Rect getViewPort() {
         return _camera->getViewport();
     }
     
-    /**
-     * Getter for view of this camera
-     *
-     * @return Rectangle that contains the camera view
-     */
-    const Mat4 & getView() {
-        return _camera->getView();
+    const Vec3 getPosition() {
+        return _camera->getPosition();
     }
+    
+    /**
+         * Getter for view of this camera
+         *
+         * @return Rectangle that contains the camera view
+         */
+        const Mat4 & getView() {
+            return _camera->getView();
+        }
     
 
   #pragma mark Setters
   public:
-    /** 
+    /**
      * Updates camera position
-     * 
+     *
      * @return viewport
      */
     void updatePosition(Vec3 position) {
       _camera->setPosition(position);
     }
 
-    /** 
+    /**
      * Updates direction of the camera
      */
     void updateDirection(Vec3 direction) {
       _camera->setDirection(direction);
     }
 
-    /** 
+    /**
      * Updates camera directoin limits. [d.x,d.y] should be the range of possible values for angle.
      */
     void updateDirectionLimits(Vec2 directionLimits) {
       _model->setDirectionLimits(directionLimits);
     }
 
-    /** 
+    /**
      * Updates camera type
      */
     void updateType(CameraType type) {

@@ -13,6 +13,7 @@
 
 #include <cugl/cugl.h>
 #include "SpiritModel.h"
+#include "SpiritView.h"
 #include "../Camera/PortraitSetController.h"
 
 using namespace cugl;
@@ -23,11 +24,13 @@ class SpiritController {
   private:
     /** The model for Spirit */
     std::unique_ptr<SpiritModel> _model;
+    std::unique_ptr<SpiritView> _view;
 
   #pragma mark External References
   private:
     /** The set of accessible portraits */
-    std::unique_ptr<PortraitSetController> _portraits;
+    std::shared_ptr<PortraitSetController> _portraits;
+    Size _screenSize;
 
   #pragma mark Constants
   private:
@@ -45,6 +48,11 @@ class SpiritController {
      * The Constructor should set up the preset cooltimes as well as all other class variables.
      */
     SpiritController();
+    
+    /**
+     * Constructor to initialize SpiritController with PortraitSetController
+     */
+    SpiritController(std::shared_ptr<PortraitSetController> portraits, Size screenSize);
 
     /**
      * TODO: Implement Me (Not for Gameplay Prototype)
@@ -71,7 +79,7 @@ class SpiritController {
      * (1) get the view from portraitsetcontroller
      * (2) attach the viewport to the scene
      */
-    void render();
+    void render(std::shared_ptr<cugl::SpriteBatch>& batch, Size size);
 
     /**
      * TODO: Implement Me
@@ -136,6 +144,10 @@ class SpiritController {
     void updateDoorCooldown(float doorCool) {
       _model->setDoorCooldown(doorCool);
     }
+    
+#pragma mark Helpers
+public:
+    Rect screenToWorld(Rect rect);
 };
 
 #endif /* _SPIRIT_CONTROLLER_H */

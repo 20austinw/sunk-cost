@@ -9,8 +9,8 @@
 //  Authors of Referenced File: Walker White and Gonzalo Gonzalez
 //  Version: 2/22/23
 //
-#ifndef __GAME_CONTROLLER_H__
-#define __GAME_CONTROLLER_H__
+#ifndef __HGAME_CONTROLLER_H__
+#define __HGAME_CONTROLLER_H__
 #include <random>
 #include <climits>
 
@@ -23,7 +23,6 @@ using namespace cugl;
 #include "LevelModel.h"
 #include "HunterController.h"
 #include "SpiritController.h"
-#include "PortraitSetController.h"
 
 
 /**
@@ -34,7 +33,7 @@ using namespace cugl;
  * class shows, this is not necessary. You could have the scene as
  * an attribute of a more general class.
  */
-class GameController{
+class HGameController{
     
 #pragma mark Internal References
 private:
@@ -66,8 +65,6 @@ private:
     
     SpiritController _spirit;
     
-    PortraitSetController _portraits;
-    
     std::shared_ptr<scene2::PolygonNode> _filter;
     
     
@@ -98,7 +95,7 @@ private:
 #pragma mark Main Methods
 public:
     
-    GameController();
+    HGameController();
 
     /**
      * Creates the game controller.
@@ -109,7 +106,7 @@ public:
      * @param displaySize   The display size of the game window
      * @param randoms		Reference to the random number generator
      */
-    GameController(const Size displaySize, const std::shared_ptr<AssetManager>& assets);
+    HGameController(const Size displaySize, const std::shared_ptr<AssetManager>& assets);
     
 #pragma mark Gameplay Handling
     /**
@@ -146,4 +143,4 @@ private:
     
 };
 
-#endif /* __GAME_CONTROLLER_H__ */
+#endif /* __HGAME_CONTROLLER_H__ */

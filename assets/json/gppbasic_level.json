@@ -43,8 +43,8 @@
                  "rotation":0,
                  "visible":true,
                  "width":0,
-                 "x":545.544506427359,
-                 "y":161.358234295416
+                 "x": -150,
+                 "y": 30
                 }, 
                 {
                  "class":"portrait",
@@ -55,8 +55,8 @@
                  "rotation":0,
                  "visible":true,
                  "width":0,
-                 "x":287.091923356779,
-                 "y":319.922386611691
+                 "x":150,
+                 "y":30
                 }, 
                 {
                  "class":"portrait",
@@ -67,8 +67,8 @@
                  "rotation":0,
                  "visible":true,
                  "width":0,
-                 "x":30.7349017705554,
-                 "y":159.26267281106
+                 "x":0,
+                 "y":150
                 }, 
                 {
                  "class":"portrait",
@@ -85,8 +85,8 @@
                  "rotation":0,
                  "visible":true,
                  "width":0,
-                 "x":22.3526558331312,
-                 "y":284.996361872423
+                 "x":0,
+                 "y":-150
                 }],
          "opacity":1,
          "properties":[

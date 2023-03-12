@@ -17,7 +17,7 @@ using namespace cugl;
  */
 class CameraModel {
   #pragma mark State
-  private: 
+  private:
     /** Portrait or Viewpoint or Default */
     int _type;
     /** Limits on angles for the camera. [d.x,d.y] should be the range of possible values for angle. */
@@ -36,7 +36,7 @@ class CameraModel {
 
   #pragma mark Main Functions
   public:
-    /** 
+    /**
      * Constructor for Camera Model
      */
     CameraModel(int id) :
@@ -59,14 +59,14 @@ class CameraModel {
         _id = id;
     }
     
-    /** 
+    /**
      * Setter for camera angle bounds
      */
     void setDirectionLimits(Vec2 directionLimits) {
       _directionLimits = directionLimits;
     }
 
-    /** 
+    /**
      * Setter for camera type
      */
     void setType(int type) {

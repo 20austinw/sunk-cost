@@ -10,18 +10,14 @@
 //  Version: 2/22/23
 //
 // This is in the same directory
-#include "GameController.h"
+#include "HGameController.h"
 #include "LevelConstants.h"
 
 #pragma mark Main Methods
-GameController::GameController(){
+HGameController::HGameController(){
     _hunter = HunterController();
-    
     // Initialize SpiritController
     _spirit = SpiritController();
-    
-    // Initialize PortraitSetController
-    _portraits = PortraitSetController();
 }
 
 /**
@@ -33,7 +29,7 @@ GameController::GameController(){
  * @param displaySize   The display size of the game window
  * @param randoms        Reference to the random number generator
  */
-GameController::GameController(const Size displaySize, const std::shared_ptr<cugl::AssetManager>& assets):
+HGameController::HGameController(const Size displaySize, const std::shared_ptr<cugl::AssetManager>& assets):
 _scene(cugl::Scene2::alloc(displaySize)),
 _assets(assets){
     /// Initialize the tilemap and add it to the scene
@@ -46,13 +42,11 @@ _assets(assets){
 
     _tilemap->addChildTo(_scene);
 
-    _hunter = HunterController(assets);
+    CULog("%f, %f", displaySize.width, displaySize.height);
+    _hunter = HunterController(assets, displaySize);
     
     // Initialize SpiritController
     _spirit = SpiritController();
-    
-    // Initialize PortraitSetController
-    _portraits = PortraitSetController();
     
     _level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
     if (_level == nullptr) {
@@ -68,7 +62,7 @@ _assets(assets){
 /**
  * Resets the status of the game so that we can play again.
  */
-void GameController::reset() {
+void HGameController::reset() {
     CULog("reset");
 }
 
@@ -80,7 +74,7 @@ void GameController::reset() {
  *
  * @param dt  The amount of time (in seconds) since the last frame
  */
-void GameController::update(float dt) {
+void HGameController::update(float dt) {
     if (!_levelLoaded) {
         checkLevelLoaded();
     }
@@ -179,12 +173,12 @@ void GameController::update(float dt) {
  *
  * @param batch     The SpriteBatch to draw with.
  */
-void GameController::render(std::shared_ptr<cugl::SpriteBatch>& batch) {
+void HGameController::render(std::shared_ptr<cugl::SpriteBatch>& batch) {
     _scene->render(batch);
 }
 
 
-void GameController::checkLevelLoaded() {
+void HGameController::checkLevelLoaded() {
     _level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
     if (_level == nullptr) {
         _levelLoaded = false;
@@ -203,16 +197,11 @@ void GameController::checkLevelLoaded() {
         // Initialize SpiritController
         _spirit = SpiritController();
         
-        // Initialize PortraitSetController
-        _portraits = PortraitSetController();
         
         _tileHeight=100;
         _tileWidth=100;
         
         // TODO: implement direction and direction limits
-        for(int i = 0; i < _level->getPortaits().size(); i++) {
-            _portraits.addPortrait(i + 1, _level->getPortaits()[i], Vec3(0, 0, -1), Vec2::ZERO);
-        }
         _tilemap->updatePosition(_scene->getSize() / 2);
         std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
         _tilemap->updateDimensions(Vec2(tiles[0].size(), tiles.size()));
@@ -244,7 +233,7 @@ void GameController::checkLevelLoaded() {
         }
         
         // Initialize HunterController
-        _hunter = HunterController(_assets);
+        _hunter = HunterController(_assets, _scene->getSize());
         _hunter.addChildTo(_scene);
 
         
@@ -257,7 +246,7 @@ void GameController::checkLevelLoaded() {
 /**
  *
  */
-void GameController::initCamera() {
+void HGameController::initCamera() {
     
     Vec3 curr = _scene->getCamera()->getPosition();
     Vec3 next = _offset
@@ -273,7 +262,7 @@ void GameController::initCamera() {
 /**
  * Updates camera based on the position of the controlled player
  */
-void GameController::updateCamera(float timestep) {
+void HGameController::updateCamera(float timestep) {
     
     Vec2 curr = _scene->getCamera()->getPosition();
     _filter->setPosition(_scene->getCamera()->getPosition());
@@ -285,7 +274,7 @@ void GameController::updateCamera(float timestep) {
    
 }
 
-void GameController::generateLevel() {
+void HGameController::generateLevel() {
     _tilemap->updateDimensions(_level->getDimensions());
     
 }

@@ -14,13 +14,16 @@
  * TODO: Implement Me
  * The constructor should set up the model, view, and camera controller
  */
-HunterController::HunterController(const std::shared_ptr<cugl::AssetManager>& assets) {
+HunterController::HunterController(const std::shared_ptr<cugl::AssetManager>& assets, Size screenSize) {
+    CULog("Called!");
     _model = std::make_unique<HunterModel>();
     _model->setPosition(Vec2(400,400));
     _view = std::make_unique<HunterView>(assets, Vec2(400,400), Vec2(40,40));
-    
+    _screenSize = screenSize;
     //A default camera ID = 1 if not specified
-    _camera = std::make_unique<CameraController>(1);
+    CULog("%f, %f", _screenSize.width, _screenSize.height);
+    _camera = std::make_unique<CameraController>(1, _screenSize);
+    CULog("%f, %f", _screenSize.width, _screenSize.height);
     _camera->updatePosition(Vec3(5,0,15));
 
     _hideCool = 0.0;

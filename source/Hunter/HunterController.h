@@ -42,6 +42,7 @@ private:
     std::unique_ptr<CameraController> _camera;
     /** The controller to manage the hunter */
     InputController _input;
+    Size _screenSize;
     
 #pragma mark Constants
 private:
@@ -57,7 +58,7 @@ public:
      * TODO: Implement Me
      * The constructor should set up the model, view, and camera controller
      */
-    HunterController(const std::shared_ptr<cugl::AssetManager>& assets);
+    HunterController(const std::shared_ptr<cugl::AssetManager>& assets, Size screenSize);
     
     /**
      * Gets the viewpoint for the hunter's camera

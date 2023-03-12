@@ -65,6 +65,7 @@ void SGameController::update(float dt) {
     if (!_levelLoaded) {
         CULog("Level not loaded!");
         checkLevelLoaded();
+        
     }
     auto inputController = InputController::getInstance();
     inputController->update(dt);
@@ -96,7 +97,7 @@ void SGameController::update(float dt) {
     }
     Vec3 offset(405, 315, 0);
     _scene->getCamera()->setPosition(_portraits->getPosition(_portraits->getIndex()) + offset);
-    
+    _portraits->updateBattery();
     _scene->getCamera()->update();
     //CULog("%f, %f, %f", _scene->getCamera()->getPosition().x, _scene->getCamera()->getPosition().y, _scene->getCamera()->getPosition().z);
     
@@ -120,10 +121,10 @@ void SGameController::update(float dt) {
 void SGameController::render(std::shared_ptr<cugl::SpriteBatch>& batch) {
     // CULog("Rendering!");
     _scene->render(batch);
-    displayBattery(_portraits->getIndex(), batch);
+    displayBattery(_portraits->getCurBattery(), batch);
 }
 
-void SGameController::displayBattery(int id, std::shared_ptr<cugl::SpriteBatch>& batch){
+void SGameController::displayBattery(float battery, std::shared_ptr<cugl::SpriteBatch>& batch){
     
 }
 
@@ -169,6 +170,7 @@ void SGameController::checkLevelLoaded() {
         }
 
         _levelLoaded = true;
+        _portraits->setMaxbattery(_level->getBattery());
     }
 }
 

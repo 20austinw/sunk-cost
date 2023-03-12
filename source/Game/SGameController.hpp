@@ -104,7 +104,7 @@ private:
     
     void generateLevel();
     
-    void displayBattery(int id, std::shared_ptr<cugl::SpriteBatch>& batch);
+    void displayBattery(float battery, std::shared_ptr<cugl::SpriteBatch>& batch);
     
 };
 

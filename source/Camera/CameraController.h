@@ -111,6 +111,10 @@ class CameraController {
     void updateBattery(int battery){
         _model->setBattery(battery);
     }
+    
+    int getBattery(){
+        return _model->battery;
+    }
 
     /**
      * Updates camera type

@@ -22,16 +22,19 @@ class PortraitSetController {
     /** The Camera object */
     std::unique_ptr<PortraitSet> _model;
     Size _screenSize;
+    /** The max batteryt */
+    int _maxBattery;
 
   #pragma mark Main Functions
   public:
     /**
      * Constructor for Camera Controller
      */
-    PortraitSetController(int id = 0, Size screenSize = Size::ZERO) {
+    PortraitSetController(int id = 0, Size screenSize = Size::ZERO, int maxBattery = 600) {
         CULog("Initialized!");
       _model = std::make_unique<PortraitSet>();
         _screenSize = screenSize;
+        _maxBattery = maxBattery;
       initializePortraitSet();
     }
 
@@ -170,6 +173,17 @@ class PortraitSetController {
      */
     void lookAt(const Vec3 target) {
       _portraits[_model->getIndex()]->lookAt(target);
+    }
+    
+    void updateBattery(){
+    }
+    
+    float getCurBattery(){
+        return _portraits[_model->getIndex()]->getBattery() / _maxBattery;
+    }
+    
+    void setMaxbattery(int maxBattery){
+        _maxBattery = maxBattery;
     }
 
   #pragma mark Helpers

@@ -26,6 +26,8 @@ class CameraModel {
     int _id;
     /** Camera battery*/
     int _battery;
+    /** Current state of the camera; true: functioning; false: charging*/
+    bool _state;
 
   #pragma mark External References
   public:

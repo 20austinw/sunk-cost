@@ -176,6 +176,9 @@ class PortraitSetController {
     }
     
     void updateBattery(){
+        for (auto p : _portraits){
+            
+        }
     }
     
     float getCurBattery(){

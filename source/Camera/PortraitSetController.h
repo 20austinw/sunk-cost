@@ -45,8 +45,8 @@ class PortraitSetController {
      * @param type camera type - (0 = default) (1 = player) (2 = portrait)
      * default camera is camera that is viewing a black screen
      */
-    void addPortrait(int id, Vec3 position, Vec3 direction, Vec2 directionLimits, int type = 2) {
-        _portraits.push_back(makePortrait(id, position, direction, directionLimits, type));
+    void addPortrait(int id, Vec3 position, Vec3 direction, Vec2 directionLimits, int battery=600, int type = 2) {
+        _portraits.push_back(makePortrait(id, position, direction, directionLimits, battery, type));
     }
 
     /**
@@ -59,8 +59,8 @@ class PortraitSetController {
      * @param type camera type - (0 = default) (1 = player) (2 = portrait)
      * default camera is camera that is viewing a black screen
      */
-    void insertPortraitTo(int index, int id, Vec3 position, Vec3 direction, Vec2 directionLimits, int type = 2) {
-        _portraits.insert(getIteratorForIndex(index), makePortrait(id, position, direction, directionLimits, type));
+    void insertPortraitTo(int index, int id, Vec3 position, Vec3 direction, Vec2 directionLimits, int battery = 600, int type = 2) {
+        _portraits.insert(getIteratorForIndex(index), makePortrait(id, position, direction, directionLimits, battery, type));
     }
 
     /**
@@ -73,8 +73,8 @@ class PortraitSetController {
      * @param type camera type - (0 = default) (1 = player) (2 = portrait)
      * default camera is camera that is viewing a black screen
      */
-    void initializePortraitSet(int id = 0, Vec3 position = Vec2::ZERO, Vec3 direction = Vec3::ZERO, Vec2 directionLimits = Vec2::ZERO, int type = 2) {
-        _portraits.push_back(makePortrait(id, position, direction, directionLimits, type));
+    void initializePortraitSet(int id = 0, Vec3 position = Vec2::ZERO, Vec3 direction = Vec3::ZERO, Vec2 directionLimits = Vec2::ZERO, int battery = 600, int type = 2) {
+        _portraits.push_back(makePortrait(id, position, direction, directionLimits, battery, type));
       _model->setIndex(0);
     }
 
@@ -174,12 +174,14 @@ class PortraitSetController {
 
   #pragma mark Helpers
   private:
-    std::unique_ptr<CameraController> makePortrait(int id, Vec3 position, Vec3 direction, Vec2 directionLimits, int type) {
+    std::unique_ptr<CameraController> makePortrait(int id, Vec3 position, Vec3 direction, Vec2 directionLimits, int battery, int type) {
         std::unique_ptr<CameraController> camera = std::make_unique<CameraController>(id, _screenSize);
-      camera->updatePosition(position);
-      camera->lookAt(direction);
-      camera->updateDirectionLimits(directionLimits);
-      camera->updateType(CameraType(type));
+        camera->updatePosition(position);
+        camera->lookAt(direction);
+        camera->updateDirectionLimits(directionLimits);
+        camera->updateType(CameraType(type));
+        camera->updateBattery(battery);
+        
       return camera;
     }
 

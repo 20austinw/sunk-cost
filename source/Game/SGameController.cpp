@@ -96,6 +96,7 @@ void SGameController::update(float dt) {
     }
     Vec3 offset(405, 315, 0);
     _scene->getCamera()->setPosition(_portraits->getPosition(_portraits->getIndex()) + offset);
+    
     _scene->getCamera()->update();
     //CULog("%f, %f, %f", _scene->getCamera()->getPosition().x, _scene->getCamera()->getPosition().y, _scene->getCamera()->getPosition().z);
     
@@ -119,6 +120,11 @@ void SGameController::update(float dt) {
 void SGameController::render(std::shared_ptr<cugl::SpriteBatch>& batch) {
     // CULog("Rendering!");
     _scene->render(batch);
+    displayBattery(_portraits->getIndex(), batch);
+}
+
+void SGameController::displayBattery(int id, std::shared_ptr<cugl::SpriteBatch>& batch){
+    
 }
 
 void SGameController::checkLevelLoaded() {
@@ -140,7 +146,7 @@ void SGameController::checkLevelLoaded() {
         // TODO: implement direction and direction limits
         for(int i = 0; i < _level->getPortaits().size(); i++) {
             Vec3 pos(_level->getPortaits()[i].x, _level->getPortaits()[i].y, 0);
-            _portraits->addPortrait(i + 1, pos, Vec3(0, 0, -1), Vec2::ZERO);
+            _portraits->addPortrait(i + 1, pos, Vec3(0, 0, -1), Vec2::ZERO, _level->getBattery());
             //CULog("%f, %f", _level->getPortaits()[i].x, _level->getPortaits()[i].y);
         }
         _tilemap->updatePosition(_scene->getSize() / 2);

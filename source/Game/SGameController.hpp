@@ -104,6 +104,8 @@ private:
     
     void generateLevel();
     
+    void displayBattery(int id, std::shared_ptr<cugl::SpriteBatch>& batch);
+    
 };
 
 #endif /* SGameController_hpp */

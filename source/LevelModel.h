@@ -46,6 +46,9 @@ class LevelModel : public Asset {
     /** The AssetManager for the game mode */
     std::shared_ptr<cugl::AssetManager> _assets;
     
+    /** The battery limit for the protraits */
+    int _battery;
+    
 public:
 #pragma mark Static Constructors
   /**
@@ -102,6 +105,10 @@ public:
     
     Size getMapSize() {
         return _mapSize;
+    }
+    
+    int getBattery(){
+        return _battery;
     }
     
 #pragma mark Physics Attributes

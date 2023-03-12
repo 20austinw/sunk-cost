@@ -12,6 +12,8 @@
 #define _SPIRITMODEL_H
 
 #include <cugl/cugl.h>
+#include "TrapView.h"
+#include "TrapModel.hpp"
 
 class SpiritModel {
   #pragma mark State
@@ -28,6 +30,9 @@ class SpiritModel {
     float _clamCool;
     /** Cooldown time for switching camera */
     float _cameraCool;
+    
+    std::unordered_set<std::shared_ptr<TrapModel>> trapModels;
+    std::unordered_set<std::shared_ptr<TrapView>> trapViews;
 
   public:
     /** A public accessible, read-only version of the energy level */
@@ -124,6 +129,15 @@ class SpiritModel {
     void setEnergy(float energy) {
       _energy = energy;
     };
+
+    void addTrap(Vec2 position) {
+        trapModels.insert(std::make_shared<TrapModel>(position));
+        trapViews.insert(std::make_shared<TrapView>(position));
+    }
+    
+    void removeTrap() {
+        
+    }
 };
 
 #endif /* _SPIRITMODEL_H */

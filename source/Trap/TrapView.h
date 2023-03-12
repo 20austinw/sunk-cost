@@ -16,7 +16,7 @@ class TrapView {
 #pragma mark Internal References
 private:
     std::shared_ptr<scene2::PolygonNode> _node;
-
+    
 #pragma mark Main Functions
 public:
     /**
@@ -66,5 +66,6 @@ public:
     void setPosition(Vec2 position) {
         _node->setPosition(position);
     }
+};
 
 #endif /* TrapView_h */

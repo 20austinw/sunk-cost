@@ -71,6 +71,9 @@ void SGameController::update(float dt) {
     if (inputController->didPressReset()) {
         reset();
     }
+    if(inputController->isMouseClicked()) {
+        CULog("%f, %f", inputController->getLastMousePos().x, inputController->getLastMousePos().y);
+    }
     if(inputController->isKeyPressed(KeyCode::NUM_0)) {
         _portraits->setIndex(0);
         std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())->setZoom(1);
@@ -91,10 +94,10 @@ void SGameController::update(float dt) {
         _portraits->setIndex(4);
         std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())->setZoom(2);
     }
-//    Vec3 offset(_scene->getSize().width/2, _scene->getSize().height/2, 0);
-//    _scene->getCamera()->setPosition(_portraits->getPosition(_portraits->getIndex()) + offset);
-//    _scene->getCamera()->update();
-    CULog("%f, %f, %f", _scene->getCamera()->getPosition().x, _scene->getCamera()->getPosition().y, _scene->getCamera()->getPosition().z);
+    Vec3 offset(405, 315, 0);
+    _scene->getCamera()->setPosition(_portraits->getPosition(_portraits->getIndex()) + offset);
+    _scene->getCamera()->update();
+    //CULog("%f, %f, %f", _scene->getCamera()->getPosition().x, _scene->getCamera()->getPosition().y, _scene->getCamera()->getPosition().z);
     
     
     // Will crash the program because the constructor doesn't set up the model/view yet (delete this comment later)

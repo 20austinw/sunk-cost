@@ -20,6 +20,9 @@ private:
     
     bool triggered = false;
     
+    int _age = 0;
+    int _maxAge;
+    
 #pragma mark Main Functions
 public:
     /**
@@ -29,8 +32,9 @@ public:
      * @param direction the hunter's direction
      * @param speed the hunter's movement speed
      */
-    TrapModel(Vec2 position) {
+    TrapModel(Vec2 position, int maxAge) {
         setPosition(position);
+        _maxAge = maxAge;
     };
     
 #pragma mark Getters
@@ -55,6 +59,13 @@ public:
         _position = position;
     }
     
+    bool update() {
+        _age++;
+        if(_age > _maxAge) {
+            return true;
+        }
+        return false;
+    }
 };
 
 #endif /* TrapModel_hpp */

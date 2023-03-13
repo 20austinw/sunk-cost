@@ -16,6 +16,7 @@ class TrapView {
 #pragma mark Internal References
 private:
     std::shared_ptr<scene2::PolygonNode> _node;
+    float _radius;
     
 #pragma mark Main Functions
 public:
@@ -30,16 +31,25 @@ public:
      * @param size The width and height of a tile
      * @param color The tile color tint
      */
-    TrapView(Vec2 position){
+    TrapView(Vec2 position, float radius){
+        _radius = radius;
+        _node = scene2::PolygonNode::alloc();
+        _node->setColor(Color4::PAPYRUS);
         _node->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-        setPosition(position);
-        _node->setPolygon(Rect(Vec2::ZERO, Size(50, 50)));
+        setPosition(position - Vec2(radius, radius));
+        _node->setPolygon(Rect(position, Size(2*radius, 2*radius)));
     };
     
     
     /** Deletes this HunterView */
     ~TrapView() {
         _node->removeFromParent();
+    }
+    
+#pragma mark Getters
+public:
+    std::shared_ptr<scene2::PolygonNode> getNode() {
+        return _node;
     }
     
 #pragma mark Scene Methods

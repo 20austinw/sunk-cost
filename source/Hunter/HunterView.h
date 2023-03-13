@@ -16,6 +16,13 @@ class HunterView {
 #pragma mark Internal References
 private:
     std::shared_ptr<scene2::PolygonNode> _node;
+    std::vector<int> _animFrames;
+    std::vector<std::shared_ptr<cugl::scene2::Animate>> _animations;
+    std::vector<std::shared_ptr<cugl::Texture>> _spriteSheets;
+    std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> _spriteNodes;
+
+
+
 
 #pragma mark Main Functions
 public:
@@ -32,12 +39,33 @@ public:
      */
 
     HunterView(const std::shared_ptr<cugl::AssetManager>& assets, Vec2 position, Size size){
-//        _node = scene2::PolygonNode::allocWithPoly(Rect(Vec2::ZERO, size));
-//        _node = scene2::PolygonNode::alloc();
-        _node = scene2::PolygonNode::allocWithTexture(assets->get<Texture>("hunter"));
-//        const Rect a(Rect(Vec2::ZERO, size));
-//        _node->initWithPoly(a);
 
+        _node = scene2::PolygonNode::allocWithTexture(assets->get<Texture>("hunter"));
+        _animFrames = {10};
+        
+        for (int i = 0; i < _animFrames.size(); i++) {
+            std::vector<int> vec;
+            for(int ii = 0; ii < _animFrames[i]; ii++) {
+                vec.push_back(ii);
+            }
+            
+            _animations.push_back(scene2::Animate::alloc(vec,0.2f));
+        }
+        _spriteSheets.push_back(assets->get<Texture>("hunterrunning"));
+        
+        
+        float width = size.width * 1.5f;
+        
+        for (int i = 0; i < _spriteSheets.size(); i++) {
+            _spriteNodes.push_back(scene2::SpriteNode::alloc(_spriteSheets[i], 1, _animFrames[i]));
+            _spriteNodes[i]->setScale(1);
+            _spriteNodes[i]->setAnchor(Vec2::ANCHOR_CENTER);
+            _spriteNodes[i]->setPosition(Vec2(0, width / 2.5f));
+            _spriteNodes[i]->setVisible(false);
+            _node->addChild(_spriteNodes[i]);
+        }
+        _spriteNodes[STILL_ANIM_KEY]->setVisible(true);
+        
         _node->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
         _node->setPosition(position);
         _node->setPolygon(Rect(Vec2::ZERO, size));

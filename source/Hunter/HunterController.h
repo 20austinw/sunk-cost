@@ -84,6 +84,8 @@ public:
      */
     void update();
     
+    void collisionWithTrap();
+    
 #pragma mark Setters
 public:
     /**

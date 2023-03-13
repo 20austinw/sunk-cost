@@ -39,6 +39,8 @@ class CameraModel {
     int& id;
     /** Camera battery*/
     int& battery;
+    /** Camera state*/
+    bool& state;
 
   #pragma mark Main Functions
   public:
@@ -49,13 +51,14 @@ class CameraModel {
     id(_id),
     directionLimits(_directionLimits),
     battery(_battery),
-    type(_type)
+    type(_type),
+    state(_state)
      {
          setId(id);
          setDirectionLimits(Vec2::ZERO);
          setType(0);
          setBattery(600);
-         
+         setState(true);
     }
 
   #pragma mark Setters
@@ -88,6 +91,10 @@ class CameraModel {
     void setType(int type) {
       _type = type;
     };
+    
+    void setState(bool state){
+        _state = state;
+    }
 };
 
 #endif /* __CAMERA_MODEL_H__ */

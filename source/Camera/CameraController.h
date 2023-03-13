@@ -122,6 +122,14 @@ class CameraController {
     void updateType(CameraType type) {
       _model->setType(type);
     }
+    
+    bool getState(){
+        return _model->state;
+    }
+    
+    void updateState(bool state){
+        _model->setState(state);
+    }
 };
 
 #endif /* __CAMERA_CONTROLLER_H__ */

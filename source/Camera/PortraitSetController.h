@@ -176,7 +176,7 @@ class PortraitSetController {
     }
     
     void updateBattery(){
-        for (auto p : _portraits){
+        for (auto it = begin (_portraits); it != end (_portraits); ++it) {
             
         }
     }

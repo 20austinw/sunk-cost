@@ -18,6 +18,9 @@
         "hunter":{
             "file":  "textures/hunter.png"
         },
+        "hunterrunning":{
+            "file":  "textures/diver_walking_animation.png"
+        },
         "filter":{
             "file":  "textures/filter.png"
         }

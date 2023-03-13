@@ -67,6 +67,11 @@ void HunterController::update() {
 }
 
 
+void HunterController::collisionWithTrap() {
+    
+}
+
+
 /**
  * Moves the hunter by the specified amount.
  *

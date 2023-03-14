@@ -20,6 +20,7 @@ private:
     std::vector<std::shared_ptr<cugl::scene2::Animate>> _animations;
     std::vector<std::shared_ptr<cugl::Texture>> _spriteSheets;
     std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> _spriteNodes;
+    int  _frameNum;
 
 
 
@@ -42,10 +43,13 @@ public:
 
         _node = scene2::PolygonNode::allocWithTexture(assets->get<Texture>("hunter"));
         _animFrames = {10};
+        _frameNum = 8;
         
+        CULog("truee %d", assets->get<Texture>("hunterrunning")==nullptr);
         for (int i = 0; i < _animFrames.size(); i++) {
             std::vector<int> vec;
             for(int ii = 0; ii < _animFrames[i]; ii++) {
+//                CULog("sizee %d",vec);
                 vec.push_back(ii);
             }
             
@@ -57,14 +61,16 @@ public:
         float width = size.width * 1.5f;
         
         for (int i = 0; i < _spriteSheets.size(); i++) {
-            _spriteNodes.push_back(scene2::SpriteNode::alloc(_spriteSheets[i], 1, _animFrames[i]));
+//            CULog("sizee %d",_spriteSheets.size());
+            _spriteNodes.push_back(scene2::SpriteNode::allocWithSheet(_spriteSheets[i], 2, 8, 10));
             _spriteNodes[i]->setScale(1);
+            _spriteNodes[i]->setFrame(0);
             _spriteNodes[i]->setAnchor(Vec2::ANCHOR_CENTER);
             _spriteNodes[i]->setPosition(Vec2(0, width / 2.5f));
             _spriteNodes[i]->setVisible(false);
             _node->addChild(_spriteNodes[i]);
         }
-        _spriteNodes[STILL_ANIM_KEY]->setVisible(true);
+        _spriteNodes[0]->setVisible(true);
         
         _node->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
         _node->setPosition(position);
@@ -107,6 +113,12 @@ public:
         return _node;
     }
     
+    /** Returns the SpriteNodes */
+    const std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> getSpriteNode() const {
+        // TODO: Implement me
+        return _spriteNodes;
+    }
+    
 #pragma mark Setters
     /**
      * Sets the position of the bottom left corner of the tile.
@@ -142,27 +154,40 @@ public:
 
     
     /**
-     * Sets the texture for this ship.
+     * Determines the next animation frame for the ship and applies it to the sprite.
      *
-     * The texture should be formated as a sprite sheet, and the size and
-     * layout of the sprite sheet should already be specified in the
-     * initializing JSON. If so, this method will construct a sprite sheet
-     * from this texture. Otherwise, the texture will be ignored.
-     *
-     * @param texture   The texture for the sprite sheet
+     * This method includes some dampening of the turn, and should be called before
+     * moving the ship.
      */
-//    void setTexture(const std::shared_ptr<cugl::Texture>& texture) {
-//        if (_framecols > 0) {
-//            int rows = _framesize/_framecols;
-//            if (_framesize % _framecols != 0) {
-//                rows++;
-//            }
-//            _sprite = SpriteSheet::alloc(texture, rows, _framecols, _framesize);
-//            _sprite->setFrame(_frameflat);
-//            _radius = std::max(_sprite->getFrameSize().width, _sprite->getFrameSize().height)/2;
-//            _sprite->setOrigin(_sprite->getFrameSize()/2);
+    void advanceFrame(int forward, int right) {
+        if(_frameNum >=9){
+            _frameNum = 0;
+        }
+        if(forward==0 && right == 0){
+            _spriteNodes[0]->setFrame(8);
+        }
+//        else if(forward<0 && right == 0){
+//            //down
+//            _frameNum++;
+//            _spriteNodes[0]->setFrame(1);
 //        }
-//    }
+//        else if(forward>0 && right == 0){
+//            _spriteNodes[0]->setFrame(2);
+//        }
+//        else if(forward==0 && right<0){
+//            _spriteNodes[0]->setFrame(3);
+//        }
+//        else if(forward==0 && right>0){
+//            _spriteNodes[0]->setFrame(5);
+//        }
+        else{
+            
+            _spriteNodes[0]->setFrame(_frameNum);
+            _frameNum++;
+        }
+        
+       
+    }
 };
 
 

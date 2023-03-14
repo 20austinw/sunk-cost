@@ -83,6 +83,9 @@ public:
      * (1) detect camera change
      * (2) modify camera to reflect the change
      */
+
+    void setViewFrame(int forward, int right);
+    
     void update();
     
     void collisionWithTrap();

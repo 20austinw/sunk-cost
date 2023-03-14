@@ -16,8 +16,6 @@ class HunterView {
 #pragma mark Internal References
 private:
     std::shared_ptr<scene2::PolygonNode> _node;
-    std::vector<int> _animFrames;
-    std::vector<std::shared_ptr<cugl::scene2::Animate>> _animations;
     std::vector<std::shared_ptr<cugl::Texture>> _spriteSheets;
     std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> _spriteNodes;
     int  _frameNum;
@@ -41,21 +39,13 @@ public:
 
     HunterView(const std::shared_ptr<cugl::AssetManager>& assets, Vec2 position, Size size){
 
-        _node = scene2::PolygonNode::allocWithTexture(assets->get<Texture>("hunter"));
-        _animFrames = {10};
         _frameNum = 8;
         
         CULog("truee %d", assets->get<Texture>("hunterrunning")==nullptr);
-        for (int i = 0; i < _animFrames.size(); i++) {
-            std::vector<int> vec;
-            for(int ii = 0; ii < _animFrames[i]; ii++) {
-//                CULog("sizee %d",vec);
-                vec.push_back(ii);
-            }
-            
-            _animations.push_back(scene2::Animate::alloc(vec,0.2f));
-        }
+        
+
         _spriteSheets.push_back(assets->get<Texture>("hunterrunning"));
+        _spriteSheets.push_back(assets->get<Texture>("hunterleft"));
         
         
         float width = size.width * 1.5f;
@@ -63,25 +53,23 @@ public:
         for (int i = 0; i < _spriteSheets.size(); i++) {
 //            CULog("sizee %d",_spriteSheets.size());
             _spriteNodes.push_back(scene2::SpriteNode::allocWithSheet(_spriteSheets[i], 2, 8, 10));
-            _spriteNodes[i]->setScale(1);
-            _spriteNodes[i]->setFrame(0);
+            _spriteNodes[i]->setScale(0.5);
+            _spriteNodes[i]->setFrame(8);
             _spriteNodes[i]->setAnchor(Vec2::ANCHOR_CENTER);
             _spriteNodes[i]->setPosition(Vec2(0, width / 2.5f));
             _spriteNodes[i]->setVisible(false);
-            _node->addChild(_spriteNodes[i]);
         }
         _spriteNodes[0]->setVisible(true);
         
-        _node->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-        _node->setPosition(position);
-        _node->setPolygon(Rect(Vec2::ZERO, size));
 
     };
     
     
     /** Deletes this HunterView */
     ~HunterView() {
-        _node->removeFromParent();
+        for (int i = 0; i< _spriteNodes.size();i++){
+            _spriteNodes[i]->removeFromParent();
+        }
     }
     
     
@@ -93,8 +81,9 @@ public:
      * @param sceneNode The scenenode to add the view to
      */
     void addChildTo(const std::shared_ptr<cugl::Scene2>& scene) {
-        // TODO: Implement me
-        scene->addChild(_node);
+        for (int i = 0; i< _spriteNodes.size();i++){
+            scene->addChild(_spriteNodes[i]);
+        }
     }
     
     /**
@@ -103,16 +92,12 @@ public:
      * @param sceneNode The scenenode to remove the view from
      */
     void removeChildFrom(const std::shared_ptr<cugl::Scene2>& scene) {
-        scene->removeChild(_node);
+        for (int i = 0; i< _spriteNodes.size();i++){
+            scene->removeChild(_spriteNodes[i]);
+        }
     }
 #pragma mark Getters
 public:
-    /** Returns the TileView */
-    const std::shared_ptr<scene2::PolygonNode> getNode() const {
-        // TODO: Implement me
-        return _node;
-    }
-    
     /** Returns the SpriteNodes */
     const std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> getSpriteNode() const {
         // TODO: Implement me
@@ -126,7 +111,9 @@ public:
      * @param position Bottom left corner of tile
      */
     void setPosition(Vec2 position) {
-        _node->setPosition(position);
+        for (int i = 0; i< _spriteNodes.size();i++){
+            _spriteNodes[i]->setPosition(position);
+        }
     }
     
     /**
@@ -139,19 +126,11 @@ public:
      * @param size Width and height of a single tile
      */
     void setSize(Size size) {
-        _node->setContentSize(size);
+        for (int i = 0; i< _spriteNodes.size();i++){
+            _spriteNodes[i]->setContentSize(size);
+        }
+       
     }
-    
-    /**
-     *  Sets the color of the tile.
-     *
-     *  @param color The color of the tile
-     */
-    void setColor(Color4 color) {
-        _node->setColor(color);
-    }
-    
-
     
     /**
      * Determines the next animation frame for the ship and applies it to the sprite.
@@ -160,34 +139,28 @@ public:
      * moving the ship.
      */
     void advanceFrame(int forward, int right) {
-        if(_frameNum >=9){
-            _frameNum = 0;
-        }
-        if(forward==0 && right == 0){
-            _spriteNodes[0]->setFrame(8);
-        }
-//        else if(forward<0 && right == 0){
-//            //down
-//            _frameNum++;
-//            _spriteNodes[0]->setFrame(1);
-//        }
-//        else if(forward>0 && right == 0){
-//            _spriteNodes[0]->setFrame(2);
-//        }
-//        else if(forward==0 && right<0){
-//            _spriteNodes[0]->setFrame(3);
-//        }
-//        else if(forward==0 && right>0){
-//            _spriteNodes[0]->setFrame(5);
-//        }
-        else{
+            if(_frameNum >=9){
+                _frameNum = 0;
+            }
+            if(forward==0 && right == 0){
+                _spriteNodes[0]->setFrame(8);
+                _spriteNodes[1]->setFrame(8);
+            }
+    
+            else if (right == -1){
+                _spriteNodes[0]->setVisible(false);
+                _spriteNodes[1]->setVisible(true);
+                
+                _spriteNodes[1]->setFrame(_frameNum);
+                _frameNum++;
+            }else{
+                _spriteNodes[1]->setVisible(false);
+                _spriteNodes[0]->setVisible(true);
+                _spriteNodes[0]->setFrame(_frameNum);
+                _frameNum++;
+            }
             
-            _spriteNodes[0]->setFrame(_frameNum);
-            _frameNum++;
         }
-        
-       
-    }
 };
 
 

@@ -21,6 +21,15 @@
         "hunterrunning":{
             "file":  "textures/diver_walking_animation.png"
         },
+        "hunterleft":{
+            "file":  "textures/diver_walking_animation_L.png"
+        },
+        "trap":{
+            "file":  "textures/trap.png"
+        },
+        "clamtrap_anim":{
+            "file":  "textures/Clam_trap.png"
+        },
         "filter":{
             "file":  "textures/filter.png"
         }

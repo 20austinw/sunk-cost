@@ -12,12 +12,15 @@
 // This is in the same directory
 #include "HGameController.h"
 #include "LevelConstants.h"
+#include <cstdlib>
+using namespace std;
 
 #pragma mark Main Methods
 HGameController::HGameController(){
     _hunter = HunterController();
     // Initialize SpiritController
     _spirit = SpiritController();
+    _trap = TrapController();
 }
 
 /**
@@ -45,6 +48,7 @@ _assets(assets){
 
     CULog("%f, %f", displaySize.width, displaySize.height);
     _hunter = HunterController(assets, displaySize);
+    _trap = TrapController(assets, displaySize);
     
     // Initialize SpiritController
     _spirit = SpiritController();
@@ -158,15 +162,24 @@ void HGameController::update(float dt) {
             forward = 0;
         }
     }
-    _hunter.move(forward,rightward);
+    bool age = _trap.update(); //false means trap active
+    if (!_trap.getTrigger()){
+        _hunter.move(forward,rightward);
+    }
+    //trap collision
+    CULog("xPos diff %f", _trap.getPosition().x-_hunter.getPosition().x);
+    CULog("yPos diff %f", _trap.getPosition().y-_hunter.getPosition().y);
+    CULog("age %f", age);
+    if(abs(_trap.getPosition().x-_hunter.getPosition().x)<= 80 && abs(_trap.getPosition().y-_hunter.getPosition().y)<= 80 && !age){
+        _trap.setTrigger(true);
+    }
+    if (_trap.getTrigger()&& _count == 5){
+        _trap.setViewFrame();
+    }
+    
     
 
-
     
-//    if(_tilemap->isTileTraversable(_hunter.getPosition())){
-//            _hunter.updatePosition(_level->getPlayerPosition());
-//        _hunter.update();
-//    }
     updateCamera(dt);
 
     // TODO: update direction index for portraits on spirit control
@@ -244,6 +257,8 @@ void HGameController::checkLevelLoaded() {
         // Initialize HunterController
         _hunter = HunterController(_assets, _scene->getSize());
         _hunter.addChildTo(_scene);
+        _trap = TrapController(_assets, _scene->getSize());
+        _trap.addChildTo(_scene);
 
         
         

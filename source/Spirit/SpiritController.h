@@ -14,6 +14,7 @@
 #include <cugl/cugl.h>
 #include "SpiritModel.h"
 #include "SpiritView.h"
+#include "InputController.h"
 #include "../Camera/PortraitSetController.h"
 
 using namespace cugl;
@@ -31,6 +32,7 @@ class SpiritController {
     /** The set of accessible portraits */
     std::shared_ptr<PortraitSetController> _portraits;
     Size _screenSize;
+    std::shared_ptr<cugl::Scene2> _scene;
 
   #pragma mark Constants
   private:
@@ -52,7 +54,7 @@ class SpiritController {
     /**
      * Constructor to initialize SpiritController with PortraitSetController
      */
-    SpiritController(std::shared_ptr<PortraitSetController> portraits, Size screenSize);
+    SpiritController(std::shared_ptr<cugl::Scene2> scene, std::shared_ptr<PortraitSetController> portraits, Size screenSize);
 
     /**
      * TODO: Implement Me (Not for Gameplay Prototype)

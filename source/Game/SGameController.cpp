@@ -36,7 +36,7 @@ _assets(assets){
 //        _hunter.updatePosition(_level->getPlayerPosition());
 
     // Initialize SpiritController
-    _spirit = SpiritController(_portraits, _scene->getSize());
+    _spirit = SpiritController(_scene, _portraits, _scene->getSize());
     _level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
     if (_level == nullptr) {
         _levelLoaded = false;
@@ -71,9 +71,6 @@ void SGameController::update(float dt) {
     inputController->update(dt);
     if (inputController->didPressReset()) {
         reset();
-    }
-    if(inputController->isMouseClicked()) {
-        CULog("%f, %f", inputController->getLastMousePos().x, inputController->getLastMousePos().y);
     }
     if(inputController->isKeyPressed(KeyCode::NUM_0)) {
         _portraits->setIndex(0);

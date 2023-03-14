@@ -176,13 +176,26 @@ class PortraitSetController {
     }
     
     void updateBattery(){
-        for (auto it = begin (_portraits); it != end (_portraits); ++it) {
-            
+        for (int i=0;i<_portraits.size();i++){
+            if(((_model->getIndex() != _portraits[i]->getID()) || (!_portraits[i]->getState())) && (_portraits[i]->getBattery() < _maxBattery)){
+                _portraits[i]->updateBattery(_portraits[i]->getBattery()+1);
+            } else if (_model->getIndex() == _portraits[i]->getID() && _portraits[i]->getBattery() > 0){
+                _portraits[i]->updateBattery(_portraits[i]->getBattery()-1);
+            }
+            if (_portraits[i]->getBattery() == 0){
+                _portraits[i]->updateState(false);
+            } else if (!_portraits[i]->getState() && _portraits[i]->getBattery() >= 0.8 * _maxBattery){
+                _portraits[i]->updateState(true);
+            }
         }
     }
     
     float getCurBattery(){
-        return _portraits[_model->getIndex()]->getBattery() / _maxBattery;
+        return (float)_portraits[_model->getIndex()]->getBattery() / _maxBattery;
+    }
+    
+    bool getCurState(){
+        return _portraits[_model->getIndex()]->getState();
     }
     
     void setMaxbattery(int maxBattery){
@@ -198,7 +211,6 @@ class PortraitSetController {
         camera->updateDirectionLimits(directionLimits);
         camera->updateType(CameraType(type));
         camera->updateBattery(battery);
-        
       return camera;
     }
 

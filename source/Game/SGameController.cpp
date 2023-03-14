@@ -121,11 +121,16 @@ void SGameController::update(float dt) {
 void SGameController::render(std::shared_ptr<cugl::SpriteBatch>& batch) {
     // CULog("Rendering!");
     _scene->render(batch);
-    displayBattery(_portraits->getCurBattery(), batch);
+    displayBattery(_portraits->getCurBattery(), _portraits->getCurState(), batch);
 }
 
-void SGameController::displayBattery(float battery, std::shared_ptr<cugl::SpriteBatch>& batch){
-    
+void SGameController::displayBattery(float battery, bool state, std::shared_ptr<cugl::SpriteBatch>& batch){
+    CULog("%f", battery);
+    if (state){
+        batch->setColor(Color4::GREEN);
+    } else{
+        batch->setColor(Color4::RED);
+    }
 }
 
 void SGameController::checkLevelLoaded() {

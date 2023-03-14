@@ -24,6 +24,10 @@ class PortraitSetController {
     Size _screenSize;
     /** The max batteryt */
     int _maxBattery;
+    
+    std::shared_ptr<scene2::PolygonNode> _bound;
+    std::shared_ptr<scene2::PolygonNode> _charge;
+    std::shared_ptr<scene2::PolygonNode> _block;
 
   #pragma mark Main Functions
   public:
@@ -190,6 +194,22 @@ class PortraitSetController {
         }
     }
     
+    void updateBatteryNode(){
+        Rect offset = _portraits[_model->getIndex()] -> getViewPort();
+        Vec2 pos = _portraits[_model->getIndex()]->getPosition() + Vec2(offset.size)/2;
+        _bound->setPosition(pos);
+        _charge->setPolygon(Rect(0, 0, getCurBattery()*100, 20));
+            CULog("%f", getCurBattery()*100);
+        _charge->setPosition(pos + Vec2((getCurBattery()*100-100)/2,0));
+        if(getCurState()){
+            _charge->setColor(Color4::GREEN);
+        }else{
+            _charge->setColor(Color4::RED);
+        }
+        
+        
+    }
+    
     float getCurBattery(){
         return (float)_portraits[_model->getIndex()]->getBattery() / _maxBattery;
     }
@@ -200,6 +220,32 @@ class PortraitSetController {
     
     void setMaxbattery(int maxBattery){
         _maxBattery = maxBattery;
+    }
+    
+    void addBlock(const std::shared_ptr<cugl::Scene2>& scene){
+        scene->addChild(_block);
+    }
+    
+    void removeBlock(const std::shared_ptr<cugl::Scene2>& scene){
+        scene->removeChild(_block);
+    }
+    
+    void refreshBatteryNodes(const std::shared_ptr<cugl::Scene2>& scene){
+        scene->removeChild(_bound);
+        scene->removeChild(_charge);
+        scene->addChild(_bound);
+        scene->addChild(_charge);
+    }
+    
+    void initializeBatteryNodes(const std::shared_ptr<cugl::Scene2>& scene){
+        _bound = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 100, 20));
+        _bound->setColor(Color4::WHITE);
+        _charge = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 100, 20));
+        _charge->setColor(Color4::GREEN);
+        _block = scene2::PolygonNode::allocWithPoly(Rect(0, 0, scene->getSize().width, scene->getSize().height));
+        _block->setColor(Color4::BLACK);
+        scene->addChild(_bound);
+        scene->addChild(_charge);
     }
 
   #pragma mark Helpers

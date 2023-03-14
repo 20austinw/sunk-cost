@@ -154,6 +154,7 @@ class SpiritModel {
         _trapModels = pendingTrapModels;
         _trapViews = pendingTrapViews;
     }
+    
 };
 
 #endif /* _SPIRITMODEL_H */

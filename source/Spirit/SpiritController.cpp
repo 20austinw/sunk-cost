@@ -68,7 +68,7 @@ void SpiritController::render(std::shared_ptr<cugl::SpriteBatch>& batch, Size si
    */
 void SpiritController::update() {
     auto inputController = InputController::getInstance();
-    if(inputController->isMouseClicked()){
+    if(inputController->isMouseClicked() && _portraits->getCurState()){
         _model->addTrap(_scene->getCamera()->screenToWorldCoords(inputController->getLastMousePos()));
         auto pos = _scene->getCamera()->screenToWorldCoords(inputController->getLastMousePos());
         CULog("%f, %f", pos.x, pos.y);

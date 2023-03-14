@@ -56,6 +56,8 @@ private:
     
     bool _levelLoaded;
     
+    bool _prevState;
+    
 #pragma mark External References
 private:
     /** The tilemap to procedurally generate */

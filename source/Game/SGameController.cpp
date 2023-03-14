@@ -31,6 +31,7 @@ _assets(assets){
     _tilemap->addChildTo(_scene);
     // Initialize PortraitSetController
     _portraits = std::make_shared<PortraitSetController>(0, displaySize);
+    _portraits->initializeBatteryNodes(_scene);
 
     // Initialize HunterController
 //        _hunter.updatePosition(_level->getPlayerPosition());
@@ -42,6 +43,7 @@ _assets(assets){
         _levelLoaded = false;
         CULog("Fail!");
     }
+    _prevState = true;
 }
 
 #pragma mark Gameplay Handling
@@ -95,7 +97,16 @@ void SGameController::update(float dt) {
     Vec3 offset(405, 315, 0);
     _scene->getCamera()->setPosition(_portraits->getPosition(_portraits->getIndex()) + offset);
     _portraits->updateBattery();
+    _portraits->updateBatteryNode();
     _scene->getCamera()->update();
+    
+    if(!_portraits->getCurState() && _prevState){
+        _portraits->addBlock(_scene);
+        _portraits->refreshBatteryNodes(_scene);
+    } else if (_portraits->getCurState() && !_prevState){
+        _portraits->removeBlock(_scene);
+    }
+    _prevState = _portraits->getCurState();
     //CULog("%f, %f, %f", _scene->getCamera()->getPosition().x, _scene->getCamera()->getPosition().y, _scene->getCamera()->getPosition().z);
     
     
@@ -122,12 +133,7 @@ void SGameController::render(std::shared_ptr<cugl::SpriteBatch>& batch) {
 }
 
 void SGameController::displayBattery(float battery, bool state, std::shared_ptr<cugl::SpriteBatch>& batch){
-    CULog("%f", battery);
-    if (state){
-        batch->setColor(Color4::GREEN);
-    } else{
-        batch->setColor(Color4::RED);
-    }
+//    CULog("%f", battery);
 }
 
 void SGameController::checkLevelLoaded() {

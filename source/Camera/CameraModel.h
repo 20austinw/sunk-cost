@@ -24,6 +24,10 @@ class CameraModel {
     Vec2 _directionLimits;
     /** Camera ID, for ordering purpose in Portrait Set */
     int _id;
+    /** Camera battery*/
+    int _battery;
+    /** Current state of the camera; true: functioning; false: charging*/
+    bool _state;
 
   #pragma mark External References
   public:
@@ -33,6 +37,10 @@ class CameraModel {
     Vec2& directionLimits;
     /** A public accessible, read-only version of the camera id */
     int& id;
+    /** Camera battery*/
+    int& battery;
+    /** Camera state*/
+    bool& state;
 
   #pragma mark Main Functions
   public:
@@ -42,11 +50,15 @@ class CameraModel {
     CameraModel(int id) :
     id(_id),
     directionLimits(_directionLimits),
-    type(_type)
+    battery(_battery),
+    type(_type),
+    state(_state)
      {
-      setId(id);
-      setDirectionLimits(Vec2::ZERO);
-      setType(0);
+         setId(id);
+         setDirectionLimits(Vec2::ZERO);
+         setType(0);
+         setBattery(600);
+         setState(true);
     }
 
   #pragma mark Setters
@@ -65,6 +77,13 @@ class CameraModel {
     void setDirectionLimits(Vec2 directionLimits) {
       _directionLimits = directionLimits;
     }
+    
+    /**
+     * Setter for camera battery
+     */
+    void setBattery(int battery) {
+        _battery = battery;
+    }
 
     /**
      * Setter for camera type
@@ -72,6 +91,10 @@ class CameraModel {
     void setType(int type) {
       _type = type;
     };
+    
+    void setState(bool state){
+        _state = state;
+    }
 };
 
 #endif /* __CAMERA_MODEL_H__ */

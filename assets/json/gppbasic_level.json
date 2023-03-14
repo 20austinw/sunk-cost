@@ -1,5 +1,7 @@
 { "compressionlevel":-1,
  "height":14,
+ "width":18,
+ "battery":600,
  "infinite":false,
  "layers":[
         {
@@ -27,7 +29,7 @@
          "width":18,
          "x":0,
          "y":0
-        }, 
+        },
         {
          "class":"portraits",
          "draworder":"topdown",
@@ -137,6 +139,5 @@
         }],
  "tilewidth":32,
  "type":"map",
- "version":"1.9",
- "width":18
+ "version":"1.9"
 }

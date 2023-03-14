@@ -31,17 +31,19 @@ _assets(assets){
     _tilemap->addChildTo(_scene);
     // Initialize PortraitSetController
     _portraits = std::make_shared<PortraitSetController>(0, displaySize);
+    _portraits->initializeBatteryNodes(_scene);
 
     // Initialize HunterController
 //        _hunter.updatePosition(_level->getPlayerPosition());
 
     // Initialize SpiritController
-    _spirit = SpiritController(_portraits, _scene->getSize());
+    _spirit = SpiritController(_scene, _portraits, _scene->getSize());
     _level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
     if (_level == nullptr) {
         _levelLoaded = false;
         CULog("Fail!");
     }
+    _prevState = true;
 }
 
 #pragma mark Gameplay Handling
@@ -65,14 +67,12 @@ void SGameController::update(float dt) {
     if (!_levelLoaded) {
         CULog("Level not loaded!");
         checkLevelLoaded();
+        
     }
     auto inputController = InputController::getInstance();
     inputController->update(dt);
     if (inputController->didPressReset()) {
         reset();
-    }
-    if(inputController->isMouseClicked()) {
-        CULog("%f, %f", inputController->getLastMousePos().x, inputController->getLastMousePos().y);
     }
     if(inputController->isKeyPressed(KeyCode::NUM_0)) {
         _portraits->setIndex(0);
@@ -96,7 +96,17 @@ void SGameController::update(float dt) {
     }
     Vec3 offset(405, 315, 0);
     _scene->getCamera()->setPosition(_portraits->getPosition(_portraits->getIndex()) + offset);
+    _portraits->updateBattery();
+    _portraits->updateBatteryNode();
     _scene->getCamera()->update();
+    
+    if(!_portraits->getCurState() && _prevState){
+        _portraits->addBlock(_scene);
+        _portraits->refreshBatteryNodes(_scene);
+    } else if (_portraits->getCurState() && !_prevState){
+        _portraits->removeBlock(_scene);
+    }
+    _prevState = _portraits->getCurState();
     //CULog("%f, %f, %f", _scene->getCamera()->getPosition().x, _scene->getCamera()->getPosition().y, _scene->getCamera()->getPosition().z);
     
     
@@ -119,6 +129,11 @@ void SGameController::update(float dt) {
 void SGameController::render(std::shared_ptr<cugl::SpriteBatch>& batch) {
     // CULog("Rendering!");
     _scene->render(batch);
+    displayBattery(_portraits->getCurBattery(), _portraits->getCurState(), batch);
+}
+
+void SGameController::displayBattery(float battery, bool state, std::shared_ptr<cugl::SpriteBatch>& batch){
+//    CULog("%f", battery);
 }
 
 void SGameController::checkLevelLoaded() {
@@ -140,7 +155,7 @@ void SGameController::checkLevelLoaded() {
         // TODO: implement direction and direction limits
         for(int i = 0; i < _level->getPortaits().size(); i++) {
             Vec3 pos(_level->getPortaits()[i].x, _level->getPortaits()[i].y, 0);
-            _portraits->addPortrait(i + 1, pos, Vec3(0, 0, -1), Vec2::ZERO);
+            _portraits->addPortrait(i + 1, pos, Vec3(0, 0, -1), Vec2::ZERO, _level->getBattery());
             //CULog("%f, %f", _level->getPortaits()[i].x, _level->getPortaits()[i].y);
         }
         _tilemap->updatePosition(_scene->getSize() / 2);
@@ -163,6 +178,7 @@ void SGameController::checkLevelLoaded() {
         }
 
         _levelLoaded = true;
+        _portraits->setMaxbattery(_level->getBattery());
     }
 }
 

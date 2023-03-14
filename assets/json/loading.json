@@ -1,7 +1,7 @@
 {
 	"textures": {
 		"logo": {
-			"file":      "textures/cugl-logo.png",
+			"file":      "textures/conceptart.png",
             "wrapS":     "clamp",
             "wrapT":     "clamp",
             "minfilter": "linear",
@@ -53,12 +53,12 @@
                     "data"   : {
                         "texture"  : "logo",
                         "anchor"   : [0.5,0.5],
-                        "scale"    : 0.75
+                        "scale"    : 0.4
                     },
                     "layout" : {
                         "x_anchor" : "center",
                         "y_anchor" : "middle",
-                        "y_offset" : 115,
+                        "x_offset" : -50,
                         "absolute" : true
                     }
                 },

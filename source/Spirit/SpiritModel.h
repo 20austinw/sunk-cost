@@ -12,6 +12,8 @@
 #define _SPIRITMODEL_H
 
 #include <cugl/cugl.h>
+#include "TrapView.h"
+#include "TrapModel.hpp"
 
 class SpiritModel {
   #pragma mark State
@@ -28,6 +30,11 @@ class SpiritModel {
     float _clamCool;
     /** Cooldown time for switching camera */
     float _cameraCool;
+    
+    std::vector<std::shared_ptr<TrapModel>> _trapModels;
+    std::vector<std::shared_ptr<TrapView>> _trapViews;
+    
+    std::shared_ptr<cugl::Scene2> _scene;
 
   public:
     /** A public accessible, read-only version of the energy level */
@@ -52,7 +59,7 @@ class SpiritModel {
      * @param doors the number of close doors left
      * @param energy the energy left for this player
      */
-    SpiritModel(int clams, int doors, float energy) :
+    SpiritModel(std::shared_ptr<cugl::Scene2> scene, int clams, int doors, float energy) :
     clams(_clams),
     doors(_doors),
     energy(_energy),
@@ -66,6 +73,7 @@ class SpiritModel {
       setCameraCooldown(0);
       setClamCooldown(0);
       setDoorCooldown(0);
+        _scene = scene;
     }
 
   #pragma mark Setters
@@ -124,6 +132,29 @@ class SpiritModel {
     void setEnergy(float energy) {
       _energy = energy;
     };
+
+    void addTrap(Vec2 position) {
+        _trapModels.emplace_back(std::make_shared<TrapModel>(position, 300));
+        auto trap = std::make_shared<TrapView>(position, 20);
+        _trapViews.emplace_back(trap);
+        _scene->addChild(trap->getNode());
+    }
+    
+    void update() {
+        std::vector<std::shared_ptr<TrapModel>> pendingTrapModels;
+        std::vector<std::shared_ptr<TrapView>> pendingTrapViews;
+        for(int i = 0; i < _trapModels.size(); i++) {
+            if(!_trapModels[i]->update()) {
+                pendingTrapModels.emplace_back(_trapModels[i]);
+                pendingTrapViews.emplace_back(_trapViews[i]);
+            }else{
+                _scene->removeChild(_trapViews[i]->getNode());
+            }
+        }
+        _trapModels = pendingTrapModels;
+        _trapViews = pendingTrapViews;
+    }
+    
 };
 
 #endif /* _SPIRITMODEL_H */

@@ -104,12 +104,35 @@ class CameraController {
     void updateDirectionLimits(Vec2 directionLimits) {
       _model->setDirectionLimits(directionLimits);
     }
+    
+    /**
+     * Updates camera battery.
+     */
+    void updateBattery(int battery){
+        _model->setBattery(battery);
+    }
+    
+    int getBattery(){
+        return _model->battery;
+    }
 
     /**
      * Updates camera type
      */
     void updateType(CameraType type) {
       _model->setType(type);
+    }
+    
+    bool getState(){
+        return _model->state;
+    }
+    
+    void updateState(bool state){
+        _model->setState(state);
+    }
+    
+    int getID(){
+        return _model->id;
     }
 };
 

@@ -59,6 +59,9 @@ bool LevelModel:: preload(const std::shared_ptr<cugl::JsonValue>& json) {
     float h = json->get(HEIGHT_FIELD)->asFloat();
     _bounds.size.set(w, h);
     
+    //Set battery
+    _battery = json->get(BATTERY_FIELD)->asInt();
+    
     // Get each object in each layer, then decide what to do based off of what
     // type the object is.
     auto objects = json->get("layers")->get(0);

@@ -23,6 +23,7 @@ using namespace cugl;
 #include "LevelModel.h"
 #include "HunterController.h"
 #include "SpiritController.h"
+#include "TrapController.hpp"
 
 
 /**
@@ -52,7 +53,7 @@ private:
     /** The scale between the physics world and the screen (SCREEN UNITS / BOX2D WORLD UNITS) */
     float _scale;
     
-    int _tileWidth;
+    int _tileWidth; 
     
     int _tileHeight;
     
@@ -65,6 +66,8 @@ private:
     HunterController _hunter;
     
     SpiritController _spirit;
+    
+    TrapController _trap;
     
     std::shared_ptr<scene2::PolygonNode> _filter;
     

@@ -48,6 +48,7 @@ private:
     /** The locked size of the display. */
     cugl::Size _dimen;
     
+    int _count;
     /** The scale between the physics world and the screen (SCREEN UNITS / BOX2D WORLD UNITS) */
     float _scale;
     

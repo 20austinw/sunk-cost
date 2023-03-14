@@ -35,6 +35,7 @@ _assets(assets){
     /// Initialize the tilemap and add it to the scene
 //    SCENE_WIDTH = 1024;
 //    SCENE_HEIGHT = 576;
+    _count = 0;
     _dimen = Application::get()->getDisplaySize();
 //    _offset = Vec3((_dimen.width)/2.0f,(_dimen.height)/2.0f,50);
     _offset = Vec3(0,0,50);
@@ -124,6 +125,14 @@ void HGameController::update(float dt) {
     
     int forward = inputController->getForward();
     int rightward = inputController->getRight();
+    
+    _count++;
+    if(_count==6){
+        _hunter.setViewFrame((int)forward, (int)rightward);
+        _count=0;
+    }
+    
+    
     std::string left = tiles[midy][posx];
     std::string up = tiles[posyup][midx];
     std::string bottom =tiles[posy][midx];

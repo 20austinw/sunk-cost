@@ -54,6 +54,10 @@ void HunterController::render(const std::shared_ptr<cugl::SpriteBatch>& batch) {
 
 }
 
+void HunterController::setViewFrame(int forward, int right){
+    _view->advanceFrame(forward, right);
+}
+
 /**
  * TODO: Implement Me
  * This function should (for gameplay prototype)

@@ -241,7 +241,7 @@ class PortraitSetController {
         _bound->setColor(Color4::WHITE);
         _charge = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 100, 20));
         _charge->setColor(Color4::GREEN);
-        _block = scene2::PolygonNode::allocWithPoly(Rect(0, 0, scene->getSize().width, scene->getSize().height));
+        _block = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 4608, 4608));
         _block->setColor(Color4::BLACK);
         scene->addChild(_bound);
         scene->addChild(_charge);

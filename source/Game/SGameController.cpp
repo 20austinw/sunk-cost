@@ -38,7 +38,7 @@ _assets(assets){
 
     // Initialize SpiritController
     _spirit = SpiritController(_assets, _scene, _portraits, _scene->getSize());
-    _level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
+    _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
     if (_level == nullptr) {
         _levelLoaded = false;
         CULog("Fail!");
@@ -82,19 +82,19 @@ void SGameController::update(float dt) {
     }
     if(inputController->isKeyPressed(KeyCode::NUM_1)) {
         _portraits->setIndex(1);
-        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())->setZoom(2);
+        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())->setZoom(0.5);
     }
     if(inputController->isKeyPressed(KeyCode::NUM_2)) {
         _portraits->setIndex(2);
-        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())->setZoom(2);
+        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())->setZoom(0.5);
     }
     if(inputController->isKeyPressed(KeyCode::NUM_3)) {
         _portraits->setIndex(3);
-        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())->setZoom(2);
+        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())->setZoom(0.5);
     }
     if(inputController->isKeyPressed(KeyCode::NUM_4)) {
         _portraits->setIndex(4);
-        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())->setZoom(2);
+        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())->setZoom(0.5);
     }
     Vec3 offset(405, 315, 0);
     _scene->getCamera()->setPosition(_portraits->getPosition(_portraits->getIndex()) + offset);
@@ -139,7 +139,7 @@ void SGameController::displayBattery(float battery, bool state, std::shared_ptr<
 }
 
 void SGameController::checkLevelLoaded() {
-    _level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
+    _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
     if (_level == nullptr) {
         _levelLoaded = false;
     }
@@ -149,7 +149,7 @@ void SGameController::checkLevelLoaded() {
         _level = nullptr;
 
         // Access and initialize level
-        _level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
+        _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
         _level->setAssets(_assets);
 
         CULog("Loading level!");
@@ -164,7 +164,7 @@ void SGameController::checkLevelLoaded() {
         std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
         _tilemap->updateDimensions(Vec2(tiles[0].size(), tiles.size()));
         _tilemap->updateColor(Color4::WHITE);
-        _tilemap->updateTileSize(Size(45, 45));
+        _tilemap->updateTileSize(Size(256, 256));
         for (int i = 0; i < tiles.size() * tiles[0].size(); ++i){
             int c = i%tiles[0].size();
             int r = i/tiles[0].size();
@@ -178,6 +178,13 @@ void SGameController::checkLevelLoaded() {
                 _tilemap->addTile(c, r, Color4::BLUE, true, _assets->get<Texture>("map"));
             }
         }
+        
+        _map = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
+        _map->setPolygon(Rect(0, 0, 4608, 4608));
+                    //    _map = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 9216, 9216));
+                    //    _map ->setTexture(_assets->get<Texture>("map"));
+        _scene->addChild(_map);
+        _portraits->refreshBatteryNodes(_scene);
 
         _levelLoaded = true;
         _portraits->setMaxbattery(_level->getBattery());

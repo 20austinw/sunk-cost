@@ -32,6 +32,7 @@
 #define DENSITY_FIELD       "density"
 #define ROTATION_FIELD      "rotation"
 #define STATIC_VALUE        "static"
+#define BATTERY_FIELD       "battery"
 
 /** The drawing fields for each object */
 #define TEXTURE_FIELD       "texture"

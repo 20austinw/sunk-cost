@@ -56,6 +56,8 @@ private:
     
     bool _levelLoaded;
     
+    bool _prevState;
+    
 #pragma mark External References
 private:
     /** The tilemap to procedurally generate */
@@ -103,6 +105,8 @@ private:
     void checkLevelLoaded();
     
     void generateLevel();
+    
+    void displayBattery(float battery, bool state, std::shared_ptr<cugl::SpriteBatch>& batch);
     
 };
 

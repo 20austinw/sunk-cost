@@ -18,8 +18,9 @@
    * TODO: Implement Me
    * The Constructor should set up the preset cooltimes as well as all other class variables.
    */
-  SpiritController::SpiritController(std::shared_ptr<PortraitSetController> portraits, Size screenSize) {
-      _model = std::make_unique<SpiritModel>(3, 3, 30);
+SpiritController::SpiritController(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<cugl::Scene2> scene, std::shared_ptr<PortraitSetController> portraits, Size screenSize) {
+      _scene = scene;
+      _model = std::make_unique<SpiritModel>(assets, scene, 3, 3, 30);
       _view = std::make_unique<SpiritView>();
       _portraits = portraits;
       _screenSize = screenSize;
@@ -66,6 +67,12 @@ void SpiritController::render(std::shared_ptr<cugl::SpriteBatch>& batch, Size si
    * (2) modify portraitsetcontroller to reflect the change
    */
 void SpiritController::update() {
-    
+    auto inputController = InputController::getInstance();
+    if(inputController->isMouseClicked() && _portraits->getCurState()){
+        _model->addTrap(_scene->getCamera()->screenToWorldCoords(inputController->getLastMousePos()));
+        auto pos = _scene->getCamera()->screenToWorldCoords(inputController->getLastMousePos());
+        CULog("%f, %f", pos.x, pos.y);
+    }
+    _model->update();
 }
 

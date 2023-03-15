@@ -71,6 +71,7 @@ private:
     
     std::shared_ptr<scene2::PolygonNode> _filter;
     
+    std::shared_ptr<scene2::PolygonNode> _map;
     float _timer;
     std::shared_ptr<cugl::scene2::Label> _timerLabel;
     

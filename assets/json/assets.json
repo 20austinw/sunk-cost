@@ -34,7 +34,7 @@
             "file":  "textures/filter.png"
         },
         "map":{
-            "file": "textures/full_map.png"
+            "file":  "textures/map.png"
         },
         "trap":{
             "file": "textures/clam_trap.png"

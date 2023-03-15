@@ -54,6 +54,8 @@ private:
     /** The text with the current health */
     std::shared_ptr<cugl::TextLayout> _text;
     
+    std::shared_ptr<scene2::PolygonNode> _map;
+    
     bool _levelLoaded;
     
     bool _prevState;

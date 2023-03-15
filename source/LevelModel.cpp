@@ -138,15 +138,21 @@ bool LevelModel::loadTiles(const std::shared_ptr<JsonValue>& json) {
           int c = i%width;
           int r = i/width;
           int type = tiles->get(c + r*width)->asInt();
-          if (type < 9) {
+          if (type == 1) {
             _tiles[r].push_back("black");
-          } else if (type > 24 && type < 27) {
+          } else {
             _tiles[r].push_back("green");
-          } else if (type == 29) {
-            _tiles[r].push_back("blue");
-          } else if (type == 11) {
-            _tiles[r].push_back("red");
           }
+          
+//          if (type < 9) {
+//            _tiles[r].push_back("black");
+//          } else if (type > 24 && type < 27) {
+//            _tiles[r].push_back("green");
+//          } else if (type == 29) {
+//            _tiles[r].push_back("blue");
+//          } else if (type == 11) {
+//            _tiles[r].push_back("red");
+//          }
       }
   }
   return success;

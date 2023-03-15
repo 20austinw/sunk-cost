@@ -67,6 +67,7 @@ private:
     
     std::shared_ptr<scene2::PolygonNode> _filter;
     
+    std::shared_ptr<scene2::PolygonNode> _map;
     
     
     // MODELS should be shared pointers or a data structure of shared pointers

@@ -48,7 +48,7 @@ _assets(assets){
     // Initialize SpiritController
     _spirit = SpiritController();
     
-    _level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
+    _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
     if (_level == nullptr) {
         _levelLoaded = false;
         CULog("Fail!");
@@ -179,7 +179,7 @@ void HGameController::render(std::shared_ptr<cugl::SpriteBatch>& batch) {
 
 
 void HGameController::checkLevelLoaded() {
-    _level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
+    _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
     if (_level == nullptr) {
         _levelLoaded = false;
     }
@@ -190,7 +190,7 @@ void HGameController::checkLevelLoaded() {
         _level = nullptr;
         
         // Access and initialize level
-        _level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
+        _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
         _level->setAssets(_assets);
         
 
@@ -198,8 +198,8 @@ void HGameController::checkLevelLoaded() {
         _spirit = SpiritController();
         
         
-        _tileHeight=100;
-        _tileWidth=100;
+        _tileHeight=256;
+        _tileWidth=256;
         
         // TODO: implement direction and direction limits
         _tilemap->updatePosition(_scene->getSize() / 2);
@@ -207,6 +207,12 @@ void HGameController::checkLevelLoaded() {
         _tilemap->updateDimensions(Vec2(tiles[0].size(), tiles.size()));
         _tilemap->updateColor(Color4::WHITE);
         _tilemap->updateTileSize(Size(_tileWidth, _tileHeight));
+        
+        _map = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
+        _map->setPolygon(Rect(0, 0, 4608, 4608));
+    //    _map = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 9216, 9216));
+    //    _map ->setTexture(_assets->get<Texture>("map"));
+        _scene->addChild(_map);
         
         _filterTexture = _assets->get<Texture>("filter");
         _filter = scene2::PolygonNode::allocWithTexture(_filterTexture);

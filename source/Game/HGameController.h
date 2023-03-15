@@ -23,6 +23,7 @@ using namespace cugl;
 #include "LevelModel.h"
 #include "HunterController.h"
 #include "SpiritController.h"
+#include "TrapController.hpp"
 
 
 /**
@@ -48,10 +49,11 @@ private:
     /** The locked size of the display. */
     cugl::Size _dimen;
     
+    int _count;
     /** The scale between the physics world and the screen (SCREEN UNITS / BOX2D WORLD UNITS) */
     float _scale;
     
-    int _tileWidth;
+    int _tileWidth; 
     
     int _tileHeight;
     
@@ -65,9 +67,13 @@ private:
     
     SpiritController _spirit;
     
+    TrapController _trap;
+    
     std::shared_ptr<scene2::PolygonNode> _filter;
     
     std::shared_ptr<scene2::PolygonNode> _map;
+    float _timer;
+    std::shared_ptr<cugl::scene2::Label> _timerLabel;
     
     
     // MODELS should be shared pointers or a data structure of shared pointers

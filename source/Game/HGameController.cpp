@@ -12,12 +12,18 @@
 // This is in the same directory
 #include "HGameController.h"
 #include "LevelConstants.h"
+#include <cstdlib>
+using namespace std;
 
 #pragma mark Main Methods
 HGameController::HGameController(){
     _hunter = HunterController();
     // Initialize SpiritController
     _spirit = SpiritController();
+    _trap = TrapController();
+    auto inputController = InputController::getInstance();
+    CULog("tsts in controller");
+    inputController->initListeners();
 }
 
 /**
@@ -35,15 +41,20 @@ _assets(assets){
     /// Initialize the tilemap and add it to the scene
 //    SCENE_WIDTH = 1024;
 //    SCENE_HEIGHT = 576;
+    _count = 0;
     _dimen = Application::get()->getDisplaySize();
 //    _offset = Vec3((_dimen.width)/2.0f,(_dimen.height)/2.0f,50);
     _offset = Vec3(0,0,50);
     _tilemap = std::make_unique<TilemapController>();
-
     _tilemap->addChildTo(_scene);
+    
+    _timer=12000;
+    _timerLabel= cugl::scene2::Label::allocWithText(Vec2(200,200), "2:00", _assets->get<Font>("pixel32"));
+    _scene->addChild(_timerLabel);
 
     CULog("%f, %f", displaySize.width, displaySize.height);
     _hunter = HunterController(assets, displaySize);
+    _trap = TrapController(assets, displaySize);
     
     // Initialize SpiritController
     _spirit = SpiritController();
@@ -53,7 +64,9 @@ _assets(assets){
         _levelLoaded = false;
         CULog("Fail!");
     }
-    
+//    auto inputController = InputController::getInstance();
+//    CULog("tsts");
+//    inputController->initListeners();
     initCamera();
 }
 
@@ -78,6 +91,11 @@ void HGameController::update(float dt) {
     if (!_levelLoaded) {
         checkLevelLoaded();
     }
+    
+    _timer=_timer-1;
+    _timerLabel->setText(std::to_string(int(_timer/6000))+":"+std::to_string(int(_timer/100) % 60 ));
+    _timerLabel->setPosition(_scene->getCamera()->getPosition()-Vec2(0,300));
+    _timerLabel->setColor(cugl::Color4f::WHITE);
     
     auto inputController = InputController::getInstance();
     inputController->readInput();
@@ -124,6 +142,14 @@ void HGameController::update(float dt) {
     
     int forward = inputController->getForward();
     int rightward = inputController->getRight();
+    
+    _count++;
+    if(_count==6){
+        _hunter.setViewFrame((int)forward, (int)rightward);
+        _count=0;
+    }
+    
+    
     std::string left = tiles[midy][posx];
     std::string up = tiles[posyup][midx];
     std::string bottom =tiles[posy][midx];
@@ -149,15 +175,24 @@ void HGameController::update(float dt) {
             forward = 0;
         }
     }
-    _hunter.move(forward,rightward);
+    bool age = _trap.update(); //false means trap active
+    if (!_trap.getTrigger()){
+        _hunter.move(forward,rightward);
+    }
+    //trap collision
+    CULog("xPos diff %f", _trap.getPosition().x-_hunter.getPosition().x);
+    CULog("yPos diff %f", _trap.getPosition().y-_hunter.getPosition().y);
+    CULog("age %f", age);
+    if(abs(_trap.getPosition().x-_hunter.getPosition().x)<= 80 && abs(_trap.getPosition().y-_hunter.getPosition().y)<= 80 && !age){
+        _trap.setTrigger(true);
+    }
+    if (_trap.getTrigger()&& _count == 5){
+        _trap.setViewFrame();
+    }
+    
     
 
-
     
-//    if(_tilemap->isTileTraversable(_hunter.getPosition())){
-//            _hunter.updatePosition(_level->getPlayerPosition());
-//        _hunter.update();
-//    }
     updateCamera(dt);
 
     // TODO: update direction index for portraits on spirit control
@@ -241,6 +276,8 @@ void HGameController::checkLevelLoaded() {
         // Initialize HunterController
         _hunter = HunterController(_assets, _scene->getSize());
         _hunter.addChildTo(_scene);
+        _trap = TrapController(_assets, _scene->getSize());
+        _trap.addChildTo(_scene);
 
         
         
@@ -276,6 +313,10 @@ void HGameController::updateCamera(float timestep) {
     Vec2 next = _offset
         + ((Vec3(_hunter.getPosition().x, _hunter.getPosition().y, 1)));
     _scene->getCamera()->translate((next - curr) * timestep);
+    
+    _timerLabel->setPosition(_scene->getCamera()->getPosition()-Vec2(0,300));
+    
+    _filter->setPosition(_scene->getCamera()->getPosition());
     _scene->getCamera()->update();
    
 }

@@ -199,7 +199,6 @@ class PortraitSetController {
         Vec2 pos = _portraits[_model->getIndex()]->getPosition() + Vec2(offset.size)/2;
         _bound->setPosition(pos);
         _charge->setPolygon(Rect(0, 0, getCurBattery()*100, 20));
-            CULog("%f", getCurBattery()*100);
         _charge->setPosition(pos + Vec2((getCurBattery()*100-100)/2,0));
         if(getCurState()){
             _charge->setColor(Color4::GREEN);

@@ -18,9 +18,9 @@
    * TODO: Implement Me
    * The Constructor should set up the preset cooltimes as well as all other class variables.
    */
-SpiritController::SpiritController(std::shared_ptr<cugl::Scene2> scene, std::shared_ptr<PortraitSetController> portraits, Size screenSize) {
+SpiritController::SpiritController(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<cugl::Scene2> scene, std::shared_ptr<PortraitSetController> portraits, Size screenSize) {
       _scene = scene;
-      _model = std::make_unique<SpiritModel>(scene, 3, 3, 30);
+      _model = std::make_unique<SpiritModel>(assets, scene, 3, 3, 30);
       _view = std::make_unique<SpiritView>();
       _portraits = portraits;
       _screenSize = screenSize;

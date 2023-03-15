@@ -33,10 +33,15 @@ using namespace cugl;
 void SCApp::onStartup() {
     _assets = AssetManager::alloc();
     _batch  = SpriteBatch::alloc();
-    
-    // Start-up basic input (DESKTOP ONLY)
+#ifdef CU_TOUCH_SCREEN
+    // Start-up basic input for loading screen (MOBILE ONLY)
+    Input::activate<Touchscreen>();
+#else
+    // Start-up basic input for loading screen (DESKTOP ONLY)
     Input::activate<Mouse>();
     Input::activate<Keyboard>();
+#endif
+   
     
     _assets->attach<Texture>(TextureLoader::alloc()->getHook());
     _assets->attach<Sound>(SoundLoader::alloc()->getHook());
@@ -129,6 +134,7 @@ void SCApp::update(float timestep) {
         _loading.update(0.01f);
     } else if (!_loaded) {
         _loading.dispose(); // Disables the input listeners in this mode
+        _hunterGameplay = HGameController(getDisplaySize(), _assets);
         _loaded = true;
     } else {
         _hunterGameplay.update(timestep);

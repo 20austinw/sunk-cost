@@ -54,6 +54,10 @@ void HunterController::render(const std::shared_ptr<cugl::SpriteBatch>& batch) {
 
 }
 
+void HunterController::setViewFrame(int forward, int right){
+    _view->advanceFrame(forward, right);
+}
+
 /**
  * TODO: Implement Me
  * This function should (for gameplay prototype)
@@ -65,6 +69,7 @@ void HunterController::update() {
     move(_input.getForward(),_input.getRight());
     
 }
+
 
 
 /**
@@ -169,9 +174,12 @@ Vec2 HunterController::getPosition() {
  * @param scene The scene to add the view to
  */
 void HunterController::addChildTo(const std::shared_ptr<cugl::Scene2>& scene) {
-    scene->addChild(_view->getNode());
+    std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> vec =_view->getSpriteNode();
+    
+    for (int i =0; i<vec.size();i++){
+        scene->addChild(vec[i]);
+    }
 }
-
 
 /**
  * Removes the TilemapView child from the given `scene`.
@@ -182,7 +190,11 @@ void HunterController::addChildTo(const std::shared_ptr<cugl::Scene2>& scene) {
  */
 void HunterController::removeChildFrom(const std::shared_ptr<cugl::Scene2>& scene) {
     // TODO: Implement me
-    scene->removeChild(_view->getNode());
+    std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> vec =_view->getSpriteNode();
+
+    for (int i =0; i<vec.size();i++){
+        scene->removeChild(vec[i]);
+    }
 }
 
 

@@ -12,7 +12,7 @@
 
 #include <cugl/cugl.h>
 #include "TrapModel.hpp"
-#include "TrapView.h"
+#include "TrapViewH.h"
 
 using namespace cugl;
 
@@ -22,7 +22,7 @@ private:
     /** Model reference */
     std::unique_ptr<TrapModel> _model;
     /** View reference */
-    std::unique_ptr<TrapView> _view;
+    std::unique_ptr<TrapViewH> _view;
     Size _screenSize;
 public:
     TrapController() {};

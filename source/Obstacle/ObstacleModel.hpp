@@ -62,21 +62,7 @@ public:
      * Initializes an Obstacle Model
      */
    
-    bool init(float scale, std::shared_ptr<Texture>& texture, Type type) {
-        PolyFactory pf;
-        switch (type) {
-            case TRAP:
-                PolygonObstacle::init(pf.makeRect(0, 0, TRAP_WIDTH, TRAP_WIDTH / 2));
-                break;
-            case TREASURE:
-                PolygonObstacle::init(pf.makeRect(0, 0, TREASURE_WIDTH, TREASURE_WIDTH / 4));
-                break;
-        }
-        setDebugColor(Color4::RED);
-
-
-        return true;
-    }
+    bool init(float scale, std::shared_ptr<Texture>& texture, Type type);
 
 };
 

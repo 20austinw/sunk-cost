@@ -1,18 +1,18 @@
 //
-//  TrapView.h
+//  TrapViewH.h
 //  Sunk
 //
 //  Created by 任清扬 on 14/3/23.
 //
 
-#ifndef TrapView_h
-#define TrapView_h
+#ifndef TrapViewH_h
+#define TrapViewH_h
 
 #include <cugl/cugl.h>
 
 using namespace cugl;
 
-class TrapView {
+class TrapViewH {
 #pragma mark Internal References
 private:
     std::shared_ptr<scene2::PolygonNode> _node;
@@ -33,7 +33,7 @@ public:
      * @param size The width and height of a tile
      * @param color The tile color tint
      */
-    TrapView(const std::shared_ptr<cugl::AssetManager>& assets, Vec2 position, Size size){
+    TrapViewH(const std::shared_ptr<cugl::AssetManager>& assets, Vec2 position, Size size){
 //        _node = scene2::PolygonNode::alloc();
 //        _node->setColor(Color4::PAPYRUS);
 //        _node->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
@@ -67,7 +67,7 @@ public:
     
     
     /** Deletes this HunterView */
-    ~TrapView() {
+    ~TrapViewH() {
         _node->removeFromParent();
     }
     
@@ -123,5 +123,5 @@ public:
 
 
 
-#endif /* TrapView_h */
+#endif /* TrapViewH_h */
 

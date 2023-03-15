@@ -7,7 +7,7 @@
 
 #include "TrapController.hpp"
 #include "TrapModel.hpp"
-#include "TrapView.h"
+#include "TrapViewH.h"
 
 #pragma mark Main Functions
 /**
@@ -18,7 +18,7 @@
 TrapController::TrapController(const std::shared_ptr<cugl::AssetManager>& assets, Size screenSize) {
     CULog("Called!");
     _model = std::make_unique<TrapModel>(Vec2(500,600),1000);
-    _view = std::make_unique<TrapView>(assets, Vec2(500,600), Vec2(40,40));
+    _view = std::make_unique<TrapViewH>(assets, Vec2(500,600), Vec2(40,40));
     _screenSize = screenSize;
 
    

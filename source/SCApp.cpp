@@ -56,7 +56,7 @@ void SCApp::onStartup() {
     
     // Queue up the other assets
     _assets->loadDirectoryAsync("json/assets.json", nullptr);
-    _assets->loadAsync<LevelModel>(LEVEL_ONE_KEY, LEVEL_ONE_FILE, nullptr);
+    _assets->loadAsync<LevelModel>(LEVEL_TWO_KEY, LEVEL_TWO_FILE, nullptr);
     
 //    _hunterGameplay = HGameController(getDisplaySize(), _assets);
 //    _spiritGameplay = SGameController(getDisplaySize(), _assets);

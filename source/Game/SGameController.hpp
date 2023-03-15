@@ -58,6 +58,8 @@ private:
     
     bool _prevState;
     
+    std::shared_ptr<scene2::PolygonNode> _map;
+    
 #pragma mark External References
 private:
     /** The tilemap to procedurally generate */

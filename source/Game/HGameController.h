@@ -71,6 +71,8 @@ private:
     
     std::shared_ptr<scene2::PolygonNode> _filter;
     
+    float _timer;
+    std::shared_ptr<cugl::scene2::Label> _timerLabel;
     
     
     // MODELS should be shared pointers or a data structure of shared pointers

@@ -43,10 +43,8 @@
 
 /** The source for our level file */
 #define LEVEL_ONE_FILE      "json/gppbasic_level.json"
-#define LEVEL_TWO_FILE      "json/technical_level.json"
 /** The key for our loaded level */
 #define LEVEL_ONE_KEY       "basic_level"
-#define LEVEL_TWO_KEY       "techinical_level"
 
 
 #endif /* defined(__TD_LEVEL_CONSTANTS_H__) */

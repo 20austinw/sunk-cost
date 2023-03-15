@@ -35,6 +35,7 @@ class SpiritModel {
     std::vector<std::shared_ptr<TrapView>> _trapViews;
     
     std::shared_ptr<cugl::Scene2> _scene;
+    std::shared_ptr<cugl::AssetManager> _assets;
 
   public:
     /** A public accessible, read-only version of the energy level */
@@ -59,7 +60,7 @@ class SpiritModel {
      * @param doors the number of close doors left
      * @param energy the energy left for this player
      */
-    SpiritModel(std::shared_ptr<cugl::Scene2> scene, int clams, int doors, float energy) :
+    SpiritModel(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<cugl::Scene2> scene, int clams, int doors, float energy) :
     clams(_clams),
     doors(_doors),
     energy(_energy),
@@ -74,6 +75,7 @@ class SpiritModel {
       setClamCooldown(0);
       setDoorCooldown(0);
         _scene = scene;
+        _assets = assets;
     }
 
   #pragma mark Setters
@@ -135,9 +137,9 @@ class SpiritModel {
 
     void addTrap(Vec2 position) {
         _trapModels.emplace_back(std::make_shared<TrapModel>(position, 300));
-        auto trap = std::make_shared<TrapView>(position, 20);
+        auto trap = std::make_shared<TrapView>(_assets, position, 20);
         _trapViews.emplace_back(trap);
-        _scene->addChild(trap->getNode());
+        trap->addChildTo(_scene);
     }
     
     void update() {
@@ -147,8 +149,9 @@ class SpiritModel {
             if(!_trapModels[i]->update()) {
                 pendingTrapModels.emplace_back(_trapModels[i]);
                 pendingTrapViews.emplace_back(_trapViews[i]);
+                _trapViews[i]->update();
             }else{
-                _scene->removeChild(_trapViews[i]->getNode());
+                _trapViews[i]->removeChildFrom(_scene);
             }
         }
         _trapModels = pendingTrapModels;

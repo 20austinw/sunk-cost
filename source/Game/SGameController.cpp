@@ -37,7 +37,7 @@ _assets(assets){
 //        _hunter.updatePosition(_level->getPlayerPosition());
 
     // Initialize SpiritController
-    _spirit = SpiritController(_scene, _portraits, _scene->getSize());
+    _spirit = SpiritController(_assets, _scene, _portraits, _scene->getSize());
     _level = _assets->get<LevelModel>(LEVEL_ONE_KEY);
     if (_level == nullptr) {
         _levelLoaded = false;
@@ -167,13 +167,13 @@ void SGameController::checkLevelLoaded() {
             int c = i%tiles[0].size();
             int r = i/tiles[0].size();
             if (tiles[r][c] == "red") {
-                _tilemap->addTile(c, r, Color4::RED, true, _assets->get<Texture>("red"));
+                _tilemap->addTile(c, r, Color4::RED, true, _assets->get<Texture>("map"));
             } else if (tiles[r][c] == "black") {
-                _tilemap->addTile(c, r, Color4::BLACK, false, _assets->get<Texture>("black"));
+                _tilemap->addTile(c, r, Color4::BLACK, false, _assets->get<Texture>("map"));
             } else if (tiles[r][c] == "green") {
-                _tilemap->addTile(c, r, Color4::GREEN, true, _assets->get<Texture>("green"));
+                _tilemap->addTile(c, r, Color4::GREEN, true, _assets->get<Texture>("map"));
             } else if (tiles[r][c] == "blue") {
-                _tilemap->addTile(c, r, Color4::BLUE, true, _assets->get<Texture>("blue"));
+                _tilemap->addTile(c, r, Color4::BLUE, true, _assets->get<Texture>("map"));
             }
         }
 

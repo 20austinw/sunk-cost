@@ -21,6 +21,9 @@ HGameController::HGameController(){
     // Initialize SpiritController
     _spirit = SpiritController();
     _trap = TrapController();
+    auto inputController = InputController::getInstance();
+    CULog("tsts in controller");
+    inputController->initListeners();
 }
 
 /**
@@ -43,8 +46,11 @@ _assets(assets){
 //    _offset = Vec3((_dimen.width)/2.0f,(_dimen.height)/2.0f,50);
     _offset = Vec3(0,0,50);
     _tilemap = std::make_unique<TilemapController>();
-
     _tilemap->addChildTo(_scene);
+    
+    _timer=12000;
+    _timerLabel= cugl::scene2::Label::allocWithText(Vec2(200,200), "2:00", _assets->get<Font>("pixel32"));
+    _scene->addChild(_timerLabel);
 
     CULog("%f, %f", displaySize.width, displaySize.height);
     _hunter = HunterController(assets, displaySize);
@@ -58,7 +64,9 @@ _assets(assets){
         _levelLoaded = false;
         CULog("Fail!");
     }
-    
+//    auto inputController = InputController::getInstance();
+//    CULog("tsts");
+//    inputController->initListeners();
     initCamera();
 }
 
@@ -83,6 +91,11 @@ void HGameController::update(float dt) {
     if (!_levelLoaded) {
         checkLevelLoaded();
     }
+    
+    _timer=_timer-1;
+    _timerLabel->setText(std::to_string(int(_timer/6000))+":"+std::to_string(int(_timer/100) % 60 ));
+    _timerLabel->setPosition(_scene->getCamera()->getPosition()-Vec2(0,300));
+    _timerLabel->setColor(cugl::Color4f::WHITE);
     
     auto inputController = InputController::getInstance();
     inputController->readInput();
@@ -294,6 +307,10 @@ void HGameController::updateCamera(float timestep) {
     Vec2 next = _offset
         + ((Vec3(_hunter.getPosition().x, _hunter.getPosition().y, 1)));
     _scene->getCamera()->translate((next - curr) * timestep);
+    
+    _timerLabel->setPosition(_scene->getCamera()->getPosition()-Vec2(0,300));
+    
+    _filter->setPosition(_scene->getCamera()->getPosition());
     _scene->getCamera()->update();
    
 }

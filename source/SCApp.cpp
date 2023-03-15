@@ -33,10 +33,15 @@ using namespace cugl;
 void SCApp::onStartup() {
     _assets = AssetManager::alloc();
     _batch  = SpriteBatch::alloc();
-    
-    // Start-up basic input (DESKTOP ONLY)
+#ifdef CU_TOUCH_SCREEN
+    // Start-up basic input for loading screen (MOBILE ONLY)
+    Input::activate<Touchscreen>();
+#else
+    // Start-up basic input for loading screen (DESKTOP ONLY)
     Input::activate<Mouse>();
     Input::activate<Keyboard>();
+#endif
+   
     
     _assets->attach<Texture>(TextureLoader::alloc()->getHook());
     _assets->attach<Sound>(SoundLoader::alloc()->getHook());

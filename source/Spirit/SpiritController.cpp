@@ -66,12 +66,12 @@ void SpiritController::render(std::shared_ptr<cugl::SpriteBatch>& batch, Size si
    * (1) detect camera change
    * (2) modify portraitsetcontroller to reflect the change
    */
-void SpiritController::update() {
+void SpiritController::update(const std::shared_ptr<TilemapController> _tilemap) {
     auto inputController = InputController::getInstance();
+    auto pos = _scene->getCamera()->screenToWorldCoords(inputController->getLastMousePos());
     if(inputController->isMouseClicked() && _portraits->getCurState()){
-        _model->addTrap(_scene->getCamera()->screenToWorldCoords(inputController->getLastMousePos()));
-        auto pos = _scene->getCamera()->screenToWorldCoords(inputController->getLastMousePos());
-        CULog("%f, %f", pos.x, pos.y);
+        if(!_tilemap->isTileTraversable(pos) || _tilemap->mapPosToGridPos(pos).x < 0 || _tilemap->mapPosToGridPos(pos).y < 0) return;
+        _model->addTrap(pos);
     }
     _model->update();
 }

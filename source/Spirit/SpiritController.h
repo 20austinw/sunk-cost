@@ -15,6 +15,7 @@
 #include "SpiritModel.h"
 #include "SpiritView.h"
 #include "InputController.h"
+#include "TilemapController.h"
 #include "../Camera/PortraitSetController.h"
 
 using namespace cugl;
@@ -89,7 +90,7 @@ class SpiritController {
      * (1) detect camera change
      * (2) modify portraitsetcontroller to reflect the change
      */
-    void update();
+    void update(const std::shared_ptr<TilemapController> _tilemap);
 
   #pragma mark Setters
   public:

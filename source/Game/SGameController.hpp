@@ -63,7 +63,7 @@ private:
 #pragma mark External References
 private:
     /** The tilemap to procedurally generate */
-    std::unique_ptr<TilemapController> _tilemap;
+    std::shared_ptr<TilemapController> _tilemap;
     
 #pragma mark Main Methods
 public:

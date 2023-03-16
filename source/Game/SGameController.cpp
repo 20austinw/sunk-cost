@@ -27,7 +27,7 @@ SGameController::SGameController(const Size displaySize, const std::shared_ptr<c
 _scene(cugl::Scene2::alloc(displaySize)),
 _assets(assets){
     /// Initialize the tilemap and add it to the scene
-    _tilemap = std::make_unique<TilemapController>();
+    _tilemap = std::make_shared<TilemapController>();
     _tilemap->addChildTo(_scene);
     // Initialize PortraitSetController
     _portraits = std::make_shared<PortraitSetController>(0, displaySize);
@@ -115,7 +115,7 @@ void SGameController::update(float dt) {
     
     // Will crash the program because the constructor doesn't set up the model/view yet (delete this comment later)
 //    _hunter.update();
-    _spirit.update();
+    _spirit.update(_tilemap);
     // TODO: update direction index for portraits on spirit control
 //    _portraits->updateDirectionIndex(<#Vec3 direction#>, <#int index#>)
 }

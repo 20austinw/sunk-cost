@@ -43,7 +43,6 @@ TilemapController::TilemapController(Vec2 position, Vec2 dimensions,
  *  @param position The center of the tilemap
  */
 void TilemapController::updatePosition(Vec2 position) {
-    Vec2 newPos(centerToBottomLeftPosition(position, Size(_model->dimensions)*_model->tileSize));
     _model->setPosition(Vec2::ZERO);
     _view->setPosition(Vec2::ZERO);
 }
@@ -94,7 +93,6 @@ void TilemapController::updateColor(Color4 color) {
 void TilemapController::updateTileSize(Size tileSize) {
     // TODO: Implement me
     if (tileSize.width >= 0 && tileSize.height >= 0) {
-        Vec2 center = bottomLeftToCenterPosition(_model->position, _model->dimensions * _model->tileSize);
         _model->setTileSize(tileSize);
         _view->setSize(_model->dimensions * tileSize);
         for(int c = 0; c < _model->dimensions.x; c++) {
@@ -127,7 +125,7 @@ void TilemapController::updateTileSize(Size tileSize) {
  */
 void TilemapController::addTile(int col, int row, Color4 color, bool traversable, const std::shared_ptr<Texture> &texture) {
     Vec2 pos(_model->tileSize.width*(col), _model->tileSize.height*row);
-    _tilemap[row][col] = std::move(std::make_unique<TileController>(pos,_model->tileSize,color, traversable, texture));
+    _tilemap[row][col] = std::make_unique<TileController>(pos,_model->tileSize,color, traversable, texture);
     _tilemap[row][col]->addChildTo(_view->getNode());
 }
 

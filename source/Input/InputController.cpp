@@ -136,9 +136,9 @@ void InputController::readInput() {
 void InputController::dispose() {
     Touchscreen* ts = Input::get<Touchscreen>();
     if (_active && ts) {
-        ts->removeBeginListener(_touchID);
-        ts->removeEndListener(_touchID);
-        ts->removeMotionListener(_touchID);
+        ts->removeBeginListener((Uint32)_touchID);
+        ts->removeEndListener((Uint32)_touchID);
+        ts->removeMotionListener((Uint32)_touchID);
         _active = false;
     }
         

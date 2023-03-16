@@ -70,14 +70,12 @@ void SGameController::update(float dt) {
         
     }
     auto inputController = InputController::getInstance();
-    inputController->readInput();
     inputController->update(dt);
     if (inputController->didPressReset()) {
         reset();
     }
     if(inputController->isKeyPressed(KeyCode::NUM_0)) {
         _portraits->setIndex(0);
-        CULog("Num 0 clicked!");
         std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())->setZoom(1);
     }
     if(inputController->isKeyPressed(KeyCode::NUM_1)) {
@@ -168,24 +166,23 @@ void SGameController::checkLevelLoaded() {
         for (int i = 0; i < tiles.size() * tiles[0].size(); ++i){
             int c = i%tiles[0].size();
             int r = i/tiles[0].size();
-            if (tiles[r][c] == "red") {
-                _tilemap->addTile(c, r, Color4::RED, true, _assets->get<Texture>("map"));
-            } else if (tiles[r][c] == "black") {
-                _tilemap->addTile(c, r, Color4::BLACK, false, _assets->get<Texture>("map"));
+            if (tiles[r][c] == "black") {
+                _tilemap->addTile(c, r, Color4::BLACK, false, _assets->get<Texture>("black"));
             } else if (tiles[r][c] == "green") {
-                _tilemap->addTile(c, r, Color4::GREEN, true, _assets->get<Texture>("map"));
-            } else if (tiles[r][c] == "blue") {
-                _tilemap->addTile(c, r, Color4::BLUE, true, _assets->get<Texture>("map"));
+                _tilemap->addTile(c, r, Color4::GREEN, true, _assets->get<Texture>("green"));
+            } else if (tiles[r][c] == "door") {
+                _tilemap->addDoor(c, r, _assets->get<Texture>("fulldoor"));
             }
         }
         
         _map = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
         _map->setPolygon(Rect(0, 0, 4608, 4608));
-                    //    _map = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 9216, 9216));
-                    //    _map ->setTexture(_assets->get<Texture>("map"));
+            //    _map = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 9216, 9216));
+            //    _map ->setTexture(_assets->get<Texture>("map"));
         _scene->addChild(_map);
         _portraits->refreshBatteryNodes(_scene);
-
+        _tilemap->addDoorTo(_scene);
+        
         _levelLoaded = true;
         _portraits->setMaxbattery(_level->getBattery());
     }

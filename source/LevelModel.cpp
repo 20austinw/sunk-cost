@@ -140,7 +140,9 @@ bool LevelModel::loadTiles(const std::shared_ptr<JsonValue>& json) {
           int type = tiles->get(c + r*width)->asInt();
           if (type == 1) {
             _tiles[r].push_back("black");
-          } else{
+          } else if (type == 3){
+              _tiles[r].push_back("door");
+          } else {
               _tiles[r].push_back("green");
           }
               

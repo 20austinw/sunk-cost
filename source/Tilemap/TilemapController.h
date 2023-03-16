@@ -28,6 +28,9 @@ private:
     /** View reference */
     std::unique_ptr<TilemapView> _view;
     
+    /** doors view(place holder might change later)*/
+    std::vector<std::shared_ptr<scene2::PolygonNode>> _doors;
+    
 #pragma mark External References
 private:
     /** Tilemape is a 2D vector list of tiles */
@@ -52,6 +55,9 @@ public:
     
 #pragma mark Model Methods
 public:
+    
+    void addDoor(int col, int row, const std::shared_ptr<Texture> &texture);
+    
     /**
      * Updates the model and view with the position of this tilemap.
      *
@@ -95,12 +101,16 @@ public:
      */
     void addChildTo(const std::shared_ptr<cugl::Scene2>& scene);
     
+    void addDoorTo(const std::shared_ptr<cugl::Scene2>& scene);
+    
     /**
      * Removes the TilemapView child from the given scene.
      *
      * @param scene The scene to remove the view from
      */
     void removeChildFrom(const std::shared_ptr<cugl::Scene2>& scene);
+    
+    void removeDoorFrom(const std::shared_ptr<cugl::Scene2>& scene);
     
 #pragma mark Controller Methods
 public:

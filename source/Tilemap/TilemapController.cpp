@@ -131,6 +131,14 @@ void TilemapController::addTile(int col, int row, Color4 color, bool traversable
     _tilemap[row][col]->addChildTo(_view->getNode());
 }
 
+void TilemapController::addDoor(int col, int row, const std::shared_ptr<Texture> &texture){
+    Vec2 pos(_model->tileSize.width*(col), _model->tileSize.height*row);
+    std::shared_ptr<scene2::PolygonNode> door = scene2::PolygonNode::allocWithTexture(texture);
+    door->setPolygon(Rect(0,0,1024,512));
+    door->setPosition(pos);
+    _doors.emplace_back(door);
+}
+
 #pragma mark View Methods
 /**
  * Adds the TilemapView as a child to the given scene.
@@ -139,6 +147,12 @@ void TilemapController::addTile(int col, int row, Color4 color, bool traversable
  */
 void TilemapController::addChildTo(const std::shared_ptr<cugl::Scene2>& scene) {
     scene->addChild(_view->getNode());
+}
+
+void TilemapController::addDoorTo(const std::shared_ptr<cugl::Scene2>& scene) {
+    for(int i=0; i<_doors.size(); i++){
+        scene->addChild(_doors[i]);
+    }
 }
 
 /**

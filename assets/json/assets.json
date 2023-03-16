@@ -38,6 +38,12 @@
         },
         "trap":{
             "file": "textures/clam_trap.png"
+        },
+        "door":{
+            "file": "textures/door.png"
+        },
+        "fulldoor":{
+            "file": "textures/full_door.png"
         }
         
 	},

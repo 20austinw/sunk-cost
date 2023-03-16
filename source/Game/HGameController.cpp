@@ -47,10 +47,6 @@ _assets(assets){
     _offset = Vec3(0,0,50);
     _tilemap = std::make_unique<TilemapController>();
     _tilemap->addChildTo(_scene);
-    
-    _timer=12000;
-    _timerLabel= cugl::scene2::Label::allocWithText(Vec2(200,200), "2:00", _assets->get<Font>("pixel32"));
-    _scene->addChild(_timerLabel);
 
     CULog("%f, %f", displaySize.width, displaySize.height);
     _hunter = HunterController(assets, displaySize);
@@ -249,6 +245,36 @@ void HGameController::checkLevelLoaded() {
                     //    _map ->setTexture(_assets->get<Texture>("map"));
         _scene->addChild(_map);
         
+        
+        for (int i = 0; i < tiles.size() * tiles[0].size(); ++i){
+            int c = i%tiles[0].size();
+            int r = i/tiles[0].size();
+            
+            if (tiles[r][c] == "black") {
+                _tilemap->addTile(c, r, Color4::BLACK, false, _assets->get<Texture>("black"));
+            } else if (tiles[r][c] == "green") {
+                _tilemap->addTile(c, r, Color4::GREEN, true, _assets->get<Texture>("green"));
+            } else if (tiles[r][c] == "door") {
+                _tilemap->addDoor(c, r, _assets->get<Texture>("fulldoor"));
+            }
+            
+//            if (tiles[r][c] == "red") {
+//                _tilemap->addTile(c, r, Color4::RED, true, _assets->get<Texture>("red"));
+//
+//            }
+//            else if (tiles[r][c] == "blue") {
+//                _tilemap->addTile(c, r, Color4::BLUE, true, _assets->get<Texture>("blue"));
+//            }
+        }
+        
+        // Initialize HunterController
+        _hunter = HunterController(_assets, _scene->getSize());
+        _hunter.addChildTo(_scene);
+        _trap = TrapController(_assets, _scene->getSize());
+        _trap.addChildTo(_scene);
+        
+        _tilemap->addDoorTo(_scene);
+        
         _filterTexture = _assets->get<Texture>("filter");
         _filter = scene2::PolygonNode::allocWithTexture(_filterTexture);
         _filter->setPosition(_scene->getCamera()->getPosition());
@@ -257,27 +283,9 @@ void HGameController::checkLevelLoaded() {
         _filter->setPolygon(Rect( Vec2::ZERO, Vec2(1280,720)));
         _scene->addChild(_filter);
         
-        for (int i = 0; i < tiles.size() * tiles[0].size(); ++i){
-            int c = i%tiles[0].size();
-            int r = i/tiles[0].size();
-            
-            if (tiles[r][c] == "red") {
-                _tilemap->addTile(c, r, Color4::RED, true, _assets->get<Texture>("red"));
-                
-            } else if (tiles[r][c] == "black") {
-                _tilemap->addTile(c, r, Color4::BLACK, false, _assets->get<Texture>("black"));
-            } else if (tiles[r][c] == "green") {
-                _tilemap->addTile(c, r, Color4::GREEN, true, _assets->get<Texture>("green"));
-            } else if (tiles[r][c] == "blue") {
-                _tilemap->addTile(c, r, Color4::BLUE, true, _assets->get<Texture>("blue"));
-            }
-        }
-        
-        // Initialize HunterController
-        _hunter = HunterController(_assets, _scene->getSize());
-        _hunter.addChildTo(_scene);
-        _trap = TrapController(_assets, _scene->getSize());
-        _trap.addChildTo(_scene);
+        _timer=12000;
+        _timerLabel= cugl::scene2::Label::allocWithText(Vec2(200,200), "2:00", _assets->get<Font>("pixel32"));
+        _scene->addChild(_timerLabel);
 
         
         

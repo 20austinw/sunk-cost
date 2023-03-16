@@ -33,7 +33,7 @@
         "map":{
             "file": "textures/map.png"
         },
-        "trap":{
+        "trap_animation":{
             "file": "textures/clam_trap.png"
         },
         "door":{

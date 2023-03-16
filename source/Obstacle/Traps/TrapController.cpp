@@ -16,7 +16,6 @@
  */
 
 TrapController::TrapController(const std::shared_ptr<cugl::AssetManager>& assets, Size screenSize) {
-    CULog("Called!");
     _model = std::make_unique<TrapModel>(Vec2(500,600),1000);
     _view = std::make_unique<TrapView>(assets, Vec2(500,600), 20);
     _screenSize = screenSize;

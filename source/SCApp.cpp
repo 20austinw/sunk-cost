@@ -58,8 +58,6 @@ void SCApp::onStartup() {
     _assets->loadDirectoryAsync("json/assets.json", nullptr);
     _assets->loadAsync<LevelModel>(LEVEL_TWO_KEY, LEVEL_TWO_FILE, nullptr);
     
-    _spiritGameplay = SGameController(getDisplaySize(), _assets);
-    
     AudioEngine::start();
     Application::onStartup(); // YOU MUST END with call to parent
 }
@@ -134,6 +132,7 @@ void SCApp::update(float timestep) {
     } else if (!_loaded) {
         _loading.dispose(); // Disables the input listeners in this mode
 //        _hunterGameplay = HGameController(getDisplaySize(), _assets);
+        _spiritGameplay = SGameController(getDisplaySize(), _assets);
         _loaded = true;
     } else {
 //        _hunterGameplay.update(timestep);

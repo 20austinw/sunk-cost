@@ -175,10 +175,6 @@ void HGameController::update(float dt) {
     if (!_trap.getTrigger()){
         _hunter.move(forward,rightward);
     }
-    //trap collision
-    CULog("xPos diff %f", _trap.getPosition().x-_hunter.getPosition().x);
-    CULog("yPos diff %f", _trap.getPosition().y-_hunter.getPosition().y);
-    CULog("age %f", age);
     if(abs(_trap.getPosition().x-_hunter.getPosition().x)<= 80 && abs(_trap.getPosition().y-_hunter.getPosition().y)<= 80 && !age){
         _trap.setTrigger(true);
     }

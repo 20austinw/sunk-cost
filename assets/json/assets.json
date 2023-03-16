@@ -27,9 +27,6 @@
         "trap":{
             "file":  "textures/trap.png"
         },
-        "clamtrap_anim":{
-            "file":  "textures/Clam_trap.png"
-        },
         "filter":{
             "file":  "textures/filter.png"
         },

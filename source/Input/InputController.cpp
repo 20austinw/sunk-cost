@@ -48,7 +48,6 @@ bool InputController::initListeners() {
         _active = true;
     }
     if (_keyboard) {
-        CULog("boolean of KEYY %d", _keyboard);
         _kkey = _keyboard->acquireKey();
         bool addedKey = _keyboard->addKeyDownListener(_kkey,
                                                       [this](const KeyEvent& event, bool focus) {
@@ -75,7 +74,6 @@ bool InputController::initListeners() {
         CUAssertLog(addedRelease, "failed adding release listener");
         _active = true;
     }
-    CULog("tsts in init %f", _active);
     return _active;
 }
 
@@ -84,8 +82,8 @@ std::shared_ptr<InputController> InputController::getInstance() {
     static std::shared_ptr<InputController> inputController;
     if (inputController == nullptr) {
         inputController = std::make_shared<InputController>();
-        inputController->initListeners();
     }
+    inputController->initListeners();
     return inputController;
 }
 
@@ -112,6 +110,7 @@ void InputController::readInput() {
     
   // Movement forward/backward
   Keyboard* keys = Input::get<Keyboard>();
+    
   if(keys){
       if (keys->keyDown(up) && !keys->keyDown(down)) {
         _forward = 1;

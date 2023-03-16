@@ -71,10 +71,13 @@ void SGameController::update(float dt) {
     }
     auto inputController = InputController::getInstance();
     inputController->update(dt);
+    inputController->readInput();
     if (inputController->didPressReset()) {
         reset();
+        CULog("Reset!");
     }
     if(inputController->isKeyPressed(KeyCode::NUM_0)) {
+        CULog("Num 0 pressed!");
         _portraits->setIndex(0);
         std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())->setZoom(1);
     }

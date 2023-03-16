@@ -196,10 +196,10 @@ class PortraitSetController {
     
     void updateBatteryNode(){
         Rect offset = _portraits[_model->getIndex()] -> getViewPort();
-        Vec2 pos = _portraits[_model->getIndex()]->getPosition() + Vec2(offset.size)/2;
+        Vec2 pos = _portraits[_model->getIndex()]->getPosition() + Vec2(offset.size);
         _bound->setPosition(pos);
-        _charge->setPolygon(Rect(0, 0, getCurBattery()*100, 20));
-        _charge->setPosition(pos + Vec2((getCurBattery()*100-100)/2,0));
+        _charge->setPolygon(Rect(0, 0, getCurBattery()*300, 60));
+        _charge->setPosition(pos + Vec2((getCurBattery()*300-300)/2,0));
         if(getCurState()){
             _charge->setColor(Color4::GREEN);
         }else{
@@ -237,9 +237,9 @@ class PortraitSetController {
     }
     
     void initializeBatteryNodes(const std::shared_ptr<cugl::Scene2>& scene){
-        _bound = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 100, 20));
+        _bound = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 300, 60));
         _bound->setColor(Color4::WHITE);
-        _charge = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 100, 20));
+        _charge = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 300, 60));
         _charge->setColor(Color4::GREEN);
         _block = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 4608, 4608));
         _block->setColor(Color4::BLACK);

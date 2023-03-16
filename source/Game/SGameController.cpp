@@ -183,8 +183,9 @@ void SGameController::checkLevelLoaded() {
             //    _map = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 9216, 9216));
             //    _map ->setTexture(_assets->get<Texture>("map"));
         _scene->addChild(_map);
-        _portraits->refreshBatteryNodes(_scene);
         _tilemap->addDoorTo(_scene);
+        _portraits->refreshBatteryNodes(_scene);
+        
         
         _levelLoaded = true;
         _portraits->setMaxbattery(_level->getBattery());

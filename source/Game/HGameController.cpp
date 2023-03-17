@@ -48,7 +48,6 @@ HGameController::HGameController(
   _tilemap = std::make_unique<TilemapController>();
   _tilemap->addChildTo(_scene);
 
-  CULog("%f, %f", displaySize.width, displaySize.height);
   _hunter = HunterController(assets, displaySize);
   _trap = TrapController(assets, displaySize);
 

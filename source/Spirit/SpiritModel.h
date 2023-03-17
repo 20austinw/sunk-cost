@@ -124,7 +124,6 @@ public:
       return;
     _trapModels.emplace_back(std::make_shared<TrapModel>(position, 300));
     auto trap = std::make_shared<TrapView>(_assets, position, 20);
-    CULog("Spawned!");
     _trapViews.emplace_back(trap);
     trap->addChildTo(_scene);
   }

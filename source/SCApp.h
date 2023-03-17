@@ -37,11 +37,11 @@ protected:
         CLIENT
     };
     
+protected:
     /** The global sprite batch for drawing (only want one of these) */
     std::shared_ptr<cugl::SpriteBatch> _batch;
     /** The global asset manager */
     std::shared_ptr<cugl::AssetManager> _assets;
-    
     // Player modes
     /** The primary controller for the hunter game world */
     HGameController _hunterGameplay;
@@ -58,6 +58,7 @@ protected:
     /** The current active scene */
     SCApp::State _scene;
     
+    
 public:
     /**
      * Creates, but does not initialized a new application.
@@ -69,7 +70,6 @@ public:
      * advanced configuration of the application before it starts.
      */
     SCApp() : cugl::Application(), _loaded(false), _scene(State::LOAD) {}
-    
     /**
      * Disposes of this application, releasing all resources.
      *
@@ -78,7 +78,6 @@ public:
      * special to do here.
      */
     ~SCApp() { }
-    
 #pragma mark Application State
     /**
      * The method called after OpenGL is initialized, but before running the
@@ -138,6 +137,9 @@ public:
      *
      * This is your core loop and should be replaced with your custom implementation.
      * This method should contain any code that is not an OpenGL call.
+     * This is your core loop and should be replaced with your custom
+     * implementation. This method should contain any code that is not an OpenGL
+     * call.
      *
      * When overriding this method, you do not need to call the parent method
      * at all. The default implmentation does nothing.
@@ -183,13 +185,14 @@ public:
     /**
      * The method called to draw the application to the screen.
      *
-     * This is your core loop and should be replaced with your custom implementation.
-     * This method should OpenGL and related drawing calls.
+     * This is your core loop and should be replaced with your custom
+     * implementation. This method should OpenGL and related drawing calls.
      *
      * When overriding this method, you do not need to call the parent method
      * at all. The default implmentation does nothing.
      */
     virtual void draw() override;
+    
 };
 
 #endif /* _SC_APP_H__ */

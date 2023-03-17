@@ -24,18 +24,18 @@ using namespace std;
 /**
  * Initializes an Obstacle Model
  */
-bool ObstacleModel::init(float scale, shared_ptr<Texture> &texture, Type type) {
-  PolyFactory pf;
-  switch (type) {
-  case TRAP:
-    PolygonObstacle::init(pf.makeRect(0, 0, TRAP_WIDTH, TRAP_WIDTH / 2));
-    break;
-  case TREASURE:
-    PolygonObstacle::init(
-        pf.makeRect(0, 0, TREASURE_WIDTH, TREASURE_WIDTH / 4));
-    break;
-  }
-  setDebugColor(Color4::RED);
+bool ObstacleModel::init(float scale, shared_ptr<Texture>& texture, Type type) {
+    PolyFactory pf;
+    switch (type) {
+    case TRAP:
+        PolygonObstacle::init(pf.makeRect(0, 0, TRAP_WIDTH, TRAP_WIDTH / 2));
+        break;
+    case TREASURE:
+        PolygonObstacle::init(
+            pf.makeRect(0, 0, TREASURE_WIDTH, TREASURE_WIDTH / 4));
+        break;
+    }
+    setDebugColor(Color4::RED);
 
-  return true;
+    return true;
 }

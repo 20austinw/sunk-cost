@@ -105,28 +105,28 @@
         "textfield" : "widgets/textfield.json",
         "labelbox" : "widgets/labelbox.json"
     },
-  "sounds": {
-    "fusion": {
-      "type": "sample",
-      "file": "sounds/fusion.ogg"
+    "sounds": {
+        "fusion": {
+            "type": "sample",
+            "file": "sounds/fusion.ogg"
+        },
+        "laser": {
+            "type": "sample",
+            "file": "sounds/laser.ogg",
+            "volume": 0.5
+        },
+        "blast": {
+            "type": "sample",
+            "file": "sounds/explode.ogg"
+        },
+        "bang": {
+            "type": "sample",
+            "file": "sounds/bang.ogg",
+            "volume": 0.8
+        }
     },
-    "laser": {
-      "type": "sample",
-      "file": "sounds/laser.ogg",
-      "volume": 0.5
-    },
-    "blast": {
-      "type": "sample",
-      "file": "sounds/explode.ogg"
-    },
-    "bang": {
-      "type": "sample",
-      "file": "sounds/bang.ogg",
-      "volume": 0.8
+    "jsons": {
+        "constants": "json/constants.json",
+        "server": "json/server.json"
     }
-  },
-  "jsons": {
-    "constants": "json/constants.json",
-    "server": "json/server.json"
-  }
 }

@@ -27,6 +27,15 @@ SGameController::SGameController(
     const Size displaySize, const std::shared_ptr<cugl::AssetManager> &assets)
 : _scene(cugl::Scene2::alloc(displaySize)), _assets(assets) {
     /// Initialize the tilemap and add it to the scene
+
+    _scene = cugl::Scene2::alloc(displaySize);
+    std::shared_ptr<scene2::PolygonNode> background =
+        scene2::PolygonNode::allocWithPoly(cugl::Rect(0, 0, 20000, 20000));
+    background->setColor(Color4::BLACK);
+    background->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    background->setPosition(-1 * Size(9000, 9000) / 2);
+    _scene->addChild(background);
+
     _tilemap = std::make_shared<TilemapController>();
     _tilemap->addChildTo(_scene);
     // Initialize PortraitSetController
@@ -153,61 +162,54 @@ SGameController::SGameController(
                                              //    CULog("%f", battery);
                                          }
     
-    void SGameController::checkLevelLoaded() {
-        _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
-        if (_level == nullptr) {
-            _levelLoaded = false;
-        }
+void SGameController::checkLevelLoaded() {
+    _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
+    if (_level == nullptr) {
+        _levelLoaded = false;
+    }
+    
+    // Check to see if new level loaded yet
+    if (!_levelLoaded && _assets->complete()) {
+        _level = nullptr;
         
-        // Check to see if new level loaded yet
-        if (!_levelLoaded && _assets->complete()) {
-            _level = nullptr;
-            
-            // Access and initialize level
-            _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
-            _level->setAssets(_assets);
-            
-            CULog("Loading level!");
-            
-            // TODO: implement direction and direction limits
-            for (int i = 0; i < _level->getPortaits().size(); i++) {
-                Vec3 pos(_level->getPortaits()[i].x, _level->getPortaits()[i].y, 0);
-                _portraits->addPortrait(i + 1, pos, Vec3(0, 0, -1), Vec2::ZERO,
-                                        _level->getBattery());
-                // CULog("%f, %f", _level->getPortaits()[i].x,
-                // _level->getPortaits()[i].y);
+        // Access and initialize level
+        _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
+        _level->setAssets(_assets);
+        
+        
+        CULog("Loading level!");
+        
+        _tilemap->updatePosition(_scene->getSize() / 2);
+        std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
+        _tilemap->updateDimensions(Vec2(tiles[0].size(), tiles.size()));
+        _tilemap->updateColor(Color4::BLACK);
+        _tilemap->updateTileSize(Size(256, 256));
+        for (int i = 0; i < tiles.size() * tiles[0].size(); ++i) {
+            int c = i % tiles[0].size();
+            int r = i / tiles[0].size();
+            if (tiles[r][c] == "black") {
+                _tilemap->addTile(c, r, Color4::BLACK, false,
+                                  _assets->get<Texture>("black"));
+            } else if (tiles[r][c] == "green") {
+                _tilemap->addTile(c, r, Color4::GREEN, true,
+                                  _assets->get<Texture>("green"));
+            } else if (tiles[r][c] == "door") {
+                _tilemap->addDoor(c, r, _assets->get<Texture>("fulldoor"));
+                
+                _map = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
+                _map->setPolygon(Rect(0, 0, 4608, 4608));
+                //    _map = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 9216, 9216));
+                //    _map ->setTexture(_assets->get<Texture>("map"));
+                _scene->addChild(_map);
+                _tilemap->addDoorTo(_scene);
+                _portraits->refreshBatteryNodes(_scene);
+                
+                _levelLoaded = true;
+                _portraits->setMaxbattery(_level->getBattery());
             }
-            _tilemap->updatePosition(_scene->getSize() / 2);
-            std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
-            _tilemap->updateDimensions(Vec2(tiles[0].size(), tiles.size()));
-            _tilemap->updateColor(Color4::WHITE);
-            _tilemap->updateTileSize(Size(256, 256));
-            for (int i = 0; i < tiles.size() * tiles[0].size(); ++i) {
-                int c = i % tiles[0].size();
-                int r = i / tiles[0].size();
-                if (tiles[r][c] == "black") {
-                    _tilemap->addTile(c, r, Color4::BLACK, false,
-                                      _assets->get<Texture>("black"));
-                } else if (tiles[r][c] == "green") {
-                    _tilemap->addTile(c, r, Color4::GREEN, true,
-                                      _assets->get<Texture>("green"));
-                } else if (tiles[r][c] == "door") {
-                    _tilemap->addDoor(c, r, _assets->get<Texture>("fulldoor"));
-                }
-            }
-            
-            _map = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
-            _map->setPolygon(Rect(0, 0, 4608, 4608));
-            //    _map = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 9216, 9216));
-            //    _map ->setTexture(_assets->get<Texture>("map"));
-            _scene->addChild(_map);
-            _tilemap->addDoorTo(_scene);
-            _portraits->refreshBatteryNodes(_scene);
-            
-            _levelLoaded = true;
-            _portraits->setMaxbattery(_level->getBattery());
         }
     }
+}
     
     void SGameController::generateLevel() {
         _tilemap->updateDimensions(_level->getDimensions());

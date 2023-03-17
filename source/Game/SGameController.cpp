@@ -39,7 +39,6 @@ SGameController::SGameController(
     // Initialize PortraitSetController
     _portraits = std::make_shared<PortraitSetController>(_assets, _scene, 0,
                                                          displaySize);
-    _portraits->initializeBatteryNodes(_scene);
 
     // Initialize HunterController
     //        _hunter.updatePosition(_level->getPlayerPosition());
@@ -51,7 +50,6 @@ SGameController::SGameController(
         _levelLoaded = false;
         CULog("Fail!");
     }
-    _prevState = true;
 }
 
 #pragma mark Gameplay Handling
@@ -81,51 +79,68 @@ void SGameController::update(float dt) {
         reset();
         CULog("Reset!");
     }
-    if (inputController->isKeyPressed(KeyCode::NUM_0)) {
-        CULog("Num 0 pressed!");
-        _portraits->setIndex(0);
-        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.15);
+    
+    
+    if(inputController->isKeyPressed(KeyCode::NUM_0)) {
+        if (_spirit.isSwitchable() && _portraits->getIndex() != 0){
+            _portraits->setIndex(0);
+            std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+                ->setZoom(0.15);
+            _spirit.resetCameraCool();
+        }
+    } else if(inputController->isKeyPressed(KeyCode::NUM_1)) {
+        if (_spirit.isSwitchable() && _portraits->getIndex() != 1){
+            _portraits->setIndex(1);
+            std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+                ->setZoom(0.4);
+            _spirit.resetCameraCool();
+        }
+    } else if(inputController->isKeyPressed(KeyCode::NUM_2)) {
+        if (_spirit.isSwitchable() && _portraits->getIndex() != 2){
+            _portraits->setIndex(2);
+            std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+                ->setZoom(0.4);
+            _spirit.resetCameraCool();
+        }
+    } else if(inputController->isKeyPressed(KeyCode::NUM_3)) {
+        if (_spirit.isSwitchable() && _portraits->getIndex() != 3){
+            _portraits->setIndex(3);
+            std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+                ->setZoom(0.4);
+            _spirit.resetCameraCool();
+        }
+    } else if(inputController->isKeyPressed(KeyCode::NUM_4)) {
+        if (_spirit.isSwitchable() && _portraits->getIndex() != 4){
+            _portraits->setIndex(4);
+            std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+                ->setZoom(0.4);
+            _spirit.resetCameraCool();
+        }
+    } else if(inputController->isKeyPressed(KeyCode::NUM_5)) {
+        if (_spirit.isSwitchable() && _portraits->getIndex() != 5){
+            _portraits->setIndex(5);
+            std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+                ->setZoom(0.4);
+            _spirit.resetCameraCool();
+        }
+    } else {
+        _spirit.decreaseCameraCool();
     }
-    if (inputController->isKeyPressed(KeyCode::NUM_1)) {
-        _portraits->setIndex(1);
-        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.4);
-    }
-    if (inputController->isKeyPressed(KeyCode::NUM_2)) {
-        _portraits->setIndex(2);
-        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.4);
-    }
-    if (inputController->isKeyPressed(KeyCode::NUM_3)) {
-        _portraits->setIndex(3);
-        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.4);
-    }
-    if (inputController->isKeyPressed(KeyCode::NUM_4)) {
-        _portraits->setIndex(4);
-        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.4);
-    }
-    if (inputController->isKeyPressed(KeyCode::NUM_5)) {
-        _portraits->setIndex(5);
-        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.4);
-    }
+    
     Vec3 offset = Vec3(_assets->get<Texture>("map")->getSize() / 2);
     _scene->getCamera()->setPosition(
         _portraits->getPosition(_portraits->getIndex()) + offset);
     _portraits->updateBattery();
-    _portraits->updateBatteryNode();
+    _portraits->updateBatteryNode(offset, _scene);
     _scene->getCamera()->update();
 
-    if (!_portraits->getCurState() && _prevState) {
+    if (!_portraits->getCurState() && _portraits->getPrevState()) {
         _portraits->addBlock(_scene);
         _portraits->refreshBatteryNodes(_scene);
-    } else if (_portraits->getCurState() && !_prevState) {
+    } else if (_portraits->getCurState() && !_portraits->getPrevState()) {
         _portraits->removeBlock(_scene);
     }
-    _prevState = _portraits->getCurState();
+    _portraits->setPrevState(_portraits->getCurState());
     // CULog("%f, %f, %f", _scene->getCamera()->getPosition().x,
     // _scene->getCamera()->getPosition().y,
     // _scene->getCamera()->getPosition().z);
@@ -197,8 +212,6 @@ void SGameController::checkLevelLoaded() {
         _map =
             scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
         _map->setPolygon(Rect(0, 0, 4608, 4608));
-        //    _map = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 9216, 9216));
-        //    _map ->setTexture(_assets->get<Texture>("map"));
         _scene->addChild(_map);
         _tilemap->addDoorTo(_scene);
         for (int i = 0; i < _level->getPortaits().size(); i++) {
@@ -206,13 +219,13 @@ void SGameController::checkLevelLoaded() {
                                     _level->getPortaits()[i].second,
                                     Vec3(0, 0, -1), Vec2::ZERO,
                                     _level->getBattery());
-            // CULog("%f, %f", _level->getPortaits()[i].x,
-            // _level->getPortaits()[i].y);
         }
-        _portraits->refreshBatteryNodes(_scene);
 
         _levelLoaded = true;
         _portraits->setMaxbattery(_level->getBattery());
+        
+        _portraits->initalizeSheets(_assets->get<Texture>("greenBattery"), _assets->get<Texture>("redBattery"));
+        _portraits->initializeBatteryNodes(_scene);
     }
 }
 

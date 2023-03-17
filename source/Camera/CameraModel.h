@@ -27,7 +27,7 @@ class CameraModel {
     /** Camera ID, for ordering purpose in Portrait Set */
     int _id;
     /** Camera battery*/
-    int _battery;
+    float _battery;
     /** Current state of the camera; true: functioning; false: charging*/
     bool _state;
 
@@ -40,7 +40,7 @@ class CameraModel {
     /** A public accessible, read-only version of the camera id */
     int& id;
     /** Camera battery*/
-    int& battery;
+    float& battery;
     /** Camera state*/
     bool& state;
 
@@ -77,7 +77,7 @@ class CameraModel {
     /**
      * Setter for camera battery
      */
-    void setBattery(int battery) { _battery = battery; }
+    void setBattery(float battery) { _battery = battery; }
 
     /**
      * Setter for camera type

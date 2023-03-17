@@ -26,6 +26,7 @@ SpiritController::SpiritController(
     _view = std::make_unique<SpiritView>();
     _portraits = portraits;
     _screenSize = screenSize;
+    _cameraCool = CAMERA_COOL;
 }
 
 /**

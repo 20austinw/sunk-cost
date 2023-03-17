@@ -47,8 +47,13 @@
         },
         "shadow": {
             "file": "textures/diver_shadow.png"
+        },
+        "greenBattery":{
+                    "file": "textures/greenBattery.png"
+                },
+        "redBattery":{
+            "file": "textures/redBattery.png"
         }
-
     },
     "fonts": {
         "pixel32": {

@@ -1,79 +1,82 @@
 {
-	"textures": {
-		"background": {
-            "file":  "textures/black.png"
+    "textures": {
+        "background": {
+            "file": "textures/black.png"
         },
         "red": {
-            "file":  "textures/red.png"
+            "file": "textures/red.png"
         },
         "black": {
-            "file":  "textures/black.png"
+            "file": "textures/black.png"
         },
         "green": {
-            "file":  "textures/green.png"
+            "file": "textures/green.png"
         },
         "blue": {
-            "file":  "textures/blue.png"
+            "file": "textures/blue.png"
         },
-        "hunter":{
-            "file":  "textures/hunter.png"
+        "hunter": {
+            "file": "textures/hunter.png"
         },
-        "hunterrunning":{
-            "file":  "textures/diver_walking_animation.png"
+        "hunterrunning": {
+            "file": "textures/diver_walking_animation.png"
         },
-        "hunterleft":{
-            "file":  "textures/diver_walking_animation_L.png"
+        "hunterleft": {
+            "file": "textures/diver_walking_animation_L.png"
         },
-        "trap":{
-            "file":  "textures/trap.png"
+        "trap": {
+            "file": "textures/trap.png"
         },
-        "filter":{
-            "file":  "textures/filter.png"
+        "filter": {
+            "file": "textures/filter.png"
         },
-        "map":{
+        "map": {
             "file": "textures/map.png"
         },
-        "trap_animation":{
+        "trap_animation": {
             "file": "textures/clam_trap.png"
         },
-        "door":{
+        "door": {
             "file": "textures/door.png"
         },
-        "fulldoor":{
+        "fulldoor": {
             "file": "textures/full_door.png"
         },
-        "painting_animation":{
+        "painting_animation": {
             "file": "textures/live_painting.png"
+        },
+        "shadow": {
+            "file": "textures/diver_shadow.png"
         }
-        
-	},
+
+    },
     "fonts": {
         "pixel32": {
-            "file":     "fonts/LightPixel7.ttf",
-            "size":     32
+            "file": "fonts/LightPixel7.ttf",
+            "size": 32
         }
     },
-    "sounds" : {
-        "fusion" : {
+    "sounds": {
+        "fusion": {
             "type": "sample",
             "file": "sounds/fusion.ogg"
         },
-        "laser" : {
+        "laser": {
             "type": "sample",
             "file": "sounds/laser.ogg",
             "volume": 0.5
         },
-        "blast" : {
+        "blast": {
             "type": "sample",
             "file": "sounds/explode.ogg"
         },
-        "bang" : {
+        "bang": {
             "type": "sample",
             "file": "sounds/bang.ogg",
             "volume": 0.8
         }
     },
-    "jsons" : {
-        "constants" : "json/constants.json"
+    "jsons": {
+        "constants": "json/constants.json"
     }
 }

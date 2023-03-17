@@ -14,11 +14,11 @@ using namespace cugl;
 
 class SpiritView {
 #pragma mark Internal References
-private:
+  private:
     std::shared_ptr<scene2::PolygonNode> _node;
 
 #pragma mark Main Functions
-public:
+  public:
     /**
      * TODO: Implement Me
      * Creates the view.
@@ -30,17 +30,13 @@ public:
      * @param size The width and height of a tile
      * @param color The tile color tint
      */
-    SpiritView(){
-    };
-    
-    
+    SpiritView(){};
+
     /** Deletes this HunterView */
-    ~SpiritView() {
-        _node->removeFromParent();
-    }
-    
+    ~SpiritView() { _node->removeFromParent(); }
+
 #pragma mark Scene Methods
-public:
+  public:
     /**
      * Adds the view components as children to the given `sceneNode`.
      *
@@ -49,7 +45,7 @@ public:
     void addChildTo(const std::shared_ptr<scene2::SceneNode>& sceneNode) {
         sceneNode->addChild(_node);
     }
-    
+
     /**
      * Removes the view component children from the given `sceneNode`.
      *
@@ -58,9 +54,8 @@ public:
     void removeChildFrom(const std::shared_ptr<scene2::SceneNode>& sceneNode) {
         sceneNode->removeChild(_node);
     }
-    
+
 #pragma mark Setters
-    
 };
 
 #endif /* _SPIRIT_VIEW_H__ */

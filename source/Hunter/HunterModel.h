@@ -15,7 +15,7 @@ using namespace cugl;
 
 class HunterModel {
 #pragma mark State
-private:
+  private:
     /** Position of the hunter */
     cugl::Vec2 _position;
     /** Direction the hunter is facing */
@@ -24,8 +24,8 @@ private:
     float _speed;
     /** Cooldown time for hiding */
     float _hideCool;
-    
-public:
+
+  public:
     /** A public accessible, read-only version of the  hunter position */
     cugl::Vec2& position;
     /** A public accessible, read-only version of the  hunter direction  */
@@ -34,9 +34,9 @@ public:
     float& speed;
     /** A public accessible, read-only version of the hiding cooldown */
     float& hideCool;
-    
+
 #pragma mark Main Functions
-public:
+  public:
     /**
      * Constructor for the hunter model
      *
@@ -44,67 +44,53 @@ public:
      * @param direction the hunter's direction
      * @param speed the hunter's movement speed
      */
-    HunterModel() :
-    position(_position),
-    direction(_direction),
-    speed(_speed),
-    hideCool(_hideCool) {
+    HunterModel()
+        : position(_position), direction(_direction), speed(_speed),
+          hideCool(_hideCool) {
         setPosition(position);
         setDirection(direction);
         setSpeed(0);
         setHideCooldown(0);
     }
-    
+
 #pragma mark Getters
-public:
+  public:
     /**
      * Updates  position of the hunter
      *
      * @param position  hunter's new position
      */
-    Vec2 getPosition() {
-        return _position;
-    }
+    Vec2 getPosition() { return _position; }
 
 #pragma mark Setters
-public:
+  public:
     /**
      * Sets position for this hunter
      *
      * @param position hunter position
      */
-    void setPosition(cugl::Vec2 position) {
-        _position = position;
-    }
-    
+    void setPosition(cugl::Vec2 position) { _position = position; }
+
     /**
      * Sets direction for this hunter
      *
      * @param direction hunter direction
      */
-    void setDirection(cugl::Vec2 direction) {
-        _direction = direction;
-    }
-    
+    void setDirection(cugl::Vec2 direction) { _direction = direction; }
+
     /**
      * Sets speed for this hunter
      *
      * @param speed hunter movement speed
      */
-    void setSpeed(float speed) {
-        _speed = speed;
-    }
-    
+    void setSpeed(float speed) { _speed = speed; }
+
     /**
      * Sets cooldown time for hiding
      *
      * @param hideCool cooldown time for hiding
      */
-    void setHideCooldown(float hideCool) {
-        _hideCool = hideCool;
-    }
-    
+    void setHideCooldown(float hideCool) { _hideCool = hideCool; }
 };
-
 
 #endif /* _HUNTER_MODEL_H__ */

@@ -18,41 +18,39 @@
 #define __SL_LOADING_SCENE_H__
 #include <cugl/cugl.h>
 
-
 /**
  * This class is a simple loading screen for asychronous asset loading.
  *
  * The screen will display a very minimal progress bar that displays the
  * status of the asset manager.  Make sure that all asychronous load requests
  * are issued BEFORE calling update for the first time, or else this screen
- * will think that asset loading is complete. 
+ * will think that asset loading is complete.
  *
  * Once asset loading is completed, it will display a play button.  Clicking
  * this button will inform the application root to switch to the gameplay mode.
  */
 class LoadingScene : public cugl::Scene2 {
-protected:
+  protected:
     /** The asset manager for loading. */
     std::shared_ptr<cugl::AssetManager> _assets;
 
     // NO CONTROLLER (ALL IN SEPARATE THREAD)
-    
+
     // VIEW
     /** The animated progress bar */
-    std::shared_ptr<cugl::scene2::ProgressBar>  _bar;
+    std::shared_ptr<cugl::scene2::ProgressBar> _bar;
     /** The engine name */
-    std::shared_ptr<cugl::scene2::SceneNode>  _brand;
+    std::shared_ptr<cugl::scene2::SceneNode> _brand;
     /** The "play" button */
-    std::shared_ptr<cugl::scene2::Button>    _button;
+    std::shared_ptr<cugl::scene2::Button> _button;
 
     // MODEL
     /** The progress displayed on the screen */
     float _progress;
     /** Whether or not the player has pressed play to continue */
-    bool  _completed;
+    bool _completed;
 
-    
-public:
+  public:
 #pragma mark -
 #pragma mark Constructors
     /**
@@ -62,7 +60,7 @@ public:
      * This allows us to use the object without a heap pointer.
      */
     LoadingScene() : cugl::Scene2(), _progress(0.0f) {}
-    
+
     /**
      * Disposes of all (non-static) resources allocated to this mode.
      *
@@ -70,12 +68,12 @@ public:
      * static resources, like the input controller.
      */
     ~LoadingScene() { dispose(); }
-    
+
     /**
      * Disposes of all (non-static) resources allocated to this mode.
      */
     void dispose();
-    
+
     /**
      * Initializes the controller contents, making it ready for loading
      *
@@ -89,7 +87,6 @@ public:
      */
     bool init(const std::shared_ptr<cugl::AssetManager>& assets);
 
-    
 #pragma mark -
 #pragma mark Progress Monitoring
     /**
@@ -106,7 +103,7 @@ public:
      *
      * @return true if loading is complete, but the player has not pressed play
      */
-    bool isPending( ) const;
+    bool isPending() const;
 };
 
 #endif /* __SL_LOADING_SCENE_H__ */

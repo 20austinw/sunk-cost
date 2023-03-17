@@ -11,31 +11,31 @@
 #ifndef _SPIRIT_CONTROLLER_H
 #define _SPIRIT_CONTROLLER_H
 
-#include <cugl/cugl.h>
+#include "../Camera/PortraitSetController.h"
+#include "InputController.h"
 #include "SpiritModel.h"
 #include "SpiritView.h"
-#include "InputController.h"
 #include "TilemapController.h"
-#include "../Camera/PortraitSetController.h"
+#include <cugl/cugl.h>
 
 using namespace cugl;
 
 /** TODO: Implement Me */
 class SpiritController {
-  #pragma mark Internal References
+#pragma mark Internal References
   private:
     /** The model for Spirit */
     std::unique_ptr<SpiritModel> _model;
     std::unique_ptr<SpiritView> _view;
 
-  #pragma mark External References
+#pragma mark External References
   private:
     /** The set of accessible portraits */
     std::shared_ptr<PortraitSetController> _portraits;
     Size _screenSize;
     std::shared_ptr<cugl::Scene2> _scene;
 
-  #pragma mark Constants
+#pragma mark Constants
   private:
     /** The preset cooltime for cameras */
     float _cameraCool;
@@ -44,18 +44,22 @@ class SpiritController {
     /** The preset cooltime for close doors */
     float _doorCool;
 
-  #pragma mark Main Functions
+#pragma mark Main Functions
   public:
     /**
      * TODO: Implement Me
-     * The Constructor should set up the preset cooltimes as well as all other class variables.
+     * The Constructor should set up the preset cooltimes as well as all other
+     * class variables.
      */
     SpiritController();
-    
+
     /**
      * Constructor to initialize SpiritController with PortraitSetController
      */
-    SpiritController(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<cugl::Scene2> scene, std::shared_ptr<PortraitSetController> portraits, Size screenSize);
+    SpiritController(const std::shared_ptr<cugl::AssetManager>& assets,
+                     std::shared_ptr<cugl::Scene2> scene,
+                     std::shared_ptr<PortraitSetController> portraits,
+                     Size screenSize);
 
     /**
      * TODO: Implement Me (Not for Gameplay Prototype)
@@ -72,9 +76,7 @@ class SpiritController {
      *
      * @return rectangle that should be drawn
      */
-    const Rect getCameraView() {
-      return _portraits->getViewPortrait();
-    };
+    const Rect getCameraView() { return _portraits->getViewPortrait(); };
 
     /**
      * TODO: Implement Me
@@ -92,34 +94,28 @@ class SpiritController {
      */
     void update(const std::shared_ptr<TilemapController> _tilemap);
 
-  #pragma mark Setters
+#pragma mark Setters
   public:
     /**
      * Updates the number of clams available.
      *
      * @param clams the number of clams
      */
-    void updateClams(float clams) {
-      _model->setClams(clams);
-    }
+    void updateClams(float clams) { _model->setClams(clams); }
 
     /**
      * Updates the number of close doors available.
      *
      * @param doors the number of close doors available
      */
-    void updateDoors(float doors) {
-      _model->setDoors(doors);
-    }
+    void updateDoors(float doors) { _model->setDoors(doors); }
 
     /**
      * Updates available energy
      *
      * @param energy the energy level available
      */
-    void updateEnergy(float energy) {
-      _model->setEnergy(energy);
-    }
+    void updateEnergy(float energy) { _model->setEnergy(energy); }
 
     /**
      * Updates remaining camera cooldown time for this spirit
@@ -127,7 +123,7 @@ class SpiritController {
      * @param cameraCool the new remaining cooltime
      */
     void updateCameraCoolDown(float cameraCool) {
-      _model->setCameraCooldown(cameraCool);
+        _model->setCameraCooldown(cameraCool);
     }
 
     /**
@@ -136,7 +132,7 @@ class SpiritController {
      * @param clamCool the new remaining cooltime
      */
     void updateClamCooldown(float clamCool) {
-      _model->setClamCooldown(clamCool);
+        _model->setClamCooldown(clamCool);
     }
 
     /**
@@ -145,11 +141,11 @@ class SpiritController {
      * @param doorCool the new remaining cooltime
      */
     void updateDoorCooldown(float doorCool) {
-      _model->setDoorCooldown(doorCool);
+        _model->setDoorCooldown(doorCool);
     }
-    
+
 #pragma mark Helpers
-public:
+  public:
     Rect screenToWorld(Rect rect);
 };
 

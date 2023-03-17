@@ -10,25 +10,27 @@
 
 #include <stdio.h>
 
-#include <cugl/cugl.h>
 #include "TrapModel.hpp"
 #include "TrapView.h"
+#include <cugl/cugl.h>
 
 using namespace cugl;
 
-class TrapController{
+class TrapController {
 #pragma mark Internal References
-private:
+  private:
     /** Model reference */
     std::unique_ptr<TrapModel> _model;
     /** View reference */
     std::unique_ptr<TrapView> _view;
     Size _screenSize;
-public:
-    TrapController() {};
-    
-    TrapController(const std::shared_ptr<cugl::AssetManager>& assets, Size screenSize);
-    
+
+  public:
+    TrapController(){};
+
+    TrapController(const std::shared_ptr<cugl::AssetManager>& assets,
+                   Size screenSize);
+
     std::unique_ptr<TrapModel> getModel();
     void setViewFrame();
     Vec2 getPosition();
@@ -38,11 +40,6 @@ public:
     bool getTrigger();
     void addChildTo(const std::shared_ptr<cugl::Scene2>& scene);
     void removeChildFrom(const std::shared_ptr<cugl::Scene2>& scene);
-    
-    
 };
-
-
-
 
 #endif /* TrapController_hpp */

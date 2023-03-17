@@ -42,8 +42,6 @@ class PortraitView {
         _spriteNode->setScale(1);
         _spriteNode->setFrame(_frameNum);
         _spriteNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-        CULog("%f, %f", _spriteNode->getSize().width,
-              _spriteNode->getSize().height);
         _spriteNode->setPosition(position);
         _spriteNode->setVisible(true);
     };

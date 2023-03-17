@@ -22,7 +22,8 @@
 //      2. Altered source versions must be plainly marked as such, and must not
 //      be misrepresented as being the original software.
 //
-//      3. This notice may not be removed or altered from any source distribution.
+//      3. This notice may not be removed or altered from any source
+//      distribution.
 //
 //  Author: Walker White
 //  Version: 1/20/22
@@ -41,28 +42,29 @@ using namespace cugl;
  *
  * @return the exit status of the application
  */
-int main(int argc, char * argv[]) {
-    // Change this to your application class
-    SCApp app;
-    
-    // Set the properties of your application
-    app.setName("Sunk Cost");
-    app.setOrganization("Risky Biscuitz");
-    app.setHighDPI(true);
-    app.setFPS(60.0f);
+int main(int argc, char *argv[]) {
+  // Change this to your application class
+  SCApp app;
 
-    // VARY THIS TO TRY OUT YOUR SCENE GRAPH
-    app.setDisplaySize(1280, 720); // 16x9,  Android phones, PC Gaming
+  // Set the properties of your application
+  app.setName("Sunk Cost");
+  app.setOrganization("Risky Biscuitz");
+  app.setHighDPI(true);
+  app.setFPS(60.0f);
 
-    /// DO NOT MODIFY ANYTHING BELOW THIS LINE
-    if (!app.init()) {
-        return 1;
-    }
-    
-    app.onStartup();
-    while (app.step());
-    app.onShutdown();
+  // VARY THIS TO TRY OUT YOUR SCENE GRAPH
+  app.setDisplaySize(1280, 720); // 16x9,  Android phones, PC Gaming
 
-    exit(0);    // Necessary to quit on mobile devices
-    return 0;   // This line is never reached
+  /// DO NOT MODIFY ANYTHING BELOW THIS LINE
+  if (!app.init()) {
+    return 1;
+  }
+
+  app.onStartup();
+  while (app.step())
+    ;
+  app.onShutdown();
+
+  exit(0);  // Necessary to quit on mobile devices
+  return 0; // This line is never reached
 }

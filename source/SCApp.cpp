@@ -21,7 +21,8 @@ using namespace cugl;
 #pragma mark Gameplay Control
 
 /**
- * The method called after OpenGL is initialized, but before running the application.
+ * The method called after OpenGL is initialized, but before running the
+ * application.
  *
  * This is the method in which all user-defined program intialization should
  * take place.  You should not create a new init() method.
@@ -31,35 +32,35 @@ using namespace cugl;
  * causing the application to run.
  */
 void SCApp::onStartup() {
-    _assets = AssetManager::alloc();
-    _batch  = SpriteBatch::alloc();
-//#ifdef CU_TOUCH_SCREEN
-//    // Start-up basic input for loading screen (MOBILE ONLY)
-//    Input::activate<Touchscreen>();
-//#else
-//    // Start-up basic input for loading screen (DESKTOP ONLY)
-    Input::activate<Mouse>();
-    Input::activate<Keyboard>();
-//#endif
-   
-    
-    _assets->attach<Texture>(TextureLoader::alloc()->getHook());
-    _assets->attach<Sound>(SoundLoader::alloc()->getHook());
-    _assets->attach<Font>(FontLoader::alloc()->getHook());
-    _assets->attach<JsonValue>(JsonLoader::alloc()->getHook());
-    _assets->attach<scene2::SceneNode>(Scene2Loader::alloc()->getHook()); // Needed for loading screen
-    _assets->attach<LevelModel>(GenericLoader<LevelModel>::alloc()->getHook());
+  _assets = AssetManager::alloc();
+  _batch = SpriteBatch::alloc();
+  //#ifdef CU_TOUCH_SCREEN
+  //    // Start-up basic input for loading screen (MOBILE ONLY)
+  //    Input::activate<Touchscreen>();
+  //#else
+  //    // Start-up basic input for loading screen (DESKTOP ONLY)
+  Input::activate<Mouse>();
+  Input::activate<Keyboard>();
+  //#endif
 
-    // Create a "loading" screen
-    _loaded = false;
-    _loading.init(_assets);
-    
-    // Queue up the other assets
-    _assets->loadDirectoryAsync("json/assets.json", nullptr);
-    _assets->loadAsync<LevelModel>(LEVEL_TWO_KEY, LEVEL_TWO_FILE, nullptr);
-    
-    AudioEngine::start();
-    Application::onStartup(); // YOU MUST END with call to parent
+  _assets->attach<Texture>(TextureLoader::alloc()->getHook());
+  _assets->attach<Sound>(SoundLoader::alloc()->getHook());
+  _assets->attach<Font>(FontLoader::alloc()->getHook());
+  _assets->attach<JsonValue>(JsonLoader::alloc()->getHook());
+  _assets->attach<scene2::SceneNode>(
+      Scene2Loader::alloc()->getHook()); // Needed for loading screen
+  _assets->attach<LevelModel>(GenericLoader<LevelModel>::alloc()->getHook());
+
+  // Create a "loading" screen
+  _loaded = false;
+  _loading.init(_assets);
+
+  // Queue up the other assets
+  _assets->loadDirectoryAsync("json/assets.json", nullptr);
+  _assets->loadAsync<LevelModel>(LEVEL_TWO_KEY, LEVEL_TWO_FILE, nullptr);
+
+  AudioEngine::start();
+  Application::onStartup(); // YOU MUST END with call to parent
 }
 
 /**
@@ -74,20 +75,21 @@ void SCApp::onStartup() {
  * causing the application to be deleted.
  */
 void SCApp::onShutdown() {
-    _loading.dispose();
-    _assets = nullptr;
-    _batch = nullptr;
+  _loading.dispose();
+  _assets = nullptr;
+  _batch = nullptr;
 
-    // Shutdown input
-    Input::deactivate<Keyboard>();
-    Input::deactivate<Mouse>();
+  // Shutdown input
+  Input::deactivate<Keyboard>();
+  Input::deactivate<Mouse>();
 
-    AudioEngine::stop();
-    Application::onShutdown();  // YOU MUST END with call to parent
+  AudioEngine::stop();
+  Application::onShutdown(); // YOU MUST END with call to parent
 }
 
 /**
- * The method called when the application is suspended and put in the background.
+ * The method called when the application is suspended and put in the
+ * background.
  *
  * When this method is called, you should store any state that you do not
  * want to be lost.  There is no guarantee that an application will return
@@ -97,9 +99,7 @@ void SCApp::onShutdown() {
  * Otherwise, the audio thread may persist while the application is in
  * the background.
  */
-void SCApp::onSuspend() {
-    AudioEngine::get()->pause();
-}
+void SCApp::onSuspend() { AudioEngine::get()->pause(); }
 
 /**
  * The method called when the application resumes and put in the foreground.
@@ -111,15 +111,14 @@ void SCApp::onSuspend() {
  * If you are using audio, you should use this method to resume any audio
  * paused before app suspension.
  */
-void SCApp::onResume() {
-    AudioEngine::get()->resume();
-}
+void SCApp::onResume() { AudioEngine::get()->resume(); }
 
 /**
  * The method called to update the application data.
  *
- * This is your core loop and should be replaced with your custom implementation.
- * This method should contain any code that is not an OpenGL call.
+ * This is your core loop and should be replaced with your custom
+ * implementation. This method should contain any code that is not an OpenGL
+ * call.
  *
  * When overriding this method, you do not need to call the parent method
  * at all. The default implmentation does nothing.
@@ -127,35 +126,33 @@ void SCApp::onResume() {
  * @param timestep  The amount of time (in seconds) since the last frame
  */
 void SCApp::update(float timestep) {
-    if (!_loaded && _loading.isActive()) {
-        _loading.update(0.01f);
-    } else if (!_loaded) {
-        _loading.dispose(); // Disables the input listeners in this mode
-//        _hunterGameplay = HGameController(getDisplaySize(), _assets);
-        _spiritGameplay = SGameController(getDisplaySize(), _assets);
-        _loaded = true;
-    } else {
-//        _hunterGameplay.update(timestep);
-        _spiritGameplay.update(timestep);
-    }
+  if (!_loaded && _loading.isActive()) {
+    _loading.update(0.01f);
+  } else if (!_loaded) {
+    _loading.dispose(); // Disables the input listeners in this mode
+    //        _hunterGameplay = HGameController(getDisplaySize(), _assets);
+    _spiritGameplay = SGameController(getDisplaySize(), _assets);
+    _loaded = true;
+  } else {
+    //        _hunterGameplay.update(timestep);
+    _spiritGameplay.update(timestep);
+  }
 }
 
 /**
  * The method called to draw the application to the screen.
  *
- * This is your core loop and should be replaced with your custom implementation.
- * This method should OpenGL and related drawing calls.
+ * This is your core loop and should be replaced with your custom
+ * implementation. This method should OpenGL and related drawing calls.
  *
  * When overriding this method, you do not need to call the parent method
  * at all. The default implmentation does nothing.
  */
 void SCApp::draw() {
-    if (!_loaded) {
-        _loading.render(_batch);
-    } else {
-//        _hunterGameplay.render(_batch);
-        _spiritGameplay.render(_batch);
-    }
+  if (!_loaded) {
+    _loading.render(_batch);
+  } else {
+    //        _hunterGameplay.render(_batch);
+    _spiritGameplay.render(_batch);
+  }
 }
-
-

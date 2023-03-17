@@ -78,8 +78,7 @@ class PortraitSetController {
      * default camera is camera that is viewing a black screen
      */
     void addPortrait(int id, Vec3 cameraPosition, Vec3 portraitPosition,
-                     Vec3 direction, Vec2 directionLimits, float battery = 600,
-                     int type = 2) {
+                     Vec3 direction, Vec2 directionLimits, float battery = 600,                     int type = 2) {
         _portraits.push_back(makePortrait(id, cameraPosition, portraitPosition,
                                           direction, directionLimits, battery,
                                           type));

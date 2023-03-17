@@ -222,6 +222,7 @@ void SGameController::checkLevelLoaded() {
         _map =
             scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
         _map->setPolygon(Rect(0, 0, 4608, 4608));
+
         _scene->addChild(_map);
         _miniMap = scene2::PolygonNode::allocWithTexture(
             _assets->get<Texture>("minimap"));

@@ -1,6 +1,6 @@
 {
-	"textures": {
-		"background": {
+    "textures": {
+        "background": {
             "file":  "textures/black.png"
         },
         "red": {
@@ -43,7 +43,7 @@
             "file": "textures/full_door.png"
         }
         
-	},
+    },
     "fonts": {
         "pixel32": {
             "file":     "fonts/LightPixel7.ttf",
@@ -70,7 +70,56 @@
             "volume": 0.8
         }
     },
+    "scene2s": {
+        "menu": {
+            "type"      : "Node",
+            "format"    : {
+                "type"        : "Float",
+                "orientation" : "vertical",
+                "x_alignment" : "center",
+                "y_alignment" : "middle"
+            },
+            "children":  {
+                "host": {
+                    "type"   : "Widget",
+                    "data"   : {
+                        "key"     : "textbutton",
+                        "variables" : {
+                            "size": [400,100],
+                            "text": "Host Game",
+                            "color": "#000088"
+                        }
+                    },
+                    "layout" : {
+                        "priority" : 1,
+                        "padding"  : [0,50,0,0]
+                    }
+                },
+                "join": {
+                    "type"   : "Widget",
+                    "data"   : {
+                        "key"     : "textbutton",
+                        "variables" : {
+                            "size": [400,100],
+                            "text": "Join Game",
+                            "color": "#000088"
+                        }
+                    },
+                    "layout" : {
+                        "priority" : 1,
+                        "padding"  : [0,0,0,0]
+                    }
+                }
+            }
+        }
+    },
     "jsons" : {
-        "constants" : "json/constants.json"
+        "constants" : "json/constants.json",
+        "server": "json/server.json"
+    },
+    "widgets": {
+        "textbutton" : "widgets/textbutton.json",
+        "textfield" : "widgets/textfield.json",
+        "labelbox" : "widgets/labelbox.json"
     }
 }

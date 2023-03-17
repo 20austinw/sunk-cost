@@ -44,6 +44,8 @@ _assets(assets){
         CULog("Fail!");
     }
     _prevState = true;
+    
+    _status = Status::START;
 }
 
 #pragma mark Gameplay Handling

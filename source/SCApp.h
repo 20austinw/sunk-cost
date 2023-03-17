@@ -16,12 +16,27 @@
 #include "HGameController.h"
 #include "SGameController.hpp"
 #include "LoadingScene.h"
+#include "SCMenuScene.h"
 
 /**
  * This class represents the application root for the ship demo.
  */
 class SCApp : public cugl::Application {
 protected:
+    /**
+     * The current active scene
+     */
+    enum State {
+        /** The loading scene */
+        LOAD,
+        /** The main menu scene */
+        MENU,
+        /** The scene to host a game */
+        HOST,
+        /** The scene to join a game */
+        CLIENT
+    };
+    
     /** The global sprite batch for drawing (only want one of these) */
     std::shared_ptr<cugl::SpriteBatch> _batch;
     /** The global asset manager */
@@ -34,9 +49,14 @@ protected:
     SGameController _spiritGameplay;
     /** The controller for the loading screen */
     LoadingScene _loading;
+    
+    MenuScene _menu;
 
     /** Whether or not we have finished loading all assets */
     bool _loaded;
+    
+    /** The current active scene */
+    SCApp::State _scene;
     
 public:
     /**
@@ -48,7 +68,9 @@ public:
      * of initialization from the constructor allows main.cpp to perform
      * advanced configuration of the application before it starts.
      */
-    SCApp() : cugl::Application(), _loaded(false) {}
+    SCApp() : cugl::Application(), _loaded(false) {
+        _scene = State::LOAD;
+    }
     
     /**
      * Disposes of this application, releasing all resources.
@@ -123,6 +145,40 @@ public:
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     virtual void update(float timestep) override;
+    
+    /**
+     * Inidividualized update method for the loading scene.
+     *
+     * This method keeps the primary {@link #update} from being a mess of switch
+     * statements. It also handles the transition logic from the loading scene.
+     *
+     * @param timestep  The amount of time (in seconds) since the last frame
+     */
+    void updateLoadingScene(float timestep);
+
+    /**
+     * Inidividualized update method for the menu scene.
+     *
+     * This method keeps the primary {@link #update} from being a mess of switch
+     * statements. It also handles the transition logic from the menu scene.
+     *
+     * @param timestep  The amount of time (in seconds) since the last frame
+     */
+    void updateMenuScene(float timestep);
+
+    /**
+     * Inidividualized update method for the host scene.
+     *
+     * @param timestep  The amount of time (in seconds) since the last frame
+     */
+    void updateSGameController(float timestep);
+    
+    /**
+     * Inidividualized update method for the client scene.
+     *
+     * @param timestep  The amount of time (in seconds) since the last frame
+     */
+    void updateHGameController(float timestep);
     
     /**
      * The method called to draw the application to the screen.

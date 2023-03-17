@@ -44,6 +44,9 @@
         },
         "painting_animation": {
             "file": "textures/live_painting.png"
+        },
+        "shadow": {
+            "file": "textures/diver_shadow.png"
         }
 
     },

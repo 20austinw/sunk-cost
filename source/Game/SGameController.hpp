@@ -55,8 +55,6 @@ class SGameController {
 
     bool _levelLoaded;
 
-    bool _prevState;
-
     std::shared_ptr<scene2::PolygonNode> _map;
 
 #pragma mark External References

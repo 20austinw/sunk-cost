@@ -95,9 +95,9 @@ class CameraController {
     /**
      * Updates camera battery.
      */
-    void updateBattery(int battery) { _model->setBattery(battery); }
+    void updateBattery(float battery) { _model->setBattery(battery); }
 
-    int getBattery() { return _model->battery; }
+    float getBattery() { return _model->battery; }
 
     /**
      * Updates camera type

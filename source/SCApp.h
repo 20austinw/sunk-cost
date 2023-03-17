@@ -17,6 +17,8 @@
 #include "SGameController.hpp"
 #include <cugl/cugl.h>
 #include "SCMenuScene.h"
+#include "SGameController.hpp"
+#include <cugl/cugl.h>
 
 /**
  * This class represents the application root for the ship demo.
@@ -41,7 +43,7 @@ protected:
     std::shared_ptr<cugl::SpriteBatch> _batch;
     /** The global asset manager */
     std::shared_ptr<cugl::AssetManager> _assets;
-
+    
     // Player modes
     /** The primary controller for the hunter game world */
     HGameController _hunterGameplay;
@@ -51,7 +53,7 @@ protected:
     LoadingScene _loading;
     
     MenuScene _menu;
-
+    
     /** Whether or not we have finished loading all assets */
     bool _loaded;
     
@@ -68,9 +70,7 @@ public:
      * of initialization from the constructor allows main.cpp to perform
      * advanced configuration of the application before it starts.
      */
-    SCApp() : cugl::Application(), _loaded(false) {
-        _scene = State::LOAD;
-    }
+    SCApp() : cugl::Application(), _loaded(false), _scene(State::LOAD) {}
     
     /**
      * Disposes of this application, releasing all resources.
@@ -107,7 +107,6 @@ public:
      * causing the application to be deleted.
      */
     virtual void onShutdown() override;
-
     /**
      * The method called when the application is suspended and put in the
      * background.
@@ -133,7 +132,6 @@ public:
      * paused before app suspension.
      */
     virtual void onResume() override;
-
 #pragma mark Application Loop
     /**
      * The method called to update the application data.
@@ -158,7 +156,7 @@ public:
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     void updateLoadingScene(float timestep);
-
+    
     /**
      * Inidividualized update method for the menu scene.
      *
@@ -168,7 +166,7 @@ public:
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     void updateMenuScene(float timestep);
-
+    
     /**
      * Inidividualized update method for the host scene.
      *

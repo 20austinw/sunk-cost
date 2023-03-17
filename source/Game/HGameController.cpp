@@ -118,9 +118,7 @@ _assets(assets){
 /**
  * Resets the status of the game so that we can play again.
  */
-void HGameController::reset() {
-    CULog("reset");
-}
+void HGameController::reset() { CULog("reset"); }
 
 /**
  * Responds to the keyboard commands.
@@ -264,9 +262,9 @@ void HGameController::update(float dt) {
     _shadow->setPosition(_hunter.getPosition()-Vec2(300,370));
     updateCamera(dt);
     updateJoystick();
-
+    
     // TODO: update direction index for portraits on spirit control
-//    _portraits->updateDirectionIndex(<#Vec3 direction#>, <#int index#>)
+    //    _portraits->updateDirectionIndex(<#Vec3 direction#>, <#int index#>)
 }
 
 /**
@@ -278,19 +276,17 @@ void HGameController::update(float dt) {
  *
  * @param batch     The SpriteBatch to draw with.
  */
-void HGameController::render(std::shared_ptr<cugl::SpriteBatch>& batch) {
-    _scene->render(batch);
+void HGameController::render(std::shared_ptr<cugl::SpriteBatch> &batch) {
+  _scene->render(batch);
 }
 
-
 void HGameController::checkLevelLoaded() {
-    _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
-    if (_level == nullptr) {
-        _levelLoaded = false;
-    }
+  _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
+  if (_level == nullptr) {
+    _levelLoaded = false;
+  }
 
-
-    // Check to see if new level loaded yet
+  // Check to see if new level loaded yet
     if (!_levelLoaded && _assets->complete()) {
         _level = nullptr;
         
@@ -298,13 +294,11 @@ void HGameController::checkLevelLoaded() {
         _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
         _level->setAssets(_assets);
         
-
         // Initialize SpiritController
         _spirit = SpiritController();
         
-        
-        _tileHeight=256;
-        _tileWidth=256;
+        _tileHeight = 256;
+        _tileWidth = 256;
         
         // TODO: implement direction and direction limits
         _tilemap->updatePosition(_scene->getSize() / 2);
@@ -315,8 +309,8 @@ void HGameController::checkLevelLoaded() {
         
         _map = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
         _map->setPolygon(Rect(0, 0, 4608, 4608));
-                    //    _map = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 9216, 9216));
-                    //    _map ->setTexture(_assets->get<Texture>("map"));
+        //    _map = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 9216, 9216));
+        //    _map ->setTexture(_assets->get<Texture>("map"));
         _scene->addChild(_map);
         _scene->addChild(_worldnode);
         _scene->addChild(_debugnode);
@@ -328,19 +322,19 @@ void HGameController::checkLevelLoaded() {
                                     _level->getBattery());
         }
         
-        
-        for (int i = 0; i < tiles.size() * tiles[0].size(); ++i){
-            int c = i%tiles[0].size();
-            int r = i/tiles[0].size();
+        for (int i = 0; i < tiles.size() * tiles[0].size(); ++i) {
+            int c = i % tiles[0].size();
+            int r = i / tiles[0].size();
             
             if (tiles[r][c] == "black") {
-                _tilemap->addTile(c, r, Color4::BLACK, false, _assets->get<Texture>("black"));
+                _tilemap->addTile(c, r, Color4::BLACK, false,
+                                  _assets->get<Texture>("black"));
             } else if (tiles[r][c] == "green") {
-                _tilemap->addTile(c, r, Color4::GREEN, true, _assets->get<Texture>("green"));
+                _tilemap->addTile(c, r, Color4::GREEN, true,
+                                  _assets->get<Texture>("green"));
             } else if (tiles[r][c] == "door") {
                 _tilemap->addDoor(c, r, _assets->get<Texture>("fulldoor"));
             }
-            
         }
         
         // Initialize HunterController
@@ -351,14 +345,14 @@ void HGameController::checkLevelLoaded() {
         _shadow = scene2::PolygonNode::allocWithTexture(_shadowTexture);
         _shadow->setPosition(_hunter.getPosition()-Vec2(300,370));
         _shadow->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-//        _shadow->setScale(Vec2(_dimen.width/1280,_dimen.height/720));
+        //        _shadow->setScale(Vec2(_dimen.width/1280,_dimen.height/720));
         _scene->addChild(_shadow);
         
         //Draw hunter after shadow
         _hunter.addChildTo(_scene);
         
-//        _trap = TrapController(_assets, _scene->getSize());
-//        _trap.addChildTo(_scene);
+        //        _trap = TrapController(_assets, _scene->getSize());
+        //        _trap.addChildTo(_scene);
         _treasure = TreasureController(_assets, _scene->getSize());
         _treasure.addChildTo(_scene);
         
@@ -367,7 +361,7 @@ void HGameController::checkLevelLoaded() {
         _filterTexture = _assets->get<Texture>("filter");
         _filter = scene2::PolygonNode::allocWithTexture(_filterTexture);
         _filter->setPosition(_scene->getCamera()->getPosition());
-      
+        
         _filter->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
         _filter->setScale(Vec2(_dimen.width/1280,_dimen.height/720));
         _scene->addChild(_filter);
@@ -382,9 +376,8 @@ void HGameController::checkLevelLoaded() {
         _scene->addChild(_treasureLabel);
         
         _loseLabel = cugl::scene2::Label::allocWithText(Vec2(800,800), "You Lose!", _assets->get<Font>("pixel32"));
-
-        initJoystick();
         
+        initJoystick();
         
         _levelLoaded = true;
     }
@@ -399,7 +392,7 @@ void HGameController::initCamera() {
     Vec3 next = _offset
     + (Vec3(_hunter.getPosition().x, _hunter.getPosition().y, 1));
     _scene->getCamera()->translate(next - curr);
-
+    
     _scene->getCamera()->update();
     
 }
@@ -424,9 +417,9 @@ void HGameController::updateCamera(float timestep) {
    
 }
 
+
 void HGameController::generateLevel() {
     _tilemap->updateDimensions(_level->getDimensions());
-    
 }
 
 void HGameController::initJoystick(){
@@ -452,7 +445,6 @@ void HGameController::initJoystick(){
 }
 
 void HGameController::updateJoystick(){
-    
     _outerJoystick->setPosition(_scene->getCamera()->getPosition()-Vec2(380,250));
     _innerJoystick->setPosition(_scene->getCamera()->getPosition()-Vec2(380,250));
     

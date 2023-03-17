@@ -53,7 +53,7 @@ SGameController::SGameController(
     
     _status = Status::START;
 }
-
+    
 #pragma mark Gameplay Handling
 
 /**

@@ -78,6 +78,7 @@
 >>>>>>> a6dd1b9 (Implemented placeholder menu selection screen)
         }
     },
+<<<<<<< HEAD
     "fonts": {
         "pixel32": {
             "file": "fonts/LightPixel7.ttf",
@@ -108,6 +109,8 @@
     "jsons": {
         "constants": "json/constants.json"
 =======
+=======
+>>>>>>> e57b2cb (Rebased onto main)
     "scene2s": {
         "menu": {
             "type"      : "Node",
@@ -159,6 +162,33 @@
         "textbutton" : "widgets/textbutton.json",
         "textfield" : "widgets/textfield.json",
         "labelbox" : "widgets/labelbox.json"
+<<<<<<< HEAD
 >>>>>>> a6dd1b9 (Implemented placeholder menu selection screen)
+=======
+    },
+  "sounds": {
+    "fusion": {
+      "type": "sample",
+      "file": "sounds/fusion.ogg"
+    },
+    "laser": {
+      "type": "sample",
+      "file": "sounds/laser.ogg",
+      "volume": 0.5
+    },
+    "blast": {
+      "type": "sample",
+      "file": "sounds/explode.ogg"
+    },
+    "bang": {
+      "type": "sample",
+      "file": "sounds/bang.ogg",
+      "volume": 0.8
+>>>>>>> e57b2cb (Rebased onto main)
     }
+  },
+  "jsons": {
+    "constants": "json/constants.json",
+    "server": "json/server.json"
+  }
 }

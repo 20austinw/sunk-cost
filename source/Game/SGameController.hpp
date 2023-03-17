@@ -39,7 +39,7 @@ public:
         /** Game was aborted; back to main menu */
         ABORT
     };
-    
+
 #pragma mark Internal References
   private:
     /** The Game scene */
@@ -73,11 +73,11 @@ public:
 
     std::shared_ptr<scene2::PolygonNode> _map;
     std::shared_ptr<scene2::PolygonNode> _miniMap;
-    
+
     Status _status;
     
     bool _ishost;
-    
+
 #pragma mark External References
   private:
     /** The tilemap to procedurally generate */
@@ -129,14 +129,14 @@ public:
     void setHost(bool b) {
         _ishost = b;
     }
-    
+
 private:
-    void checkLevelLoaded();
+  void checkLevelLoaded();
 
-    void generateLevel();
+  void generateLevel();
 
-    void displayBattery(float battery, bool state,
-                        std::shared_ptr<cugl::SpriteBatch>& batch);
+  void displayBattery(float battery, bool state,
+                      std::shared_ptr<cugl::SpriteBatch> &batch);
 };
 
 #endif /* SGameController_hpp */

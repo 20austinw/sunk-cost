@@ -209,4 +209,3 @@ void HunterController::removeChildFrom(const std::shared_ptr<cugl::Scene2>& scen
 
 
 
-

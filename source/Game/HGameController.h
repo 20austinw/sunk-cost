@@ -11,12 +11,12 @@
 //
 #ifndef __HGAME_CONTROLLER_H__
 #define __HGAME_CONTROLLER_H__
-#include <random>
 #include <climits>
+#include <random>
 
 #include <cugl/cugl.h>
-#include <vector>
 #include <unordered_set>
+#include <vector>
 using namespace cugl;
 #include "TilemapController.h"
 #include "InputController.h"
@@ -26,7 +26,6 @@ using namespace cugl;
 //#include "TrapController.hpp"
 #include "CollisionController.hpp"
 #include "TreasureController.hpp"
-
 
 /**
  * The primary controller for the game logic.
@@ -56,7 +55,6 @@ public:
         /** Game was aborted; back to main menu */
         ABORT
     };
-    
 #pragma mark Internal References
 private:
     /** The Game scene */
@@ -141,25 +139,25 @@ private:
     
 #pragma mark External References
 private:
-    /** The tilemap to procedurally generate */
-    std::unique_ptr<TilemapController> _tilemap;
-    
+  /** The tilemap to procedurally generate */
+  std::unique_ptr<TilemapController> _tilemap;
+
 #pragma mark Main Methods
 public:
-    
-    HGameController();
+  HGameController();
 
-    /**
-     * Creates the game controller.
-     *
-     * This constructor will procedurally generate a tilemap immediately
-     * on creation.
-     *
-     * @param displaySize   The display size of the game window
-     * @param randoms		Reference to the random number generator
-     */
-    HGameController(const Size displaySize, const std::shared_ptr<AssetManager>& assets);
-    
+  /**
+   * Creates the game controller.
+   *
+   * This constructor will procedurally generate a tilemap immediately
+   * on creation.
+   *
+   * @param displaySize   The display size of the game window
+   * @param randoms		Reference to the random number generator
+   */
+  HGameController(const Size displaySize,
+                  const std::shared_ptr<AssetManager> &assets);
+
 #pragma mark Gameplay Handling
     /**
      * Resets the status of the game so that we can play again.
@@ -200,8 +198,6 @@ private:
     void checkLevelLoaded();
     
     void generateLevel();
-
-    
 };
 
 #endif /* __HGAME_CONTROLLER_H__ */

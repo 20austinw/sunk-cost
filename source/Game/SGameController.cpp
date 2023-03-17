@@ -71,6 +71,9 @@ void SGameController::update(float dt) {
     if (!_levelLoaded) {
         CULog("Level not loaded!");
         checkLevelLoaded();
+        _portraits->setIndex(1);
+        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+            ->setZoom(0.4);
     }
     auto inputController = InputController::getInstance();
     inputController->update(dt);
@@ -87,6 +90,8 @@ void SGameController::update(float dt) {
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
                 ->setZoom(0.15);
             _spirit.resetCameraCool();
+        } else if (!_spirit.isSwitchable() && _portraits->getIndex() != 0){
+            _portraits->resetScale();
         }
     } else if(inputController->isKeyPressed(KeyCode::NUM_1)) {
         if (_spirit.isSwitchable() && _portraits->getIndex() != 1){
@@ -94,6 +99,8 @@ void SGameController::update(float dt) {
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
                 ->setZoom(0.4);
             _spirit.resetCameraCool();
+        } else if (!_spirit.isSwitchable() && _portraits->getIndex() != 1){
+            _portraits->resetScale();
         }
     } else if(inputController->isKeyPressed(KeyCode::NUM_2)) {
         if (_spirit.isSwitchable() && _portraits->getIndex() != 2){
@@ -101,6 +108,8 @@ void SGameController::update(float dt) {
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
                 ->setZoom(0.4);
             _spirit.resetCameraCool();
+        } else if (!_spirit.isSwitchable() && _portraits->getIndex() != 2){
+            _portraits->resetScale();
         }
     } else if(inputController->isKeyPressed(KeyCode::NUM_3)) {
         if (_spirit.isSwitchable() && _portraits->getIndex() != 3){
@@ -108,6 +117,8 @@ void SGameController::update(float dt) {
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
                 ->setZoom(0.4);
             _spirit.resetCameraCool();
+        } else if (!_spirit.isSwitchable() && _portraits->getIndex() != 3){
+            _portraits->resetScale();
         }
     } else if(inputController->isKeyPressed(KeyCode::NUM_4)) {
         if (_spirit.isSwitchable() && _portraits->getIndex() != 4){
@@ -115,6 +126,8 @@ void SGameController::update(float dt) {
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
                 ->setZoom(0.4);
             _spirit.resetCameraCool();
+        } else if (!_spirit.isSwitchable() && _portraits->getIndex() != 4){
+            _portraits->resetScale();
         }
     } else if(inputController->isKeyPressed(KeyCode::NUM_5)) {
         if (_spirit.isSwitchable() && _portraits->getIndex() != 5){
@@ -122,6 +135,8 @@ void SGameController::update(float dt) {
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
                 ->setZoom(0.4);
             _spirit.resetCameraCool();
+        } else if (!_spirit.isSwitchable() && _portraits->getIndex() != 5){
+            _portraits->resetScale();
         }
     } else {
         _spirit.decreaseCameraCool();
@@ -224,7 +239,7 @@ void SGameController::checkLevelLoaded() {
         _levelLoaded = true;
         _portraits->setMaxbattery(_level->getBattery());
         
-        _portraits->initalizeSheets(_assets->get<Texture>("greenBattery"), _assets->get<Texture>("redBattery"));
+        _portraits->initializeSheets(_assets->get<Texture>("greenBattery"), _assets->get<Texture>("redBattery"), _assets->get<Texture>("noBattery"));
         _portraits->initializeBatteryNodes(_scene);
     }
 }

@@ -53,6 +53,9 @@
                 },
         "redBattery":{
             "file": "textures/redBattery.png"
+        },
+        "noBattery":{
+            "file": "textures/noBattery.png"
         }
     },
     "fonts": {

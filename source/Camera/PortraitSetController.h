@@ -26,19 +26,21 @@ class PortraitSetController {
     std::shared_ptr<cugl::AssetManager> _assets;
     std::shared_ptr<cugl::Scene2> _scene;
     Size _screenSize;
-    /** The max batteryt */
+    /** The max battery */
     float _maxBattery;
     
     bool _prevState;
 
     int _index;
+    
+    /** The scale for noBattery*/
+    float _scale;
 
-//    std::shared_ptr<scene2::PolygonNode> _bound;
-//    std::shared_ptr<scene2::PolygonNode> _charge;
     std::shared_ptr<scene2::PolygonNode> _block;
     
     std::shared_ptr<scene2::SpriteNode> _redBattery;
     std::shared_ptr<scene2::SpriteNode> _greenBattery;
+    std::shared_ptr<scene2::PolygonNode> _noBattery;
 
 #pragma mark Main Functions
   public:
@@ -122,11 +124,14 @@ class PortraitSetController {
                                           type));
         _index = 0;
         _prevState = true;
+        _scale = 0;
     }
     
-    void initalizeSheets(std::shared_ptr<cugl::Texture> green, std::shared_ptr<cugl::Texture> red){
-            _greenBattery = scene2::SpriteNode::allocWithSheet(green, 2, 8, 16);
-            _redBattery = scene2::SpriteNode::allocWithSheet(red, 2, 8, 16);
+    void initializeSheets(std::shared_ptr<cugl::Texture> green, std::shared_ptr<cugl::Texture> red, std::shared_ptr<cugl::Texture> no){
+        _greenBattery = scene2::SpriteNode::allocWithSheet(green, 2, 8, 16);
+        _redBattery = scene2::SpriteNode::allocWithSheet(red, 2, 8, 16);
+        _noBattery = scene2::PolygonNode::allocWithTexture(no);
+        _noBattery->setScale(_scale);
     }
 
     /**
@@ -253,6 +258,11 @@ class PortraitSetController {
         _redBattery->setFrame(frame);
         _greenBattery->setPosition(pos);
         _redBattery->setPosition(pos);
+        _noBattery->setPosition(pos);
+        _noBattery->setScale(_scale);
+        if (_scale>0){
+            _scale -= 0.01;
+        }
         if (curState && (curState != _prevState)){
             scene->removeChild(_redBattery);
             scene->addChild(_greenBattery);
@@ -287,6 +297,8 @@ class PortraitSetController {
             scene->removeChild(_redBattery);
             scene->addChild(_redBattery);
         }
+        scene->removeChild(_noBattery);
+        scene->addChild(_noBattery);
     }
 
     void initializeBatteryNodes(const std::shared_ptr<cugl::Scene2>& scene) {
@@ -294,6 +306,11 @@ class PortraitSetController {
         _block->setColor(Color4::BLACK);
         _greenBattery->setFrame(0);
         scene->addChild(_greenBattery);
+        scene->addChild(_noBattery);
+    }
+    
+    void resetScale(){
+        _scale = 0.5;
     }
 
 #pragma mark Helpers
@@ -308,8 +325,6 @@ class PortraitSetController {
         camera->updateDirectionLimits(directionLimits);
         camera->updateType(CameraType(type));
         camera->updateBattery(battery);
-        CULog("%f, %f", cameraPosition.x, cameraPosition.y);
-        CULog("%f, %f", portraitPosition.x, portraitPosition.y);
         _portraitModels.push_back(
             std::make_unique<PortraitModel>(cameraPosition));
         _portraitViews.push_back(std::make_unique<PortraitView>(

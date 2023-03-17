@@ -28,6 +28,12 @@ SGameController::SGameController(
     : _assets(assets) {
     /// Initialize the tilemap and add it to the scene
     _scene = cugl::Scene2::alloc(displaySize);
+    std::shared_ptr<scene2::PolygonNode> background =
+        scene2::PolygonNode::allocWithPoly(cugl::Rect(0, 0, 20000, 20000));
+    background->setColor(Color4::BLACK);
+    background->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    background->setPosition(-1 * Size(9000, 9000) / 2);
+    _scene->addChild(background);
     _tilemap = std::make_shared<TilemapController>();
     _tilemap->addChildTo(_scene);
     // Initialize PortraitSetController
@@ -172,7 +178,7 @@ void SGameController::checkLevelLoaded() {
         _tilemap->updatePosition(_scene->getSize() / 2);
         std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
         _tilemap->updateDimensions(Vec2(tiles[0].size(), tiles.size()));
-        _tilemap->updateColor(Color4::WHITE);
+        _tilemap->updateColor(Color4::BLACK);
         _tilemap->updateTileSize(Size(256, 256));
         for (int i = 0; i < tiles.size() * tiles[0].size(); ++i) {
             int c = i % tiles[0].size();

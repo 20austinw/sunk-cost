@@ -80,4 +80,5 @@ void SpiritController::update(
     _model->addTrap(pos);
   }
   _model->update();
+  _portraits->update();
 }

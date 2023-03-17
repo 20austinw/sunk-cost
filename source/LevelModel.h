@@ -6,7 +6,6 @@
 #define _LEVEL_MODEL_H
 
 #include "HunterModel.h"
-#include "PortraitSet.h"
 #include "SpiritModel.h"
 #include "TileModel.h"
 #include <cugl/assets/CUAsset.h>

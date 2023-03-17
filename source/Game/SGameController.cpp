@@ -25,12 +25,14 @@
  */
 SGameController::SGameController(
     const Size displaySize, const std::shared_ptr<cugl::AssetManager> &assets)
-    : _scene(cugl::Scene2::alloc(displaySize)), _assets(assets) {
+    : _assets(assets) {
   /// Initialize the tilemap and add it to the scene
+  _scene = cugl::Scene2::alloc(displaySize);
   _tilemap = std::make_shared<TilemapController>();
   _tilemap->addChildTo(_scene);
   // Initialize PortraitSetController
-  _portraits = std::make_shared<PortraitSetController>(0, displaySize);
+  _portraits =
+      std::make_shared<PortraitSetController>(_assets, _scene, 0, displaySize);
   _portraits->initializeBatteryNodes(_scene);
 
   // Initialize HunterController
@@ -104,7 +106,6 @@ void SGameController::update(float dt) {
     std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
         ->setZoom(0.5);
   }
-  //    Vec3 offset(405, 315, 0);
   Vec3 offset = Vec3(_assets->get<Texture>("map")->getSize() / 2);
   _scene->getCamera()->setPosition(
       _portraits->getPosition(_portraits->getIndex()) + offset);
@@ -167,14 +168,6 @@ void SGameController::checkLevelLoaded() {
 
     CULog("Loading level!");
 
-    // TODO: implement direction and direction limits
-    for (int i = 0; i < _level->getPortaits().size(); i++) {
-      Vec3 pos(_level->getPortaits()[i].x, _level->getPortaits()[i].y, 0);
-      _portraits->addPortrait(i + 1, pos, Vec3(0, 0, -1), Vec2::ZERO,
-                              _level->getBattery());
-      // CULog("%f, %f", _level->getPortaits()[i].x,
-      // _level->getPortaits()[i].y);
-    }
     _tilemap->updatePosition(_scene->getSize() / 2);
     std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
     _tilemap->updateDimensions(Vec2(tiles[0].size(), tiles.size()));
@@ -200,6 +193,12 @@ void SGameController::checkLevelLoaded() {
     //    _map ->setTexture(_assets->get<Texture>("map"));
     _scene->addChild(_map);
     _tilemap->addDoorTo(_scene);
+    for (int i = 0; i < _level->getPortaits().size(); i++) {
+      _portraits->addPortrait(i + 1, _level->getPortaits()[i], Vec3(0, 0, -1),
+                              Vec2::ZERO, _level->getBattery());
+      // CULog("%f, %f", _level->getPortaits()[i].x,
+      // _level->getPortaits()[i].y);
+    }
     _portraits->refreshBatteryNodes(_scene);
 
     _levelLoaded = true;

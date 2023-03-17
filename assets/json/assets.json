@@ -56,6 +56,9 @@
         },
         "noBattery": {
             "file": "textures/noBattery.png"
+        },
+        "minimap": {
+            "file": "textures/minimap.png"
         }
     },
     "fonts": {

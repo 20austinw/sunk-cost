@@ -72,6 +72,8 @@ float SGameController::getZoom() {
         ->getZoom();
 }
 void SGameController::update(float dt) {
+    bool canPlaceTrap = true;
+    Vec2 minimapOffset = Vec2(20, 20);
     if (!_levelLoaded) {
         CULog("Level not loaded!");
         checkLevelLoaded();
@@ -89,11 +91,26 @@ void SGameController::update(float dt) {
 
     if (inputController->isMouseClicked()) {
         auto screenPos = inputController->getLastMousePos();
-        if (screenPos.x <= _miniMap->getSize().width * getZoom() &&
-            screenPos.y <= _miniMap->getSize().height * getZoom()) {
+        // Check if click is minimap
+        auto inBound = [&](Vec2 pos) {
+            if (pos.x >= minimapOffset.x && pos.y >= minimapOffset.y &&
+                pos.x <=
+                    _miniMap->getSize().width * getZoom() + minimapOffset.x &&
+                pos.y <=
+                    _miniMap->getSize().height * getZoom() + minimapOffset.y) {
+                return true;
+            }
+            return false;
+        };
+        // Logic for switching cameras
+        if (inBound(screenPos)) {
+            canPlaceTrap = false;
             auto miniMapPos =
-                Vec2(screenPos.x - _miniMap->getSize().width / 2 * getZoom(),
-                     _miniMap->getSize().height / 2 * getZoom() - screenPos.y);
+                Vec2(screenPos.x - _miniMap->getSize().width / 2 * getZoom() -
+                         minimapOffset.x,
+                     _miniMap->getSize().height / 2 * getZoom() +
+                         minimapOffset.y - screenPos.y);
+            CULog("%f, %f", miniMapPos.x, miniMapPos.y);
             auto mapPos = miniMapPos / _miniMap->getScale() / getZoom();
             int idx = _portraits->getNearest(mapPos);
             if (_spirit.isSwitchable() && _portraits->getIndex() != idx) {
@@ -117,7 +134,7 @@ void SGameController::update(float dt) {
     _scene->getCamera()->setPosition(
         _portraits->getPosition(_portraits->getIndex()) + offset);
     _miniMap->setPosition(_scene->getCamera()->screenToWorldCoords(
-        _miniMap->getSize() / 2 * getZoom()));
+        _miniMap->getSize() / 2 * getZoom() + minimapOffset));
     _scene->removeChild(_miniMap);
     _scene->addChild(_miniMap);
     _portraits->updateBattery();
@@ -138,7 +155,7 @@ void SGameController::update(float dt) {
     // Will crash the program because the constructor doesn't set up the
     // model/view yet (delete this comment later)
     //    _hunter.update();
-    _spirit.update(_tilemap);
+    _spirit.update(_tilemap, canPlaceTrap);
     // TODO: update direction index for portraits on spirit control
     //    _portraits->updateDirectionIndex(<#Vec3 direction#>, <#int index#>)
 }
@@ -203,8 +220,8 @@ void SGameController::checkLevelLoaded() {
             scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
         _map->setPolygon(Rect(0, 0, 4608, 4608));
         _scene->addChild(_map);
-        _miniMap =
-            scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
+        _miniMap = scene2::PolygonNode::allocWithTexture(
+            _assets->get<Texture>("minimap"));
         _miniMap->setScale(0.1);
         _scene->addChild(_miniMap);
         _tilemap->addDoorTo(_scene);

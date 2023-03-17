@@ -18,28 +18,28 @@ using namespace cugl;
 
 class TrapController {
 #pragma mark Internal References
-private:
-  /** Model reference */
-  std::unique_ptr<TrapModel> _model;
-  /** View reference */
-  std::unique_ptr<TrapView> _view;
-  Size _screenSize;
+  private:
+    /** Model reference */
+    std::unique_ptr<TrapModel> _model;
+    /** View reference */
+    std::unique_ptr<TrapView> _view;
+    Size _screenSize;
 
-public:
-  TrapController(){};
+  public:
+    TrapController(){};
 
-  TrapController(const std::shared_ptr<cugl::AssetManager> &assets,
-                 Size screenSize);
+    TrapController(const std::shared_ptr<cugl::AssetManager>& assets,
+                   Size screenSize);
 
-  std::unique_ptr<TrapModel> getModel();
-  void setViewFrame();
-  Vec2 getPosition();
-  void setPosition(cugl::Vec2 position);
-  bool update();
-  void setTrigger(bool isTriggered);
-  bool getTrigger();
-  void addChildTo(const std::shared_ptr<cugl::Scene2> &scene);
-  void removeChildFrom(const std::shared_ptr<cugl::Scene2> &scene);
+    std::unique_ptr<TrapModel> getModel();
+    void setViewFrame();
+    Vec2 getPosition();
+    void setPosition(cugl::Vec2 position);
+    bool update();
+    void setTrigger(bool isTriggered);
+    bool getTrigger();
+    void addChildTo(const std::shared_ptr<cugl::Scene2>& scene);
+    void removeChildFrom(const std::shared_ptr<cugl::Scene2>& scene);
 };
 
 #endif /* TrapController_hpp */

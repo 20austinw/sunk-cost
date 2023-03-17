@@ -12,18 +12,18 @@
 using namespace cugl;
 
 class ObstacleModel : public cugl::physics2::PolygonObstacle {
-public:
-  //  MARK: - Enumerations
+  public:
+    //  MARK: - Enumerations
 
-  /** The different type of obstacles you can make */
-  enum Type {
-    /** A trap */
-    TRAP,
-    /** A treasure */
-    TREASURE,
+    /** The different type of obstacles you can make */
+    enum Type {
+        /** A trap */
+        TRAP,
+        /** A treasure */
+        TREASURE,
 
-  };
-  //  MARK: - Constants
+    };
+    //  MARK: - Constants
 
 /** Keys for obstacle textures */
 #define TRAP_TEXTURE "trap"
@@ -33,35 +33,35 @@ public:
 #define TRAP_WIDTH 10
 #define TREASURE_WIDTH 10
 
-protected:
-  //  MARK: - Properties
+  protected:
+    //  MARK: - Properties
 
-  /** The type of obstacle this model represents */
-  Type _type;
+    /** The type of obstacle this model represents */
+    Type _type;
 
-public:
-  //  MARK: - Constructors
+  public:
+    //  MARK: - Constructors
 
-  /**
-   * Constructs an Obstacle Model
-   */
-  ObstacleModel(){};
+    /**
+     * Constructs an Obstacle Model
+     */
+    ObstacleModel(){};
 
-  /**
-   * Destructs an Obstacle Model
-   */
-  ~ObstacleModel() { dispose(); }
+    /**
+     * Destructs an Obstacle Model
+     */
+    ~ObstacleModel() { dispose(); }
 
-  /**
-   * Disposes of all resources in this instance of Obstacle Model
-   */
-  void dispose(){};
+    /**
+     * Disposes of all resources in this instance of Obstacle Model
+     */
+    void dispose(){};
 
-  /**
-   * Initializes an Obstacle Model
-   */
+    /**
+     * Initializes an Obstacle Model
+     */
 
-  bool init(float scale, std::shared_ptr<Texture> &texture, Type type);
+    bool init(float scale, std::shared_ptr<Texture>& texture, Type type);
 };
 
 #endif /* ObstacleModel_hpp */

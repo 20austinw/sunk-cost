@@ -32,35 +32,35 @@ using namespace cugl;
  * causing the application to run.
  */
 void SCApp::onStartup() {
-  _assets = AssetManager::alloc();
-  _batch = SpriteBatch::alloc();
-  //#ifdef CU_TOUCH_SCREEN
-  //    // Start-up basic input for loading screen (MOBILE ONLY)
-  //    Input::activate<Touchscreen>();
-  //#else
-  //    // Start-up basic input for loading screen (DESKTOP ONLY)
-  Input::activate<Mouse>();
-  Input::activate<Keyboard>();
-  //#endif
+    _assets = AssetManager::alloc();
+    _batch = SpriteBatch::alloc();
+    //#ifdef CU_TOUCH_SCREEN
+    //    // Start-up basic input for loading screen (MOBILE ONLY)
+    //    Input::activate<Touchscreen>();
+    //#else
+    //    // Start-up basic input for loading screen (DESKTOP ONLY)
+    Input::activate<Mouse>();
+    Input::activate<Keyboard>();
+    //#endif
 
-  _assets->attach<Texture>(TextureLoader::alloc()->getHook());
-  _assets->attach<Sound>(SoundLoader::alloc()->getHook());
-  _assets->attach<Font>(FontLoader::alloc()->getHook());
-  _assets->attach<JsonValue>(JsonLoader::alloc()->getHook());
-  _assets->attach<scene2::SceneNode>(
-      Scene2Loader::alloc()->getHook()); // Needed for loading screen
-  _assets->attach<LevelModel>(GenericLoader<LevelModel>::alloc()->getHook());
+    _assets->attach<Texture>(TextureLoader::alloc()->getHook());
+    _assets->attach<Sound>(SoundLoader::alloc()->getHook());
+    _assets->attach<Font>(FontLoader::alloc()->getHook());
+    _assets->attach<JsonValue>(JsonLoader::alloc()->getHook());
+    _assets->attach<scene2::SceneNode>(
+        Scene2Loader::alloc()->getHook()); // Needed for loading screen
+    _assets->attach<LevelModel>(GenericLoader<LevelModel>::alloc()->getHook());
 
-  // Create a "loading" screen
-  _loaded = false;
-  _loading.init(_assets);
+    // Create a "loading" screen
+    _loaded = false;
+    _loading.init(_assets);
 
-  // Queue up the other assets
-  _assets->loadDirectoryAsync("json/assets.json", nullptr);
-  _assets->loadAsync<LevelModel>(LEVEL_TWO_KEY, LEVEL_TWO_FILE, nullptr);
+    // Queue up the other assets
+    _assets->loadDirectoryAsync("json/assets.json", nullptr);
+    _assets->loadAsync<LevelModel>(LEVEL_TWO_KEY, LEVEL_TWO_FILE, nullptr);
 
-  AudioEngine::start();
-  Application::onStartup(); // YOU MUST END with call to parent
+    AudioEngine::start();
+    Application::onStartup(); // YOU MUST END with call to parent
 }
 
 /**
@@ -75,16 +75,16 @@ void SCApp::onStartup() {
  * causing the application to be deleted.
  */
 void SCApp::onShutdown() {
-  _loading.dispose();
-  _assets = nullptr;
-  _batch = nullptr;
+    _loading.dispose();
+    _assets = nullptr;
+    _batch = nullptr;
 
-  // Shutdown input
-  Input::deactivate<Keyboard>();
-  Input::deactivate<Mouse>();
+    // Shutdown input
+    Input::deactivate<Keyboard>();
+    Input::deactivate<Mouse>();
 
-  AudioEngine::stop();
-  Application::onShutdown(); // YOU MUST END with call to parent
+    AudioEngine::stop();
+    Application::onShutdown(); // YOU MUST END with call to parent
 }
 
 /**
@@ -126,17 +126,17 @@ void SCApp::onResume() { AudioEngine::get()->resume(); }
  * @param timestep  The amount of time (in seconds) since the last frame
  */
 void SCApp::update(float timestep) {
-  if (!_loaded && _loading.isActive()) {
-    _loading.update(0.01f);
-  } else if (!_loaded) {
-    _loading.dispose(); // Disables the input listeners in this mode
-    //        _hunterGameplay = HGameController(getDisplaySize(), _assets);
-    _spiritGameplay = SGameController(getDisplaySize(), _assets);
-    _loaded = true;
-  } else {
-    //        _hunterGameplay.update(timestep);
-    _spiritGameplay.update(timestep);
-  }
+    if (!_loaded && _loading.isActive()) {
+        _loading.update(0.01f);
+    } else if (!_loaded) {
+        _loading.dispose(); // Disables the input listeners in this mode
+        //        _hunterGameplay = HGameController(getDisplaySize(), _assets);
+        _spiritGameplay = SGameController(getDisplaySize(), _assets);
+        _loaded = true;
+    } else {
+        //        _hunterGameplay.update(timestep);
+        _spiritGameplay.update(timestep);
+    }
 }
 
 /**
@@ -149,10 +149,10 @@ void SCApp::update(float timestep) {
  * at all. The default implmentation does nothing.
  */
 void SCApp::draw() {
-  if (!_loaded) {
-    _loading.render(_batch);
-  } else {
-    //        _hunterGameplay.render(_batch);
-    _spiritGameplay.render(_batch);
-  }
+    if (!_loaded) {
+        _loading.render(_batch);
+    } else {
+        //        _hunterGameplay.render(_batch);
+        _spiritGameplay.render(_batch);
+    }
 }

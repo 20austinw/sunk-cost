@@ -21,24 +21,24 @@ using namespace cugl;
 class InputModel {
 
 #pragma mark State
-public:
-  /** Whether the mouse was first clicked during a callback */
-  bool didClickMouse;
-  /** Whether the mouse was first clicked during this frame */
-  bool isMouseClicked;
-  /** Whether the mouse was held down during a callback */
-  bool didHoldMouse;
-  /** Whether the mouse was held down during this frame */
-  bool isMouseHeld;
-  /** The last position that the mouse was recorded in any mouse callback */
-  Vec2 lastMousePos;
+  public:
+    /** Whether the mouse was first clicked during a callback */
+    bool didClickMouse;
+    /** Whether the mouse was first clicked during this frame */
+    bool isMouseClicked;
+    /** Whether the mouse was held down during a callback */
+    bool didHoldMouse;
+    /** Whether the mouse was held down during this frame */
+    bool isMouseHeld;
+    /** The last position that the mouse was recorded in any mouse callback */
+    Vec2 lastMousePos;
 
 #pragma mark Main Functions
-public:
-  /** Creates the model state */
-  InputModel()
-      : didClickMouse(false), isMouseClicked(false), didHoldMouse(false),
-        isMouseHeld(false), lastMousePos(Vec2(0, 0)) {}
+  public:
+    /** Creates the model state */
+    InputModel()
+        : didClickMouse(false), isMouseClicked(false), didHoldMouse(false),
+          isMouseHeld(false), lastMousePos(Vec2(0, 0)) {}
 };
 
 #endif /* InputModel_h */

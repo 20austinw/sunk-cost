@@ -16,10 +16,10 @@
  */
 
 TrapController::TrapController(
-    const std::shared_ptr<cugl::AssetManager> &assets, Size screenSize) {
-  _model = std::make_unique<TrapModel>(Vec2(500, 600), 1000);
-  _view = std::make_unique<TrapView>(assets, Vec2(500, 600), 20);
-  _screenSize = screenSize;
+    const std::shared_ptr<cugl::AssetManager>& assets, Size screenSize) {
+    _model = std::make_unique<TrapModel>(Vec2(500, 600), 1000);
+    _view = std::make_unique<TrapView>(assets, Vec2(500, 600), 20);
+    _screenSize = screenSize;
 }
 
 void TrapController::setViewFrame() { _view->update(); }
@@ -40,7 +40,7 @@ Vec2 TrapController::getPosition() { return _model->getPosition(); }
  * @param position trap position
  */
 void TrapController::setPosition(cugl::Vec2 position) {
-  _model->setPosition(position);
+    _model->setPosition(position);
 }
 
 /**
@@ -49,7 +49,7 @@ void TrapController::setPosition(cugl::Vec2 position) {
  * @param position trap triggered
  */
 void TrapController::setTrigger(bool isTriggered) {
-  _model->setTrigger(isTriggered);
+    _model->setTrigger(isTriggered);
 }
 
 bool TrapController::getTrigger() { return _model->getTrigger(); }
@@ -62,8 +62,8 @@ bool TrapController::getTrigger() { return _model->getTrigger(); }
  *
  * @param scene The scene to add the view to
  */
-void TrapController::addChildTo(const std::shared_ptr<cugl::Scene2> &scene) {
-  scene->addChild(_view->getNode());
+void TrapController::addChildTo(const std::shared_ptr<cugl::Scene2>& scene) {
+    scene->addChild(_view->getNode());
 }
 
 /**
@@ -74,8 +74,8 @@ void TrapController::addChildTo(const std::shared_ptr<cugl::Scene2> &scene) {
  * @param scene The scene to remove the view from
  */
 void TrapController::removeChildFrom(
-    const std::shared_ptr<cugl::Scene2> &scene) {
-  scene->removeChild(_view->getNode());
+    const std::shared_ptr<cugl::Scene2>& scene) {
+    scene->removeChild(_view->getNode());
 }
 
 bool TrapController::update() { return _model->update(); }

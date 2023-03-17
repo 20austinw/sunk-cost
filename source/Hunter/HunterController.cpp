@@ -15,23 +15,23 @@
  * The constructor should set up the model, view, and camera controller
  */
 HunterController::HunterController(
-    const std::shared_ptr<cugl::AssetManager> &assets, Size screenSize) {
-  CULog("Called!");
-  _model = std::make_unique<HunterModel>();
-  _model->setPosition(Vec2(400, 400));
-  _view = std::make_unique<HunterView>(assets, Vec2(400, 400), Vec2(40, 40));
-  _screenSize = screenSize;
-  // A default camera ID = 1 if not specified
-  CULog("%f, %f", _screenSize.width, _screenSize.height);
-  _camera = std::make_unique<CameraController>(1, _screenSize);
-  CULog("%f, %f", _screenSize.width, _screenSize.height);
-  _camera->updatePosition(Vec3(5, 0, 15));
+    const std::shared_ptr<cugl::AssetManager>& assets, Size screenSize) {
+    CULog("Called!");
+    _model = std::make_unique<HunterModel>();
+    _model->setPosition(Vec2(400, 400));
+    _view = std::make_unique<HunterView>(assets, Vec2(400, 400), Vec2(40, 40));
+    _screenSize = screenSize;
+    // A default camera ID = 1 if not specified
+    CULog("%f, %f", _screenSize.width, _screenSize.height);
+    _camera = std::make_unique<CameraController>(1, _screenSize);
+    CULog("%f, %f", _screenSize.width, _screenSize.height);
+    _camera->updatePosition(Vec3(5, 0, 15));
 
-  _hideCool = 0.0;
-  _pos = _model->position;
-  _ang = 0;
-  _dAng = 0;
-  _vel = Vec2(7, 7);
+    _hideCool = 0.0;
+    _pos = _model->position;
+    _ang = 0;
+    _dAng = 0;
+    _vel = Vec2(7, 7);
 }
 
 /**
@@ -40,21 +40,21 @@ HunterController::HunterController(
  * (1) get the view from CameraController
  * (2) attach the viewport to the scene
  */
-void HunterController::render(const std::shared_ptr<cugl::SpriteBatch> &batch) {
-  // Set the viewport as the rendering target
-  batch->begin();
-  batch->setPerspective(_camera->getView());
+void HunterController::render(const std::shared_ptr<cugl::SpriteBatch>& batch) {
+    // Set the viewport as the rendering target
+    batch->begin();
+    batch->setPerspective(_camera->getView());
 
-  batch->end();
-  //        // Render the scene
-  //        scene->render(cugl::Application::get()->getAssets()->getRenderer());
-  //
-  //        // End rendering to the viewport
-  //        cugl::Application::get()->getAssets()->getRenderer()->drawEnd();
+    batch->end();
+    //        // Render the scene
+    //        scene->render(cugl::Application::get()->getAssets()->getRenderer());
+    //
+    //        // End rendering to the viewport
+    //        cugl::Application::get()->getAssets()->getRenderer()->drawEnd();
 }
 
 void HunterController::setViewFrame(int forward, int right) {
-  _view->advanceFrame(forward, right);
+    _view->advanceFrame(forward, right);
 }
 
 /**
@@ -64,8 +64,8 @@ void HunterController::setViewFrame(int forward, int right) {
  * (2) modify camera to reflect the change
  */
 void HunterController::update() {
-  _input.readInput();
-  move(_input.getForward(), _input.getRight());
+    _input.readInput();
+    move(_input.getForward(), _input.getRight());
 }
 
 /**
@@ -106,54 +106,54 @@ void HunterController::update() {
 //
 // }
 void HunterController::move(float forward, float rightward) {
-  // Process the hunter thrust.
-  //    float pos.x+=rightward*_vel;
-  //    _pos.y += forward*_vel;
-  Vec2 pos = _model->getPosition();
-  //     int posx;
-  //     int posy;
-  //     Vec3 currPos = (pos-Vec2(280,90));
-  //     posx =(int) (currPos.x)/45;
-  //     posy=(int)((currPos.y))/45;
+    // Process the hunter thrust.
+    //    float pos.x+=rightward*_vel;
+    //    _pos.y += forward*_vel;
+    Vec2 pos = _model->getPosition();
+    //     int posx;
+    //     int posy;
+    //     Vec3 currPos = (pos-Vec2(280,90));
+    //     posx =(int) (currPos.x)/45;
+    //     posy=(int)((currPos.y))/45;
 
-  //     if(posx>15 ){
-  //         pos.x-=12;
+    //     if(posx>15 ){
+    //         pos.x-=12;
 
-  //     }else if(posx<=0 ){
-  //         pos.x+=12;
+    //     }else if(posx<=0 ){
+    //         pos.x+=12;
 
-  //     }
-  //     else if(posy>11 ){
-  //         pos.y -= 12;
-  //     }else if(posy<=-0){
-  //         pos.y+=12;
-  //     }
-  //     else{
-  pos.x += rightward * _vel.x;
-  pos.y += forward * _vel.y;
-  //   }
-  _model->setPosition(pos);
-  _view->setPosition(pos);
+    //     }
+    //     else if(posy>11 ){
+    //         pos.y -= 12;
+    //     }else if(posy<=-0){
+    //         pos.y+=12;
+    //     }
+    //     else{
+    pos.x += rightward * _vel.x;
+    pos.y += forward * _vel.y;
+    //   }
+    _model->setPosition(pos);
+    _view->setPosition(pos);
 
-  if (forward == 1 && rightward == 1) {
-    // Thrust key pressed; increase the hunters velocity.
-    setAngle(45);
+    if (forward == 1 && rightward == 1) {
+        // Thrust key pressed; increase the hunters velocity.
+        setAngle(45);
 
-  } else if (forward == 1 && rightward == 0) {
-    setAngle(0);
-  } else if (forward == 1 && rightward == -1) {
-    setAngle(315);
-  } else if (forward == 0 && rightward == -1) {
-    setAngle(270);
-  } else if (forward == 0 && rightward == 1) {
-    setAngle(90);
-  } else if (forward == -1 && rightward == 1) {
-    setAngle(135);
-  } else if (forward == -1 && rightward == 0) {
-    setAngle(180);
-  } else if (forward == -1 && rightward == -1) {
-    setAngle(225);
-  }
+    } else if (forward == 1 && rightward == 0) {
+        setAngle(0);
+    } else if (forward == 1 && rightward == -1) {
+        setAngle(315);
+    } else if (forward == 0 && rightward == -1) {
+        setAngle(270);
+    } else if (forward == 0 && rightward == 1) {
+        setAngle(90);
+    } else if (forward == -1 && rightward == 1) {
+        setAngle(135);
+    } else if (forward == -1 && rightward == 0) {
+        setAngle(180);
+    } else if (forward == -1 && rightward == -1) {
+        setAngle(225);
+    }
 }
 
 Vec2 HunterController::getPosition() { return _model->getPosition(); }
@@ -166,13 +166,13 @@ Vec2 HunterController::getPosition() { return _model->getPosition(); }
  *
  * @param scene The scene to add the view to
  */
-void HunterController::addChildTo(const std::shared_ptr<cugl::Scene2> &scene) {
-  std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> vec =
-      _view->getSpriteNode();
+void HunterController::addChildTo(const std::shared_ptr<cugl::Scene2>& scene) {
+    std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> vec =
+        _view->getSpriteNode();
 
-  for (int i = 0; i < vec.size(); i++) {
-    scene->addChild(vec[i]);
-  }
+    for (int i = 0; i < vec.size(); i++) {
+        scene->addChild(vec[i]);
+    }
 }
 
 /**
@@ -183,12 +183,12 @@ void HunterController::addChildTo(const std::shared_ptr<cugl::Scene2> &scene) {
  * @param scene The scene to remove the view from
  */
 void HunterController::removeChildFrom(
-    const std::shared_ptr<cugl::Scene2> &scene) {
-  // TODO: Implement me
-  std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> vec =
-      _view->getSpriteNode();
+    const std::shared_ptr<cugl::Scene2>& scene) {
+    // TODO: Implement me
+    std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> vec =
+        _view->getSpriteNode();
 
-  for (int i = 0; i < vec.size(); i++) {
-    scene->removeChild(vec[i]);
-  }
+    for (int i = 0; i < vec.size(); i++) {
+        scene->removeChild(vec[i]);
+    }
 }

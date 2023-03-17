@@ -18,14 +18,14 @@ SpiritController::SpiritController() {}
  * variables.
  */
 SpiritController::SpiritController(
-    const std::shared_ptr<cugl::AssetManager> &assets,
+    const std::shared_ptr<cugl::AssetManager>& assets,
     std::shared_ptr<cugl::Scene2> scene,
     std::shared_ptr<PortraitSetController> portraits, Size screenSize) {
-  _scene = scene;
-  _model = std::make_unique<SpiritModel>(assets, scene, 3, 3, 30);
-  _view = std::make_unique<SpiritView>();
-  _portraits = portraits;
-  _screenSize = screenSize;
+    _scene = scene;
+    _model = std::make_unique<SpiritModel>(assets, scene, 3, 3, 30);
+    _view = std::make_unique<SpiritView>();
+    _portraits = portraits;
+    _screenSize = screenSize;
 }
 
 /**
@@ -40,11 +40,11 @@ Vec2 SpiritController::placeTraps() { return Vec2::ZERO; }
 
 // Helper function
 Rect SpiritController::screenToWorld(Rect rect) {
-  Size size = rect.size;
-  const float WIDTH = _screenSize.width;
-  const float HEIGHT = _screenSize.height;
-  return Rect(2 * rect.getMinX() / WIDTH, 2 * rect.getMinY() / HEIGHT,
-              2 * size.width / WIDTH, 2 * size.height / HEIGHT);
+    Size size = rect.size;
+    const float WIDTH = _screenSize.width;
+    const float HEIGHT = _screenSize.height;
+    return Rect(2 * rect.getMinX() / WIDTH, 2 * rect.getMinY() / HEIGHT,
+                2 * size.width / WIDTH, 2 * size.height / HEIGHT);
 }
 
 /**
@@ -53,12 +53,12 @@ Rect SpiritController::screenToWorld(Rect rect) {
  * (1) get the view from portraitsetcontroller
  * (2) attach the viewport to the scene
  */
-void SpiritController::render(std::shared_ptr<cugl::SpriteBatch> &batch,
+void SpiritController::render(std::shared_ptr<cugl::SpriteBatch>& batch,
                               Size size) {
-  //    Rect cameraView = getCameraView();
-  //    batch->setColor(Color4::YELLOW);
-  //    batch->fill(screenToWorld(cameraView.translate(-size.width/2,
-  //    -size.height/2)));
+    //    Rect cameraView = getCameraView();
+    //    batch->setColor(Color4::YELLOW);
+    //    batch->fill(screenToWorld(cameraView.translate(-size.width/2,
+    //    -size.height/2)));
 }
 
 /**
@@ -69,16 +69,16 @@ void SpiritController::render(std::shared_ptr<cugl::SpriteBatch> &batch,
  */
 void SpiritController::update(
     const std::shared_ptr<TilemapController> _tilemap) {
-  auto inputController = InputController::getInstance();
-  auto pos = _scene->getCamera()->screenToWorldCoords(
-      inputController->getLastMousePos());
-  if (inputController->isMouseClicked() && _portraits->getCurState()) {
-    if (!_tilemap->isTileTraversable(pos) ||
-        _tilemap->mapPosToGridPos(pos).x < 0 ||
-        _tilemap->mapPosToGridPos(pos).y < 0)
-      return;
-    _model->addTrap(pos);
-  }
-  _model->update();
-  _portraits->update();
+    auto inputController = InputController::getInstance();
+    auto pos = _scene->getCamera()->screenToWorldCoords(
+        inputController->getLastMousePos());
+    if (inputController->isMouseClicked() && _portraits->getCurState()) {
+        if (!_tilemap->isTileTraversable(pos) ||
+            _tilemap->mapPosToGridPos(pos).x < 0 ||
+            _tilemap->mapPosToGridPos(pos).y < 0)
+            return;
+        _model->addTrap(pos);
+    }
+    _model->update();
+    _portraits->update();
 }

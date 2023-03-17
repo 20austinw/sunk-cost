@@ -25,66 +25,68 @@ InputController::InputController()
       _active(false), _ts(false) {}
 
 bool InputController::initListeners() {
-  Touchscreen *ts = Input::get<Touchscreen>();
-  _keyboard = Input::get<Keyboard>();
-  _mouse = Input::get<Mouse>();
-  if (ts) {
-    _ts = true;
-    _touchKey = ts->acquireKey();
-    ts->addBeginListener(
-        _touchKey, [=](const cugl::TouchEvent &event, bool focus) {
-          this->touchDownCB(event, ts->touchPressed(event.touch));
-        });
-    ts->addEndListener(_touchKey,
-                       [=](const cugl::TouchEvent &event, bool focus) {
-                         this->touchUpCB(event, ts->touchReleased(event.touch));
-                       });
-    ts->addMotionListener(
-        _touchKey, [=](const cugl::TouchEvent &event, Vec2 previous,
-                       bool focus) { this->touchMotionCB(event, focus); });
-    _active = true;
-  }
-  if (_keyboard) {
-    _kkey = _keyboard->acquireKey();
-    bool addedKey = _keyboard->addKeyDownListener(
-        _kkey, [this](const KeyEvent &event, bool focus) {
-          _current.emplace(event.keycode);
-        });
-    CUAssertLog(addedKey, "failed adding key listener");
-    _active = true;
-  }
-  if (_mouse) {
-    _mkey = _mouse->acquireKey();
-    _mouse->setPointerAwareness(Mouse::PointerAwareness::DRAG);
-    bool addedPress = _mouse->addPressListener(
-        _mkey, [this](const MouseEvent &event, Uint8 clicks, bool focus) {
-          buttonDownCB(event, clicks, focus);
-        });
-    CUAssertLog(addedPress, "failed adding press listener");
+    Touchscreen* ts = Input::get<Touchscreen>();
+    _keyboard = Input::get<Keyboard>();
+    _mouse = Input::get<Mouse>();
+    if (ts) {
+        _ts = true;
+        _touchKey = ts->acquireKey();
+        ts->addBeginListener(
+            _touchKey, [=](const cugl::TouchEvent& event, bool focus) {
+                this->touchDownCB(event, ts->touchPressed(event.touch));
+            });
+        ts->addEndListener(
+            _touchKey, [=](const cugl::TouchEvent& event, bool focus) {
+                this->touchUpCB(event, ts->touchReleased(event.touch));
+            });
+        ts->addMotionListener(
+            _touchKey, [=](const cugl::TouchEvent& event, Vec2 previous,
+                           bool focus) { this->touchMotionCB(event, focus); });
+        _active = true;
+    }
+    if (_keyboard) {
+        _kkey = _keyboard->acquireKey();
+        bool addedKey = _keyboard->addKeyDownListener(
+            _kkey, [this](const KeyEvent& event, bool focus) {
+                _current.emplace(event.keycode);
+            });
+        CUAssertLog(addedKey, "failed adding key listener");
+        _active = true;
+    }
+    if (_mouse) {
+        _mkey = _mouse->acquireKey();
+        _mouse->setPointerAwareness(Mouse::PointerAwareness::DRAG);
+        bool addedPress = _mouse->addPressListener(
+            _mkey, [this](const MouseEvent& event, Uint8 clicks, bool focus) {
+                buttonDownCB(event, clicks, focus);
+            });
+        CUAssertLog(addedPress, "failed adding press listener");
 
-    bool addedDrag = _mouse->addDragListener(
-        _mkey, [this](const MouseEvent &event, const Vec2 previous,
-                      bool focus) { buttonHeldCB(event, previous, focus); });
-    CUAssertLog(addedDrag, "failed adding drag listener");
+        bool addedDrag = _mouse->addDragListener(
+            _mkey,
+            [this](const MouseEvent& event, const Vec2 previous, bool focus) {
+                buttonHeldCB(event, previous, focus);
+            });
+        CUAssertLog(addedDrag, "failed adding drag listener");
 
-    bool addedRelease = _mouse->addReleaseListener(
-        _mkey, [this](const MouseEvent &event, Uint8 clicks, bool focus) {
-          buttonUpCB(event, clicks, focus);
-        });
-    CUAssertLog(addedRelease, "failed adding release listener");
-    _active = true;
-  }
-  return _active;
+        bool addedRelease = _mouse->addReleaseListener(
+            _mkey, [this](const MouseEvent& event, Uint8 clicks, bool focus) {
+                buttonUpCB(event, clicks, focus);
+            });
+        CUAssertLog(addedRelease, "failed adding release listener");
+        _active = true;
+    }
+    return _active;
 }
 
 /** Returns a singleton instance of InputController. */
 std::shared_ptr<InputController> InputController::getInstance() {
-  static std::shared_ptr<InputController> inputController;
-  if (inputController == nullptr) {
-    inputController = std::make_shared<InputController>();
-  }
-  inputController->initListeners();
-  return inputController;
+    static std::shared_ptr<InputController> inputController;
+    if (inputController == nullptr) {
+        inputController = std::make_shared<InputController>();
+    }
+    inputController->initListeners();
+    return inputController;
 }
 
 /**
@@ -96,49 +98,49 @@ std::shared_ptr<InputController> InputController::getInstance() {
  * are more appropriate for menus and buttons (like the loading screen).
  */
 void InputController::readInput() {
-  // This makes it easier to change the keys later
-  KeyCode up = KeyCode::ARROW_UP;
-  KeyCode down = KeyCode::ARROW_DOWN;
-  KeyCode left = KeyCode::ARROW_LEFT;
-  KeyCode right = KeyCode::ARROW_RIGHT;
-  KeyCode reset = KeyCode::R;
+    // This makes it easier to change the keys later
+    KeyCode up = KeyCode::ARROW_UP;
+    KeyCode down = KeyCode::ARROW_DOWN;
+    KeyCode left = KeyCode::ARROW_LEFT;
+    KeyCode right = KeyCode::ARROW_RIGHT;
+    KeyCode reset = KeyCode::R;
 
-  // Convert keyboard state into game commands
-  _forward = _rightward = 0;
-  _didReset = false;
+    // Convert keyboard state into game commands
+    _forward = _rightward = 0;
+    _didReset = false;
 
-  // Movement forward/backward
-  Keyboard *keys = Input::get<Keyboard>();
+    // Movement forward/backward
+    Keyboard* keys = Input::get<Keyboard>();
 
-  if (keys) {
-    if (keys->keyDown(up) && !keys->keyDown(down)) {
-      _forward = 1;
-    } else if (keys->keyDown(down) && !keys->keyDown(up)) {
-      _forward = -1;
+    if (keys) {
+        if (keys->keyDown(up) && !keys->keyDown(down)) {
+            _forward = 1;
+        } else if (keys->keyDown(down) && !keys->keyDown(up)) {
+            _forward = -1;
+        }
+
+        // Movement left/right
+        if (keys->keyDown(left) && !keys->keyDown(right)) {
+            _rightward = -1;
+        } else if (keys->keyDown(right) && !keys->keyDown(left)) {
+            _rightward = 1;
+        }
+
+        // Reset the game
+        if (keys->keyDown(reset)) {
+            _didReset = true;
+        }
     }
-
-    // Movement left/right
-    if (keys->keyDown(left) && !keys->keyDown(right)) {
-      _rightward = -1;
-    } else if (keys->keyDown(right) && !keys->keyDown(left)) {
-      _rightward = 1;
-    }
-
-    // Reset the game
-    if (keys->keyDown(reset)) {
-      _didReset = true;
-    }
-  }
 }
 
 void InputController::dispose() {
-  Touchscreen *ts = Input::get<Touchscreen>();
-  if (_active && ts) {
-    ts->removeBeginListener((Uint32)_touchID);
-    ts->removeEndListener((Uint32)_touchID);
-    ts->removeMotionListener((Uint32)_touchID);
-    _active = false;
-  }
+    Touchscreen* ts = Input::get<Touchscreen>();
+    if (_active && ts) {
+        ts->removeBeginListener((Uint32)_touchID);
+        ts->removeEndListener((Uint32)_touchID);
+        ts->removeMotionListener((Uint32)_touchID);
+        _active = false;
+    }
 }
 
 /**
@@ -148,22 +150,22 @@ void InputController::dispose() {
  */
 void InputController::update(float dt) {
 
-  if (_ts) {
-    _prevDown = _currDown;
-    _currDown = _touchDown;
-    _prevPos = _currPos;
-    _currPos = _touchPos;
-  }
+    if (_ts) {
+        _prevDown = _currDown;
+        _currDown = _touchDown;
+        _prevPos = _currPos;
+        _currPos = _touchPos;
+    }
 
-  // Swap the keyboard buffers, removing old keys
-  _previous.clear();
-  _previous = _current;
-  _current.clear();
+    // Swap the keyboard buffers, removing old keys
+    _previous.clear();
+    _previous = _current;
+    _current.clear();
 
-  _model->isMouseClicked = _model->didClickMouse;
-  // Only need to detect the first click
-  _model->didClickMouse = false;
-  _model->isMouseHeld = _model->didHoldMouse;
+    _model->isMouseClicked = _model->didClickMouse;
+    // Only need to detect the first click
+    _model->didClickMouse = false;
+    _model->isMouseHeld = _model->didHoldMouse;
 }
 
 #pragma mark -
@@ -177,13 +179,13 @@ void InputController::update(float dt) {
  * @param clicks    The number of clicks (for double clicking)
  * @param focus     Whether this device has focus (UNUSED)
  */
-void InputController::buttonDownCB(const cugl::MouseEvent &event, Uint8 clicks,
+void InputController::buttonDownCB(const cugl::MouseEvent& event, Uint8 clicks,
                                    bool focus) {
-  if (!_model->didHoldMouse && event.buttons.hasLeft()) {
-    _model->didClickMouse = true;
-    _model->didHoldMouse = true;
-    _model->lastMousePos = event.position;
-  }
+    if (!_model->didHoldMouse && event.buttons.hasLeft()) {
+        _model->didClickMouse = true;
+        _model->didHoldMouse = true;
+        _model->lastMousePos = event.position;
+    }
 }
 
 /**
@@ -196,11 +198,11 @@ void InputController::buttonDownCB(const cugl::MouseEvent &event, Uint8 clicks,
  * @param previous    The previous position of the mouse
  * @param focus     Whether this device has focus (UNUSED)
  */
-void InputController::buttonHeldCB(const MouseEvent &event, const Vec2 previous,
+void InputController::buttonHeldCB(const MouseEvent& event, const Vec2 previous,
                                    bool focus) {
-  if (_model->didHoldMouse && event.buttons.hasLeft()) {
-    _model->lastMousePos = event.position;
-  }
+    if (_model->didHoldMouse && event.buttons.hasLeft()) {
+        _model->lastMousePos = event.position;
+    }
 }
 
 /**
@@ -212,12 +214,12 @@ void InputController::buttonHeldCB(const MouseEvent &event, const Vec2 previous,
  * @param clicks    The number of clicks (for double clicking)
  * @param focus     Whether this device has focus (UNUSED)
  */
-void InputController::buttonUpCB(const cugl::MouseEvent &event, Uint8 clicks,
+void InputController::buttonUpCB(const cugl::MouseEvent& event, Uint8 clicks,
                                  bool focus) {
-  if (_model->didHoldMouse && event.buttons.hasLeft()) {
-    _model->didHoldMouse = false;
-    _model->lastMousePos = event.position;
-  }
+    if (_model->didHoldMouse && event.buttons.hasLeft()) {
+        _model->didHoldMouse = false;
+        _model->lastMousePos = event.position;
+    }
 }
 
 #pragma mark Touch Callbacks
@@ -233,12 +235,12 @@ void InputController::buttonUpCB(const cugl::MouseEvent &event, Uint8 clicks,
  * @param event     The event with the touch information
  * @param focus     Whether this touch has been pressed
  */
-void InputController::touchDownCB(const cugl::TouchEvent &event, bool focus) {
-  if (!_touchDown && event.touch && focus) {
-    _touchDown = true;
-    _touchID = event.touch;
-    _touchPos = event.position;
-  }
+void InputController::touchDownCB(const cugl::TouchEvent& event, bool focus) {
+    if (!_touchDown && event.touch && focus) {
+        _touchDown = true;
+        _touchID = event.touch;
+        _touchPos = event.position;
+    }
 }
 
 /**
@@ -250,10 +252,10 @@ void InputController::touchDownCB(const cugl::TouchEvent &event, bool focus) {
  * @param event     The event with the touch information
  * @param focus     Whether this touch has been released
  */
-void InputController::touchUpCB(const cugl::TouchEvent &event, bool focus) {
-  if (_touchDown && event.touch == _touchID && focus) {
-    _touchDown = false;
-  }
+void InputController::touchUpCB(const cugl::TouchEvent& event, bool focus) {
+    if (_touchDown && event.touch == _touchID && focus) {
+        _touchDown = false;
+    }
 }
 
 /**
@@ -262,8 +264,8 @@ void InputController::touchUpCB(const cugl::TouchEvent &event, bool focus) {
  * @param event     The event with the touch information
  * @param focus     Whether this device has focus (UNUSED)
  */
-void InputController::touchMotionCB(const cugl::TouchEvent &event, bool focus) {
-  if (_touchDown && event.touch == _touchID) {
-    _touchPos = event.position;
-  }
+void InputController::touchMotionCB(const cugl::TouchEvent& event, bool focus) {
+    if (_touchDown && event.touch == _touchID) {
+        _touchPos = event.position;
+    }
 }

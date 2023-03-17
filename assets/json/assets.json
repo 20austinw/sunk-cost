@@ -1,79 +1,79 @@
 {
-  "textures": {
-    "background": {
-      "file": "textures/black.png"
-    },
-    "red": {
-      "file": "textures/red.png"
-    },
-    "black": {
-      "file": "textures/black.png"
-    },
-    "green": {
-      "file": "textures/green.png"
-    },
-    "blue": {
-      "file": "textures/blue.png"
-    },
-    "hunter": {
-      "file": "textures/hunter.png"
-    },
-    "hunterrunning": {
-      "file": "textures/diver_walking_animation.png"
-    },
-    "hunterleft": {
-      "file": "textures/diver_walking_animation_L.png"
-    },
-    "trap": {
-      "file": "textures/trap.png"
-    },
-    "filter": {
-      "file": "textures/filter.png"
-    },
-    "map": {
-      "file": "textures/map.png"
-    },
-    "trap_animation": {
-      "file": "textures/clam_trap.png"
-    },
-    "door": {
-      "file": "textures/door.png"
-    },
-    "fulldoor": {
-      "file": "textures/full_door.png"
-    },
-    "painting_animation": {
-      "file": "textures/live_painting.png"
-    }
+    "textures": {
+        "background": {
+            "file": "textures/black.png"
+        },
+        "red": {
+            "file": "textures/red.png"
+        },
+        "black": {
+            "file": "textures/black.png"
+        },
+        "green": {
+            "file": "textures/green.png"
+        },
+        "blue": {
+            "file": "textures/blue.png"
+        },
+        "hunter": {
+            "file": "textures/hunter.png"
+        },
+        "hunterrunning": {
+            "file": "textures/diver_walking_animation.png"
+        },
+        "hunterleft": {
+            "file": "textures/diver_walking_animation_L.png"
+        },
+        "trap": {
+            "file": "textures/trap.png"
+        },
+        "filter": {
+            "file": "textures/filter.png"
+        },
+        "map": {
+            "file": "textures/map.png"
+        },
+        "trap_animation": {
+            "file": "textures/clam_trap.png"
+        },
+        "door": {
+            "file": "textures/door.png"
+        },
+        "fulldoor": {
+            "file": "textures/full_door.png"
+        },
+        "painting_animation": {
+            "file": "textures/live_painting.png"
+        }
 
-  },
-  "fonts": {
-    "pixel32": {
-      "file": "fonts/LightPixel7.ttf",
-      "size": 32
+    },
+    "fonts": {
+        "pixel32": {
+            "file": "fonts/LightPixel7.ttf",
+            "size": 32
+        }
+    },
+    "sounds": {
+        "fusion": {
+            "type": "sample",
+            "file": "sounds/fusion.ogg"
+        },
+        "laser": {
+            "type": "sample",
+            "file": "sounds/laser.ogg",
+            "volume": 0.5
+        },
+        "blast": {
+            "type": "sample",
+            "file": "sounds/explode.ogg"
+        },
+        "bang": {
+            "type": "sample",
+            "file": "sounds/bang.ogg",
+            "volume": 0.8
+        }
+    },
+    "jsons": {
+        "constants": "json/constants.json"
     }
-  },
-  "sounds": {
-    "fusion": {
-      "type": "sample",
-      "file": "sounds/fusion.ogg"
-    },
-    "laser": {
-      "type": "sample",
-      "file": "sounds/laser.ogg",
-      "volume": 0.5
-    },
-    "blast": {
-      "type": "sample",
-      "file": "sounds/explode.ogg"
-    },
-    "bang": {
-      "type": "sample",
-      "file": "sounds/bang.ogg",
-      "volume": 0.8
-    }
-  },
-  "jsons": {
-    "constants": "json/constants.json"
-  }
 }

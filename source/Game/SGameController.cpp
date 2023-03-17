@@ -50,6 +50,8 @@ SGameController::SGameController(
         _levelLoaded = false;
         CULog("Fail!");
     }
+    
+    _status = Status::START;
 }
 
 #pragma mark Gameplay Handling

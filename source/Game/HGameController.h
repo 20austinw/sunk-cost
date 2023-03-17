@@ -38,6 +38,25 @@ using namespace cugl;
  */
 class HGameController{
     
+public:
+    /**
+     * The configuration status
+     *
+     * This is how the application knows to switch to the next scene.
+     */
+    enum Status {
+        /** Client has not yet entered a room */
+        IDLE,
+        /** Client is connecting to the host */
+        JOIN,
+        /** Client is waiting on host to start game */
+        WAIT,
+        /** Time to start the game */
+        START,
+        /** Game was aborted; back to main menu */
+        ABORT
+    };
+    
 #pragma mark Internal References
 private:
     /** The Game scene */
@@ -116,6 +135,10 @@ private:
     
     bool _levelLoaded;
     
+    bool _ishost;
+    
+    Status _status;
+    
 #pragma mark External References
 private:
     /** The tilemap to procedurally generate */
@@ -165,7 +188,13 @@ public:
     void updateJoystick();
     void updateCamera(float timestep);
     
+    Status getStatus() {
+        return _status;
+    }
     
+    void setHost(bool b) {
+        _ishost = b;
+    }
 //    void updateCamera();
 private:
     void checkLevelLoaded();

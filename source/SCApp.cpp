@@ -34,31 +34,35 @@ using namespace cugl;
 void SCApp::onStartup() {
     _assets = AssetManager::alloc();
     _batch = SpriteBatch::alloc();
-    //#ifdef CU_TOUCH_SCREEN
-    //    // Start-up basic input for loading screen (MOBILE ONLY)
-    //    Input::activate<Touchscreen>();
-    //#else
-    //    // Start-up basic input for loading screen (DESKTOP ONLY)
+
+#ifdef CU_TOUCH_SCREEN
+    // Start-up basic input for loading screen (MOBILE ONLY)
+    Input::activate<Touchscreen>();
+#else
+//    // Start-up basic input for loading screen (DESKTOP ONLY)
     Input::activate<Mouse>();
     Input::activate<Keyboard>();
-    //#endif
-
+#endif
+   
     _assets->attach<Texture>(TextureLoader::alloc()->getHook());
     _assets->attach<Sound>(SoundLoader::alloc()->getHook());
     _assets->attach<Font>(FontLoader::alloc()->getHook());
+    _assets->attach<WidgetValue>(WidgetLoader::alloc()->getHook());
     _assets->attach<JsonValue>(JsonLoader::alloc()->getHook());
     _assets->attach<scene2::SceneNode>(
         Scene2Loader::alloc()->getHook()); // Needed for loading screen
     _assets->attach<LevelModel>(GenericLoader<LevelModel>::alloc()->getHook());
 
     // Create a "loading" screen
+    _scene = State::LOAD;
     _loaded = false;
     _loading.init(_assets);
 
     // Queue up the other assets
     _assets->loadDirectoryAsync("json/assets.json", nullptr);
     _assets->loadAsync<LevelModel>(LEVEL_TWO_KEY, LEVEL_TWO_FILE, nullptr);
-
+    
+    net::NetworkLayer::start(net::NetworkLayer::Log::INFO);
     AudioEngine::start();
     Application::onStartup(); // YOU MUST END with call to parent
 }
@@ -80,9 +84,14 @@ void SCApp::onShutdown() {
     _batch = nullptr;
 
     // Shutdown input
+#ifdef CU_MOBILE
+    Input::deactivate<Touchscreen>();
+#else
     Input::deactivate<Keyboard>();
     Input::deactivate<Mouse>();
+#endif
 
+    net::NetworkLayer::stop();
     AudioEngine::stop();
     Application::onShutdown(); // YOU MUST END with call to parent
 }
@@ -126,19 +135,89 @@ void SCApp::onResume() { AudioEngine::get()->resume(); }
  * @param timestep  The amount of time (in seconds) since the last frame
  */
 void SCApp::update(float timestep) {
-    if (!_loaded && _loading.isActive()) {
-        _loading.update(0.01f);
-    } else if (!_loaded) {
-        _loading.dispose(); // Disables the input listeners in this mode
-                _hunterGameplay = HGameController(getDisplaySize(), _assets);
-//        _spiritGameplay = SGameController(getDisplaySize(), _assets);
-        _loaded = true;
-    } else {
-                _hunterGameplay.update(timestep);
-//        _spiritGameplay.update(timestep);
+    switch (_scene) {
+        case LOAD:
+            updateLoadingScene(timestep);
+            break;
+        case MENU:
+            updateMenuScene(timestep);
+            break;
+        case HOST:
+            updateSGameController(timestep);
+            break;
+        case CLIENT:
+            updateHGameController(timestep);
+            break;
     }
 }
 
+
+void SCApp::updateMenuScene(float timestep) {
+    _menu.update(timestep);
+    switch (_menu.getChoice()) {
+        case MenuScene::Choice::HOST:
+            _menu.setActive(false);
+            _scene = State::HOST;
+            break;
+        case MenuScene::Choice::CLIENT:
+            _menu.setActive(false);
+            _scene = State::CLIENT;
+            break;
+        case MenuScene::Choice::NONE:
+            // DO NOTHING
+            break;
+    }
+}
+
+void SCApp::updateLoadingScene(float timestep) {
+    if (!_loaded && _loading.isActive()) {
+        _loading.update(0.01f);
+    } else {
+        _loading.dispose();
+        _menu.init(_assets);
+        _spiritGameplay = SGameController(getDisplaySize(), _assets);
+        _hunterGameplay = HGameController(getDisplaySize(), _assets);
+        _menu.setActive(true);
+        _scene = State::MENU;
+    }
+}
+
+void SCApp::updateHGameController(float timestep) {
+    _hunterGameplay.update(timestep);
+    switch (_hunterGameplay.getStatus()) {
+        case HGameController::Status::ABORT:
+            _scene = State::MENU;
+            break;
+        case HGameController::Status::START:
+            _scene = State::CLIENT;
+            // Transfer connection ownership
+            _hunterGameplay.setHost(false);
+            break;
+        case HGameController::Status::WAIT:
+        case HGameController::Status::IDLE:
+        case HGameController::Status::JOIN:
+            // DO NOTHING
+            break;
+    }
+}
+
+void SCApp::updateSGameController(float timestep) {
+    _spiritGameplay.update(timestep);
+    switch (_spiritGameplay.getStatus()) {
+        case SGameController::Status::ABORT:
+            _menu.setActive(true);
+            _scene = State::MENU;
+            break;
+        case SGameController::Status::START:
+            _scene = State::HOST;
+            _spiritGameplay.setHost(true);
+            break;
+        case SGameController::Status::WAIT:
+        case SGameController::Status::IDLE:
+            // DO NOTHING
+            break;
+    }
+}
 /**
  * The method called to draw the application to the screen.
  *
@@ -149,10 +228,18 @@ void SCApp::update(float timestep) {
  * at all. The default implmentation does nothing.
  */
 void SCApp::draw() {
-    if (!_loaded) {
-        _loading.render(_batch);
-    } else {
-                _hunterGameplay.render(_batch);
-//        _spiritGameplay.render(_batch);
+    switch (_scene) {
+        case LOAD:
+            _loading.render(_batch);
+            break;
+        case MENU:
+            _menu.render(_batch);
+            break;
+        case HOST:
+            _spiritGameplay.render(_batch);
+            break;
+        case CLIENT:
+            _hunterGameplay.render(_batch);
+            break;
     }
 }

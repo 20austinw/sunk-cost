@@ -23,7 +23,23 @@ using namespace cugl;
  * an attribute of a more general class.
  */
 class SGameController {
-
+public:
+    /**
+     * The configuration status
+     *
+     * This is how the application knows to switch to the next scene.
+     */
+    enum Status {
+        /** Host is waiting on a connection */
+        WAIT,
+        /** Host is waiting on all players to join */
+        IDLE,
+        /** Time to start the game */
+        START,
+        /** Game was aborted; back to main menu */
+        ABORT
+    };
+    
 #pragma mark Internal References
   private:
     /** The Game scene */
@@ -57,7 +73,11 @@ class SGameController {
 
     std::shared_ptr<scene2::PolygonNode> _map;
     std::shared_ptr<scene2::PolygonNode> _miniMap;
-
+    
+    Status _status;
+    
+    bool _ishost;
+    
 #pragma mark External References
   private:
     /** The tilemap to procedurally generate */
@@ -101,8 +121,16 @@ class SGameController {
      * @param batch The SpriteBatch used to render this scene
      */
     void render(std::shared_ptr<SpriteBatch>& batch);
-
-  private:
+    
+    Status getStatus() {
+        return _status;
+    }
+    
+    void setHost(bool b) {
+        _ishost = b;
+    }
+    
+private:
     void checkLevelLoaded();
 
     void generateLevel();

@@ -15,7 +15,7 @@ using namespace cugl;
 class TrapView {
 #pragma mark Internal References
   private:
-    std::shared_ptr<scene2::PolygonNode> _node;
+    std::shared_ptr<scene2::PolygonNode> _shadow;
     float _radius;
     int _frameNum;
     int _tick = 0;
@@ -46,10 +46,22 @@ class TrapView {
         _spriteNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
         _spriteNode->setPosition(position - _spriteNode->getSize() / 2);
         _spriteNode->setVisible(true);
+
+        // Shadow
+        _shadow = scene2::PolygonNode::allocWithTexture(
+            assets->get<Texture>("shadow"));
+        _shadow->setScale(1);
+        _shadow->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+        _shadow->setPosition(position - _shadow->getSize() / 2 -
+                             Vec2(0, _spriteNode->getSize().height / 4));
+        _shadow->setVisible(true);
     };
 
     /** Deletes this HunterView */
-    ~TrapView() { _spriteNode->removeFromParent(); }
+    ~TrapView() {
+        _spriteNode->removeFromParent();
+        _shadow->removeFromParent();
+    }
 
 #pragma mark Getters
   public:
@@ -63,6 +75,7 @@ class TrapView {
      * @param sceneNode The scenenode to add the view to
      */
     void addChildTo(const std::shared_ptr<cugl::Scene2>& scene) {
+        scene->addChild(_shadow);
         scene->addChild(_spriteNode);
     }
 
@@ -72,6 +85,7 @@ class TrapView {
      * @param sceneNode The scenenode to remove the view from
      */
     void removeChildFrom(const std::shared_ptr<cugl::Scene2>& scene) {
+        scene->removeChild(_shadow);
         scene->removeChild(_spriteNode);
     }
 

@@ -276,8 +276,8 @@ void HGameController::update(float dt) {
  *
  * @param batch     The SpriteBatch to draw with.
  */
-void HGameController::render(std::shared_ptr<cugl::SpriteBatch> &batch) {
-  _scene->render(batch);
+void HGameController::render(std::shared_ptr<cugl::SpriteBatch>& batch) {
+    _scene->render(batch);
 }
 
 void HGameController::checkLevelLoaded() {
@@ -447,5 +447,4 @@ void HGameController::initJoystick(){
 void HGameController::updateJoystick(){
     _outerJoystick->setPosition(_scene->getCamera()->getPosition()-Vec2(380,250));
     _innerJoystick->setPosition(_scene->getCamera()->getPosition()-Vec2(380,250));
-    
 }

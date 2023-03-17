@@ -166,11 +166,27 @@
 >>>>>>> a6dd1b9 (Implemented placeholder menu selection screen)
 =======
     },
-  "sounds": {
-    "fusion": {
-      "type": "sample",
-      "file": "sounds/fusion.ogg"
+    "sounds": {
+        "fusion": {
+            "type": "sample",
+            "file": "sounds/fusion.ogg"
+        },
+        "laser": {
+            "type": "sample",
+            "file": "sounds/laser.ogg",
+            "volume": 0.5
+        },
+        "blast": {
+            "type": "sample",
+            "file": "sounds/explode.ogg"
+        },
+        "bang": {
+            "type": "sample",
+            "file": "sounds/bang.ogg",
+            "volume": 0.8
+        }
     },
+<<<<<<< HEAD
     "laser": {
       "type": "sample",
       "file": "sounds/laser.ogg",
@@ -185,10 +201,10 @@
       "file": "sounds/bang.ogg",
       "volume": 0.8
 >>>>>>> e57b2cb (Rebased onto main)
+=======
+    "jsons": {
+        "constants": "json/constants.json",
+        "server": "json/server.json"
+>>>>>>> b098198 (Format and add portrait assets)
     }
-  },
-  "jsons": {
-    "constants": "json/constants.json",
-    "server": "json/server.json"
-  }
 }

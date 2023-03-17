@@ -79,9 +79,9 @@ void SCApp::onStartup() {
  * causing the application to be deleted.
  */
 void SCApp::onShutdown() {
-  _loading.dispose();
-  _assets = nullptr;
-  _batch = nullptr;
+    _loading.dispose();
+    _assets = nullptr;
+    _batch = nullptr;
 
     // Shutdown input
 #ifdef CU_MOBILE

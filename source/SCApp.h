@@ -39,11 +39,11 @@ protected:
         CLIENT
     };
     
+protected:
     /** The global sprite batch for drawing (only want one of these) */
     std::shared_ptr<cugl::SpriteBatch> _batch;
     /** The global asset manager */
     std::shared_ptr<cugl::AssetManager> _assets;
-    
     // Player modes
     /** The primary controller for the hunter game world */
     HGameController _hunterGameplay;

@@ -51,8 +51,12 @@ class PortraitSetController {
     }
 
     void update() {
-        for (auto& view : _portraitViews) {
-            view->update();
+        for (int i = 0; i < _portraitViews.size(); i++) {
+            if (i == _index) {
+                _portraitViews[i]->update();
+            } else {
+                _portraitViews[i]->reset();
+            }
         }
     }
     /**

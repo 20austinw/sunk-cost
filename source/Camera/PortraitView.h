@@ -77,6 +77,10 @@ class PortraitView {
 
 #pragma mark Setters
     void setPosition(Vec2 position) { _spriteNode->setPosition(position); }
+    void reset() {
+        _frameNum = 0;
+        _spriteNode->setFrame(0);
+    }
     int v = 1;
     void update() {
         // For hunters: Probably want to have a parameter (i.e.

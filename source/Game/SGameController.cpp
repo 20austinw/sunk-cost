@@ -71,7 +71,7 @@ void SGameController::update(float dt) {
     if (!_levelLoaded) {
         CULog("Level not loaded!");
         checkLevelLoaded();
-        _portraits->setIndex(1);
+        _portraits->setIndex(4);
         std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
             ->setZoom(0.4);
     }

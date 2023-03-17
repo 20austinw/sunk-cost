@@ -41,6 +41,9 @@
         },
         "fulldoor":{
             "file": "textures/full_door.png"
+        },
+        "painting_animation":{
+            "file": "textures/live_painting.png"
         }
         
     },

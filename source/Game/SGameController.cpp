@@ -81,7 +81,7 @@ void SGameController::update(float dt) {
     if(inputController->isKeyPressed(KeyCode::NUM_0)) {
         CULog("Num 0 pressed!");
         _portraits->setIndex(0);
-        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())->setZoom(1);
+        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())->setZoom(0.25);
     }
     if(inputController->isKeyPressed(KeyCode::NUM_1)) {
         _portraits->setIndex(1);
@@ -99,7 +99,12 @@ void SGameController::update(float dt) {
         _portraits->setIndex(4);
         std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())->setZoom(0.5);
     }
-    Vec3 offset(405, 315, 0);
+    if(inputController->isKeyPressed(KeyCode::NUM_5)) {
+        _portraits->setIndex(5);
+        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())->setZoom(0.5);
+    }
+//    Vec3 offset(405, 315, 0);
+    Vec3 offset = Vec3(_assets->get<Texture>("map")->getSize()/2);
     _scene->getCamera()->setPosition(_portraits->getPosition(_portraits->getIndex()) + offset);
     _portraits->updateBattery();
     _portraits->updateBatteryNode();

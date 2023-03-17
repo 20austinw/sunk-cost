@@ -69,10 +69,12 @@ class PortraitSetController {
      * @param type camera type - (0 = default) (1 = player) (2 = portrait)
      * default camera is camera that is viewing a black screen
      */
-    void addPortrait(int id, Vec3 position, Vec3 direction,
-                     Vec2 directionLimits, int battery = 600, int type = 2) {
-        _portraits.push_back(makePortrait(id, position, direction,
-                                          directionLimits, battery, type));
+    void addPortrait(int id, Vec3 cameraPosition, Vec3 portraitPosition,
+                     Vec3 direction, Vec2 directionLimits, int battery = 600,
+                     int type = 2) {
+        _portraits.push_back(makePortrait(id, cameraPosition, portraitPosition,
+                                          direction, directionLimits, battery,
+                                          type));
     }
 
     /**
@@ -85,12 +87,14 @@ class PortraitSetController {
      * @param type camera type - (0 = default) (1 = player) (2 = portrait)
      * default camera is camera that is viewing a black screen
      */
-    void insertPortraitTo(int index, int id, Vec3 position, Vec3 direction,
+    void insertPortraitTo(int index, int id, Vec3 cameraPosition,
+                          Vec3 portraitPosition, Vec3 direction,
                           Vec2 directionLimits, int battery = 600,
                           int type = 2) {
         _portraits.insert(getIteratorForIndex(index),
-                          makePortrait(id, position, direction, directionLimits,
-                                       battery, type));
+                          makePortrait(id, cameraPosition, portraitPosition,
+                                       direction, directionLimits, battery,
+                                       type));
     }
 
     /**
@@ -103,12 +107,14 @@ class PortraitSetController {
      * @param type camera type - (0 = default) (1 = player) (2 = portrait)
      * default camera is camera that is viewing a black screen
      */
-    void initializePortraitSet(int id = 0, Vec3 position = Vec2::ZERO,
+    void initializePortraitSet(int id = 0, Vec3 cameraPosition = Vec3::ZERO,
+                               Vec3 portraitPosition = Vec3::ZERO,
                                Vec3 direction = Vec3::ZERO,
                                Vec2 directionLimits = Vec2::ZERO,
                                int battery = 600, int type = 2) {
-        _portraits.push_back(makePortrait(id, position, direction,
-                                          directionLimits, battery, type));
+        _portraits.push_back(makePortrait(id, cameraPosition, portraitPosition,
+                                          direction, directionLimits, battery,
+                                          type));
         _index = 0;
     }
 
@@ -261,21 +267,23 @@ class PortraitSetController {
 
 #pragma mark Helpers
   private:
-    std::unique_ptr<CameraController> makePortrait(int id, Vec3 position,
-                                                   Vec3 direction,
-                                                   Vec2 directionLimits,
-                                                   int battery, int type) {
+    std::unique_ptr<CameraController>
+    makePortrait(int id, Vec3 cameraPosition, Vec3 portraitPosition,
+                 Vec3 direction, Vec2 directionLimits, int battery, int type) {
         std::unique_ptr<CameraController> camera =
             std::make_unique<CameraController>(id, _screenSize);
-        camera->updatePosition(position);
+        camera->updatePosition(cameraPosition);
         camera->lookAt(direction);
         camera->updateDirectionLimits(directionLimits);
         camera->updateType(CameraType(type));
         camera->updateBattery(battery);
-        Vec2 pos = Vec2(position.x + 2000, position.y + 2000);
-        _portraitModels.push_back(std::make_unique<PortraitModel>(pos));
-        _portraitViews.push_back(std::make_unique<PortraitView>(_assets, pos));
-        CULog("%f, %f", pos.x, pos.y);
+        CULog("%f, %f", cameraPosition.x, cameraPosition.y);
+        CULog("%f, %f", portraitPosition.x, portraitPosition.y);
+        _portraitModels.push_back(
+            std::make_unique<PortraitModel>(cameraPosition));
+        _portraitViews.push_back(std::make_unique<PortraitView>(
+            _assets, portraitPosition +
+                         Vec2(_assets->get<Texture>("map")->getSize() / 2)));
         _portraitViews[id]->addChildTo(_scene);
         return camera;
     }

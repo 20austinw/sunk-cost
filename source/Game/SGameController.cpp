@@ -85,32 +85,32 @@ void SGameController::update(float dt) {
         CULog("Num 0 pressed!");
         _portraits->setIndex(0);
         std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.25);
+            ->setZoom(0.15);
     }
     if (inputController->isKeyPressed(KeyCode::NUM_1)) {
         _portraits->setIndex(1);
         std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.5);
+            ->setZoom(0.4);
     }
     if (inputController->isKeyPressed(KeyCode::NUM_2)) {
         _portraits->setIndex(2);
         std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.5);
+            ->setZoom(0.4);
     }
     if (inputController->isKeyPressed(KeyCode::NUM_3)) {
         _portraits->setIndex(3);
         std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.5);
+            ->setZoom(0.4);
     }
     if (inputController->isKeyPressed(KeyCode::NUM_4)) {
         _portraits->setIndex(4);
         std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.5);
+            ->setZoom(0.4);
     }
     if (inputController->isKeyPressed(KeyCode::NUM_5)) {
         _portraits->setIndex(5);
         std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.5);
+            ->setZoom(0.4);
     }
     Vec3 offset = Vec3(_assets->get<Texture>("map")->getSize() / 2);
     _scene->getCamera()->setPosition(
@@ -202,7 +202,8 @@ void SGameController::checkLevelLoaded() {
         _scene->addChild(_map);
         _tilemap->addDoorTo(_scene);
         for (int i = 0; i < _level->getPortaits().size(); i++) {
-            _portraits->addPortrait(i + 1, _level->getPortaits()[i],
+            _portraits->addPortrait(i + 1, _level->getPortaits()[i].first,
+                                    _level->getPortaits()[i].second,
                                     Vec3(0, 0, -1), Vec2::ZERO,
                                     _level->getBattery());
             // CULog("%f, %f", _level->getPortaits()[i].x,

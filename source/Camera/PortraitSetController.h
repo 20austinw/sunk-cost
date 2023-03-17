@@ -251,7 +251,7 @@ class PortraitSetController {
     }
 
     void updateBatteryNode(Vec2 offset, const std::shared_ptr<cugl::Scene2>& scene) {
-        Vec2 pos = _portraits[_index]->getPosition() + offset;
+        Vec2 pos = _portraits[_index]->getPosition() + offset + Vec2(_screenSize.width+50, -_screenSize.height+100);
         bool curState = getCurState();
         int frame = getCurFrame();
         _greenBattery->setFrame(frame);
@@ -263,13 +263,16 @@ class PortraitSetController {
         if (_scale>0){
             _scale -= 0.01;
         }
-        if (curState && (curState != _prevState)){
-            scene->removeChild(_redBattery);
-            scene->addChild(_greenBattery);
-            
-        }else if (curState != _prevState){
-            scene->removeChild(_greenBattery);
-            scene->addChild(_redBattery);
+        if (curState != _prevState){
+            if (curState){
+                scene->removeChild(_redBattery);
+                scene->addChild(_greenBattery);
+            } else {
+                scene->removeChild(_greenBattery);
+                scene->addChild(_redBattery);
+            }
+            scene->removeChild(_noBattery);
+            scene->addChild(_noBattery);
         }
     }
 

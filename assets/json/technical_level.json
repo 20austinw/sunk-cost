@@ -358,8 +358,10 @@
                     "rotation": 0,
                     "visible": true,
                     "width": 0,
-                    "x": -1000,
-                    "y": 1000
+                    "x1": -1000,
+                    "y1": 1400,
+                    "x2": -1000,
+                    "y2": 2000
                 },
                 {
                     "class": "portrait",
@@ -370,8 +372,10 @@
                     "rotation": 0,
                     "visible": true,
                     "width": 0,
-                    "x": 1000,
-                    "y": 1000
+                    "x1": 1000,
+                    "y1": 1400,
+                    "x2": 1000,
+                    "y2": 2000
                 },
                 {
                     "class": "portrait",
@@ -382,8 +386,10 @@
                     "rotation": 0,
                     "visible": true,
                     "width": 0,
-                    "x": 0,
-                    "y": -1000
+                    "x1": 0,
+                    "y1": -1000,
+                    "x2": 0,
+                    "y2": -500
                 },
                 {
                     "class": "portrait",
@@ -401,8 +407,10 @@
                     "rotation": 0,
                     "visible": true,
                     "width": 0,
-                    "x": -1000,
-                    "y": -1000
+                    "x1": -1000,
+                    "y1": -1000,
+                    "x2": -1150,
+                    "y2": -1300
                 },
                 {
                     "class": "portrait",
@@ -420,8 +428,10 @@
                     "rotation": 0,
                     "visible": true,
                     "width": 0,
-                    "x": 1000,
-                    "y": -1000
+                    "x1": 1000,
+                    "y1": -1000,
+                    "x2": 1150,
+                    "y2": -1300
                 }
             ],
             "opacity": 1,

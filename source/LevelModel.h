@@ -34,7 +34,7 @@ class LevelModel : public Asset {
     Vec2 _defaultcam;
 
     /** Vector of positions of portraits */
-    std::vector<Vec2> _portraits;
+    std::vector<std::pair<Vec2, Vec2>> _portraits;
 
     /** Position data of player */
     Vec2 _player;
@@ -87,7 +87,7 @@ class LevelModel : public Asset {
 
     Vec2 getDefaultCamPosition() { return _defaultcam; }
 
-    std::vector<Vec2> getPortaits() { return _portraits; }
+    std::vector<std::pair<Vec2, Vec2>> getPortaits() { return _portraits; }
 
     Vec2 getPlayerPosition() { return _player; }
 

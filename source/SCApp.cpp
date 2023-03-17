@@ -21,7 +21,8 @@ using namespace cugl;
 #pragma mark Gameplay Control
 
 /**
- * The method called after OpenGL is initialized, but before running the application.
+ * The method called after OpenGL is initialized, but before running the
+ * application.
  *
  * This is the method in which all user-defined program intialization should
  * take place.  You should not create a new init() method.
@@ -77,9 +78,9 @@ void SCApp::onStartup() {
  * causing the application to be deleted.
  */
 void SCApp::onShutdown() {
-    _loading.dispose();
-    _assets = nullptr;
-    _batch = nullptr;
+  _loading.dispose();
+  _assets = nullptr;
+  _batch = nullptr;
 
     // Shutdown input
 #ifdef CU_MOBILE
@@ -95,7 +96,8 @@ void SCApp::onShutdown() {
 }
 
 /**
- * The method called when the application is suspended and put in the background.
+ * The method called when the application is suspended and put in the
+ * background.
  *
  * When this method is called, you should store any state that you do not
  * want to be lost.  There is no guarantee that an application will return
@@ -105,9 +107,7 @@ void SCApp::onShutdown() {
  * Otherwise, the audio thread may persist while the application is in
  * the background.
  */
-void SCApp::onSuspend() {
-    AudioEngine::get()->pause();
-}
+void SCApp::onSuspend() { AudioEngine::get()->pause(); }
 
 /**
  * The method called when the application resumes and put in the foreground.
@@ -119,15 +119,14 @@ void SCApp::onSuspend() {
  * If you are using audio, you should use this method to resume any audio
  * paused before app suspension.
  */
-void SCApp::onResume() {
-    AudioEngine::get()->resume();
-}
+void SCApp::onResume() { AudioEngine::get()->resume(); }
 
 /**
  * The method called to update the application data.
  *
- * This is your core loop and should be replaced with your custom implementation.
- * This method should contain any code that is not an OpenGL call.
+ * This is your core loop and should be replaced with your custom
+ * implementation. This method should contain any code that is not an OpenGL
+ * call.
  *
  * When overriding this method, you do not need to call the parent method
  * at all. The default implmentation does nothing.
@@ -221,8 +220,8 @@ void SCApp::updateSGameController(float timestep) {
 /**
  * The method called to draw the application to the screen.
  *
- * This is your core loop and should be replaced with your custom implementation.
- * This method should OpenGL and related drawing calls.
+ * This is your core loop and should be replaced with your custom
+ * implementation. This method should OpenGL and related drawing calls.
  *
  * When overriding this method, you do not need to call the parent method
  * at all. The default implmentation does nothing.
@@ -243,5 +242,3 @@ void SCApp::draw() {
             break;
     }
 }
-
-

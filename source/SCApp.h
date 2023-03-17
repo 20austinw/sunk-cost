@@ -12,11 +12,11 @@
 //
 #ifndef _SC_APP_H__
 #define _SC_APP_H__
-#include <cugl/cugl.h>
 #include "HGameController.h"
-#include "SGameController.hpp"
 #include "LoadingScene.h"
 #include "SCMenuScene.h"
+#include "SGameController.hpp"
+#include <cugl/cugl.h>
 
 /**
  * This class represents the application root for the ship demo.
@@ -41,7 +41,7 @@ protected:
     std::shared_ptr<cugl::SpriteBatch> _batch;
     /** The global asset manager */
     std::shared_ptr<cugl::AssetManager> _assets;
-
+    
     // Player modes
     /** The primary controller for the hunter game world */
     HGameController _hunterGameplay;
@@ -51,7 +51,7 @@ protected:
     LoadingScene _loading;
     
     MenuScene _menu;
-
+    
     /** Whether or not we have finished loading all assets */
     bool _loaded;
     
@@ -68,9 +68,7 @@ public:
      * of initialization from the constructor allows main.cpp to perform
      * advanced configuration of the application before it starts.
      */
-    SCApp() : cugl::Application(), _loaded(false) {
-        _scene = State::LOAD;
-    }
+    SCApp() : cugl::Application(), _loaded(false), _scene(State::LOAD) {}
     
     /**
      * Disposes of this application, releasing all resources.
@@ -83,7 +81,8 @@ public:
     
 #pragma mark Application State
     /**
-     * The method called after OpenGL is initialized, but before running the application.
+     * The method called after OpenGL is initialized, but before running the
+     * application.
      *
      * This is the method in which all user-defined program intialization should
      * take place.  You should not create a new init() method.
@@ -106,9 +105,10 @@ public:
      * causing the application to be deleted.
      */
     virtual void onShutdown() override;
- 
+    
     /**
-     * The method called when the application is suspended and put in the background.
+     * The method called when the application is suspended and put in the
+     * background.
      *
      * When this method is called, you should store any state that you do not
      * want to be lost.  There is no guarantee that an application will return
@@ -130,7 +130,7 @@ public:
      * If you are using audio, you should use this method to resume any audio
      * paused before app suspension.
      */
-    virtual void onResume()  override;
+    virtual void onResume() override;
     
 #pragma mark Application Loop
     /**
@@ -155,7 +155,7 @@ public:
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     void updateLoadingScene(float timestep);
-
+    
     /**
      * Inidividualized update method for the menu scene.
      *
@@ -165,7 +165,7 @@ public:
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     void updateMenuScene(float timestep);
-
+    
     /**
      * Inidividualized update method for the host scene.
      *

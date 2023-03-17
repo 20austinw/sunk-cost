@@ -23,19 +23,19 @@
  * @param displaySize   The display size of the game window
  * @param randoms        Reference to the random number generator
  */
-SGameController::SGameController(const Size displaySize, const std::shared_ptr<cugl::AssetManager>& assets):
-_scene(cugl::Scene2::alloc(displaySize)),
-_assets(assets){
+SGameController::SGameController(
+    const Size displaySize, const std::shared_ptr<cugl::AssetManager> &assets)
+: _scene(cugl::Scene2::alloc(displaySize)), _assets(assets) {
     /// Initialize the tilemap and add it to the scene
     _tilemap = std::make_shared<TilemapController>();
     _tilemap->addChildTo(_scene);
     // Initialize PortraitSetController
     _portraits = std::make_shared<PortraitSetController>(0, displaySize);
     _portraits->initializeBatteryNodes(_scene);
-
+    
     // Initialize HunterController
-//        _hunter.updatePosition(_level->getPlayerPosition());
-
+    //        _hunter.updatePosition(_level->getPlayerPosition());
+    
     // Initialize SpiritController
     _spirit = SpiritController(_assets, _scene, _portraits, _scene->getSize());
     _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
@@ -47,159 +47,168 @@ _assets(assets){
     
     _status = Status::START;
 }
-
+    
 #pragma mark Gameplay Handling
-
-/**
- * Resets the status of the game so that we can play again.
- */
-void SGameController::reset() {
-    CULog("reset");
-}
-
-/**
- * Responds to the keyboard commands.
- *
- * This method allows us to regenerate the procedurally generated tilemap
- * upon command.
- *
- * @param dt  The amount of time (in seconds) since the last frame
- */
-void SGameController::update(float dt) {
-    if (!_levelLoaded) {
-        CULog("Level not loaded!");
-        checkLevelLoaded();
+    
+    /**
+     * Resets the status of the game so that we can play again.
+     */
+    void SGameController::reset() { CULog("reset"); }
+    
+    /**
+     * Responds to the keyboard commands.
+     *
+     * This method allows us to regenerate the procedurally generated tilemap
+     * upon command.
+     *
+     * @param dt  The amount of time (in seconds) since the last frame
+     */
+    void SGameController::update(float dt) {
+        if (!_levelLoaded) {
+            CULog("Level not loaded!");
+            checkLevelLoaded();
+        }
+        auto inputController = InputController::getInstance();
+        inputController->update(dt);
+        inputController->readInput();
+        if (inputController->didPressReset()) {
+            reset();
+            CULog("Reset!");
+        }
+        if (inputController->isKeyPressed(KeyCode::NUM_0)) {
+            CULog("Num 0 pressed!");
+            _portraits->setIndex(0);
+            std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+            ->setZoom(0.25);
+        }
+        if (inputController->isKeyPressed(KeyCode::NUM_1)) {
+            _portraits->setIndex(1);
+            std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+            ->setZoom(0.5);
+        }
+        if (inputController->isKeyPressed(KeyCode::NUM_2)) {
+            _portraits->setIndex(2);
+            std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+            ->setZoom(0.5);
+        }
+        if (inputController->isKeyPressed(KeyCode::NUM_3)) {
+            _portraits->setIndex(3);
+            std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+            ->setZoom(0.5);
+        }
+        if (inputController->isKeyPressed(KeyCode::NUM_4)) {
+            _portraits->setIndex(4);
+            std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+            ->setZoom(0.5);
+        }
+        if (inputController->isKeyPressed(KeyCode::NUM_5)) {
+            _portraits->setIndex(5);
+            std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+            ->setZoom(0.5);
+        }
+        //    Vec3 offset(405, 315, 0);
+        Vec3 offset = Vec3(_assets->get<Texture>("map")->getSize() / 2);
+        _scene->getCamera()->setPosition(
+                                         _portraits->getPosition(_portraits->getIndex()) + offset);
+        _portraits->updateBattery();
+        _portraits->updateBatteryNode();
+        _scene->getCamera()->update();
         
+        if (!_portraits->getCurState() && _prevState) {
+            _portraits->addBlock(_scene);
+            _portraits->refreshBatteryNodes(_scene);
+        } else if (_portraits->getCurState() && !_prevState) {
+            _portraits->removeBlock(_scene);
+        }
+        _prevState = _portraits->getCurState();
+        // CULog("%f, %f, %f", _scene->getCamera()->getPosition().x,
+        // _scene->getCamera()->getPosition().y,
+        // _scene->getCamera()->getPosition().z);
+        
+        // Will crash the program because the constructor doesn't set up the
+        // model/view yet (delete this comment later)
+        //    _hunter.update();
+        _spirit.update(_tilemap);
+        // TODO: update direction index for portraits on spirit control
+        //    _portraits->updateDirectionIndex(}, <#int index#>)
     }
-    auto inputController = InputController::getInstance();
-    inputController->update(dt);
-    inputController->readInput();
-    if (inputController->didPressReset()) {
-        reset();
-        CULog("Reset!");
-    }
-    if(inputController->isKeyPressed(KeyCode::NUM_0)) {
-        CULog("Num 0 pressed!");
-        _portraits->setIndex(0);
-        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())->setZoom(0.25);
-    }
-    if(inputController->isKeyPressed(KeyCode::NUM_1)) {
-        _portraits->setIndex(1);
-        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())->setZoom(0.5);
-    }
-    if(inputController->isKeyPressed(KeyCode::NUM_2)) {
-        _portraits->setIndex(2);
-        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())->setZoom(0.5);
-    }
-    if(inputController->isKeyPressed(KeyCode::NUM_3)) {
-        _portraits->setIndex(3);
-        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())->setZoom(0.5);
-    }
-    if(inputController->isKeyPressed(KeyCode::NUM_4)) {
-        _portraits->setIndex(4);
-        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())->setZoom(0.5);
-    }
-    if(inputController->isKeyPressed(KeyCode::NUM_5)) {
-        _portraits->setIndex(5);
-        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())->setZoom(0.5);
-    }
-//    Vec3 offset(405, 315, 0);
-    Vec3 offset = Vec3(_assets->get<Texture>("map")->getSize()/2);
-    _scene->getCamera()->setPosition(_portraits->getPosition(_portraits->getIndex()) + offset);
-    _portraits->updateBattery();
-    _portraits->updateBatteryNode();
-    _scene->getCamera()->update();
     
-    if(!_portraits->getCurState() && _prevState){
-        _portraits->addBlock(_scene);
-        _portraits->refreshBatteryNodes(_scene);
-    } else if (_portraits->getCurState() && !_prevState){
-        _portraits->removeBlock(_scene);
+    /**
+     * Draws all this scene to the given SpriteBatch.
+     *
+     * The default implemen3tation of this method simply draws the scene graph
+     * to the sprite batch.  By overriding it, you can do custom drawing
+     * in its place.
+     *
+     * @param batch     The SpriteBatch to draw with.
+     */
+    void SGameController::render(std::shared_ptr<cugl::SpriteBatch> &batch) {
+        // CULog("Rendering!");
+        _scene->render(batch);
+        displayBattery(_portraits->getCurBattery(), _portraits->getCurState(), batch);
     }
-    _prevState = _portraits->getCurState();
-    //CULog("%f, %f, %f", _scene->getCamera()->getPosition().x, _scene->getCamera()->getPosition().y, _scene->getCamera()->getPosition().z);
     
+    void SGameController::displayBattery(
+                                         float battery, bool state, std::shared_ptr<cugl::SpriteBatch> &batch) {
+                                             //    CULog("%f", battery);
+                                         }
     
-    // Will crash the program because the constructor doesn't set up the model/view yet (delete this comment later)
-//    _hunter.update();
-    _spirit.update(_tilemap);
-    // TODO: update direction index for portraits on spirit control
-//    _portraits->updateDirectionIndex(<#Vec3 direction#>, <#int index#>)
-}
-
-/**
- * Draws all this scene to the given SpriteBatch.
- *
- * The default implemen3tation of this method simply draws the scene graph
- * to the sprite batch.  By overriding it, you can do custom drawing
- * in its place.
- *
- * @param batch     The SpriteBatch to draw with.
- */
-void SGameController::render(std::shared_ptr<cugl::SpriteBatch>& batch) {
-    // CULog("Rendering!");
-    _scene->render(batch);
-    displayBattery(_portraits->getCurBattery(), _portraits->getCurState(), batch);
-}
-
-void SGameController::displayBattery(float battery, bool state, std::shared_ptr<cugl::SpriteBatch>& batch){
-//    CULog("%f", battery);
-}
-
-void SGameController::checkLevelLoaded() {
-    _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
-    if (_level == nullptr) {
-        _levelLoaded = false;
-    }
-
-    // Check to see if new level loaded yet
-    if (!_levelLoaded && _assets->complete()) {
-        _level = nullptr;
-
-        // Access and initialize level
+    void SGameController::checkLevelLoaded() {
         _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
-        _level->setAssets(_assets);
-
-        CULog("Loading level!");
-
-        // TODO: implement direction and direction limits
-        for(int i = 0; i < _level->getPortaits().size(); i++) {
-            Vec3 pos(_level->getPortaits()[i].x, _level->getPortaits()[i].y, 0);
-            _portraits->addPortrait(i + 1, pos, Vec3(0, 0, -1), Vec2::ZERO, _level->getBattery());
-            //CULog("%f, %f", _level->getPortaits()[i].x, _level->getPortaits()[i].y);
-        }
-        _tilemap->updatePosition(_scene->getSize() / 2);
-        std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
-        _tilemap->updateDimensions(Vec2(tiles[0].size(), tiles.size()));
-        _tilemap->updateColor(Color4::WHITE);
-        _tilemap->updateTileSize(Size(256, 256));
-        for (int i = 0; i < tiles.size() * tiles[0].size(); ++i){
-            int c = i%tiles[0].size();
-            int r = i/tiles[0].size();
-            if (tiles[r][c] == "black") {
-                _tilemap->addTile(c, r, Color4::BLACK, false, _assets->get<Texture>("black"));
-            } else if (tiles[r][c] == "green") {
-                _tilemap->addTile(c, r, Color4::GREEN, true, _assets->get<Texture>("green"));
-            } else if (tiles[r][c] == "door") {
-                _tilemap->addDoor(c, r, _assets->get<Texture>("fulldoor"));
-            }
+        if (_level == nullptr) {
+            _levelLoaded = false;
         }
         
-        _map = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
-        _map->setPolygon(Rect(0, 0, 4608, 4608));
+        // Check to see if new level loaded yet
+        if (!_levelLoaded && _assets->complete()) {
+            _level = nullptr;
+            
+            // Access and initialize level
+            _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
+            _level->setAssets(_assets);
+            
+            CULog("Loading level!");
+            
+            // TODO: implement direction and direction limits
+            for (int i = 0; i < _level->getPortaits().size(); i++) {
+                Vec3 pos(_level->getPortaits()[i].x, _level->getPortaits()[i].y, 0);
+                _portraits->addPortrait(i + 1, pos, Vec3(0, 0, -1), Vec2::ZERO,
+                                        _level->getBattery());
+                // CULog("%f, %f", _level->getPortaits()[i].x,
+                // _level->getPortaits()[i].y);
+            }
+            _tilemap->updatePosition(_scene->getSize() / 2);
+            std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
+            _tilemap->updateDimensions(Vec2(tiles[0].size(), tiles.size()));
+            _tilemap->updateColor(Color4::WHITE);
+            _tilemap->updateTileSize(Size(256, 256));
+            for (int i = 0; i < tiles.size() * tiles[0].size(); ++i) {
+                int c = i % tiles[0].size();
+                int r = i / tiles[0].size();
+                if (tiles[r][c] == "black") {
+                    _tilemap->addTile(c, r, Color4::BLACK, false,
+                                      _assets->get<Texture>("black"));
+                } else if (tiles[r][c] == "green") {
+                    _tilemap->addTile(c, r, Color4::GREEN, true,
+                                      _assets->get<Texture>("green"));
+                } else if (tiles[r][c] == "door") {
+                    _tilemap->addDoor(c, r, _assets->get<Texture>("fulldoor"));
+                }
+            }
+            
+            _map = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
+            _map->setPolygon(Rect(0, 0, 4608, 4608));
             //    _map = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 9216, 9216));
             //    _map ->setTexture(_assets->get<Texture>("map"));
-        _scene->addChild(_map);
-        _tilemap->addDoorTo(_scene);
-        _portraits->refreshBatteryNodes(_scene);
-        
-        
-        _levelLoaded = true;
-        _portraits->setMaxbattery(_level->getBattery());
+            _scene->addChild(_map);
+            _tilemap->addDoorTo(_scene);
+            _portraits->refreshBatteryNodes(_scene);
+            
+            _levelLoaded = true;
+            _portraits->setMaxbattery(_level->getBattery());
+        }
     }
-}
-
-void SGameController::generateLevel() {
-    _tilemap->updateDimensions(_level->getDimensions());
     
-}
+    void SGameController::generateLevel() {
+        _tilemap->updateDimensions(_level->getDimensions());
+    }

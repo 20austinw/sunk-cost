@@ -56,6 +56,7 @@ class SGameController {
     bool _levelLoaded;
 
     std::shared_ptr<scene2::PolygonNode> _map;
+    std::shared_ptr<scene2::PolygonNode> _miniMap;
 
 #pragma mark External References
   private:
@@ -78,6 +79,7 @@ class SGameController {
                     const std::shared_ptr<AssetManager>& assets);
 
 #pragma mark Gameplay Handling
+    float getZoom();
     /**
      * Resets the status of the game so that we can play again.
      */

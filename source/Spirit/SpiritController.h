@@ -43,7 +43,7 @@ class SpiritController {
     float _clamCool;
     /** The preset cooltime for close doors */
     float _doorCool;
-    
+
     float CAMERA_COOL = 180;
 
 #pragma mark Main Functions
@@ -145,20 +145,18 @@ class SpiritController {
     void updateDoorCooldown(float doorCool) {
         _model->setDoorCooldown(doorCool);
     }
-    
-    void decreaseCameraCool(){
-        _cameraCool --;
+
+    void decreaseCameraCool() {
+        _cameraCool--;
         _model->setCameraCooldown(_cameraCool);
     }
 
-    void resetCameraCool(){
+    void resetCameraCool() {
         _cameraCool = CAMERA_COOL;
         _model->setCameraCooldown(_cameraCool);
     }
 
-    bool isSwitchable(){
-        return _cameraCool <= 0;
-    }
+    bool isSwitchable() { return _cameraCool <= 0; }
 
 #pragma mark Helpers
   public:

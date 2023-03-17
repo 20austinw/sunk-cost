@@ -28,16 +28,16 @@ class PortraitSetController {
     Size _screenSize;
     /** The max battery */
     float _maxBattery;
-    
+
     bool _prevState;
 
     int _index;
-    
+
     /** The scale for noBattery*/
     float _scale;
 
     std::shared_ptr<scene2::PolygonNode> _block;
-    
+
     std::shared_ptr<scene2::SpriteNode> _redBattery;
     std::shared_ptr<scene2::SpriteNode> _greenBattery;
     std::shared_ptr<scene2::PolygonNode> _noBattery;
@@ -49,7 +49,8 @@ class PortraitSetController {
      */
     PortraitSetController(const std::shared_ptr<cugl::AssetManager>& assets,
                           std::shared_ptr<cugl::Scene2>& scene, int id = 0,
-                          Size screenSize = Size::ZERO, float maxBattery = 600) {
+                          Size screenSize = Size::ZERO,
+                          float maxBattery = 600) {
         _scene = scene;
         _assets = assets;
         _screenSize = screenSize;
@@ -126,8 +127,10 @@ class PortraitSetController {
         _prevState = true;
         _scale = 0;
     }
-    
-    void initializeSheets(std::shared_ptr<cugl::Texture> green, std::shared_ptr<cugl::Texture> red, std::shared_ptr<cugl::Texture> no){
+
+    void initializeSheets(std::shared_ptr<cugl::Texture> green,
+                          std::shared_ptr<cugl::Texture> red,
+                          std::shared_ptr<cugl::Texture> no) {
         _greenBattery = scene2::SpriteNode::allocWithSheet(green, 2, 8, 16);
         _redBattery = scene2::SpriteNode::allocWithSheet(red, 2, 8, 16);
         _noBattery = scene2::PolygonNode::allocWithTexture(no);
@@ -153,7 +156,18 @@ class PortraitSetController {
      * @return Rectangle that contains the camera viewpoint
      */
     const Rect getViewPortrait() { return _portraits[_index]->getViewPort(); }
-
+    const int getNearest(Vec2 position) {
+        int idx = 0;
+        int minDist = INT_MAX;
+        for (int i = 0; i < _portraits.size(); i++) {
+            float dist = _portraits[i]->getPosition().distance(position);
+            if (minDist > dist) {
+                idx = i;
+                minDist = dist;
+            }
+        }
+        return idx;
+    }
     /**
      * Getter for current camera index
      *
@@ -162,19 +176,13 @@ class PortraitSetController {
     int getIndex() { return _index; }
 
     Vec3 getPosition(int index) { return _portraits[index]->getPosition(); }
-    
-    bool getPrevState(){
-        return _prevState;
-    }
+
+    bool getPrevState() { return _prevState; }
 
 #pragma mark Main Functions
   public:
-    
-    void setPrevState(bool state){
-        _prevState = state;
-    }
+    void setPrevState(bool state) { _prevState = state; }
 
-    
     /**
      * Updates camera position
      *
@@ -226,32 +234,41 @@ class PortraitSetController {
     void lookAt(const Vec3 target) { _portraits[_index]->lookAt(target); }
 
     void updateBattery() {
-        for (int i=0;i<_portraits.size();i++){
-            if(((_index != _portraits[i]->getID()) || (!_portraits[i]->getState())) && (_portraits[i]->getBattery() < _maxBattery)){
-                float newBattery = _portraits[i]->getBattery()+0.5;
-                if (newBattery < _maxBattery){
+        for (int i = 0; i < _portraits.size(); i++) {
+            if (((_index != _portraits[i]->getID()) ||
+                 (!_portraits[i]->getState())) &&
+                (_portraits[i]->getBattery() < _maxBattery)) {
+                float newBattery = _portraits[i]->getBattery() + 0.5;
+                if (newBattery < _maxBattery) {
                     _portraits[i]->updateBattery(newBattery);
-                }else{
+                } else {
                     _portraits[i]->updateBattery(_maxBattery);
                 }
-            } else if (_index == _portraits[i]->getID() && _portraits[i]->getBattery() > 0){
-                float newBattery = _portraits[i]->getBattery()-1;
-                if (newBattery > 0){
+            } else if (_index == _portraits[i]->getID() &&
+                       _portraits[i]->getBattery() > 0) {
+                float newBattery = _portraits[i]->getBattery() - 1;
+                if (newBattery > 0) {
                     _portraits[i]->updateBattery(newBattery);
-                }else{
+                } else {
                     _portraits[i]->updateBattery(0);
                 }
             }
-            if (_portraits[i]->getBattery() <= 0){
+            if (_portraits[i]->getBattery() <= 0) {
                 _portraits[i]->updateState(false);
-            } else if (!_portraits[i]->getState() && _portraits[i]->getBattery() >= _maxBattery){
+            } else if (!_portraits[i]->getState() &&
+                       _portraits[i]->getBattery() >= _maxBattery) {
                 _portraits[i]->updateState(true);
             }
         }
     }
 
-    void updateBatteryNode(Vec2 offset, const std::shared_ptr<cugl::Scene2>& scene) {
-        Vec2 pos = _portraits[_index]->getPosition() + offset + Vec2(_screenSize.width+50, -_screenSize.height+100);
+    void updateBatteryNode(Vec2 offset,
+                           const std::shared_ptr<cugl::Scene2>& scene) {
+        float zoom =
+            std::dynamic_pointer_cast<OrthographicCamera>(scene->getCamera())
+                ->getZoom();
+        Vec2 pos = scene->getCamera()->screenToWorldCoords(
+            _scene->getSize() - _greenBattery->getSize() / 2 * zoom);
         bool curState = getCurState();
         int frame = getCurFrame();
         _greenBattery->setFrame(frame);
@@ -260,11 +277,11 @@ class PortraitSetController {
         _redBattery->setPosition(pos);
         _noBattery->setPosition(pos);
         _noBattery->setScale(_scale);
-        if (_scale>0){
+        if (_scale > 0) {
             _scale -= 0.01;
         }
-        if (curState != _prevState){
-            if (curState){
+        if (curState != _prevState) {
+            if (curState) {
                 scene->removeChild(_redBattery);
                 scene->addChild(_greenBattery);
             } else {
@@ -293,10 +310,10 @@ class PortraitSetController {
     }
 
     void refreshBatteryNodes(const std::shared_ptr<cugl::Scene2>& scene) {
-        if(getCurState()){
+        if (getCurState()) {
             scene->removeChild(_greenBattery);
             scene->addChild(_greenBattery);
-        }else{
+        } else {
             scene->removeChild(_redBattery);
             scene->addChild(_redBattery);
         }
@@ -311,16 +328,16 @@ class PortraitSetController {
         scene->addChild(_greenBattery);
         scene->addChild(_noBattery);
     }
-    
-    void resetScale(){
-        _scale = 0.5;
-    }
+
+    void resetScale() { _scale = 0.5; }
 
 #pragma mark Helpers
   private:
-    std::unique_ptr<CameraController>
-    makePortrait(int id, Vec3 cameraPosition, Vec3 portraitPosition,
-                 Vec3 direction, Vec2 directionLimits, float battery, int type) {
+    std::unique_ptr<CameraController> makePortrait(int id, Vec3 cameraPosition,
+                                                   Vec3 portraitPosition,
+                                                   Vec3 direction,
+                                                   Vec2 directionLimits,
+                                                   float battery, int type) {
         std::unique_ptr<CameraController> camera =
             std::make_unique<CameraController>(id, _screenSize);
         camera->updatePosition(cameraPosition);
@@ -341,16 +358,16 @@ class PortraitSetController {
     getIteratorForIndex(int idx) {
         return _portraits.begin() + idx;
     }
-    
-    int getCurFrame(){
-        int i = getCurBattery()*16;
-        if (getCurState()){
-            if (i>0){
-                return 16-i;
+
+    int getCurFrame() {
+        int i = getCurBattery() * 16;
+        if (getCurState()) {
+            if (i > 0) {
+                return 16 - i;
             }
             return 15;
         }
-        if (i<16){
+        if (i < 16) {
             return i;
         }
         return 15;

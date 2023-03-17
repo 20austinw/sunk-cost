@@ -188,17 +188,18 @@ void SGameController::checkLevelLoaded() {
     if (_level == nullptr) {
         _levelLoaded = false;
     }
-
+    
     // Check to see if new level loaded yet
     if (!_levelLoaded && _assets->complete()) {
         _level = nullptr;
-
+        
         // Access and initialize level
         _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
         _level->setAssets(_assets);
-
+        
+        
         CULog("Loading level!");
-
+        
         _tilemap->updatePosition(_scene->getSize() / 2);
         std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
         _tilemap->updateDimensions(Vec2(tiles[0].size(), tiles.size()));

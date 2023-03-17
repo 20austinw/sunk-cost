@@ -72,75 +72,76 @@ SGameController::SGameController(
      *
      * @param dt  The amount of time (in seconds) since the last frame
      */
-    void SGameController::update(float dt) {
-        if (!_levelLoaded) {
-            CULog("Level not loaded!");
-            checkLevelLoaded();
-        }
-        auto inputController = InputController::getInstance();
-        inputController->update(dt);
-        inputController->readInput();
-        if (inputController->didPressReset()) {
-            reset();
-            CULog("Reset!");
-        }
-        if (inputController->isKeyPressed(KeyCode::NUM_0)) {
-            CULog("Num 0 pressed!");
-            _portraits->setIndex(0);
-            std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.25);
-        }
-        if (inputController->isKeyPressed(KeyCode::NUM_1)) {
-            _portraits->setIndex(1);
-            std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.5);
-        }
-        if (inputController->isKeyPressed(KeyCode::NUM_2)) {
-            _portraits->setIndex(2);
-            std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.5);
-        }
-        if (inputController->isKeyPressed(KeyCode::NUM_3)) {
-            _portraits->setIndex(3);
-            std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.5);
-        }
-        if (inputController->isKeyPressed(KeyCode::NUM_4)) {
-            _portraits->setIndex(4);
-            std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.5);
-        }
-        if (inputController->isKeyPressed(KeyCode::NUM_5)) {
-            _portraits->setIndex(5);
-            std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.5);
-        }
-        //    Vec3 offset(405, 315, 0);
-        Vec3 offset = Vec3(_assets->get<Texture>("map")->getSize() / 2);
-        _scene->getCamera()->setPosition(
-                                         _portraits->getPosition(_portraits->getIndex()) + offset);
-        _portraits->updateBattery();
-        _portraits->updateBatteryNode();
-        _scene->getCamera()->update();
-        
-        if (!_portraits->getCurState() && _prevState) {
-            _portraits->addBlock(_scene);
-            _portraits->refreshBatteryNodes(_scene);
-        } else if (_portraits->getCurState() && !_prevState) {
-            _portraits->removeBlock(_scene);
-        }
-        _prevState = _portraits->getCurState();
-        // CULog("%f, %f, %f", _scene->getCamera()->getPosition().x,
-        // _scene->getCamera()->getPosition().y,
-        // _scene->getCamera()->getPosition().z);
-        
-        // Will crash the program because the constructor doesn't set up the
-        // model/view yet (delete this comment later)
-        //    _hunter.update();
-        _spirit.update(_tilemap);
-        // TODO: update direction index for portraits on spirit control
-        //    _portraits->updateDirectionIndex(}, <#int index#>)
+void SGameController::update(float dt) {
+    if (!_levelLoaded) {
+        CULog("Level not loaded!");
+        checkLevelLoaded();
     }
+    auto inputController = InputController::getInstance();
+    inputController->update(dt);
+    inputController->readInput();
+    if (inputController->didPressReset()) {
+        reset();
+        CULog("Reset!");
+    }
+    if (inputController->isKeyPressed(KeyCode::NUM_0)) {
+        CULog("Num 0 pressed!");
+        _portraits->setIndex(0);
+        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+        ->setZoom(0.15);
+    }
+    if (inputController->isKeyPressed(KeyCode::NUM_1)) {
+        _portraits->setIndex(1);
+        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+        ->setZoom(0.4);
+    }
+    if (inputController->isKeyPressed(KeyCode::NUM_2)) {
+        _portraits->setIndex(2);
+        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+        ->setZoom(0.4);
+    }
+    if (inputController->isKeyPressed(KeyCode::NUM_3)) {
+        _portraits->setIndex(3);
+        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+        ->setZoom(0.4);
+    }
+    if (inputController->isKeyPressed(KeyCode::NUM_4)) {
+        _portraits->setIndex(4);
+        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+        ->setZoom(0.4);
+    }
+    if (inputController->isKeyPressed(KeyCode::NUM_5)) {
+        _portraits->setIndex(5);
+        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+        ->setZoom(0.4);
+    }
+    //    Vec3 offset(405, 315, 0);
+    Vec3 offset = Vec3(_assets->get<Texture>("map")->getSize() / 2);
+    _scene->getCamera()->setPosition(
+                                     _portraits->getPosition(_portraits->getIndex()) + offset);
+    _portraits->updateBattery();
+    _portraits->updateBatteryNode();
+    _scene->getCamera()->update();
+    
+    if (!_portraits->getCurState() && _prevState) {
+        _portraits->addBlock(_scene);
+        _portraits->refreshBatteryNodes(_scene);
+    } else if (_portraits->getCurState() && !_prevState) {
+        _portraits->removeBlock(_scene);
+    }
+    _prevState = _portraits->getCurState();
+    // CULog("%f, %f, %f", _scene->getCamera()->getPosition().x,
+    // _scene->getCamera()->getPosition().y,
+    // _scene->getCamera()->getPosition().z);
+    
+    // Will crash the program because the constructor doesn't set up the
+    // model/view yet (delete this comment later)
+    //    _hunter.update();
+    _spirit.update(_tilemap);
+    // TODO: update direction index for portraits on spirit control
+    //    _portraits->updateDirectionIndex(}, <#int index#>)
+}
+    
     
     /**
      * Draws all this scene to the given SpriteBatch.
@@ -208,6 +209,26 @@ void SGameController::checkLevelLoaded() {
                 _portraits->setMaxbattery(_level->getBattery());
             }
         }
+
+        _map =
+            scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
+        _map->setPolygon(Rect(0, 0, 4608, 4608));
+        //    _map = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 9216, 9216));
+        //    _map ->setTexture(_assets->get<Texture>("map"));
+        _scene->addChild(_map);
+        _tilemap->addDoorTo(_scene);
+        for (int i = 0; i < _level->getPortaits().size(); i++) {
+            _portraits->addPortrait(i + 1, _level->getPortaits()[i].first,
+                                    _level->getPortaits()[i].second,
+                                    Vec3(0, 0, -1), Vec2::ZERO,
+                                    _level->getBattery());
+            // CULog("%f, %f", _level->getPortaits()[i].x,
+            // _level->getPortaits()[i].y);
+        }
+        _portraits->refreshBatteryNodes(_scene);
+
+        _levelLoaded = true;
+        _portraits->setMaxbattery(_level->getBattery());
     }
 }
     

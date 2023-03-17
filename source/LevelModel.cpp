@@ -185,6 +185,8 @@ bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue>& json) {
  */
 bool LevelModel::loadPortraitSetAndDefault(
     const std::shared_ptr<JsonValue>& json) {
-    _portraits.push_back(Vec2(json->getFloat("x"), json->getFloat("y")));
+    _portraits.push_back(
+        std::make_pair(Vec2(json->getFloat("x1"), json->getFloat("y1")),
+                       Vec2(json->getFloat("x2"), json->getFloat("y2"))));
     return true;
 }

@@ -59,6 +59,9 @@
         },
         "minimap": {
             "file": "textures/minimap.png"
+        },
+        "treasure":{
+           "file":  "textures/treasureasset.png"
         }
     },
     "fonts": {

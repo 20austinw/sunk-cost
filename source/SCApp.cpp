@@ -292,6 +292,8 @@ void SCApp::draw() {
         case HOST:
             _hostgame.render(_batch);
             break;
+        case CLIENT:
+            break;
         case HOSTGAME:
             _spiritGameplay.render(_batch);
             break;

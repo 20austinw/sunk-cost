@@ -1,8 +1,11 @@
 {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> b098198 (Format and add portrait assets)
+=======
+>>>>>>> aa0642f7f1e5200fedb4bdb8887ca8d42897c569
     "compressionlevel": -1,
     "height": 14,
     "width": 18,
@@ -10,6 +13,9 @@
     "infinite": false,
     "layers": [
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> aa0642f7f1e5200fedb4bdb8887ca8d42897c569
         {
             "class": "tile",
             "data": [
@@ -392,6 +398,7 @@
     "tilewidth": 32,
     "type": "map",
     "version": "1.9"
+<<<<<<< HEAD
 =======
   "compressionlevel": -1,
   "height": 14,
@@ -1106,4 +1113,6 @@
     "type": "map",
     "version": "1.9"
 >>>>>>> b098198 (Format and add portrait assets)
+=======
+>>>>>>> aa0642f7f1e5200fedb4bdb8887ca8d42897c569
 }

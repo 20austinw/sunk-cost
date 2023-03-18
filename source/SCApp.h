@@ -82,7 +82,7 @@ public:
      * advanced configuration of the application before it starts.
      */
     SCApp() : cugl::Application(), _loaded(false), _scene(State::LOAD) {}
-    
+
     /**
      * Disposes of this application, releasing all resources.
      *
@@ -143,6 +143,7 @@ public:
      * paused before app suspension.
      */
     virtual void onResume() override;
+
 #pragma mark Application Loop
     /**
      * The method called to update the application data.
@@ -222,6 +223,7 @@ public:
      * at all. The default implmentation does nothing.
      */
     virtual void draw() override;
+    
 };
 
 #endif /* _SC_APP_H__ */

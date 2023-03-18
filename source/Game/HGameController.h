@@ -18,14 +18,14 @@
 #include <unordered_set>
 #include <vector>
 using namespace cugl;
-#include "TilemapController.h"
+#include "HunterController.h"
 #include "InputController.h"
 #include "LevelModel.h"
-#include "HunterController.h"
 #include "SpiritController.h"
 //#include "TrapController.hpp"
 #include "CollisionController.hpp"
 #include "TreasureController.hpp"
+#include "TilemapController.h"
 
 /**
  * The primary controller for the game logic.
@@ -72,10 +72,11 @@ private:
 
     
     int _count;
-    /** The scale between the physics world and the screen (SCREEN UNITS / BOX2D WORLD UNITS) */
+    /** The scale between the physics world and the screen (SCREEN UNITS / BOX2D
+     * WORLD UNITS) */
     float _scale;
     
-    int _tileWidth; 
+    int _tileWidth;
     
     int _tileHeight;
     
@@ -113,10 +114,8 @@ private:
     std::shared_ptr<cugl::scene2::Label> _loseLabel;
     bool _didLose;
     
-    
     // MODELS should be shared pointers or a data structure of shared pointers
     
-
     /** The level model */
     std::shared_ptr<LevelModel> _level;
     
@@ -124,7 +123,6 @@ private:
     // In the future, we will replace this with the scene graph
     /** The backgrounnd image */
     std::shared_ptr<cugl::Texture> _background;
-    
     
     std::shared_ptr<cugl::Texture> _filterTexture;
     std::shared_ptr<cugl::Texture> _shadowTexture;

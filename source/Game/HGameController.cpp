@@ -21,7 +21,7 @@ using namespace std;
 using namespace cugl;
 
 #pragma mark Main Methods
-HGameController::HGameController(){
+HGameController::HGameController() {
     _hunter = HunterController();
     // Initialize SpiritController
 //    _spirit = SpiritController();
@@ -40,9 +40,9 @@ HGameController::HGameController(){
  * @param displaySize   The display size of the game window
  * @param randoms        Reference to the random number generator
  */
-HGameController::HGameController(const Size displaySize, const std::shared_ptr<cugl::AssetManager>& assets):
-_scene(cugl::Scene2::alloc(displaySize)),
-_assets(assets){
+HGameController::HGameController(
+    const Size displaySize, const std::shared_ptr<cugl::AssetManager>& assets)
+    : _scene(cugl::Scene2::alloc(displaySize)), _assets(assets) {
     /// Initialize the tilemap and add it to the scene
     /// //    SCENE_WIDTH = 1024;
     //    SCENE_HEIGHT = 576;
@@ -60,15 +60,11 @@ _assets(assets){
     _count = 0;
     _didLose = false;
     _dimen = Application::get()->getDisplaySize();
-//    _offset = Vec3((_dimen.width)/2.0f,(_dimen.height)/2.0f,50);
-    _offset = Vec3(0,0,50);
+    //    _offset = Vec3((_dimen.width)/2.0f,(_dimen.height)/2.0f,50);
+    _offset = Vec3(0, 0, 50);
     _tilemap = std::make_unique<TilemapController>();
     _tilemap->addChildTo(_scene);
 
-    CULog("%f, %f", displaySize.width, displaySize.height);
-    _hunter = HunterController(assets, displaySize);
-//    _trap = TrapController(assets, displaySize);
-    _treasure = TreasureController(assets, displaySize);
     
     // Initialize SpiritController
     _spirit = SpiritController();
@@ -107,7 +103,7 @@ _assets(assets){
         _levelLoaded = false;
         CULog("Fail!");
     }
-    
+
     initCamera();
     
 //    initJoystick();
@@ -132,7 +128,6 @@ void HGameController::update(float dt) {
     if (!_levelLoaded) {
         checkLevelLoaded();
     }
-     
     
     _loseLabel->setText("You Lose!");
     _loseLabel->setPosition(_scene->getCamera()->getPosition()-Vec2(100,0));
@@ -155,13 +150,14 @@ void HGameController::update(float dt) {
     _world->update(dt);
     _world->activateCollisionCallbacks(true);
     _world->onBeginContact = [this](b2Contact* contact) { _collision.beginContact(contact); };
-    
+
     auto inputController = InputController::getInstance();
     inputController->readInput();
     inputController->update(dt);
     if (inputController->didPressReset()) {
         reset();
     }
+
 //    if(inputController->isKeyPressed(KeyCode::NUM_1)) {
 //        CULog("NUM_1");
 //    }
@@ -177,63 +173,66 @@ void HGameController::update(float dt) {
     
     // Will crash the program because the constructor doesn't set up the model/view yet (delete this comment later)
 
-//    _hunter.update();
-//    _spirit.update();
-    
+    // Will crash the program because the constructor doesn't set up the
+    // model/view yet (delete this comment later)
+
+    //    _hunter.update();
+    //    _spirit.update();
+
     std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
     int posx;
     int posxup;
     int posyup;
     int posy;
-    
+
     int midx;
     int midy;
-    
+
     Vec3 currPos = (_hunter.getPosition());
-    posx =(int) (currPos.x)/_tileWidth;
-    posy=(int)((currPos.y))/_tileHeight;
-    
-    posxup =(int) (currPos.x+40)/_tileWidth;
-    posyup=(int)((currPos.y+40))/_tileHeight;
-    
-    midx =(int) (currPos.x+20)/_tileWidth;
-    midy=(int)((currPos.y+20))/_tileHeight;
-    
+    posx = (int)(currPos.x) / _tileWidth;
+    posy = (int)((currPos.y)) / _tileHeight;
+
+    posxup = (int)(currPos.x + 40) / _tileWidth;
+    posyup = (int)((currPos.y + 40)) / _tileHeight;
+
+    midx = (int)(currPos.x + 20) / _tileWidth;
+    midy = (int)((currPos.y + 20)) / _tileHeight;
+
     int forward = inputController->getForward();
     int rightward = inputController->getRight();
-    
+
     _count++;
-    if(_count==6){
+    if (_count == 6) {
         _hunter.setViewFrame((int)forward, (int)rightward);
-        _count=0;
+        _count = 0;
     }
-    
-    
+
     std::string left = tiles[midy][posx];
     std::string up = tiles[posyup][midx];
-    std::string bottom =tiles[posy][midx];
-    std::string right =tiles[midy][posxup];
-    
-    if (left == "black"){
-        if (rightward==-1 ){
+    std::string bottom = tiles[posy][midx];
+    std::string right = tiles[midy][posxup];
+
+    if (left == "black") {
+        if (rightward == -1) {
             rightward = 0;
         }
     }
-    if (right == "black"){
-        if (rightward==1 ){
+    if (right == "black") {
+        if (rightward == 1) {
             rightward = 0;
         }
     }
-    if (up == "black"){
-        if (forward==1 ){
+    if (up == "black") {
+        if (forward == 1) {
             forward = 0;
         }
     }
-    if (bottom == "black"){
-        if (forward==-1 ){
+    if (bottom == "black") {
+        if (forward == -1) {
             forward = 0;
         }
     }
+
 //    bool age = _trap.update(); //false means trap active
 //    if (!_trap.getTrigger()){
         _hunter.move(forward,rightward);
@@ -256,10 +255,9 @@ void HGameController::update(float dt) {
         _treasure.getNode() ->setVisible(false);
         _treasureCount++;
     }
-    
-    
 
     _shadow->setPosition(_hunter.getPosition()-Vec2(300,370));
+
     updateCamera(dt);
     updateJoystick();
     
@@ -286,28 +284,29 @@ void HGameController::checkLevelLoaded() {
     _levelLoaded = false;
   }
 
-  // Check to see if new level loaded yet
+    // Check to see if new level loaded yet
     if (!_levelLoaded && _assets->complete()) {
         _level = nullptr;
-        
+
         // Access and initialize level
         _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
         _level->setAssets(_assets);
         
         // Initialize SpiritController
         _spirit = SpiritController();
-        
+
         _tileHeight = 256;
         _tileWidth = 256;
-        
+
         // TODO: implement direction and direction limits
         _tilemap->updatePosition(_scene->getSize() / 2);
         std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
         _tilemap->updateDimensions(Vec2(tiles[0].size(), tiles.size()));
         _tilemap->updateColor(Color4::WHITE);
         _tilemap->updateTileSize(Size(_tileWidth, _tileHeight));
-        
-        _map = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
+
+        _map =
+            scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
         _map->setPolygon(Rect(0, 0, 4608, 4608));
         //    _map = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 9216, 9216));
         //    _map ->setTexture(_assets->get<Texture>("map"));
@@ -336,7 +335,7 @@ void HGameController::checkLevelLoaded() {
                 _tilemap->addDoor(c, r, _assets->get<Texture>("fulldoor"));
             }
         }
-        
+
         // Initialize HunterController
         _hunter = HunterController(_assets, _scene->getSize());
         
@@ -357,7 +356,7 @@ void HGameController::checkLevelLoaded() {
         _treasure.addChildTo(_scene);
         
         _tilemap->addDoorTo(_scene);
-        
+
         _filterTexture = _assets->get<Texture>("filter");
         _filter = scene2::PolygonNode::allocWithTexture(_filterTexture);
         _filter->setPosition(_scene->getCamera()->getPosition());
@@ -365,11 +364,12 @@ void HGameController::checkLevelLoaded() {
         _filter->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
         _filter->setScale(Vec2(_dimen.width/1280,_dimen.height/720));
         _scene->addChild(_filter);
-        
-        _timer=12000;
-        _timerLabel= cugl::scene2::Label::allocWithText(Vec2(200,200), "2:00", _assets->get<Font>("pixel32"));
+
+        _timer = 12000;
+        _timerLabel = cugl::scene2::Label::allocWithText(
+            Vec2(200, 200), "2:00", _assets->get<Font>("pixel32"));
         _scene->addChild(_timerLabel);
-        
+
         _treasureCount = 0;
         _treasureLabel= cugl::scene2::Label::allocWithText(Vec2(200,200), "0 Treasure Collected", _assets->get<Font>("pixel32"));
         _treasureLabel->setColor(cugl::Color4f::YELLOW);
@@ -378,7 +378,7 @@ void HGameController::checkLevelLoaded() {
         _loseLabel = cugl::scene2::Label::allocWithText(Vec2(800,800), "You Lose!", _assets->get<Font>("pixel32"));
         
         initJoystick();
-        
+
         _levelLoaded = true;
     }
 }
@@ -387,21 +387,20 @@ void HGameController::checkLevelLoaded() {
  *
  */
 void HGameController::initCamera() {
-    
+
     Vec3 curr = _scene->getCamera()->getPosition();
-    Vec3 next = _offset
-    + (Vec3(_hunter.getPosition().x, _hunter.getPosition().y, 1));
+    Vec3 next =
+        _offset + (Vec3(_hunter.getPosition().x, _hunter.getPosition().y, 1));
     _scene->getCamera()->translate(next - curr);
     
     _scene->getCamera()->update();
-    
 }
 
 /**
  * Updates camera based on the position of the controlled player
  */
 void HGameController::updateCamera(float timestep) {
-    
+
     Vec2 curr = _scene->getCamera()->getPosition();
     _filter->setPosition(_scene->getCamera()->getPosition());
     _filter->setAnchor(Vec2::ANCHOR_CENTER);
@@ -414,7 +413,6 @@ void HGameController::updateCamera(float timestep) {
     
     _filter->setPosition(_scene->getCamera()->getPosition());
     _scene->getCamera()->update();
-   
 }
 
 

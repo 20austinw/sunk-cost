@@ -26,6 +26,7 @@ class PortraitSetController {
     std::shared_ptr<cugl::AssetManager> _assets;
     std::shared_ptr<cugl::Scene2> _scene;
     Size _screenSize;
+
     /** The max battery */
     float _maxBattery;
 

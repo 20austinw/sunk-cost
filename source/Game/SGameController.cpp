@@ -144,9 +144,11 @@ void SGameController::update(float dt) {
         _miniMap->getSize() / 2 * getZoom() + minimapOffset));
     _scene->removeChild(_miniMap);
     _scene->addChild(_miniMap);
+    
     _portraits->updateBattery();
     _portraits->updateBatteryNode(offset, _scene);
     _scene->getCamera()->update();
+
 
     if (!_portraits->getCurState() && _portraits->getPrevState()) {
         _portraits->addBlock(_scene);
@@ -165,7 +167,7 @@ void SGameController::update(float dt) {
     _spirit.update(_tilemap, canPlaceTrap);
     // TODO: update direction index for portraits on spirit control
     //    _portraits->updateDirectionIndex(<#Vec3 direction#>, <#int index#>)
-    
+
     if (_network) {
         _network->receive([this](const std::string source,
                                  const std::vector<std::byte>& data) {
@@ -234,7 +236,7 @@ void SGameController::checkLevelLoaded() {
         _map =
             scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
         _map->setPolygon(Rect(0, 0, 4608, 4608));
-
+        
         _scene->addChild(_map);
         _miniMap = scene2::PolygonNode::allocWithTexture(
             _assets->get<Texture>("minimap"));
@@ -246,15 +248,15 @@ void SGameController::checkLevelLoaded() {
                                     _level->getPortaits()[i].second,
                                     Vec3(0, 0, -1), Vec2::ZERO,
                                     _level->getBattery());
+            
+            _levelLoaded = true;
+            _portraits->setMaxbattery(_level->getBattery());
+            
+            _portraits->initializeSheets(_assets->get<Texture>("greenBattery"),
+                                         _assets->get<Texture>("redBattery"),
+                                         _assets->get<Texture>("noBattery"));
+            _portraits->initializeBatteryNodes(_scene);
         }
-
-        _levelLoaded = true;
-        _portraits->setMaxbattery(_level->getBattery());
-
-        _portraits->initializeSheets(_assets->get<Texture>("greenBattery"),
-                                     _assets->get<Texture>("redBattery"),
-                                     _assets->get<Texture>("noBattery"));
-        _portraits->initializeBatteryNodes(_scene);
     }
 }
     

@@ -13,6 +13,10 @@
 #include "SGameController.hpp"
 #include "LevelConstants.h"
 
+using namespace cugl;
+using namespace cugl::net;
+using namespace std;
+
 #pragma mark Main Methods
 /**
  * Creates the game controller.
@@ -39,7 +43,8 @@ SGameController::SGameController(
     // Initialize PortraitSetController
     _portraits = std::make_shared<PortraitSetController>(_assets, _scene, 0,
                                                          displaySize);
-
+    _portraits->initializeBatteryNodes(_scene);
+    
     // Initialize HunterController
     //        _hunter.updatePosition(_level->getPlayerPosition());
 
@@ -160,6 +165,14 @@ void SGameController::update(float dt) {
     _spirit.update(_tilemap, canPlaceTrap);
     // TODO: update direction index for portraits on spirit control
     //    _portraits->updateDirectionIndex(<#Vec3 direction#>, <#int index#>)
+    
+    if (_network) {
+        _network->receive([this](const std::string source,
+                                 const std::vector<std::byte>& data) {
+            processData(source,data);
+        });
+        checkConnection();
+    }
 }
 
 /**
@@ -188,18 +201,17 @@ void SGameController::checkLevelLoaded() {
     if (_level == nullptr) {
         _levelLoaded = false;
     }
-    
+
     // Check to see if new level loaded yet
     if (!_levelLoaded && _assets->complete()) {
         _level = nullptr;
-        
+
         // Access and initialize level
         _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
         _level->setAssets(_assets);
-        
-        
+
         CULog("Loading level!");
-        
+
         _tilemap->updatePosition(_scene->getSize() / 2);
         std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
         _tilemap->updateDimensions(Vec2(tiles[0].size(), tiles.size()));
@@ -245,7 +257,25 @@ void SGameController::checkLevelLoaded() {
         _portraits->initializeBatteryNodes(_scene);
     }
 }
+    
+    void SGameController::generateLevel() {
+        _tilemap->updateDimensions(_level->getDimensions());
+    }
 
-void SGameController::generateLevel() {
-    _tilemap->updateDimensions(_level->getDimensions());
+bool SGameController::checkConnection() {
+    // IMPLEMENT ME
+    NetcodeConnection::State network_state = _network->getState();
+    switch (network_state) {
+        case NetcodeConnection::State::FAILED:
+        case NetcodeConnection::State::DISCONNECTED:
+            disconnect();
+            _quit = true;
+            return false;
+            break;
+        case NetcodeConnection::State::CONNECTED:
+            break;
+        default:
+            break;
+    }
+    return true;
 }

@@ -18,6 +18,8 @@
 #include <cugl/cugl.h>
 #include "SCMenuScene.h"
 #include "SGameController.hpp"
+#include "SCHostScene.hpp"
+#include "SCClientScene.hpp"
 #include <cugl/cugl.h>
 
 /**
@@ -36,7 +38,11 @@ protected:
         /** The scene to host a game */
         HOST,
         /** The scene to join a game */
-        CLIENT
+        CLIENT,
+        
+        HOSTGAME,
+        
+        CLIENTGAME
     };
     
 protected:
@@ -51,6 +57,11 @@ protected:
     SGameController _spiritGameplay;
     /** The controller for the loading screen */
     LoadingScene _loading;
+    
+    /** The scene to host a game */
+    HostScene _hostgame;
+//    /** The scene to join a game */
+//    ClientScene _joingame;
     
     MenuScene _menu;
     
@@ -180,6 +191,26 @@ public:
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     void updateHGameController(float timestep);
+    
+    /**
+     * Inidividualized update method for the host scene.
+     *
+     * This method keeps the primary {@link #update} from being a mess of switch
+     * statements. It also handles the transition logic from the host scene.
+     *
+     * @param timestep  The amount of time (in seconds) since the last frame
+     */
+    void updateHostScene(float timestep);
+    
+    /**
+     * Inidividualized update method for the client scene.
+     *
+     * This method keeps the primary {@link #update} from being a mess of switch
+     * statements. It also handles the transition logic from the client scene.
+     *
+     * @param timestep  The amount of time (in seconds) since the last frame
+     */
+    void updateClientScene(float timestep);
     
     /**
      * The method called to draw the application to the screen.

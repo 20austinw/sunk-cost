@@ -130,12 +130,12 @@ void SCApp::update(float timestep) {
         _loading.update(0.01f);
     } else if (!_loaded) {
         _loading.dispose(); // Disables the input listeners in this mode
-        //        _hunterGameplay = HGameController(getDisplaySize(), _assets);
-        _spiritGameplay = SGameController(getDisplaySize(), _assets);
+                _hunterGameplay = HGameController(getDisplaySize(), _assets);
+//        _spiritGameplay = SGameController(getDisplaySize(), _assets);
         _loaded = true;
     } else {
-        //        _hunterGameplay.update(timestep);
-        _spiritGameplay.update(timestep);
+                _hunterGameplay.update(timestep);
+//        _spiritGameplay.update(timestep);
     }
 }
 
@@ -152,7 +152,7 @@ void SCApp::draw() {
     if (!_loaded) {
         _loading.render(_batch);
     } else {
-        //        _hunterGameplay.render(_batch);
-        _spiritGameplay.render(_batch);
+                _hunterGameplay.render(_batch);
+//        _spiritGameplay.render(_batch);
     }
 }

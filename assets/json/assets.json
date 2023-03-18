@@ -24,13 +24,16 @@
         "hunterleft": {
             "file": "textures/diver_walking_animation_L.png"
         },
-        "trap": {
-            "file": "textures/trap.png"
+        "trap":{
+            "file":  "textures/trap.png"
         },
-        "filter": {
-            "file": "textures/filter.png"
+        "treasure":{
+            "file":  "textures/treasureasset.png"
         },
-        "map": {
+        "filter":{
+            "file":  "textures/filter.png"
+        },
+        "map":{
             "file": "textures/map.png"
         },
         "trap_animation": {

@@ -34,6 +34,15 @@
 #define STATIC_VALUE "static"
 #define BATTERY_FIELD "battery"
 
+#define POSITION_FIELD      "pos"
+#define SIZE_FIELD          "size"
+#define BODYTYPE_FIELD      "bodytype"
+#define DENSITY_FIELD       "density"
+#define ROTATION_FIELD      "rotation"
+#define STATIC_VALUE        "static"
+#define BATTERY_FIELD       "battery"
+#define TREASURE_FIELD      "treasure"
+#define TRAP_FIELD          "trap"
 /** The drawing fields for each object */
 #define TEXTURE_FIELD "texture"
 

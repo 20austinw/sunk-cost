@@ -13,6 +13,10 @@
 #include "SGameController.hpp"
 #include "LevelConstants.h"
 
+using namespace cugl;
+using namespace cugl::net;
+using namespace std;
+
 #pragma mark Main Methods
 /**
  * Creates the game controller.
@@ -39,7 +43,8 @@ SGameController::SGameController(
     _tilemap = std::make_shared<TilemapController>();
     _tilemap->addChildTo(_scene);
     // Initialize PortraitSetController
-    _portraits = std::make_shared<PortraitSetController>(0, displaySize);
+    _portraits = std::make_shared<PortraitSetController>(_assets, _scene, 0,
+                                                             displaySize);
     _portraits->initializeBatteryNodes(_scene);
     
     // Initialize HunterController
@@ -73,6 +78,7 @@ SGameController::SGameController(
      * @param dt  The amount of time (in seconds) since the last frame
      */
 void SGameController::update(float dt) {
+    
     if (!_levelLoaded) {
         CULog("Level not loaded!");
         checkLevelLoaded();
@@ -140,6 +146,14 @@ void SGameController::update(float dt) {
     _spirit.update(_tilemap);
     // TODO: update direction index for portraits on spirit control
     //    _portraits->updateDirectionIndex(}, <#int index#>)
+    
+    if (_network) {
+        _network->receive([this](const std::string source,
+                                 const std::vector<std::byte>& data) {
+            processData(source,data);
+        });
+        checkConnection();
+    }
 }
     
     
@@ -168,18 +182,17 @@ void SGameController::checkLevelLoaded() {
     if (_level == nullptr) {
         _levelLoaded = false;
     }
-    
+
     // Check to see if new level loaded yet
     if (!_levelLoaded && _assets->complete()) {
         _level = nullptr;
-        
+
         // Access and initialize level
         _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
         _level->setAssets(_assets);
-        
-        
+
         CULog("Loading level!");
-        
+
         _tilemap->updatePosition(_scene->getSize() / 2);
         std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
         _tilemap->updateDimensions(Vec2(tiles[0].size(), tiles.size()));
@@ -196,17 +209,6 @@ void SGameController::checkLevelLoaded() {
                                   _assets->get<Texture>("green"));
             } else if (tiles[r][c] == "door") {
                 _tilemap->addDoor(c, r, _assets->get<Texture>("fulldoor"));
-                
-                _map = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
-                _map->setPolygon(Rect(0, 0, 4608, 4608));
-                //    _map = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 9216, 9216));
-                //    _map ->setTexture(_assets->get<Texture>("map"));
-                _scene->addChild(_map);
-                _tilemap->addDoorTo(_scene);
-                _portraits->refreshBatteryNodes(_scene);
-                
-                _levelLoaded = true;
-                _portraits->setMaxbattery(_level->getBattery());
             }
         }
 
@@ -235,3 +237,21 @@ void SGameController::checkLevelLoaded() {
     void SGameController::generateLevel() {
         _tilemap->updateDimensions(_level->getDimensions());
     }
+
+bool SGameController::checkConnection() {
+    // IMPLEMENT ME
+    NetcodeConnection::State network_state = _network->getState();
+    switch (network_state) {
+        case NetcodeConnection::State::FAILED:
+        case NetcodeConnection::State::DISCONNECTED:
+            disconnect();
+            _quit = true;
+            return false;
+            break;
+        case NetcodeConnection::State::CONNECTED:
+            break;
+        default:
+            break;
+    }
+    return true;
+}

@@ -168,6 +168,8 @@ public:
     //    void updateCamera();
 private:
     void checkLevelLoaded();
+    
+    void generateLevel();
 };
 
 #endif /* __HGAME_CONTROLLER_H__ */

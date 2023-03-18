@@ -68,6 +68,9 @@ public:
     std::shared_ptr<cugl::Texture> _background;
     /** The text with the current health */
     std::shared_ptr<cugl::TextLayout> _text;
+    
+    /** The network connection (as made by this scene) */
+    std::shared_ptr<cugl::net::NetcodeConnection> _network;
 
     bool _levelLoaded;
 
@@ -78,6 +81,9 @@ public:
     Status _status;
     
     bool _ishost;
+    
+    /** Whether we quit the game */
+    bool _quit;
 
 #pragma mark External References
   private:
@@ -125,9 +131,61 @@ public:
         return _status;
     }
     
-    void setHost(bool b) {
-        _ishost = b;
+    /**
+     * Returns the network connection (as made by this scene)
+     *
+     * This value will be reset every time the scene is made active.
+     *
+     * @return the network connection (as made by this scene)
+     */
+    std::shared_ptr<cugl::net::NetcodeConnection> getConnection() const {
+        return _network;
     }
+    
+    /**
+     * Returns the network connection (as made by this scene)
+     *
+     * This value will be reset every time the scene is made active.
+     *
+     * @return the network connection (as made by this scene)
+     */
+    void setConnection(const std::shared_ptr<cugl::net::NetcodeConnection>& network) {
+        _network = network;
+    }
+    
+    /**
+     * Returns true if the player is host.
+     *
+     * We may need to have gameplay specific code for host.
+     *
+     * @return true if the player is host.
+     */
+    bool isHost() const { return _ishost; }
+
+    /**
+     * Sets whether the player is host.
+     *
+     * We may need to have gameplay specific code for host.
+     *
+     * @param host  Whether the player is host.
+     */
+    void setHost(bool host)  { _ishost = host; }
+
+    /**
+     * Returns true if the player quits the game.
+     *
+     * @return true if the player quits the game.
+     */
+    bool didQuit() const { return _quit; }
+ 
+    /**
+     * Disconnects this scene from the network controller.
+     *
+     * Technically, this method does not actually disconnect the network controller.
+     * Since the network controller is a smart pointer, it is only fully disconnected
+     * when ALL scenes have been disconnected.
+     */
+    void disconnect() { _network = nullptr; }
 
   private:
     void checkLevelLoaded();
@@ -136,6 +194,38 @@ public:
 
     void displayBattery(float battery, bool state,
                         std::shared_ptr<cugl::SpriteBatch>& batch);
+
+private:
+    /**
+     * Processes data sent over the network.
+     *
+     * Once connection is established, all data sent over the network consistes of
+     * byte vectors. This function is a call back function to process that data.
+     * Note that this function may be called *multiple times* per animation frame,
+     * as the messages can come from several sources.
+     *
+     * Typically this is where players would communicate their names after being
+     * connected. In this lab, we only need it to do one thing: communicate that
+     * the host has started the game.
+     *
+     * @param source    The UUID of the sender
+     * @param data      The data received
+     */
+    void processData(const std::string source, const std::vector<std::byte>& data);
+
+    /**
+     * Checks that the network connection is still active.
+     *
+     * Even if you are not sending messages all that often, you need to be calling
+     * this method regularly. This method is used to determine the current state
+     * of the scene.
+     *
+     * @return true if the network connection is still active.
+     */
+    bool checkConnection();
+
+    void transmitTrap(Vec2 pos);
+
 };
 
 #endif /* SGameController_hpp */

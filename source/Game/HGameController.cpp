@@ -99,6 +99,9 @@ _assets(assets){
     _debugnode->setPosition(_offset);
     _debugnode->setVisible(DEBUG_ON);
     
+    _portraits = std::make_shared<PortraitSetController>(_assets, _scene, 0,
+                                                         displaySize);
+    
     _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
     if (_level == nullptr) {
         _levelLoaded = false;
@@ -318,6 +321,13 @@ void HGameController::checkLevelLoaded() {
         _scene->addChild(_worldnode);
         _scene->addChild(_debugnode);
         
+        for (int i = 0; i < _level->getPortaits().size(); i++) {
+            _portraits->addPortrait(i + 1, _level->getPortaits()[i].first,
+                                    _level->getPortaits()[i].second,
+                                    Vec3(0, 0, -1), Vec2::ZERO,
+                                    _level->getBattery());
+        }
+        
         
         for (int i = 0; i < tiles.size() * tiles[0].size(); ++i){
             int c = i%tiles[0].size();
@@ -331,13 +341,6 @@ void HGameController::checkLevelLoaded() {
                 _tilemap->addDoor(c, r, _assets->get<Texture>("fulldoor"));
             }
             
-//            if (tiles[r][c] == "red") {
-//                _tilemap->addTile(c, r, Color4::RED, true, _assets->get<Texture>("red"));
-//
-//            }
-//            else if (tiles[r][c] == "blue") {
-//                _tilemap->addTile(c, r, Color4::BLUE, true, _assets->get<Texture>("blue"));
-//            }
         }
         
         // Initialize HunterController

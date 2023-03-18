@@ -24,13 +24,16 @@
         "hunterleft": {
             "file": "textures/diver_walking_animation_L.png"
         },
-        "trap": {
-            "file": "textures/trap.png"
+        "trap":{
+            "file":  "textures/trap.png"
         },
-        "filter": {
-            "file": "textures/filter.png"
+        "treasure":{
+            "file":  "textures/treasureasset.png"
         },
-        "map": {
+        "filter":{
+            "file":  "textures/filter.png"
+        },
+        "map":{
             "file": "textures/map.png"
         },
         "trap_animation": {
@@ -48,14 +51,17 @@
         "shadow": {
             "file": "textures/diver_shadow.png"
         },
-        "greenBattery":{
-                    "file": "textures/greenBattery.png"
-                },
-        "redBattery":{
+        "greenBattery": {
+            "file": "textures/greenBattery.png"
+        },
+        "redBattery": {
             "file": "textures/redBattery.png"
         },
-        "noBattery":{
+        "noBattery": {
             "file": "textures/noBattery.png"
+        },
+        "minimap": {
+            "file": "textures/minimap.png"
         }
     },
     "fonts": {

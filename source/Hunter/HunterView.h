@@ -41,7 +41,6 @@ public:
 
         _frameNum = 8;
         
-        CULog("truee %d", assets->get<Texture>("hunterrunning")==nullptr);
         
 
         _spriteSheets.push_back(assets->get<Texture>("hunterrunning"));

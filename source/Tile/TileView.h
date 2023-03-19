@@ -14,21 +14,21 @@ using namespace cugl;
 
 /**
  * A class representing the interface for a single tile view.
- * 
+ *
  * There is very little that this class does that a SceneNode (or
  * PolygonNode) does not already do. So technically we could use
  * one of those classes for the view. But by pulling it out as its
  * own class, we make the relationship explicit.
  */
 class TileView {
-    
+
 #pragma mark Internal References
-private:
+  private:
     /** Main tile view */
     std::shared_ptr<scene2::PolygonNode> _node;
-    
+
 #pragma mark Main Functions
-public:
+  public:
     /**
      * Creates the view.
      *
@@ -39,7 +39,8 @@ public:
      * @param size The width and height of a tile
      * @param color The tile color tint
      */
-    TileView(Vec2 position, Size size, Color4 color, const std::shared_ptr<Texture> &texture) {
+    TileView(Vec2 position, Size size, Color4 color,
+             const std::shared_ptr<Texture>& texture) {
         _node = scene2::PolygonNode::alloc();
         _node->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
         _node->setTexture(texture);
@@ -47,18 +48,16 @@ public:
         _node->setColor(color);
         _node->setPolygon(Rect(Vec2::ZERO, size));
     }
-    
+
     /**
      * Deletes this TileView
      *
      * Upon destruction, you should remove the node from its parent.
      */
-    ~TileView() {
-        _node->removeFromParent();
-    }
-    
+    ~TileView() { _node->removeFromParent(); }
+
 #pragma mark Scene Methods
-public:
+  public:
     /**
      * Adds the view components as children to the given `sceneNode`.
      *
@@ -67,7 +66,7 @@ public:
     void addChildTo(const std::shared_ptr<scene2::SceneNode>& sceneNode) {
         sceneNode->addChild(_node);
     }
-    
+
     /**
      * Removes the view component children from the given `sceneNode`.
      *
@@ -78,16 +77,14 @@ public:
     }
 
 #pragma mark Setters
-public:
+  public:
     /**
      * Sets the position of the bottom left corner of the tile.
      *
      * @param position Bottom left corner of tile
      */
-    void setPosition(Vec2 position) {
-        _node->setPosition(position);
-    }
-    
+    void setPosition(Vec2 position) { _node->setPosition(position); }
+
     /**
      * Sets the size of the tile.
      *
@@ -97,18 +94,14 @@ public:
      *
      * @param size Width and height of a single tile
      */
-    void setSize(Size size) {
-        _node->setPolygon(Rect(Vec2::ZERO, size));
-    }
-    
+    void setSize(Size size) { _node->setPolygon(Rect(Vec2::ZERO, size)); }
+
     /**
      *  Sets the color of the tile.
      *
      *  @param color The color of the tile
      */
-    void setColor(Color4 color) {
-        _node->setColor(color);
-    }
+    void setColor(Color4 color) { _node->setColor(color); }
 };
 
 #endif /* _TILE_VIEW_H__ */

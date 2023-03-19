@@ -21,7 +21,7 @@ class HunterController {
 #pragma mark Internal References
 private:
     /** Model reference */
-    std::unique_ptr<HunterModel> _model;
+    std::shared_ptr<HunterModel> _model;
     /** View reference */
     std::unique_ptr<HunterView> _view;
     
@@ -129,6 +129,10 @@ public:
      */
     void move(float forward, float rightward);
     Vec2 getPosition();
+    
+    b2Body* getHunterBody();
+    
+    void setAsObstacle(std::shared_ptr<cugl::physics2::ObstacleWorld> world);
 #pragma mark View Methods
 /**
  * Adds the TilemapView as a child to the given `scene`.

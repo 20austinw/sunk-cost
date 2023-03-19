@@ -1,24 +1,24 @@
 //
-//  TrapViewH.h
+//  TreasureView.h
 //  Sunk
 //
-//  Created by 任清扬 on 14/3/23.
+//  Created by 任清扬 on 16/3/23.
 //
 
-#ifndef TrapViewH_h
-#define TrapViewH_h
+#ifndef TreasureView_h
+#define TreasureView_h
 
 #include <cugl/cugl.h>
 
 using namespace cugl;
 
-class TrapViewH {
+class TreasureView {
 #pragma mark Internal References
 private:
     std::shared_ptr<scene2::PolygonNode> _node;
-    std::vector<std::shared_ptr<cugl::Texture>> _spriteSheets;
-    std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> _spriteNodes;
-    int  _frameNum;
+//    std::vector<std::shared_ptr<cugl::Texture>> _spriteSheets;
+//    std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> _spriteNodes;
+//    int  _frameNum;
     
 #pragma mark Main Functions
 public:
@@ -33,33 +33,34 @@ public:
      * @param size The width and height of a tile
      * @param color The tile color tint
      */
-    TrapViewH(const std::shared_ptr<cugl::AssetManager>& assets, Vec2 position, Size size){
+    TreasureView(const std::shared_ptr<cugl::AssetManager>& assets, Vec2 position, Size size){
 //        _node = scene2::PolygonNode::alloc();
 //        _node->setColor(Color4::PAPYRUS);
 //        _node->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
 //        setPosition(position - size);
 //        _node->setPolygon(Rect(position, size));
         
-        _node = scene2::PolygonNode::allocWithTexture(assets->get<Texture>("trap"));
-        _frameNum = 0;
-        
-        _spriteSheets.push_back(assets->get<Texture>("clamtrap_anim"));
-        
-        
-        float width = size.width * 1.5f;
-        
-        for (int i = 0; i < _spriteSheets.size(); i++) {
-            _spriteNodes.push_back(scene2::SpriteNode::allocWithSheet(_spriteSheets[i], 1, 8, 8));
-            _spriteNodes[i]->setScale(0.4);
-            _spriteNodes[i]->setFrame(7);
-    
-            _spriteNodes[i]->setAnchor(Vec2::ANCHOR_CENTER);
-            _spriteNodes[i]->setPosition(Vec2(0, width / 2.5f));
-            _spriteNodes[i]->setVisible(false);
-            _node->addChild(_spriteNodes[i]);
-        }
-        _spriteNodes[0]->setVisible(true);
-        
+        _node = scene2::PolygonNode::allocWithTexture(assets->get<Texture>("treasure"));
+        _node ->setScale(0.15);
+//        _frameNum = 0;
+//
+//        _spriteSheets.push_back(assets->get<Texture>("clamtrap_anim"));
+//
+//
+//        float width = size.width * 1.5f;
+//
+//        for (int i = 0; i < _spriteSheets.size(); i++) {
+//            _spriteNodes.push_back(scene2::SpriteNode::allocWithSheet(_spriteSheets[i], 1, 8, 8));
+//            _spriteNodes[i]->setScale(0.4);
+//            _spriteNodes[i]->setFrame(0);
+//
+//            _spriteNodes[i]->setAnchor(Vec2::ANCHOR_CENTER);
+//            _spriteNodes[i]->setPosition(Vec2(0, width / 2.5f));
+//            _spriteNodes[i]->setVisible(false);
+//            _node->addChild(_spriteNodes[i]);
+//        }
+//        _spriteNodes[0]->setVisible(true);
+//
         _node->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
         _node->setPosition(position);
         _node->setPolygon(Rect(Vec2::ZERO, size));
@@ -67,7 +68,7 @@ public:
     
     
     /** Deletes this HunterView */
-    ~TrapViewH() {
+    ~TreasureView() {
         _node->removeFromParent();
     }
     
@@ -98,22 +99,22 @@ public:
     }
     
     
-    /**
-     * Determines the next animation frame for the ship and applies it to the sprite.
-     *
-     * This method includes some dampening of the turn, and should be called before
-     * moving the ship.
-     */
-    void advanceFrame() {
-       
-        if(_frameNum >=7){
-            _spriteNodes[0]->setVisible(false);
-            _frameNum=0;
-        }
-        _spriteNodes[0]->setFrame(_frameNum);
-        _frameNum++;
-            
-        }
+//    /**
+//     * Determines the next animation frame for the ship and applies it to the sprite.
+//     *
+//     * This method includes some dampening of the turn, and should be called before
+//     * moving the ship.
+//     */
+//    void advanceFrame() {
+//
+//        if(_frameNum >=7){
+//            _spriteNodes[0]->setVisible(false);
+//            _frameNum=0;
+//        }
+//        _spriteNodes[0]->setFrame(_frameNum);
+//        _frameNum++;
+//
+//        }
     
 #pragma mark Setters
     void setPosition(Vec2 position) {
@@ -122,6 +123,4 @@ public:
 };
 
 
-
-#endif /* TrapViewH_h */
-
+#endif /* TreasureView_h */

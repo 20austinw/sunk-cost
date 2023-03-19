@@ -16,7 +16,7 @@
  */
 HunterController::HunterController(const std::shared_ptr<cugl::AssetManager>& assets, Size screenSize) {
     CULog("Called!");
-    _model = std::make_unique<HunterModel>();
+    _model = std::make_shared<HunterModel>();
     _model->setPosition(Vec2(400,400));
     _view = std::make_unique<HunterView>(assets, Vec2(400,400), Vec2(40,40));
     _screenSize = screenSize;
@@ -165,6 +165,13 @@ Vec2 HunterController::getPosition() {
     return _model->getPosition();
 }
 
+b2Body* HunterController::getHunterBody(){
+    return _model->getBody();
+}
+
+void HunterController::setAsObstacle(std::shared_ptr<cugl::physics2::ObstacleWorld> world){
+    world->addObstacle(_model);
+}
 #pragma mark View Methods
 /**
  * Adds the TilemapView as a child to the given `scene`.

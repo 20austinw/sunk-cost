@@ -8,12 +8,18 @@
 
 #ifndef _HUNTER_MODEL_H
 #define _HUNTER_MODEL_H
+/** The density of this player */
+#define DEFAULT_DENSITY 1.0f
+/** The friction of this player */
+#define DEFAULT_FRICTION 0.4f
+/** The restitution of this player */
+#define DEFAULT_RESTITUTION 0.4f
 
 #include <cugl/cugl.h>
 
 using namespace cugl;
 
-class HunterModel {
+class HunterModel : public cugl::physics2::CapsuleObstacle {
 #pragma mark State
 private:
     /** Position of the hunter */
@@ -49,8 +55,18 @@ public:
     direction(_direction),
     speed(_speed),
     hideCool(_hideCool) {
-        setPosition(position);
-        setDirection(direction);
+        // Call the parent's initializer
+        physics2::CapsuleObstacle::init(_position, Vec2(20,20));
+        
+        // Set physics properties for the body
+        setBodyType(b2_dynamicBody);
+        setDensity(DEFAULT_DENSITY);
+        setFriction(DEFAULT_FRICTION);
+        setRestitution(DEFAULT_RESTITUTION);
+        setFixedRotation(true);
+        setDebugColor(Color4::RED);
+        setPosition(_position);
+        setDirection(_direction);
         setSpeed(0);
         setHideCooldown(0);
     }
@@ -65,7 +81,7 @@ public:
     Vec2 getPosition() {
         return _position;
     }
-
+    
 #pragma mark Setters
 public:
     /**

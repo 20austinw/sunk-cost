@@ -23,7 +23,9 @@ using namespace cugl;
 #include "LevelModel.h"
 #include "HunterController.h"
 #include "SpiritController.h"
-#include "TrapController.hpp"
+//#include "TrapController.hpp"
+#include "CollisionController.hpp"
+#include "TreasureController.hpp"
 
 
 /**
@@ -49,6 +51,9 @@ private:
     /** The locked size of the display. */
     cugl::Size _dimen;
     
+    std::shared_ptr<PortraitSetController> _portraits;
+
+    
     int _count;
     /** The scale between the physics world and the screen (SCREEN UNITS / BOX2D WORLD UNITS) */
     float _scale;
@@ -67,13 +72,29 @@ private:
     
     SpiritController _spirit;
     
-    TrapController _trap;
+//    TrapController _trap;
+    
+    TreasureController _treasure;
+    std::shared_ptr<scene2::PolygonNode>_outerJoystick;
+    std::shared_ptr<scene2::PolygonNode>_innerJoystick;
     
     std::shared_ptr<scene2::PolygonNode> _filter;
+    std::shared_ptr<scene2::PolygonNode> _shadow;
     std::shared_ptr<scene2::PolygonNode> _map;
-    
+    /** The Box2D world */
+    std::shared_ptr<cugl::physics2::ObstacleWorld> _world;
+    /** The Collision Controller instance */
+    CollisionController _collision;
+    /** Reference to the physics node of the scene graph */
+    std::shared_ptr<cugl::scene2::SceneNode> _worldnode;
+    /** Reference to the debug node of the scene graph */
+    std::shared_ptr<cugl::scene2::SceneNode> _debugnode;
     float _timer;
     std::shared_ptr<cugl::scene2::Label> _timerLabel;
+    int _treasureCount;
+    std::shared_ptr<cugl::scene2::Label> _treasureLabel;
+    std::shared_ptr<cugl::scene2::Label> _loseLabel;
+    bool _didLose;
     
     
     // MODELS should be shared pointers or a data structure of shared pointers
@@ -89,6 +110,7 @@ private:
     
     
     std::shared_ptr<cugl::Texture> _filterTexture;
+    std::shared_ptr<cugl::Texture> _shadowTexture;
     /** The text with the current health */
     std::shared_ptr<cugl::TextLayout> _text;
     
@@ -139,7 +161,10 @@ public:
     void render(std::shared_ptr<SpriteBatch>& batch);
     
     void initCamera();
+    void initJoystick();
+    void updateJoystick();
     void updateCamera(float timestep);
+    
     
 //    void updateCamera();
 private:

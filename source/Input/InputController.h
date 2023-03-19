@@ -28,7 +28,7 @@
 class InputController {
 
 #pragma mark Internal References
-private:
+  private:
     /** Model reference*/
     std::unique_ptr<InputModel> _model;
     /** Whether the input device was successfully initialized */
@@ -41,15 +41,14 @@ private:
     Uint32 _kkey;
     /** The unique key for the mouse listeners */
     Uint32 _mkey;
-    
 
 #pragma mark External References
-private:
+  private:
     /** Keyboard reference */
-    Keyboard *_keyboard;
+    Keyboard* _keyboard;
     /** Mouse reference */
-    Mouse *_mouse;
-    
+    Mouse* _mouse;
+
     /** Touch screen **/
     /** Whether it is in mobile mode with touch screen */
     bool _ts;
@@ -61,7 +60,7 @@ private:
     cugl::Vec2 _touchPos;
     /** Whether the finger touch is down */
     bool _touchDown;
-    
+
     /** The current touch/mouse position */
     cugl::Vec2 _currPos;
     /** The previous touch/mouse position */
@@ -72,7 +71,7 @@ private:
     bool _prevDown;
 
 #pragma mark State
-private:
+  private:
     /** How much forward are we going? */
     float _forward;
     /** How much are we turning? */
@@ -85,7 +84,7 @@ private:
     bool _didReset;
 
 #pragma mark Main Functions
-public:
+  public:
     /**
      * Creates the handler, initializing the input devices.
      *
@@ -96,13 +95,12 @@ public:
      * singleton with {@link #getInstance} instead.
      */
     InputController();
-    
+
     bool initListeners();
-    
+
     /** Returns a singleton instance of InputController. */
     static std::shared_ptr<InputController> getInstance();
-    
-    
+
     /**
      * Disposes this input controller, deactivating all listeners.
      *
@@ -111,16 +109,14 @@ public:
      * {@link #init} method.
      */
     void dispose();
-    
-    
+
     /**
      * Aligns inputs detected through callbacks with frame updates.
      *
      * @param dt  The amount of time (in seconds) since the last frame
      */
     void update(float dt);
-    
-    
+
     /**
      * Returns the amount of forward movement.
      *
@@ -128,9 +124,7 @@ public:
      *
      * @return amount of forward movement.
      */
-    float getForward() const {
-        return _forward;
-    }
+    float getForward() const { return _forward; }
 
     /**
      * Returns the amount to turn the hunter.
@@ -139,28 +133,21 @@ public:
      *
      * @return amount to turn the hunter.
      */
-    float getRight() const {
-        return _rightward;
-    }
-
+    float getRight() const { return _rightward; }
 
     /**
      * Returns whether the exit button was pressed.
      *
      * @return whether the exit button was pressed.
      */
-    bool didPressExit() const {
-      return _didExit;
-    }
+    bool didPressExit() const { return _didExit; }
 
     /**
      * Returns whether the reset button was pressed.
      *
      * @return whether the reset button was pressed.
      */
-    bool didPressReset() const {
-      return _didReset;
-    }
+    bool didPressReset() const { return _didReset; }
 
     /**
      * Reads the input for this player and converts the result into game logic.
@@ -183,25 +170,21 @@ public:
      * @return true if this control is active.
      */
     bool isActive() const { return _active; }
-    
+
     /**
      * Returns the current mouse/touch position
      *
      * @return the current mouse/touch position
      */
-    const cugl::Vec2& getPosition() const {
-        return _currPos;
-    }
+    const cugl::Vec2& getPosition() const { return _currPos; }
 
     /**
      * Returns the previous mouse/touch position
      *
      * @return the previous mouse/touch position
      */
-    const cugl::Vec2& getPrevious() const {
-        return _prevPos;
-    }
-    
+    const cugl::Vec2& getPrevious() const { return _prevPos; }
+
     /**
      * Return true if the user initiated a press this frame.
      *
@@ -210,9 +193,7 @@ public:
      *
      * @return true if the user initiated a press this frame.
      */
-    bool didPress() const {
-        return !_prevDown && _currDown;
-    }
+    bool didPress() const { return !_prevDown && _currDown; }
 
     /**
      * Return true if the user initiated a release this frame.
@@ -222,9 +203,7 @@ public:
      *
      * @return true if the user initiated a release this frame.
      */
-    bool didRelease() const {
-        return !_currDown && _prevDown;
-    }
+    bool didRelease() const { return !_currDown && _prevDown; }
 
     /**
      * Return true if the user is actively pressing this frame.
@@ -234,13 +213,10 @@ public:
      *
      * @return true if the user is actively pressing this frame.
      */
-    bool isDown() const {
-        return _currDown;
-    }
-    
-    
+    bool isDown() const { return _currDown; }
+
 #pragma mark Mouse Callbacks
-private:
+  private:
     /**
      * Callback for the beginning of a mouse press event.
      *
@@ -250,12 +226,13 @@ private:
      * @param clicks    The number of clicks (for double clicking)
      * @param focus     Whether this device has focus (UNUSED)
      */
-    void buttonDownCB(const MouseEvent &event, Uint8 clicks, bool focus);
+    void buttonDownCB(const MouseEvent& event, Uint8 clicks, bool focus);
 
     /**
      * Callback for when the mouse is pressed down.
      *
-     * This function will record whenever the left mouse is held down after the initial press.
+     * This function will record whenever the left mouse is held down after the
+     * initial press.
      *
      * @param event     The event with the mouse information
      * @param previous    The previous position of the mouse
@@ -272,8 +249,8 @@ private:
      * @param clicks    The number of clicks (for double clicking)
      * @param focus     Whether this device has focus (UNUSED)
      */
-    void buttonUpCB(const MouseEvent &event, Uint8 clicks, bool focus);
-    
+    void buttonUpCB(const MouseEvent& event, Uint8 clicks, bool focus);
+
     /**
      * Call back to execute when a touch screen is touched.
      *
@@ -287,7 +264,8 @@ private:
     /**
      * Call back to execute when a touch is released.
      *
-     *  This function will record a release for the same touch which has been recorded by touchDownCB.
+     *  This function will record a release for the same touch which has been
+     * recorded by touchDownCB.
      *
      * @param event     The event with the touch information
      * @param focus    Whether this touch has been released
@@ -301,12 +279,9 @@ private:
      * @param focus     Whether this device has focus (UNUSED)
      */
     void touchMotionCB(const cugl::TouchEvent& event, bool focus);
-    
-
-
 
 #pragma mark Input State Getters
-public:
+  public:
     /**
      * Returns whether `key` is held down.
      *
@@ -316,13 +291,13 @@ public:
         // Previous was the result before the start of this frame
         return _previous.find(key) != _previous.end();
     }
-    
+
     /** Returns whether the mouse was first clicked during this frame. */
     bool isMouseClicked() { return _model->isMouseClicked; }
-    
+
     /** Returns whether the mouse was held down during this frame. */
     bool isMouseHeld() { return _model->isMouseHeld; }
-    
+
     /** Returns the mouse's last recorded position. */
     Vec2 getLastMousePos() { return _model->lastMousePos; }
 };

@@ -1,20 +1,28 @@
 //
-//  TrapModel.hpp
+//  TreasureModel.hpp
 //  Sunk
 //
-//  Created by 任清扬 on 14/3/23.
+//  Created by 任清扬 on 16/3/23.
 //
 
-#ifndef TrapModel_hpp
-#define TrapModel_hpp
+#ifndef TreasureModel_hpp
+#define TreasureModel_hpp
 
+#include <stdio.h>
+
+/** The density of this player */
+#define DEFAULT_DENSITY 1.0f
+/** The friction of this player */
+#define DEFAULT_FRICTION 0.4f
+/** The restitution of this player */
+#define DEFAULT_RESTITUTION 0.4f
 
 
 #include <cugl/cugl.h>
 
 using namespace cugl;
 
-class TrapModel {
+class TreasureModel : public cugl::physics2::WheelObstacle {
 #pragma mark State
 private:
     /** Position of the hunter */
@@ -35,11 +43,24 @@ public:
      * @param speed the hunter's movement speed
      */
     
-    TrapModel(){};
+    TreasureModel(){};
     
-    TrapModel(Vec2 position, int maxAge) {
-        setPosition(position);
+    TreasureModel(Vec2 position, int maxAge) {
         _maxAge = maxAge;
+        
+        // Call the parent's initializer
+        physics2::WheelObstacle::init(position, 20);
+        
+        // Set physics properties for the body
+        setBodyType(b2_dynamicBody);
+        setDensity(DEFAULT_DENSITY);
+        setFriction(DEFAULT_FRICTION);
+        setRestitution(DEFAULT_RESTITUTION);
+        setFixedRotation(true);
+        setDebugColor(Color4::RED);
+        setPosition(position);
+        _position = position;
+        
     };
     
 #pragma mark Getters
@@ -103,4 +124,4 @@ public:
 };
 
 
-#endif /* TrapModel_hpp */
+#endif /* TreasureModel_hpp */

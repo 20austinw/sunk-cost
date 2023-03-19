@@ -1,6 +1,6 @@
 //
 //  TileController.h
-//  Sunk Cost  
+//  Sunk Cost
 //
 //  This module provides the TileController class.
 //
@@ -19,16 +19,16 @@
  * controls a single tile.
  */
 class TileController {
-    
+
 #pragma mark Internal References
-private:
+  private:
     /** Model reference */
     std::unique_ptr<TileModel> _model;
     /** View reference */
     std::unique_ptr<TileView> _view;
-    
+
 #pragma mark Main Methods
-public:
+  public:
     /**
      * Creates a controller for the model and view.
      *
@@ -37,22 +37,22 @@ public:
      * @param color     The tile color tint
      * @param color     The tile color
      */
-    TileController(Vec2 position, Size size, Color4 color, bool traversable, const std::shared_ptr<Texture> &texture) {
-        _model = std::make_unique<TileModel>(position, size, color, traversable); 
-        _view = std::make_unique<TileView>(position, size, color, texture); 
+    TileController(Vec2 position, Size size, Color4 color, bool traversable,
+                   const std::shared_ptr<Texture>& texture) {
+        _model =
+            std::make_unique<TileModel>(position, size, color, traversable);
+        _view = std::make_unique<TileView>(position, size, color, texture);
     }
 
 #pragma mark Get Methods
-public:
+  public:
     /**
      *  Returns whether the tile is traversable
      */
-    bool isTraversable() {
-        return _model->traversable;
-    }
+    bool isTraversable() { return _model->traversable; }
 
 #pragma mark Update Methods
-public:
+  public:
     /**
      *  Updates the model and view with position of this tile.
      *
@@ -62,7 +62,7 @@ public:
         _model->setPosition(position);
         _view->setPosition(position);
     }
-    
+
     /**
      *  Updates the model and view with the size of this tile.
      *
@@ -72,7 +72,7 @@ public:
         _model->setSize(size);
         _view->setSize(size);
     }
-    
+
     /**
      *  Updates the model and view with the color of this tile.
      *
@@ -88,12 +88,10 @@ public:
      *
      *  @param traverse The tile traversability
      */
-    void updateTraversable(bool traverse) {
-        _model->setTraversable(traverse);
-    }
-    
+    void updateTraversable(bool traverse) { _model->setTraversable(traverse); }
+
 #pragma mark Scene Methods
-public:
+  public:
     /**
      * Adds the view as a child to the given `node`.
      *
@@ -102,7 +100,7 @@ public:
     void addChildTo(std::shared_ptr<scene2::SceneNode> node) {
         _view->addChildTo(node);
     }
-    
+
     /**
      * Removes the view child from the given `node`.
      *
@@ -112,6 +110,5 @@ public:
         _view->removeChildFrom(node);
     }
 };
-
 
 #endif /* _TILE_CONTROLLER_H__ */

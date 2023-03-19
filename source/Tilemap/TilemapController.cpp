@@ -13,12 +13,10 @@
 /** Creates the default model, view and tilemap vector. */
 TilemapController::TilemapController() {
     _model = std::make_unique<TilemapModel>();
-    _view = std::make_unique<TilemapView>(_model->position,
-                                          _model->dimensions,
-                                          _model->color,
-                                          _model->tileSize);
+    _view = std::make_unique<TilemapView>(_model->position, _model->dimensions,
+                                          _model->color, _model->tileSize);
     initializeTilemap();
- }
+}
 
 /**
  * Creates the model, view and tilemap vector.
@@ -30,8 +28,12 @@ TilemapController::TilemapController() {
  */
 TilemapController::TilemapController(Vec2 position, Vec2 dimensions,
                                      Color4 color, Size tileSize) {
-    _model = std::make_unique<TilemapModel>(centerToBottomLeftPosition(position, tileSize*dimensions), dimensions, color, tileSize);
-    _view = std::make_unique<TilemapView>(centerToBottomLeftPosition(position, tileSize*dimensions), dimensions, color, tileSize);
+    _model = std::make_unique<TilemapModel>(
+        centerToBottomLeftPosition(position, tileSize * dimensions), dimensions,
+        color, tileSize);
+    _view = std::make_unique<TilemapView>(
+        centerToBottomLeftPosition(position, tileSize * dimensions), dimensions,
+        color, tileSize);
     initializeTilemap();
 }
 
@@ -43,7 +45,6 @@ TilemapController::TilemapController(Vec2 position, Vec2 dimensions,
  *  @param position The center of the tilemap
  */
 void TilemapController::updatePosition(Vec2 position) {
-    Vec2 newPos(centerToBottomLeftPosition(position, Size(_model->dimensions)*_model->tileSize));
     _model->setPosition(Vec2::ZERO);
     _view->setPosition(Vec2::ZERO);
 }
@@ -63,8 +64,8 @@ void TilemapController::updateDimensions(Vec2 dimensions) {
         _model->setDimensions(dimensions);
         _view->setSize(dimensions * _model->tileSize);
         initializeTilemap();
-        for(int c = 0; c < currDimensions.x; c++) {
-            for(int r = 0; r < currDimensions.y; r++) {
+        for (int c = 0; c < currDimensions.x; c++) {
+            for (int r = 0; r < currDimensions.y; r++) {
                 if (r < dimensions.y && c < dimensions.x) {
                     _tilemap[r][c] = std::move(currTileMap[r][c]);
                 }
@@ -94,14 +95,14 @@ void TilemapController::updateColor(Color4 color) {
 void TilemapController::updateTileSize(Size tileSize) {
     // TODO: Implement me
     if (tileSize.width >= 0 && tileSize.height >= 0) {
-        Vec2 center = bottomLeftToCenterPosition(_model->position, _model->dimensions * _model->tileSize);
         _model->setTileSize(tileSize);
         _view->setSize(_model->dimensions * tileSize);
-        for(int c = 0; c < _model->dimensions.x; c++) {
-            for(int r = 0; r < _model->dimensions.y; r++) {
+        for (int c = 0; c < _model->dimensions.x; c++) {
+            for (int r = 0; r < _model->dimensions.y; r++) {
                 if (_tilemap[r][c]) {
                     _tilemap[r][c]->updateSize(tileSize);
-                    _tilemap[r][c]->updatePosition(Vec2(c * tileSize.width, r * tileSize.height));
+                    _tilemap[r][c]->updatePosition(
+                        Vec2(c * tileSize.width, r * tileSize.height));
                 }
             }
         }
@@ -125,10 +126,23 @@ void TilemapController::updateTileSize(Size tileSize) {
  * @param row   The row to place the tile starting from bottom to top
  * @param color The color of the tile.
  */
-void TilemapController::addTile(int col, int row, Color4 color, bool traversable, const std::shared_ptr<Texture> &texture) {
-    Vec2 pos(_model->tileSize.width*(col), _model->tileSize.height*row);
-    _tilemap[row][col] = std::move(std::make_unique<TileController>(pos,_model->tileSize,color, traversable, texture));
+void TilemapController::addTile(int col, int row, Color4 color,
+                                bool traversable,
+                                const std::shared_ptr<Texture>& texture) {
+    Vec2 pos(_model->tileSize.width * (col), _model->tileSize.height * row);
+    _tilemap[row][col] = std::make_unique<TileController>(
+        pos, _model->tileSize, color, traversable, texture);
     _tilemap[row][col]->addChildTo(_view->getNode());
+}
+
+void TilemapController::addDoor(int col, int row,
+                                const std::shared_ptr<Texture>& texture) {
+    Vec2 pos(_model->tileSize.width * (col), _model->tileSize.height * row);
+    std::shared_ptr<scene2::PolygonNode> door =
+        scene2::PolygonNode::allocWithTexture(texture);
+    door->setPolygon(Rect(0, 0, 1024, 512));
+    door->setPosition(pos);
+    _doors.emplace_back(door);
 }
 
 #pragma mark View Methods
@@ -141,12 +155,19 @@ void TilemapController::addChildTo(const std::shared_ptr<cugl::Scene2>& scene) {
     scene->addChild(_view->getNode());
 }
 
+void TilemapController::addDoorTo(const std::shared_ptr<cugl::Scene2>& scene) {
+    for (int i = 0; i < _doors.size(); i++) {
+        scene->addChild(_doors[i]);
+    }
+}
+
 /**
  * Removes the TilemapView child from the given scene.
  *
  * @param scene The scene to remove the view from
  */
-void TilemapController::removeChildFrom(const std::shared_ptr<cugl::Scene2>& scene) {
+void TilemapController::removeChildFrom(
+    const std::shared_ptr<cugl::Scene2>& scene) {
     scene->removeChild(_view->getNode());
 }
 
@@ -165,9 +186,10 @@ void TilemapController::removeChildFrom(const std::shared_ptr<cugl::Scene2>& sce
  *  move these pointers without copying them, use `std::move`.
  */
 void TilemapController::initializeTilemap() {
-    for(int i = 0; i < _model->dimensions.y; i++) {
+    for (int i = 0; i < _model->dimensions.y; i++) {
         std::vector<Tile> tileVec(_model->dimensions.x);
-        // The compiler infers that tileVec contains unique pointers so std::move must be used to avoid copys
+        // The compiler infers that tileVec contains unique pointers so
+        // std::move must be used to avoid copys
         _tilemap.push_back(std::move(tileVec));
     }
 }
@@ -183,14 +205,13 @@ void TilemapController::initializeTilemap() {
  *  procedural generation templates.
  */
 void TilemapController::clearMap() {
-    /// It is much more efficient to remake the view than to remove tiles one by one.
+    /// It is much more efficient to remake the view than to remove tiles one by
+    /// one.
     auto scene = _view->getNode()->getScene();
     scene->removeChild(_view->getNode());
     _model = std::make_unique<TilemapModel>();
-    _view = std::make_unique<TilemapView>(_model->position,
-                                          _model->dimensions,
-                                          _model->color,
-                                          _model->tileSize);
+    _view = std::make_unique<TilemapView>(_model->position, _model->dimensions,
+                                          _model->color, _model->tileSize);
     scene->addChild(_view->getNode());
     _tilemap.clear();
     initializeTilemap();

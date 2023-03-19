@@ -20,43 +20,43 @@
             "size"    : [350, 75]
         },
         "children": {
-			"text": {
-				"type"   : "Label",
-				"data": {
-					"anchor"   : [0.5, 0.5],
-					"font"     : "pixel32",
-					"text"     : "Text",
-					"padding"  : [20, 20, 20, 20],
-					"halign"   : "left",
-					"valign"   : "middle",
-					"background" : "#000000",
-					"foreground" : "#ffffff"
-				},
-				"layout" : {
-					"x_anchor" : "fill",
-					"y_anchor" : "fill",
+            "text": {
+                "type"   : "Label",
+                "data": {
+                    "anchor"   : [0.5, 0.5],
+                    "font"     : "pixel32",
+                    "text"     : "Text",
+                    "padding"  : [20, 20, 20, 20],
+                    "halign"   : "left",
+                    "valign"   : "middle",
+                    "background" : "#ffffff",
+                    "foreground" : "#000000"
+                },
+                "layout" : {
+                    "x_anchor" : "fill",
+                    "y_anchor" : "fill",
                     "x_offset" : 2,
                     "y_offset" : 2,
                     "absolute" : true
-				}
-			},
-			"frame": {
-				"type"   : "NinePatch",
-				"data": {
-					"texture":  "frame",
-					"anchor"   : [0.5, 0.5],
-					"interior" : [20,20,88,88],
-					"color"    : "#ffffff"
-				},
-				"layout" : {
-					"x_anchor" : "fill",
-					"y_anchor" : "fill"
-				}
-			}
-		},
-		"layout" : {
-			"x_anchor" : "center",
-			"y_anchor" : "middle"
-		}
+                }
+            },
+            "frame": {
+                "type"   : "NinePatch",
+                "data": {
+                    "texture":  "frame",
+                    "anchor"   : [0.5, 0.5],
+                    "interior" : [20,20,88,88],
+                    "color"    : "#ffffff"
+                },
+                "layout" : {
+                    "x_anchor" : "fill",
+                    "y_anchor" : "fill"
+                }
+            }
+        },
+        "layout" : {
+            "x_anchor" : "center",
+            "y_anchor" : "middle"
+        }
     }
 }

@@ -43,7 +43,6 @@ SGameController::SGameController(
     // Initialize PortraitSetController
     _portraits = std::make_shared<PortraitSetController>(_assets, _scene, 0,
                                                          displaySize);
-    _portraits->initializeBatteryNodes(_scene);
     
     // Initialize HunterController
     //        _hunter.updatePosition(_level->getPlayerPosition());
@@ -56,6 +55,8 @@ SGameController::SGameController(
         CULog("Fail!");
     }
     
+    _serializer = NetcodeSerializer::alloc();
+    _deserializer = NetcodeDeserializer::alloc();
     _status = Status::START;
 }
     
@@ -280,4 +281,15 @@ bool SGameController::checkConnection() {
             break;
     }
     return true;
+}
+
+void SGameController::processData(const std::string source, const std::vector<std::byte> &data) {
+    if (source == _network->getHost()) {
+        
+    }
+}
+
+void SGameController::transmitTrap(std::vector<float> pos) {
+    _serializer->writeFloatVector(pos);
+    _network->broadcast(_serializer->serialize());
 }

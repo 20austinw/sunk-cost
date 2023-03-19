@@ -137,9 +137,11 @@ void HostScene::setActive(bool value) {
     if (isActive() != value) {
         Scene2::setActive(value);
         if (value) {
+            CULog("activating");
             _status = WAIT;
             configureStartButton();
             _backout->activate();
+            
             connect();
         } else {
             _startgame->deactivate();

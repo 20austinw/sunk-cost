@@ -61,7 +61,7 @@ protected:
     /** The scene to host a game */
     HostScene _hostgame;
 //    /** The scene to join a game */
-//    ClientScene _joingame;
+    ClientScene _joingame;
     
     MenuScene _menu;
     

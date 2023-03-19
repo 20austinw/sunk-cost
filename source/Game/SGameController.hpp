@@ -83,6 +83,10 @@ public:
     
     /** Whether we quit the game */
     bool _quit;
+    
+    std::shared_ptr<cugl::net::NetcodeSerializer> _serializer;
+    
+    std::shared_ptr<cugl::net::NetcodeDeserializer> _deserializer;
 
 #pragma mark External References
   private:
@@ -196,7 +200,6 @@ public:
     void displayBattery(float battery, bool state,
                         std::shared_ptr<cugl::SpriteBatch>& batch);
 
-private:
     /**
      * Processes data sent over the network.
      *
@@ -212,7 +215,7 @@ private:
      * @param source    The UUID of the sender
      * @param data      The data received
      */
-    void processData(const std::string source, const std::vector<std::byte>& data) {};
+    void processData(const std::string source, const std::vector<std::byte>& data);
 
     /**
      * Checks that the network connection is still active.
@@ -225,7 +228,7 @@ private:
      */
     bool checkConnection();
 
-    void transmitTrap(Vec2 pos);
+    void transmitTrap(std::vector<float> pos);
 
 };
 

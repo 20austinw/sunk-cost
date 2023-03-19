@@ -19,6 +19,7 @@
 #include <cugl/cugl.h>
 using namespace std;
 using namespace cugl;
+using namespace cugl::net;
 
 #pragma mark Main Methods
 HGameController::HGameController() {
@@ -65,7 +66,11 @@ HGameController::HGameController(
     _tilemap = std::make_unique<TilemapController>();
     _tilemap->addChildTo(_scene);
 
-    
+    CULog("%f, %f", displaySize.width, displaySize.height);
+    _hunter = HunterController(assets, displaySize);
+    //    _trap = TrapController(assets, displaySize);
+    _treasure = TreasureController(assets, displaySize);
+        
     // Initialize SpiritController
     _spirit = SpiritController();
     
@@ -105,6 +110,9 @@ HGameController::HGameController(
     }
 
     initCamera();
+        
+    _serializer = NetcodeSerializer::alloc();
+    _deserializer = NetcodeDeserializer::alloc();
     
 //    initJoystick();
 }
@@ -445,4 +453,44 @@ void HGameController::initJoystick(){
 void HGameController::updateJoystick(){
     _outerJoystick->setPosition(_scene->getCamera()->getPosition()-Vec2(380,250));
     _innerJoystick->setPosition(_scene->getCamera()->getPosition()-Vec2(380,250));
+}
+
+void HGameController::processData(const std::string source, const std::vector<std::byte> &data) {
+    if (source == _network->getHost()) {
+        _deserializer->receive(data);
+        
+    }
+}
+
+/**
+ * Checks that the network connection is still active.
+ *
+ * Even if you are not sending messages all that often, you need to be calling
+ * this method regularly. This method is used to determine the current state
+ * of the scene.
+ *
+ * @return true if the network connection is still active.
+ */
+bool HGameController::checkConnection() {
+    // IMPLEMENT ME
+    NetcodeConnection::State network_state = _network->getState();
+    switch (network_state) {
+        case NetcodeConnection::State::FAILED:
+        case NetcodeConnection::State::DISCONNECTED:
+            disconnect();
+            _quit = true;
+            Application::get()->setClearColor(Color4("#c0c0c0"));
+            return false;
+            break;
+        case NetcodeConnection::State::CONNECTED:
+            break;
+        default:
+            break;
+    }
+    return true;
+}
+
+void HGameController::transmitPos(std::vector<float> position) {
+    _serializer->writeFloatVector(position);
+    _network->broadcast(_serializer->serialize());
 }

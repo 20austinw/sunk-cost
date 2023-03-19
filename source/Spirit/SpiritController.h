@@ -172,6 +172,14 @@ class SpiritController {
 #pragma mark Helpers
   public:
     Rect screenToWorld(Rect rect);
+    
+    void addHunter(Vec2 pos) {
+        _model->addHunter(pos);
+    }
+    
+    void moveHunter(Vec2 pos) {
+        _model->moveHunter(pos);
+    }
 };
 
 #endif /* _SPIRIT_CONTROLLER_H */

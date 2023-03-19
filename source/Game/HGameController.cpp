@@ -494,7 +494,6 @@ bool HGameController::checkConnection() {
         case NetcodeConnection::State::DISCONNECTED:
             disconnect();
             _quit = true;
-            Application::get()->setClearColor(Color4("#c0c0c0"));
             return false;
             break;
         case NetcodeConnection::State::CONNECTED:
@@ -506,7 +505,7 @@ bool HGameController::checkConnection() {
 }
 
 void HGameController::transmitPos(std::vector<float> position) {
-    CULog("transmitting position");
     _serializer->writeFloatVector(position);
     _network->broadcast(_serializer->serialize());
+    _serializer->reset();
 }

@@ -47,13 +47,6 @@ SGameController::SGameController(
     // Initialize HunterController
     
     //        _hunter.updatePosition(_level->getPlayerPosition());
-        if (_network) {
-//            if (_network->getNumPlayers() == 2) {
-                _hunterModel = std::make_unique<HunterModel>(_assets, _scene);
-                auto pos = _scene->getCamera()->screenToWorldCoords(Vec2(40, 40));
-                _hunterView = std::make_unique<HunterView>(_assets, Vec2(400,400), Vec2(pos.x, pos.y));
-//            }
-        }
 
     // Initialize SpiritController
     _spirit = SpiritController(_assets, _scene, _portraits, _scene->getSize());
@@ -62,7 +55,8 @@ SGameController::SGameController(
         _levelLoaded = false;
         CULog("Fail!");
     }
-    
+        
+    _hunterAdded = false;
     _serializer = NetcodeSerializer::alloc();
     _deserializer = NetcodeDeserializer::alloc();
     _status = Status::START;
@@ -301,10 +295,16 @@ bool SGameController::checkConnection() {
 
 void SGameController::processData(const std::string source, const std::vector<std::byte> &data) {
     if (source != _network->getHost()) {
-        CULog("data received");
         _deserializer->receive(data);
-        NetcodeDeserializer::Message mes = _deserializer->read();
-        
+        std::vector<float> mes = std::get<std::vector<float>>(_deserializer->read());
+        if (!_hunterAdded) {
+            _spirit.addHunter(Vec2(mes[0], mes[1]));
+            _spirit.moveHunter(Vec2(400, 400));
+            _hunterAdded = true;
+        } else {
+            _spirit.moveHunter(Vec2(mes[0], mes[1]));
+        }
+        _deserializer->reset();
     }
 }
 

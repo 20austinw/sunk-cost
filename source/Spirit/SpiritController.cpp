@@ -84,6 +84,8 @@ void SpiritController::update(const std::shared_ptr<TilemapController> _tilemap,
         _trapAdded = true;
         setLastTrapPos(pos);
     }
+    
     _model->update();
     _portraits->update();
 }
+

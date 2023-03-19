@@ -13,6 +13,8 @@
 
 #include "TrapModel.hpp"
 #include "TrapView.h"
+#include "HunterModel.h"
+#include "HunterView.h"
 #include <cugl/cugl.h>
 
 class SpiritModel {
@@ -36,6 +38,9 @@ class SpiritModel {
 
     std::shared_ptr<cugl::Scene2> _scene;
     std::shared_ptr<cugl::AssetManager> _assets;
+    
+    std::shared_ptr<HunterModel> _hunterModel;
+    std::shared_ptr<HunterView> _hunterView;
 
   public:
     /** A public accessible, read-only version of the energy level */
@@ -142,6 +147,17 @@ class SpiritModel {
         }
         _trapModels = pendingTrapModels;
         _trapViews = pendingTrapViews;
+    }
+    
+    void addHunter(Vec2 position) {
+        _hunterModel = std::make_shared<HunterModel>(_assets, _scene);
+        _hunterView = std::make_shared<HunterView>(_assets, position, Vec2(40, 40));
+        _hunterView->addChildTo(_scene);
+    }
+    
+    void moveHunter(Vec2 position) {
+        _hunterModel->setPosition(position);
+        _hunterView->setPosition(position);
     }
 };
 

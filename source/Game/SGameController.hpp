@@ -87,6 +87,9 @@ public:
     std::shared_ptr<cugl::net::NetcodeSerializer> _serializer;
     
     std::shared_ptr<cugl::net::NetcodeDeserializer> _deserializer;
+    
+    std::unique_ptr<HunterModel> _hunterModel;
+    std::unique_ptr<HunterView> _hunterView;
 
 #pragma mark External References
   private:

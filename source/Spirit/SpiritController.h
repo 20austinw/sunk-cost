@@ -34,6 +34,8 @@ class SpiritController {
     std::shared_ptr<PortraitSetController> _portraits;
     Size _screenSize;
     std::shared_ptr<cugl::Scene2> _scene;
+    bool _trapAdded;
+    Vec2 _lastTrapPos;
 
 #pragma mark Constants
   private:
@@ -158,6 +160,14 @@ class SpiritController {
     }
 
     bool isSwitchable() { return _cameraCool <= 0; }
+    
+    bool getTrapAdded() { return _trapAdded; }
+    
+    void setTrapAdded(bool trapAdded) { _trapAdded = trapAdded; }
+    
+    Vec2 getLastTrapPos() { return _lastTrapPos; }
+    
+    void setLastTrapPos(Vec2 pos) { _lastTrapPos = pos; }
 
 #pragma mark Helpers
   public:

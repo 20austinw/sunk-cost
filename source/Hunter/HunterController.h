@@ -35,6 +35,8 @@ class HunterController {
     float _ang;
     /** Accumulator variable to turn faster as key is held down */
     float _dAng;
+    
+    std::shared_ptr<cugl::Scene2> _scene;
 
 #pragma mark External References
   private:
@@ -43,6 +45,7 @@ class HunterController {
     /** The controller to manage the hunter */
     InputController _input;
     Size _screenSize;
+    
 
 #pragma mark Constants
   private:
@@ -58,7 +61,7 @@ class HunterController {
      * The constructor should set up the model, view, and camera controller
      */
     HunterController(const std::shared_ptr<cugl::AssetManager>& assets,
-                     Size screenSize);
+                     Size screenSize, const std::shared_ptr<cugl::Scene2> scene);
 
     /**
      * Gets the viewpoint for the hunter's camera
@@ -149,5 +152,7 @@ class HunterController {
      * @param scene The scene to remove the view from
      */
     void removeChildFrom(const std::shared_ptr<cugl::Scene2>& scene);
+    
+    void addTrap() { _model->addTrap(_scene->getCamera()->screenToWorldCoords(_input.getLastMousePos())); }
 };
 #endif /* _HUNTER_CONTROLLER_H__ */

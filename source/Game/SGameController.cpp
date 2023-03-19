@@ -45,7 +45,15 @@ SGameController::SGameController(
                                                          displaySize);
     
     // Initialize HunterController
+    
     //        _hunter.updatePosition(_level->getPlayerPosition());
+        if (_network) {
+//            if (_network->getNumPlayers() == 2) {
+                _hunterModel = std::make_unique<HunterModel>(_assets, _scene);
+                auto pos = _scene->getCamera()->screenToWorldCoords(Vec2(40, 40));
+                _hunterView = std::make_unique<HunterView>(_assets, Vec2(400,400), Vec2(pos.x, pos.y));
+//            }
+        }
 
     // Initialize SpiritController
     _spirit = SpiritController(_assets, _scene, _portraits, _scene->getSize());
@@ -175,6 +183,14 @@ void SGameController::update(float dt) {
             processData(source,data);
         });
         checkConnection();
+        
+        if (_spirit.getTrapAdded()) {
+            std::vector<float> pos = std::vector<float>();
+            pos.push_back(_spirit.getLastTrapPos().x);
+            pos.push_back(_spirit.getLastTrapPos().y);
+            transmitTrap(pos);
+            _spirit.setTrapAdded(false);
+        }
     }
 }
 
@@ -284,7 +300,10 @@ bool SGameController::checkConnection() {
 }
 
 void SGameController::processData(const std::string source, const std::vector<std::byte> &data) {
-    if (source == _network->getHost()) {
+    if (source != _network->getHost()) {
+        CULog("data received");
+        _deserializer->receive(data);
+        NetcodeDeserializer::Message mes = _deserializer->read();
         
     }
 }

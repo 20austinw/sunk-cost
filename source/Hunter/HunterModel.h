@@ -16,6 +16,8 @@
 #define DEFAULT_RESTITUTION 0.4f
 
 #include <cugl/cugl.h>
+#include "TrapModel.hpp"
+#include "TrapView.h"
 
 using namespace cugl;
 
@@ -30,6 +32,12 @@ class HunterModel : public cugl::physics2::CapsuleObstacle {
     float _speed;
     /** Cooldown time for hiding */
     float _hideCool;
+    
+    std::shared_ptr<cugl::AssetManager> _assets;
+    std::shared_ptr<cugl::Scene2> _scene;
+    
+    std::vector<std::shared_ptr<TrapModel>> _trapModels;
+    std::vector<std::shared_ptr<TrapView>> _trapViews;
 
   public:
     /** A public accessible, read-only version of the  hunter position */
@@ -50,7 +58,7 @@ class HunterModel : public cugl::physics2::CapsuleObstacle {
      * @param direction the hunter's direction
      * @param speed the hunter's movement speed
      */
-    HunterModel() :
+    HunterModel(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<cugl::Scene2> scene) :
     position(_position),
     direction(_direction),
     speed(_speed),
@@ -69,6 +77,8 @@ class HunterModel : public cugl::physics2::CapsuleObstacle {
         setDirection(_direction);
         setSpeed(0);
         setHideCooldown(0);
+        _assets = assets;
+        _scene = scene;
     }
 
 #pragma mark Getters
@@ -111,6 +121,31 @@ class HunterModel : public cugl::physics2::CapsuleObstacle {
      * @param hideCool cooldown time for hiding
      */
     void setHideCooldown(float hideCool) { _hideCool = hideCool; }
+    
+    void addTrap(Vec2 position) {
+        if (_trapModels.size() >= 3)
+            return;
+        _trapModels.emplace_back(std::make_shared<TrapModel>(position, 300));
+        auto trap = std::make_shared<TrapView>(_assets, position, 20);
+        _trapViews.emplace_back(trap);
+        trap->addChildTo(_scene);
+    }
+    
+    void update() {
+        std::vector<std::shared_ptr<TrapModel>> pendingTrapModels;
+        std::vector<std::shared_ptr<TrapView>> pendingTrapViews;
+        for (int i = 0; i < _trapModels.size(); i++) {
+            if (!_trapModels[i]->update()) {
+                pendingTrapModels.emplace_back(_trapModels[i]);
+                pendingTrapViews.emplace_back(_trapViews[i]);
+                _trapViews[i]->update();
+            } else {
+                _trapViews[i]->removeChildFrom(_scene);
+            }
+        }
+        _trapModels = pendingTrapModels;
+        _trapViews = pendingTrapViews;
+    }
 };
 
 #endif /* _HUNTER_MODEL_H__ */

@@ -41,8 +41,8 @@ void SCApp::onStartup() {
 #else
 //    // Start-up basic input for loading screen (DESKTOP ONLY)
     Input::activate<Mouse>();
-    Input::activate<Keyboard>();
 #endif
+    Input::activate<Keyboard>();
     Input::activate<TextInput>();
     _assets->attach<Texture>(TextureLoader::alloc()->getHook());
     _assets->attach<Sound>(SoundLoader::alloc()->getHook());
@@ -89,9 +89,9 @@ void SCApp::onShutdown() {
 #ifdef CU_MOBILE
     Input::deactivate<Touchscreen>();
 #else
-    Input::deactivate<Keyboard>();
     Input::deactivate<Mouse>();
 #endif
+    Input::deactivate<Keyboard>();
     Input::deactivate<TextInput>();
     net::NetworkLayer::stop();
     AudioEngine::stop();
@@ -206,7 +206,7 @@ void SCApp::updateHostScene(float timestep) {
             _hostgame.setActive(false);
             _scene = State::HOSTGAME;
             // Transfer connection ownership
-//            _gameplay.setConnection(_hostgame.getConnection());
+            _spiritGameplay.setConnection(_hostgame.getConnection());
             _hostgame.disconnect();
             _spiritGameplay.setHost(true);
             break;
@@ -229,7 +229,7 @@ void SCApp::updateClientScene(float timestep) {
             _joingame.setActive(false);
             _scene = State::CLIENTGAME;
             // Transfer connection ownership
-//            _gameplay.setConnection(_joingame.getConnection());
+            _hunterGameplay.setConnection(_joingame.getConnection());
             _joingame.disconnect();
             _hunterGameplay.setHost(false);
             break;

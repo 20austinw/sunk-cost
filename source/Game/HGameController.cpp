@@ -67,7 +67,7 @@ HGameController::HGameController(
     _tilemap->addChildTo(_scene);
 
     CULog("%f, %f", displaySize.width, displaySize.height);
-    _hunter = HunterController(assets, displaySize);
+    _hunter = HunterController(assets, displaySize, _scene);
     //    _trap = TrapController(assets, displaySize);
     _treasure = TreasureController(assets, displaySize);
         
@@ -167,7 +167,7 @@ void HGameController::update(float dt) {
     }
 
 //    if(inputController->isKeyPressed(KeyCode::NUM_1)) {
-//        CULog("NUM_1");
+//        _hunter.addTrap();
 //    }
 //    if(inputController->isKeyPressed(KeyCode::NUM_2)) {
 //        CULog("NUM_2");
@@ -271,6 +271,22 @@ void HGameController::update(float dt) {
     
     // TODO: update direction index for portraits on spirit control
     //    _portraits->updateDirectionIndex(<#Vec3 direction#>, <#int index#>)
+    
+    if (_network) {
+        _network->receive([this](const std::string source,
+                                 const std::vector<std::byte>& data) {
+            processData(source,data);
+        });
+        checkConnection();
+        
+        if (Vec2(currPos) != _lastpos) {
+            std::vector<float> pos = std::vector<float>();
+            pos.push_back(currPos.x);
+            pos.push_back(currPos.y);
+            transmitPos(pos);
+            _lastpos = Vec2(currPos);
+        }
+    }
 }
 
 /**
@@ -345,7 +361,7 @@ void HGameController::checkLevelLoaded() {
         }
 
         // Initialize HunterController
-        _hunter = HunterController(_assets, _scene->getSize());
+        _hunter = HunterController(_assets, _scene->getSize(), _scene);
         
         // Draw hunter shadow
         _shadowTexture = _assets->get<Texture>("shadow");
@@ -458,7 +474,6 @@ void HGameController::updateJoystick(){
 void HGameController::processData(const std::string source, const std::vector<std::byte> &data) {
     if (source == _network->getHost()) {
         _deserializer->receive(data);
-        
     }
 }
 
@@ -491,6 +506,7 @@ bool HGameController::checkConnection() {
 }
 
 void HGameController::transmitPos(std::vector<float> position) {
+    CULog("transmitting position");
     _serializer->writeFloatVector(position);
     _network->broadcast(_serializer->serialize());
 }

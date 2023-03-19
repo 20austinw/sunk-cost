@@ -137,6 +137,8 @@ private:
     
     Status _status;
     
+    Vec2 _lastpos;
+    
     std::shared_ptr<cugl::net::NetcodeConnection> _network;
     
     std::shared_ptr<cugl::net::NetcodeSerializer> _serializer;
@@ -237,6 +239,10 @@ public:
      * when ALL scenes have been disconnected.
      */
     void disconnect() { _network = nullptr; }
+    
+    Vec2 getLastPos() { return _lastpos; }
+    
+    void setLastPos(Vec2 pos) { _lastpos = pos; }
     
 private:
     void checkLevelLoaded();

@@ -153,6 +153,6 @@ class HunterController {
      */
     void removeChildFrom(const std::shared_ptr<cugl::Scene2>& scene);
     
-    void addTrap() { _model->addTrap(_scene->getCamera()->screenToWorldCoords(_input.getLastMousePos())); }
+    void addTrap(Vec2 position) { _model->addTrap(position); }
 };
 #endif /* _HUNTER_CONTROLLER_H__ */

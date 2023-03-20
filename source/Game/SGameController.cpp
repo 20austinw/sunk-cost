@@ -180,6 +180,7 @@ void SGameController::update(float dt) {
         
         if (_spirit.getTrapAdded()) {
             std::vector<float> pos = std::vector<float>();
+            pos.push_back(1);
             pos.push_back(_spirit.getLastTrapPos().x);
             pos.push_back(_spirit.getLastTrapPos().y);
             transmitTrap(pos);
@@ -298,11 +299,11 @@ void SGameController::processData(const std::string source, const std::vector<st
         _deserializer->receive(data);
         std::vector<float> mes = std::get<std::vector<float>>(_deserializer->read());
         if (!_hunterAdded) {
-            _spirit.addHunter(Vec2(mes[0], mes[1]));
+            _spirit.addHunter(Vec2(mes[1], mes[2]));
             _spirit.moveHunter(Vec2(400, 400));
             _hunterAdded = true;
-        } else {
-            _spirit.moveHunter(Vec2(mes[0], mes[1]));
+        } else if (mes[0] == 0) {
+            _spirit.moveHunter(Vec2(mes[1], mes[2]));
         }
         _deserializer->reset();
     }
@@ -311,4 +312,5 @@ void SGameController::processData(const std::string source, const std::vector<st
 void SGameController::transmitTrap(std::vector<float> pos) {
     _serializer->writeFloatVector(pos);
     _network->broadcast(_serializer->serialize());
+    _serializer->reset();
 }

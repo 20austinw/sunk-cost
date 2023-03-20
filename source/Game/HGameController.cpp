@@ -281,6 +281,7 @@ void HGameController::update(float dt) {
         
         if (Vec2(currPos) != _lastpos) {
             std::vector<float> pos = std::vector<float>();
+            pos.push_back(0);
             pos.push_back(currPos.x);
             pos.push_back(currPos.y);
             transmitPos(pos);
@@ -474,6 +475,9 @@ void HGameController::updateJoystick(){
 void HGameController::processData(const std::string source, const std::vector<std::byte> &data) {
     if (source == _network->getHost()) {
         _deserializer->receive(data);
+        std::vector<float> mes = std::get<std::vector<float>>(_deserializer->read());
+        _hunter.addTrap(Vec2(mes[1], mes[2]));
+        _deserializer->reset();
     }
 }
 

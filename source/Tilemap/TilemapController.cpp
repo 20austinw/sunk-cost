@@ -160,6 +160,12 @@ void TilemapController::addDoorTo(const std::shared_ptr<cugl::Scene2>& scene) {
     }
 }
 
+void TilemapController::removeDoorFrom(const std::shared_ptr<cugl::Scene2>& scene) {
+    for (int i = 0; i < _doors.size(); i++) {
+        scene->removeChild(_doors[i]);
+    }
+}
+
 /**
  * Removes the TilemapView child from the given scene.
  *

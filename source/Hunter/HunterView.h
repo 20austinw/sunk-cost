@@ -139,7 +139,7 @@ class HunterView {
             _spriteNodes[1]->setFrame(8);
         }
 
-        else if (right == -1) {
+        else if (right < 0) {
             _spriteNodes[0]->setVisible(false);
             _spriteNodes[1]->setVisible(true);
 

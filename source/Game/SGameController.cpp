@@ -81,6 +81,8 @@ float SGameController::getZoom() {
     return std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
         ->getZoom();
 }
+
+bool blocked = false;
 void SGameController::update(float dt) {
     bool canPlaceTrap = true;
     Vec2 minimapOffset = Vec2(_scene->getSize().width, 0) - (_miniMap == nullptr ? Vec2::ZERO : Vec2(_miniMap->getSize().width, 0)) - Vec2(60, -30);
@@ -147,33 +149,9 @@ void SGameController::update(float dt) {
     Vec3 offset = Vec3(_assets->get<Texture>("map")->getSize()/2);
     _scene->getCamera()->setPosition(
         _portraits->getPosition(_portraits->getIndex()) + offset);
-    _miniMap->setPosition(_scene->getCamera()->screenToWorldCoords(
-        _miniMap->getSize() / 2 * getZoom() + minimapOffset));
-    _scene->removeChild(_miniMap);
-    _scene->addChild(_miniMap);
-    
-    _portraits->updateBattery();
-    _portraits->updateBatteryNode(offset, _scene);
-    _scene->getCamera()->update();
 
-
-    if (!_portraits->getCurState() && _portraits->getPrevState()) {
-        _portraits->addBlock(_scene);
-        _portraits->refreshBatteryNodes(_scene);
-    } else if (_portraits->getCurState() && !_portraits->getPrevState()) {
-        _portraits->removeBlock(_scene);
-    }
     _portraits->setPrevState(_portraits->getCurState());
-    // CULog("%f, %f, %f", _scene->getCamera()->getPosition().x,
-    // _scene->getCamera()->getPosition().y,
-    // _scene->getCamera()->getPosition().z);
-
-    // Will crash the program because the constructor doesn't set up the
-    // model/view yet (delete this comment later)
-    //    _hunter.update();
     _spirit.update(_tilemap, canPlaceTrap);
-    // TODO: update direction index for portraits on spirit control
-    //    _portraits->updateDirectionIndex(<#Vec3 direction#>, <#int index#>)
 
     if (_network) {
         _network->receive([this](const std::string source,
@@ -191,6 +169,35 @@ void SGameController::update(float dt) {
             _spirit.setTrapAdded(false);
         }
     }
+    // Redraw doors
+    if (!blocked) {
+        _tilemap->removeDoorFrom(_scene);
+        _tilemap->addDoorTo(_scene);
+    }
+    // Draw minimap
+    _miniMap->setPosition(_scene->getCamera()->screenToWorldCoords(
+        _miniMap->getSize() / 2 * getZoom() + minimapOffset));
+    _scene->removeChild(_miniMap);
+    _scene->addChild(_miniMap);
+    
+    // Draw battery
+    _portraits->updateBattery();
+    _portraits->updateBatteryNode(offset, _scene);
+    _scene->getCamera()->update();
+    
+    // Black screen
+    if (!_portraits->getCurState() && _portraits->getPrevState()) {
+        CULog("Black screen drawn!");
+        // Redraw doors
+        _portraits->addBlock(_scene);
+        _portraits->refreshBatteryNodes(_scene);
+        blocked = true;
+    } else if (_portraits->getCurState() && !_portraits->getPrevState()) {
+        // Redraw doors
+        _portraits->removeBlock(_scene);
+        blocked = false;
+    }
+    
 }
 
 /**
@@ -270,7 +277,7 @@ void SGameController::checkLevelLoaded() {
         _portraits->initializeSheets(_assets->get<Texture>("greenBattery"),
                                      _assets->get<Texture>("redBattery"),
                                      _assets->get<Texture>("noBattery"));
-        _portraits->initializeBatteryNodes(_scene);
+        _portraits->initializeBatteryNodes(_scene);	
     }
 }
     
@@ -306,7 +313,9 @@ void SGameController::processData(const std::string source, const std::vector<st
             _hunterAdded = true;
         } else if (mes[0] == 0) {
             _spirit.moveHunter(Vec2(mes[1], mes[2]));
+            CULog("%f, %f", mes[1], mes[2]);
         }
+        CULog("%f", mes[0]);
         _deserializer->reset();
     }
 }

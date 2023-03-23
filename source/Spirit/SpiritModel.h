@@ -41,6 +41,8 @@ class SpiritModel {
     
     std::shared_ptr<HunterModel> _hunterModel;
     std::shared_ptr<HunterView> _hunterView;
+    int forward = 0, right = 0;
+    int _ticks = 0;
 
   public:
     /** A public accessible, read-only version of the energy level */
@@ -147,6 +149,13 @@ class SpiritModel {
         }
         _trapModels = pendingTrapModels;
         _trapViews = pendingTrapViews;
+        if(_hunterView && _ticks == 0) {
+            CULog("%d, %d", right, forward);
+            _hunterView->advanceFrame(forward, right);
+            forward = 0;
+            right = 0;
+        }
+        _ticks = (_ticks+1)%6;
     }
     
     void addHunter(Vec2 position) {
@@ -156,8 +165,12 @@ class SpiritModel {
     }
     
     void moveHunter(Vec2 position) {
+        Vec2 diff = position-_hunterModel->position;
+        forward = diff.y;
+        right = diff.x;
         _hunterModel->setPosition(position);
         _hunterView->setPosition(position);
+        
     }
 };
 

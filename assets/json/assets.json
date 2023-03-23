@@ -28,7 +28,7 @@
             "file":  "textures/trap.png"
         },
         "treasure":{
-            "file":  "textures/treasureasset.png"
+            "file":  "textures/treasureasset_1024x1024.png"
         },
         "filter":{
             "file":  "textures/filter.png"

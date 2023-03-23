@@ -41,6 +41,7 @@ class InputController {
     Uint32 _kkey;
     /** The unique key for the mouse listeners */
     Uint32 _mkey;
+    bool _joyStickPressed;
 
 #pragma mark External References
   private:

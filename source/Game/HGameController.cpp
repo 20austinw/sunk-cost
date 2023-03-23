@@ -28,8 +28,8 @@ HGameController::HGameController() {
 //    _spirit = SpiritController();
 //    _trap = TrapController();
     _treasure = TreasureController();
-    auto inputController = InputController::getInstance();
-    inputController->initListeners();
+//    auto inputController = InputController::getInstance();
+//    inputController->initListeners();
 }
 
 /**
@@ -65,6 +65,9 @@ HGameController::HGameController(
     _offset = Vec3(0, 0, 50);
     _tilemap = std::make_unique<TilemapController>();
     _tilemap->addChildTo(_scene);
+        
+    auto inputController = InputController::getInstance();
+    inputController->initListeners();
 
     CULog("%f, %f", displaySize.width, displaySize.height);
     _hunter = HunterController(assets, displaySize, _scene);
@@ -160,7 +163,7 @@ void HGameController::update(float dt) {
     _world->onBeginContact = [this](b2Contact* contact) { _collision.beginContact(contact); };
 
     auto inputController = InputController::getInstance();
-    inputController->readInput();
+//    inputController->readInput();
     inputController->update(dt);
     if (inputController->didPressReset()) {
         reset();
@@ -206,12 +209,12 @@ void HGameController::update(float dt) {
     midx = (int)(currPos.x + 20) / _tileWidth;
     midy = (int)((currPos.y + 20)) / _tileHeight;
 
-    int forward = inputController->getForward();
-    int rightward = inputController->getRight();
+    float forward = inputController->getForward();
+    float rightward = inputController->getRight();
 
     _count++;
     if (_count == 6) {
-        _hunter.setViewFrame((int)forward, (int)rightward);
+        _hunter.setViewFrame(forward, rightward);
         _count = 0;
     }
 
@@ -221,22 +224,22 @@ void HGameController::update(float dt) {
     std::string right = tiles[midy][posxup];
 
     if (left == "black") {
-        if (rightward == -1) {
+        if (rightward < 0) {
             rightward = 0;
         }
     }
     if (right == "black") {
-        if (rightward == 1) {
+        if (rightward > 0) {
             rightward = 0;
         }
     }
     if (up == "black") {
-        if (forward == 1) {
+        if (forward > 0) {
             forward = 0;
         }
     }
     if (bottom == "black") {
-        if (forward == -1) {
+        if (forward < 0) {
             forward = 0;
         }
     }
@@ -258,16 +261,16 @@ void HGameController::update(float dt) {
 //        _trap.setViewFrame();
 //    }
     
-    if(abs(_treasure.getPosition().x-_hunter.getPosition().x)<= 30 && abs(_treasure.getPosition().y-_hunter.getPosition().y)<= 30 && !_collision.didHitTreasure ){
+    if(abs(_treasure.getPosition().x-_hunter.getPosition().x)<= 100 && abs(_treasure.getPosition().y-_hunter.getPosition().y)<= 100 && !_collision.didHitTreasure ){
         _collision.didHitTreasure = true;
         _treasure.getNode() ->setVisible(false);
         _treasureCount++;
     }
 
-    _shadow->setPosition(_hunter.getPosition()-Vec2(300,370));
+    _shadow->setPosition(_hunter.getPosition()-Vec2(210,370));
 
     updateCamera(dt);
-    updateJoystick();
+    updateJoystick(forward,rightward);
     
     // TODO: update direction index for portraits on spirit control
     //    _portraits->updateDirectionIndex(<#Vec3 direction#>, <#int index#>)
@@ -367,7 +370,7 @@ void HGameController::checkLevelLoaded() {
         // Draw hunter shadow
         _shadowTexture = _assets->get<Texture>("shadow");
         _shadow = scene2::PolygonNode::allocWithTexture(_shadowTexture);
-        _shadow->setPosition(_hunter.getPosition()-Vec2(300,370));
+        _shadow->setPosition(_hunter.getPosition()-Vec2(210,370));
         _shadow->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
         //        _shadow->setScale(Vec2(_dimen.width/1280,_dimen.height/720));
         _scene->addChild(_shadow);
@@ -512,4 +515,10 @@ void HGameController::transmitPos(std::vector<float> position) {
     _serializer->writeFloatVector(position);
     _network->broadcast(_serializer->serialize());
     _serializer->reset();
+}
+
+void HGameController::updateJoystick(float forward,float rightward){
+
+    _outerJoystick->setPosition(_scene->getCamera()->getPosition()-Vec2(680,350));
+    _innerJoystick->setPosition(_scene->getCamera()->getPosition()-Vec2(680,350)+Vec2(rightward,forward)*100);
 }

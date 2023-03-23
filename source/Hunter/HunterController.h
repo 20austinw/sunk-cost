@@ -85,7 +85,7 @@ class HunterController {
      * (2) modify camera to reflect the change
      */
 
-    void setViewFrame(int forward, int right);
+    void setViewFrame(float forward, float right);
 
     void update();
 

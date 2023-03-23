@@ -54,7 +54,7 @@ void HunterController::render(const std::shared_ptr<cugl::SpriteBatch>& batch) {
     //        cugl::Application::get()->getAssets()->getRenderer()->drawEnd();
 }
 
-void HunterController::setViewFrame(int forward, int right) {
+void HunterController::setViewFrame(float forward, float right) {
     _view->advanceFrame(forward, right);
 }
 

@@ -189,7 +189,7 @@ public:
     
     void initCamera();
     void initJoystick();
-    void updateJoystick();
+    void updateJoystick(float forward,float rightward);
     void updateCamera(float timestep);
     
     Status getStatus() {

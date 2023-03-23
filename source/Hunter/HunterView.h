@@ -50,7 +50,7 @@ class HunterView {
                 scene2::SpriteNode::allocWithSheet(_spriteSheets[i], 2, 8, 10));
             _spriteNodes[i]->setScale(0.5);
             _spriteNodes[i]->setFrame(8);
-            _spriteNodes[i]->setAnchor(Vec2::ANCHOR_CENTER);
+            _spriteNodes[i]->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
             _spriteNodes[i]->setPosition(Vec2(0, width / 2.5f));
             _spriteNodes[i]->setVisible(false);
         }
@@ -130,7 +130,7 @@ class HunterView {
      * This method includes some dampening of the turn, and should be called
      * before moving the ship.
      */
-    void advanceFrame(int forward, int right) {
+    void advanceFrame(float forward, float right) {
         if (_frameNum >= 9) {
             _frameNum = 0;
         }

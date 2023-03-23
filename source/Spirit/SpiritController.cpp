@@ -75,7 +75,7 @@ void SpiritController::update(const std::shared_ptr<TilemapController> _tilemap,
         inputController->getTouchPos());
 //    auto pos = _scene->getCamera()->screenToWorldCoords(
 //        inputController->getLastMousePos());
-    if (inputController->isMouseClicked() && _portraits->getCurState()) {
+    if (inputController->isTouchDown() && _portraits->getCurState()) {
         if (!_tilemap->isTileTraversable(pos) ||
             _tilemap->mapPosToGridPos(pos).x < 0 ||
             _tilemap->mapPosToGridPos(pos).y < 0)

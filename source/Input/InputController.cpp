@@ -22,7 +22,13 @@
  */
 InputController::InputController()
     : _model(std::make_unique<InputModel>()), _forward(0), _rightward(0),
-      _active(false) {}
+      _active(false),
+        _currDown(false),
+        _prevDown(false),
+        _touchDown(false),
+        _touchID(0),
+        _touchKey(0),
+        _joyStickPressed(false) {}
 
 bool InputController::initListeners() {
     _ts = Input::get<Touchscreen>();
@@ -259,6 +265,7 @@ void InputController::touchUpCB(const cugl::TouchEvent& event, bool focus) {
     if (_touchDown && event.touch == _touchID && focus) {
         _touchDown = false;
     }
+    _rightward = _forward = 0;
 }
 
 /**
@@ -270,5 +277,12 @@ void InputController::touchUpCB(const cugl::TouchEvent& event, bool focus) {
 void InputController::touchMotionCB(const cugl::TouchEvent& event, bool focus) {
     if (_touchDown && event.touch == _touchID) {
         _touchPos = event.position;
+        
+        Vec2 direction = Vec2(_touchPos - Vec2(590,920));
+                float sum = sqrt(direction.x *direction.x+direction.y*direction.y);
+                Vec2 norm_dir = direction/sum;
+
+                _rightward = norm_dir.x;
+                _forward = norm_dir.y;
     }
 }

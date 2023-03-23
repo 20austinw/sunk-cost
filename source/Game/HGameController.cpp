@@ -470,11 +470,6 @@ void HGameController::initJoystick(){
     _innerJoystick->setPosition(Vec2(20,150));
 }
 
-void HGameController::updateJoystick(){
-    _outerJoystick->setPosition(_scene->getCamera()->getPosition()-Vec2(380,250));
-    _innerJoystick->setPosition(_scene->getCamera()->getPosition()-Vec2(380,250));
-}
-
 void HGameController::processData(const std::string source, const std::vector<std::byte> &data) {
     if (source == _network->getHost()) {
         _deserializer->receive(data);

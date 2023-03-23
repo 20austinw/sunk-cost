@@ -349,7 +349,6 @@ class PortraitSetController {
             std::make_unique<PortraitModel>(cameraPosition));
         
         
-        CULog("%f",_assets->get<Texture>("map")->getWidth());
         _portraitViews.push_back(std::make_unique<PortraitView>(
             _assets, portraitPosition +
                          Vec2(_assets->get<Texture>("map")->getSize() / 2)));

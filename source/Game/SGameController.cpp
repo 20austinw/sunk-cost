@@ -83,13 +83,13 @@ float SGameController::getZoom() {
 }
 void SGameController::update(float dt) {
     bool canPlaceTrap = true;
-    Vec2 minimapOffset = Vec2(20, 20);
+    Vec2 minimapOffset = Vec2(_scene->getSize().width, 0) - (_miniMap == nullptr ? Vec2::ZERO : Vec2(_miniMap->getSize().width, 0)) - Vec2(60, -30);
     if (!_levelLoaded) {
         CULog("Level not loaded!");
         checkLevelLoaded();
         _portraits->setIndex(4);
         std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.4);
+            ->setZoom(1);
     }
     auto inputController = InputController::getInstance();
     inputController->update(dt);
@@ -98,7 +98,9 @@ void SGameController::update(float dt) {
         reset();
         CULog("Reset!");
     }
-
+    if(inputController->isTouchDown()) {
+        auto touchPos = _scene->getCamera()->screenToWorldCoords(inputController->getTouchPos());
+    }
     if (inputController->isTouchDown()) {
         auto screenPos = inputController->getTouchPos();
     
@@ -123,14 +125,13 @@ void SGameController::update(float dt) {
                          minimapOffset.x,
                      _miniMap->getSize().height / 2 * getZoom() +
                          minimapOffset.y - screenPos.y);
-            CULog("%f, %f", miniMapPos.x, miniMapPos.y);
             auto mapPos = miniMapPos / _miniMap->getScale() / getZoom();
             int idx = _portraits->getNearest(mapPos);
             if (_spirit.isSwitchable() && _portraits->getIndex() != idx) {
                 _portraits->setIndex(idx);
                 std::dynamic_pointer_cast<OrthographicCamera>(
                     _scene->getCamera())
-                    ->setZoom(0.4);
+                    ->setZoom(1);
                 _spirit.resetCameraCool();
             } else if (!_spirit.isSwitchable() &&
                        _portraits->getIndex() != idx) {
@@ -143,7 +144,7 @@ void SGameController::update(float dt) {
         _spirit.decreaseCameraCool();
     }
 
-    Vec3 offset = Vec3(_assets->get<Texture>("map")->getSize() / 2);
+    Vec3 offset = Vec3(_assets->get<Texture>("map")->getSize()/2);
     _scene->getCamera()->setPosition(
         _portraits->getPosition(_portraits->getIndex()) + offset);
     _miniMap->setPosition(_scene->getCamera()->screenToWorldCoords(
@@ -247,10 +248,8 @@ void SGameController::checkLevelLoaded() {
                 _tilemap->addDoor(c, r, _assets->get<Texture>("fulldoor"));
             }
         }
-
         _map =
             scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
-        _map->setPolygon(Rect(0, 0, 2304, 2304));
         
         _scene->addChild(_map);
         _miniMap = scene2::PolygonNode::allocWithTexture(
@@ -265,13 +264,13 @@ void SGameController::checkLevelLoaded() {
                                     _level->getBattery());
             
             _levelLoaded = true;
-            _portraits->setMaxbattery(_level->getBattery());
-            
-            _portraits->initializeSheets(_assets->get<Texture>("greenBattery"),
-                                         _assets->get<Texture>("redBattery"),
-                                         _assets->get<Texture>("noBattery"));
-            _portraits->initializeBatteryNodes(_scene);
         }
+        _portraits->setMaxbattery(_level->getBattery());
+        
+        _portraits->initializeSheets(_assets->get<Texture>("greenBattery"),
+                                     _assets->get<Texture>("redBattery"),
+                                     _assets->get<Texture>("noBattery"));
+        _portraits->initializeBatteryNodes(_scene);
     }
 }
     

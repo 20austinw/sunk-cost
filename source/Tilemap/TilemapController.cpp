@@ -140,7 +140,6 @@ void TilemapController::addDoor(int col, int row,
     Vec2 pos(_model->tileSize.width * (col), _model->tileSize.height * row);
     std::shared_ptr<scene2::PolygonNode> door =
         scene2::PolygonNode::allocWithTexture(texture);
-    door->setPolygon(Rect(0, 0, 1024, 512));
     door->setPosition(pos);
     _doors.emplace_back(door);
 }

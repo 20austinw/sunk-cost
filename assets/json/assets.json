@@ -34,7 +34,7 @@
             "file":  "textures/filter.png"
         },
         "map":{
-            "file": "textures/map_2304.png"
+            "file": "textures/map.png"
         },
         "trap_animation": {
             "file": "textures/clam_trap.png"
@@ -46,7 +46,7 @@
             "file": "textures/full_door.png"
         },
         "painting_animation": {
-            "file": "textures/live_painting.png"
+            "file": "textures/active_portrait.png"
         },
         "shadow": {
             "file": "textures/diver_shadow.png"
@@ -71,6 +71,9 @@
         },
         "left": {
             "file":  "textures/left_arrow.png"
+        },
+        "lose_screen": {
+            "file": "textures/live_painting.png"
         }
         
     },

@@ -322,7 +322,7 @@ class PortraitSetController {
     }
 
     void initializeBatteryNodes(const std::shared_ptr<cugl::Scene2>& scene) {
-        _block = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 4608, 4608));
+        _block = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 2304, 2304));
         _block->setColor(Color4::BLACK);
         _greenBattery->setFrame(0);
         scene->addChild(_greenBattery);
@@ -347,6 +347,9 @@ class PortraitSetController {
         camera->updateBattery(battery);
         _portraitModels.push_back(
             std::make_unique<PortraitModel>(cameraPosition));
+        
+        
+        CULog("%f",_assets->get<Texture>("map")->getWidth());
         _portraitViews.push_back(std::make_unique<PortraitView>(
             _assets, portraitPosition +
                          Vec2(_assets->get<Texture>("map")->getSize() / 2)));

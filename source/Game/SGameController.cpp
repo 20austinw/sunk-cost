@@ -233,7 +233,7 @@ void SGameController::checkLevelLoaded() {
         std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
         _tilemap->updateDimensions(Vec2(tiles[0].size(), tiles.size()));
         _tilemap->updateColor(Color4::BLACK);
-        _tilemap->updateTileSize(Size(256, 256));
+        _tilemap->updateTileSize(Size(128, 128));
         for (int i = 0; i < tiles.size() * tiles[0].size(); ++i) {
             int c = i % tiles[0].size();
             int r = i / tiles[0].size();
@@ -250,7 +250,7 @@ void SGameController::checkLevelLoaded() {
 
         _map =
             scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
-        _map->setPolygon(Rect(0, 0, 4608, 4608));
+        _map->setPolygon(Rect(0, 0, 2304, 2304));
         
         _scene->addChild(_map);
         _miniMap = scene2::PolygonNode::allocWithTexture(

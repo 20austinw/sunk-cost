@@ -22,24 +22,23 @@
  */
 InputController::InputController()
     : _model(std::make_unique<InputModel>()), _forward(0), _rightward(0),
-      _active(false), _ts(false) {}
+      _active(false) {}
 
 bool InputController::initListeners() {
-    Touchscreen* ts = Input::get<Touchscreen>();
+    _ts = Input::get<Touchscreen>();
     _keyboard = Input::get<Keyboard>();
     _mouse = Input::get<Mouse>();
-    if (ts) {
-        _ts = true;
-        _touchKey = ts->acquireKey();
-        ts->addBeginListener(
+    if (_ts) {
+        _touchKey = _ts->acquireKey();
+        _ts->addBeginListener(
             _touchKey, [=](const cugl::TouchEvent& event, bool focus) {
-                this->touchDownCB(event, ts->touchPressed(event.touch));
+                this->touchDownCB(event, _ts->touchPressed(event.touch));
             });
-        ts->addEndListener(
+        _ts->addEndListener(
             _touchKey, [=](const cugl::TouchEvent& event, bool focus) {
-                this->touchUpCB(event, ts->touchReleased(event.touch));
+                this->touchUpCB(event, _ts->touchReleased(event.touch));
             });
-        ts->addMotionListener(
+        _ts->addMotionListener(
             _touchKey, [=](const cugl::TouchEvent& event, Vec2 previous,
                            bool focus) { this->touchMotionCB(event, focus); });
         _active = true;
@@ -130,6 +129,10 @@ void InputController::readInput() {
         if (keys->keyDown(reset)) {
             _didReset = true;
         }
+    }
+    
+    if(_ts){
+        
     }
 }
 

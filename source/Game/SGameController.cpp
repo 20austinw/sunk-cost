@@ -99,8 +99,11 @@ void SGameController::update(float dt) {
         CULog("Reset!");
     }
 
-    if (inputController->isMouseClicked()) {
-        auto screenPos = inputController->getLastMousePos();
+    if (inputController->isTouchDown()) {
+        auto screenPos = inputController->getTouchPos();
+    
+//    if (inputController->isMouseClicked()) {
+//        auto screenPos = inputController->getLastMousePos();
         // Check if click is minimap
         auto inBound = [&](Vec2 pos) {
             if (pos.x >= minimapOffset.x && pos.y >= minimapOffset.y &&

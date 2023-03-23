@@ -100,10 +100,7 @@ void SGameController::update(float dt) {
         reset();
         CULog("Reset!");
     }
-    if(inputController->isTouchDown()) {
-        auto touchPos = _scene->getCamera()->screenToWorldCoords(inputController->getTouchPos());
-    }
-    if (inputController->isTouchDown()) {
+    if (inputController->isTouchDown() && !blocked) {
         auto screenPos = inputController->getTouchPos();
     
 //    if (inputController->isMouseClicked()) {

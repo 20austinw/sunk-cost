@@ -63,7 +63,7 @@ bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json) {
     // type the object is.
     auto objects = json->get("layers")->get(0);
     loadObject(objects);
-    for (int i = 1; i < json->get("layers")->size(); i++) {
+    for (int i = 2; i < json->get("layers")->size(); i++) {
         // Get the objects per layer
         objects = json->get("layers")->get(i)->get("objects");
         for (int j = 0; j < objects->size(); j++) {

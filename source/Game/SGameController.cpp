@@ -100,7 +100,8 @@ void SGameController::update(float dt) {
         reset();
         CULog("Reset!");
     }
-    if (inputController->isTouchDown() && !blocked) {
+    bool didSwitch = false;
+    if (inputController->isTouchDown()) {
         auto screenPos = inputController->getTouchPos();
     
 //    if (inputController->isMouseClicked()) {
@@ -132,14 +133,15 @@ void SGameController::update(float dt) {
                     _scene->getCamera())
                     ->setZoom(1);
                 _spirit.resetCameraCool();
+                didSwitch = true;
             } else if (!_spirit.isSwitchable() &&
                        _portraits->getIndex() != idx) {
                 _portraits->resetScale();
             }
-        } else {
-            _spirit.decreaseCameraCool();
         }
-    } else {
+        
+    }
+    if (!didSwitch) {
         _spirit.decreaseCameraCool();
     }
 

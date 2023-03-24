@@ -159,7 +159,10 @@ class SpiritController {
         _model->setCameraCooldown(_cameraCool);
     }
 
-    bool isSwitchable() { return _cameraCool <= 0; }
+    bool isSwitchable() {
+        return _cameraCool <= 0;
+        
+    }
     
     bool getTrapAdded() { return _trapAdded; }
     

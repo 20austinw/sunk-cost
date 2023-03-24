@@ -141,7 +141,7 @@ class TilemapController {
      */
     bool isTileTraversable(Vec2 mapPos) {
         Vec2 gridPos(mapPosToGridPos(mapPos));
-        if(gridPos.x>=0 && gridPos.y>=0 && gridPos < _model->getDimensions()){
+        if(gridPos.x>=0 && gridPos.y>=0 && gridPos.x < _model->getDimensions().x && gridPos.y < _model->getDimensions().y){
             return _tilemap[gridPos.y][gridPos.x]->isTraversable();
         }
         return false;

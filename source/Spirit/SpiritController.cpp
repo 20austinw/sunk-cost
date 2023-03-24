@@ -73,8 +73,6 @@ void SpiritController::update(const std::shared_ptr<TilemapController> _tilemap,
     auto inputController = InputController::getInstance();
     auto pos = _scene->getCamera()->screenToWorldCoords(
         inputController->getTouchPos());
-//    auto pos = _scene->getCamera()->screenToWorldCoords(
-//        inputController->getLastMousePos());
     if (inputController->isTouchDown() && _portraits->getCurState()) {
         if (!_tilemap->isTileTraversable(pos) ||
             _tilemap->mapPosToGridPos(pos).x < 0 ||

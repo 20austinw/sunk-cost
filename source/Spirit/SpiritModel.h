@@ -170,6 +170,9 @@ class SpiritModel {
         right = diff.x;
         _hunterModel->setPosition(position);
         _hunterView->setPosition(position);
+    }
+    
+    void alertTreasure(Vec2 position) {
         
     }
 };

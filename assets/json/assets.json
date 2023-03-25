@@ -74,8 +74,13 @@
         },
         "lose_screen": {
             "file": "textures/live_painting.png"
+        },
+        "spirit_win_animation": {
+            "file": "textures/spirit_end_animation.png"
+        },
+        "blur": {
+            "file": "textures/blur.png"
         }
-        
     },
     "fonts": {
         "pixel32": {

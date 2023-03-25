@@ -13,6 +13,7 @@ using namespace cugl;
 #include "PortraitSetController.h"
 #include "SpiritController.h"
 #include "TilemapController.h"
+#include "EndScene.h"
 
 /**
  * The primary controller for the game logic.
@@ -89,6 +90,10 @@ public:
     std::shared_ptr<cugl::net::NetcodeDeserializer> _deserializer;
     
     bool _hunterAdded;
+    
+    bool _gameStatus = 0;
+    
+    std::shared_ptr<EndScene> _endScene;
 
 #pragma mark External References
   private:

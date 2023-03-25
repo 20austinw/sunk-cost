@@ -23,9 +23,7 @@ HunterController::HunterController(
     _view = std::make_unique<HunterView>(assets, Vec2(400,400), Vec2(40,40));
     _screenSize = screenSize;
     // A default camera ID = 1 if not specified
-    CULog("%f, %f", _screenSize.width, _screenSize.height);
     _camera = std::make_unique<CameraController>(1, _screenSize);
-    CULog("%f, %f", _screenSize.width, _screenSize.height);
     _camera->updatePosition(Vec3(5, 0, 15));
 
     _hideCool = 0.0;

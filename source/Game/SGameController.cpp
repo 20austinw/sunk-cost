@@ -82,121 +82,134 @@ float SGameController::getZoom() {
         ->getZoom();
 }
 
+int cnt = 0;
 bool blocked = false;
 void SGameController::update(float dt) {
-    bool canPlaceTrap = true;
-    Vec2 minimapOffset = Vec2(_scene->getSize().width, 0) - (_miniMap == nullptr ? Vec2::ZERO : Vec2(_miniMap->getSize().width, 0)) - Vec2(60, -30);
-    if (!_levelLoaded) {
-        CULog("Level not loaded!");
-        checkLevelLoaded();
-        _portraits->setIndex(4);
-        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+    if(_gameStatus == 0){
+        bool canPlaceTrap = true;
+        Vec2 minimapOffset = Vec2(_scene->getSize().width, 0) - (_miniMap == nullptr ? Vec2::ZERO : Vec2(_miniMap->getSize().width, 0)) - Vec2(60, -30);
+        if (!_levelLoaded) {
+            CULog("Level not loaded!");
+            checkLevelLoaded();
+            _portraits->setIndex(4);
+            std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
             ->setZoom(1);
-    }
-    auto inputController = InputController::getInstance();
-    inputController->update(dt);
-    inputController->readInput();
-    if (inputController->didPressReset()) {
-        reset();
-        CULog("Reset!");
-    }
-    bool didSwitch = false;
-    if (inputController->isTouchDown()) {
-        auto screenPos = inputController->getTouchPos();
-    
-//    if (inputController->isMouseClicked()) {
-//        auto screenPos = inputController->getLastMousePos();
-        // Check if click is minimap
-        auto inBound = [&](Vec2 pos) {
-            if (pos.x >= minimapOffset.x && pos.y >= minimapOffset.y &&
-                pos.x <=
+        }
+        auto inputController = InputController::getInstance();
+        inputController->update(dt);
+        inputController->readInput();
+        if (inputController->didPressReset()) {
+            reset();
+            CULog("Reset!");
+        }
+        bool didSwitch = false;
+        if (inputController->isTouchDown()) {
+            auto screenPos = inputController->getTouchPos();
+            
+            //    if (inputController->isMouseClicked()) {
+            //        auto screenPos = inputController->getLastMousePos();
+            // Check if click is minimap
+            auto inBound = [&](Vec2 pos) {
+                if (pos.x >= minimapOffset.x && pos.y >= minimapOffset.y &&
+                    pos.x <=
                     _miniMap->getSize().width * getZoom() + minimapOffset.x &&
-                pos.y <=
+                    pos.y <=
                     _miniMap->getSize().height * getZoom() + minimapOffset.y) {
-                return true;
-            }
-            return false;
-        };
-        // Logic for switching cameras
-        if (inBound(screenPos)) {
-            canPlaceTrap = false;
-            auto miniMapPos =
+                    return true;
+                }
+                return false;
+            };
+            // Logic for switching cameras
+            if (inBound(screenPos)) {
+                canPlaceTrap = false;
+                auto miniMapPos =
                 Vec2(screenPos.x - _miniMap->getSize().width / 2 * getZoom() -
-                         minimapOffset.x,
+                     minimapOffset.x,
                      _miniMap->getSize().height / 2 * getZoom() +
-                         minimapOffset.y - screenPos.y);
-            auto mapPos = miniMapPos / _miniMap->getScale() / getZoom();
-            int idx = _portraits->getNearest(mapPos);
-            if (_spirit.isSwitchable() && _portraits->getIndex() != idx) {
-                _portraits->setIndex(idx);
-                std::dynamic_pointer_cast<OrthographicCamera>(
-                    _scene->getCamera())
+                     minimapOffset.y - screenPos.y);
+                auto mapPos = miniMapPos / _miniMap->getScale() / getZoom();
+                int idx = _portraits->getNearest(mapPos);
+                if (_spirit.isSwitchable() && _portraits->getIndex() != idx) {
+                    _portraits->setIndex(idx);
+                    std::dynamic_pointer_cast<OrthographicCamera>(
+                                                                  _scene->getCamera())
                     ->setZoom(1);
-                _spirit.resetCameraCool();
-                didSwitch = true;
-            } else if (!_spirit.isSwitchable() &&
-                       _portraits->getIndex() != idx) {
-                _portraits->resetScale();
+                    _spirit.resetCameraCool();
+                    didSwitch = true;
+                } else if (!_spirit.isSwitchable() &&
+                           _portraits->getIndex() != idx) {
+                    _portraits->resetScale();
+                }
+            }
+            
+        }
+        if (!didSwitch) {
+            _spirit.decreaseCameraCool();
+        }
+        
+        Vec3 offset = Vec3(_assets->get<Texture>("map")->getSize()/2);
+        _scene->getCamera()->setPosition(
+                                         _portraits->getPosition(_portraits->getIndex()) + offset);
+        
+        _portraits->setPrevState(_portraits->getCurState());
+        _spirit.update(_tilemap, canPlaceTrap);
+        
+        if (_network) {
+            _network->receive([this](const std::string source,
+                                     const std::vector<std::byte>& data) {
+                processData(source,data);
+            });
+            checkConnection();
+            
+            if (_spirit.getTrapAdded()) {
+                std::vector<float> pos = std::vector<float>();
+                pos.push_back(1);
+                pos.push_back(_spirit.getLastTrapPos().x);
+                pos.push_back(_spirit.getLastTrapPos().y);
+                transmitTrap(pos);
+                _spirit.setTrapAdded(false);
             }
         }
-        
-    }
-    if (!didSwitch) {
-        _spirit.decreaseCameraCool();
-    }
-
-    Vec3 offset = Vec3(_assets->get<Texture>("map")->getSize()/2);
-    _scene->getCamera()->setPosition(
-        _portraits->getPosition(_portraits->getIndex()) + offset);
-
-    _portraits->setPrevState(_portraits->getCurState());
-    _spirit.update(_tilemap, canPlaceTrap);
-
-    if (_network) {
-        _network->receive([this](const std::string source,
-                                 const std::vector<std::byte>& data) {
-            processData(source,data);
-        });
-        checkConnection();
-        
-        if (_spirit.getTrapAdded()) {
-            std::vector<float> pos = std::vector<float>();
-            pos.push_back(1);
-            pos.push_back(_spirit.getLastTrapPos().x);
-            pos.push_back(_spirit.getLastTrapPos().y);
-            transmitTrap(pos);
-            _spirit.setTrapAdded(false);
+        // Redraw doors
+        if (!blocked) {
+            _tilemap->removeDoorFrom(_scene);
+            _tilemap->addDoorTo(_scene);
         }
+        // Draw minimap
+        _miniMap->setPosition(_scene->getCamera()->screenToWorldCoords(
+                                                                       _miniMap->getSize() / 2 * getZoom() + minimapOffset));
+        _scene->removeChild(_miniMap);
+        _scene->addChild(_miniMap);
+        
+        // Draw battery
+        _portraits->updateBattery();
+        _portraits->updateBatteryNode(offset, _scene);
+        _scene->getCamera()->update();
+        
+        // Black screen
+        if (!_portraits->getCurState() && _portraits->getPrevState()) {
+            CULog("Black screen drawn!");
+            // Redraw doors
+            _portraits->addBlock(_scene);
+            _portraits->refreshBatteryNodes(_scene);
+            blocked = true;
+        } else if (_portraits->getCurState() && !_portraits->getPrevState()) {
+            // Redraw doors
+            _portraits->removeBlock(_scene);
+            blocked = false;
+        }
+    }else if(_gameStatus == 1){
+        // Spirit won
+        _endScene->update();
+    }else{
+        // Spirit lost
     }
-    // Redraw doors
-    if (!blocked) {
-        _tilemap->removeDoorFrom(_scene);
-        _tilemap->addDoorTo(_scene);
+    cnt++;
+    if(cnt == 100) {
+        _gameStatus = 1;
+        _endScene = make_shared<EndScene>(_assets, true);
+        _endScene->addChildTo(_scene);
     }
-    // Draw minimap
-    _miniMap->setPosition(_scene->getCamera()->screenToWorldCoords(
-        _miniMap->getSize() / 2 * getZoom() + minimapOffset));
-    _scene->removeChild(_miniMap);
-    _scene->addChild(_miniMap);
-    
-    // Draw battery
-    _portraits->updateBattery();
-    _portraits->updateBatteryNode(offset, _scene);
-    _scene->getCamera()->update();
-    
-    // Black screen
-    if (!_portraits->getCurState() && _portraits->getPrevState()) {
-        CULog("Black screen drawn!");
-        // Redraw doors
-        _portraits->addBlock(_scene);
-        _portraits->refreshBatteryNodes(_scene);
-        blocked = true;
-    } else if (_portraits->getCurState() && !_portraits->getPrevState()) {
-        // Redraw doors
-        _portraits->removeBlock(_scene);
-        blocked = false;
-    }
-    
 }
 
 /**
@@ -312,8 +325,17 @@ void SGameController::processData(const std::string source, const std::vector<st
             _hunterAdded = true;
         } else if (mes[0] == 0) {
             _spirit.moveHunter(Vec2(mes[1], mes[2]));
-            CULog("%f, %f", mes[1], mes[2]);
         }
+        
+        // Treasure picked up alert (not sure if position will be used)
+        //_spirit.treasureAlert(pos);
+        
+        // Win alert for spirit
+        // _gameStatus = 1;
+        
+        // Lose alert for spirit
+        // _gameStatus = -1;
+        
         CULog("%f", mes[0]);
         _deserializer->reset();
     }

@@ -183,6 +183,10 @@ class SpiritController {
     void moveHunter(Vec2 pos) {
         _model->moveHunter(pos);
     }
+    
+    void alertTreasure(Vec2 pos) {
+        _model->alertTreasure(pos);
+    }
 };
 
 #endif /* _SPIRIT_CONTROLLER_H */

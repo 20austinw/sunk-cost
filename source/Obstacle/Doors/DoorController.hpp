@@ -15,4 +15,55 @@
 
 using namespace cugl;
 
+class DoorController {
+#pragma mark Internal References
+private:
+    /** Model reference */
+    std::unique_ptr<DoorModel> _model;
+    /** View reference */
+    std::unique_ptr<DoorView> _view;
+    
+#pragma mark Main Functions
+public:
+    DoorController(const std::shared_ptr<cugl::AssetManager>& assets, Vec2 position, int type){
+        _model = std::make_unique<DoorModel>(position, type);
+        _view = std::make_unique<DoorView>(assets, position, type);
+    }
+    
+    void update(bool started, bool released, Vec2 touchPos);
+    
+    /**
+     * Adds the view components as children to the given `sceneNode`.
+     *
+     * @param sceneNode The scenenode to add the view to
+     */
+    void addChildTo(const std::shared_ptr<cugl::Scene2>& scene) {
+        _view->addChildTo(scene);
+    }
+
+    /**
+     * Removes the view component children from the given `sceneNode`.
+     *
+     * @param sceneNode The scenenode to remove the view from
+     */
+    void removeChildFrom(const std::shared_ptr<cugl::Scene2>& scene) {
+        _view->removeChildFrom(scene);
+    }
+    
+    
+#pragma mark Getters
+
+#pragma mark Setters
+    void setFrame(int frame){
+        _model->setFrame(frame);
+        _view->setFrame(frame);
+    }
+    
+#pragma mark Helpers:
+private:
+    void updateFrame(Vec2 touchPos);
+    
+    bool isInBound();
+};
+
 #endif /* DoorController_hpp */

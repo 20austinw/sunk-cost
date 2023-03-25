@@ -14,6 +14,7 @@ using namespace cugl;
 #include "SpiritController.h"
 #include "TilemapController.h"
 #include "EndScene.h"
+#include "DoorController.hpp"
 
 /**
  * The primary controller for the game logic.
@@ -94,6 +95,8 @@ public:
     bool _gameStatus = 0;
     
     std::shared_ptr<EndScene> _endScene;
+    
+    std::vector<std::shared_ptr<DoorController>> _doors;
 
 #pragma mark External References
   private:
@@ -236,6 +239,10 @@ public:
     bool checkConnection();
 
     void transmitTrap(std::vector<float> pos);
+    
+    void initDoors();
+    
+    void updateDoors();
 
 };
 

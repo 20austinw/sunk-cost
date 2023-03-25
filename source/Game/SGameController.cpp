@@ -84,6 +84,7 @@ float SGameController::getZoom() {
 
 int cnt = 0;
 bool blocked = false;
+
 void SGameController::update(float dt) {
     if(_gameStatus == 0){
         bool canPlaceTrap = true;
@@ -289,13 +290,23 @@ void SGameController::checkLevelLoaded() {
         _portraits->initializeSheets(_assets->get<Texture>("greenBattery"),
                                      _assets->get<Texture>("redBattery"),
                                      _assets->get<Texture>("noBattery"));
-        _portraits->initializeBatteryNodes(_scene);	
+        _portraits->initializeBatteryNodes(_scene);
+        
+        initDoors();
     }
 }
     
     void SGameController::generateLevel() {
         _tilemap->updateDimensions(_level->getDimensions());
     }
+
+void SGameController::initDoors(){
+    std::vector<std::pair<Vec2, int>> doors = _level->getDoors();
+    for (int i=0; i<doors.size(); i++){
+        _doors.emplace_back(std::make_shared<DoorController>(_assets, doors[i].first, doors[i].second));
+//        _doors.at(i)->addChildTo(_scene);
+    }
+}
 
 bool SGameController::checkConnection() {
     // IMPLEMENT ME

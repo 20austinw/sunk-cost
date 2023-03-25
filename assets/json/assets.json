@@ -80,6 +80,12 @@
         },
         "blur": {
             "file": "textures/blur.png"
+        },
+        "front_lock": {
+            "file": "textures/front_lock.png"
+        },
+        "side_lock": {
+            "file": "textures/side_lock.png"
         }
     },
     "fonts": {

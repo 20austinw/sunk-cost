@@ -12,5 +12,52 @@
 
 using namespace cugl;
 
+class DoorView {
+
+    
+#pragma mark Internal References
+private:
+    std::shared_ptr<scene2::SpriteNode> _door;
+    
+#pragma mark Main Functions
+    public:
+    DoorView(const std::shared_ptr<cugl::AssetManager>& assets, Vec2 position, int type){
+        if (type == 0){
+            _door = scene2::SpriteNode::allocWithSheet(assets->get<Texture>("front_lock"),3,7,21);
+        }else if(type == 1){
+            _door = scene2::SpriteNode::allocWithSheet(assets->get<Texture>("side_lock"),4,5,18);
+        }
+        _door->setPosition(position);
+        setFrame(0);
+    }
+
+#pragma mark Setters
+    void setFrame(int frame){
+        _door->setFrame(frame);
+    }
+    
+#pragma mark Scene Methods
+    
+public:
+  /**
+   * Adds the view components as children to the given `sceneNode`.
+   *
+   * @param sceneNode The scenenode to add the view to
+   */
+  void addChildTo(const std::shared_ptr<cugl::Scene2>& scene) {
+      scene->addChild(_door);
+  }
+
+  /**
+   * Removes the view component children from the given `sceneNode`.
+   *
+   * @param sceneNode The scenenode to remove the view from
+   */
+  void removeChildFrom(const std::shared_ptr<cugl::Scene2>& scene) {
+      scene->removeChild(_door);
+  }
+    
+};
+
 
 #endif /* DoorView_h */

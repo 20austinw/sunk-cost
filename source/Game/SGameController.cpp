@@ -205,12 +205,12 @@ void SGameController::update(float dt) {
     }else{
         // Spirit lost
     }
-    cnt++;
-    if(cnt == 100) {
-        _gameStatus = 1;
-        _endScene = make_shared<EndScene>(_assets, true);
-        _endScene->addChildTo(_scene);
-    }
+//    cnt++;
+//    if(cnt == 100) {
+//        _gameStatus = 1;
+//        _endScene = make_shared<EndScene>(_assets, true);
+//        _endScene->addChildTo(_scene);
+//    }
 }
 
 /**
@@ -304,7 +304,7 @@ void SGameController::initDoors(){
     std::vector<std::pair<Vec2, int>> doors = _level->getDoors();
     for (int i=0; i<doors.size(); i++){
         _doors.emplace_back(std::make_shared<DoorController>(_assets, doors[i].first, doors[i].second));
-//        _doors.at(i)->addChildTo(_scene);
+        _doors.at(i)->addChildTo(_scene);
     }
 }
 

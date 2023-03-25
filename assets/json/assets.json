@@ -86,6 +86,9 @@
         },
         "side_lock": {
             "file": "textures/side_lock.png"
+        },
+        "lock_button": {
+            "file": "textures/lock_button.png"
         }
     },
     "fonts": {

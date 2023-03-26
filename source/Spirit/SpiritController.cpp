@@ -22,7 +22,7 @@ SpiritController::SpiritController(
     std::shared_ptr<cugl::Scene2> scene,
     std::shared_ptr<PortraitSetController> portraits, Size screenSize) {
     _scene = scene;
-    _model = std::make_unique<SpiritModel>(assets, scene, 3, 2, 30);
+    _model = std::make_shared<SpiritModel>(assets, scene, 3, 2, 30);
     _view = std::make_shared<SpiritView>(_model->doors, assets->get<Texture>("lock_button"));
     _portraits = portraits;
     _screenSize = screenSize;
@@ -91,8 +91,6 @@ void SpiritController::update(const std::shared_ptr<TilemapController> _tilemap,
 
 void SpiritController::updateLocksPos(const std::shared_ptr<cugl::Scene2>& scene){
     float zoom = std::dynamic_pointer_cast<OrthographicCamera>(scene->getCamera()) ->getZoom();
-    Vec2 pos2 = scene->getCamera()->screenToWorldCoords(
-        _scene->getSize() +Vec2(-_view->getLockSize().width / 2 * zoom, _view->getLockSize().height / 2 * zoom) - Vec2(0,_scene->getSize().height));
     Vec2 pos = scene->getCamera()->screenToWorldCoords(
             _scene->getSize() - _view->getLockSize() / 2 * zoom);
     _view->updateUnusedLocksPos(pos);
@@ -106,5 +104,20 @@ void SpiritController::removeLastLock(const std::shared_ptr<cugl::Scene2>& scene
     }
     _model->setDoors(_model->doors-1);
     _view->removeLastLock(scene);
+}
+
+bool SpiritController::touchInBound(Vec2 touchPos){
+    return true;
+    if(_model->doors <= 0){
+        return false;
+    }
+    float dist = _view->getLastLockPos().distance(touchPos);
+    bool result = abs(dist) <= _view->getLockSize().width/2 && abs(dist) <= _view->getLockSize().height/2;
+    if(result){
+        CULog("update lock");
+    }
+    CULog("touch pos: %f, %f", touchPos.x, touchPos.y);
+    CULog("lock pos: %f, %f", _view->getLastLockPos().x, _view->getLastLockPos().y);
+    return result;
 }
 

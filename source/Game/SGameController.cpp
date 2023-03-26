@@ -104,8 +104,60 @@ void SGameController::update(float dt) {
             CULog("Reset!");
         }
         bool didSwitch = false;
+        
+        //logic for door lock
+        if (inputController->isTouchDown() || _spirit.getModel()->isOnLock){
+            Vec2 touchPos = inputController->getTouchPos();
+            if(_spirit.getModel()->doors >= 0){
+                bool start = inputController->didPress();
+                bool release = inputController->didRelease();
+                if(_spirit.getModel()->isOnLock || _spirit.touchInBound(touchPos)){
+                    canPlaceTrap = false;
+                    _spirit.getModel()->setLockState(true);
+                    bool isLocked = false;
+                    for (int i=0; i<_doors.size();i++){
+                        if(_doors.at(i)->update(start,release, touchPos)){
+                            isLocked = true;
+                        }
+                    }
+                    if (release){
+                        _spirit.getModel()->setLockState(false);
+                        if (isLocked){
+                            _spirit.removeLastLock(_scene);
+                        }
+                    }
+                }
+                
+            }
+        }
         if (inputController->isTouchDown()) {
             auto screenPos = inputController->getTouchPos();
+            
+//            auto inLockBound = [&](Vec2 pos) {
+//                if(_spirit.getModel()->doors <= 0){
+//                    return false;
+//                }
+//                float dist = _spirit.getView()->getLastLockPos().distance(pos);
+//                bool result = abs(dist) <= _spirit.getView()->getLockSize().width/2 && abs(dist) <= _spirit.getView()->getLockSize().height/2;
+//                if(result){
+//                    CULog("update lock");
+//                }
+////                CULog("touch pos: %f, %f", touchPos.x, touchPos.y);
+////                CULog("lock pos: %f, %f", _view->getLastLockPos().x, _view->getLastLockPos().y);
+//                return result;
+//
+//                if (pos.x >= minimapOffset.x && pos.y >= minimapOffset.y &&
+//                    pos.x <=
+//                    _miniMap->getSize().width * getZoom() + minimapOffset.x &&
+//                    pos.y <=
+//                    _miniMap->getSize().height * getZoom() + minimapOffset.y) {
+//                    return true;
+//                }
+//                return false;
+//            };
+            
+
+            
             
             //    if (inputController->isMouseClicked()) {
             //        auto screenPos = inputController->getLastMousePos();
@@ -350,7 +402,7 @@ void SGameController::processData(const std::string source, const std::vector<st
         // Lose alert for spirit
         // _gameStatus = -1;
         
-        CULog("%f", mes[0]);
+//        CULog("%f", mes[0]);
         _deserializer->reset();
     }
 }

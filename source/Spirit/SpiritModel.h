@@ -159,7 +159,7 @@ class SpiritModel {
         _trapModels = pendingTrapModels;
         _trapViews = pendingTrapViews;
         if(_hunterView && _ticks == 0) {
-            CULog("%d, %d", right, forward);
+//            CULog("%d, %d", right, forward);
             _hunterView->advanceFrame(forward, right);
             forward = 0;
             right = 0;

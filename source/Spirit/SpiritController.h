@@ -25,7 +25,7 @@ class SpiritController {
 #pragma mark Internal References
   private:
     /** The model for Spirit */
-    std::unique_ptr<SpiritModel> _model;
+    std::shared_ptr<SpiritModel> _model;
     std::shared_ptr<SpiritView> _view;
 
 #pragma mark External References
@@ -189,6 +189,7 @@ class SpiritController {
     }
     
     std::shared_ptr<SpiritView> getView() {return _view;}
+    std::shared_ptr<SpiritModel> getModel() {return _model;}
     
     void updateLocks(bool start, bool released, Vec2 touchPos);
     
@@ -197,6 +198,8 @@ class SpiritController {
     void removeLastLock(const std::shared_ptr<cugl::Scene2>& scene);
     
     void addNewLock();
+    
+    bool touchInBound(Vec2 touchPos);
 };
 
 #endif /* _SPIRIT_CONTROLLER_H */

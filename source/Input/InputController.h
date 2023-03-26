@@ -62,6 +62,7 @@ class InputController {
     cugl::Vec2 _touchPos;
     /** Whether the finger touch is down */
     bool _touchDown;
+    bool _touchUp;
 
     /** The current touch/mouse position */
     cugl::Vec2 _currPos;
@@ -307,10 +308,6 @@ class InputController {
     Vec2 getTouchPos() {return _touchPos; }
     
     bool isTouchDown() {return _touchDown;}
-    
-//    bool isTouchHeld() {return _model->istouchHeld; }
-    
-//    bool isTouchReleased() {}
 };
 
 #endif /* __INPUT_CONTROLLER_H__ */

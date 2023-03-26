@@ -97,6 +97,10 @@ class SpiritView {
     Size getLockSize(){
         return _size;
     }
+    
+    Vec2 getLastLockPos(){
+        return _locks.at(_locks.size()-1)->getPosition();
+    }
 
 #pragma mark Setters
 };

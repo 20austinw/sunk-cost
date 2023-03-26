@@ -66,3 +66,10 @@ void DoorController::setLockFrame(){
         setFrame(FRAME_NUM_SIDE-1);
     }
 }
+
+void DoorController::resetToUnlock(){
+    if(_model->getState() == 2){
+        _model->setState(0);
+        setFrame(0);
+    }
+}

@@ -23,7 +23,7 @@ class SpiritModel {
     /** Energy that the spirit has left over */
     float _energy;
     /** Number of traps that the spirit has left */
-    int _clams;
+    int _traps;
     /** Number of doors that the spirit has left */
     int _doors;
     /** Cooldown time for close door */
@@ -45,12 +45,14 @@ class SpiritModel {
     int _ticks = 0;
     
     bool _isOnLock;
+    
+    bool _isOnTrap;
 
   public:
     /** A public accessible, read-only version of the energy level */
     float& energy;
     /** A public accessible, read-only version of the energy level */
-    int& clams;
+    int& traps;
     /** A public accessible, read-only version of the energy level */
     int& doors;
     /** A public accessible, read-only version of the door cool down */
@@ -61,6 +63,8 @@ class SpiritModel {
     float& cameraCool;
     /** A public accessible, read-only version of the isOnLock */
     bool& isOnLock;
+    /** A public accessible, read-only version of the isOnTrap */
+    bool& isOnTrap;
 
 #pragma mark Main Functions
   public:
@@ -74,9 +78,9 @@ class SpiritModel {
     SpiritModel(const std::shared_ptr<cugl::AssetManager>& assets,
                 std::shared_ptr<cugl::Scene2> scene, int clams, int doors,
                 float energy)
-        : clams(_clams), doors(_doors), energy(_energy),
-          cameraCool(_cameraCool), clamCool(_clamCool), doorCool(_doorCool), isOnLock(_isOnLock) {
-        setClams(clams);
+        : traps(_traps), doors(_doors), energy(_energy),
+          cameraCool(_cameraCool), clamCool(_clamCool), doorCool(_doorCool), isOnLock(_isOnLock), isOnTrap(_isOnTrap) {
+        setTraps(clams);
         setDoors(doors);
         setEnergy(energy);
         setCameraCooldown(0);
@@ -85,6 +89,7 @@ class SpiritModel {
         _scene = scene;
         _assets = assets;
               setLockState(false);
+              setTrapState(false);
     }
 
 #pragma mark Setters
@@ -115,7 +120,7 @@ class SpiritModel {
      *
      * @param clams the number of clams
      */
-    void setClams(int clams) { _clams = clams; };
+    void setTraps(int traps) { _traps = traps; };
 
     /**
      * Sets the number of available doors for the spirit
@@ -126,6 +131,10 @@ class SpiritModel {
     
     void setLockState(bool lock){
         _isOnLock = lock;
+    }
+    
+    void setTrapState(bool trap){
+        _isOnTrap = trap;
     }
  
     /**

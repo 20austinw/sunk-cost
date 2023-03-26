@@ -88,6 +88,9 @@ bool blocked = false;
 void SGameController::update(float dt) {
     if(_gameStatus == 0){
         bool canPlaceTrap = true;
+        bool canSwitch = true;
+        bool didSwitch = false;
+        
         Vec2 minimapOffset = Vec2(_scene->getSize().width, 0) - (_miniMap == nullptr ? Vec2::ZERO : Vec2(_miniMap->getSize().width, 0)) - Vec2(60, -30);
         
         if (!_levelLoaded) {
@@ -103,15 +106,15 @@ void SGameController::update(float dt) {
             reset();
             CULog("Reset!");
         }
-        bool didSwitch = false;
         
         //logic for door lock
-        if ((inputController->isTouchDown() || _spirit.getModel()->isOnLock) && _spirit.getModel()->doors >= 0){
+        if ((inputController->isTouchDown() || _spirit.getModel()->isOnLock) && _spirit.getModel()->doors >= 0 && !blocked){
             Vec2 touchPos = inputController->getTouchPos();
             bool start = inputController->didPress();
             bool release = inputController->didRelease();
             Vec2 cameraPos = _scene->getCamera()->screenToWorldCoords(touchPos);
-            if(_spirit.getModel()->isOnLock || _spirit.touchInBound(cameraPos)){
+            if(_spirit.getModel()->isOnLock || _spirit.touchInLockBound(cameraPos)){
+                canSwitch = false;
                 canPlaceTrap = false;
                 _spirit.getModel()->setLockState(true);
                 bool isLocked = false;
@@ -127,6 +130,11 @@ void SGameController::update(float dt) {
                         _spirit.removeLastLock(_scene);
                     }
                 }
+            }
+        } else if (blocked&&_spirit.getModel()->isOnLock){
+            _spirit.getModel()->setLockState(false);
+            for (int i=0; i<_doors.size();i++){
+                _doors.at(i)->resetToUnlock();
             }
         }
         if (inputController->isTouchDown()) {
@@ -144,7 +152,7 @@ void SGameController::update(float dt) {
                 return false;
             };
             // Logic for switching cameras
-            if (inBound(screenPos)) {
+            if (inBound(screenPos) && canSwitch) {
                 canPlaceTrap = false;
                 auto miniMapPos =
                 Vec2(screenPos.x - _miniMap->getSize().width / 2 * getZoom() -
@@ -177,7 +185,7 @@ void SGameController::update(float dt) {
         
         // Draw battery
         _portraits->updateBattery();
-        _portraits->updateBatteryNode(_scene);
+        _portraits->updateBatteryNode(_scene, _miniMap->getSize().width);
         
         // Black screen
         if (!_portraits->getCurState() && _portraits->getPrevState()) {
@@ -201,11 +209,11 @@ void SGameController::update(float dt) {
         _scene->removeChild(_miniMap);
         _scene->addChild(_miniMap);
         
+        // Draw locks
+        _spirit.updateLocksPos(_scene);
+        
         if(!blocked){
-            // Draw locks
-            _spirit.updateLocksPos(_scene);
             _scene->getCamera()->update();
-            
         }
         
         if (_network) {

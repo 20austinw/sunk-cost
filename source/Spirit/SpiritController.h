@@ -175,6 +175,10 @@ class SpiritController {
     Vec2 getLastLockPos() {
         return _view->getLastLockPos();
     }
+    
+    Vec2 getLastTrapBtnPos() {
+        return _view->getLastTrapBtnPos();
+    }
 
 #pragma mark Helpers
   public:
@@ -195,6 +199,8 @@ class SpiritController {
     std::shared_ptr<SpiritView> getView() {return _view;}
     std::shared_ptr<SpiritModel> getModel() {return _model;}
     
+    //Lock button functions
+    
     void updateLocks(bool start, bool released, Vec2 touchPos);
     
     void updateLocksPos(const std::shared_ptr<cugl::Scene2>& scene);
@@ -203,9 +209,26 @@ class SpiritController {
     
     void addNewLock();
     
-    bool touchInBound(Vec2 touchPos);
+    bool touchInLockBound(Vec2 touchPos);
     
     void updateMovingLock(Vec2 pos);
+    
+    void updateTrapBtns(bool start, bool released, Vec2 touchPos);
+    
+    //Trap button functions
+    
+    void updateTrapBtnsPos(const std::shared_ptr<cugl::Scene2>& scene);
+    
+    void removeLastTrapBtn(const std::shared_ptr<cugl::Scene2>& scene);
+    
+    void addNewTrapBtn();
+    
+    bool touchInTrapBound(Vec2 touchPos);
+    
+    void updateMovingTrap(Vec2 pos);
+    
+    
+    
 };
 
 #endif /* _SPIRIT_CONTROLLER_H */

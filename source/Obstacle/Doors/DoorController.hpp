@@ -50,6 +50,8 @@ public:
         _view->removeChildFrom(scene);
     }
     
+    void resetToUnlock();
+    
     
     
     

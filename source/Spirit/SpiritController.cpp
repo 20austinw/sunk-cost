@@ -23,7 +23,7 @@ SpiritController::SpiritController(
     std::shared_ptr<PortraitSetController> portraits, Size screenSize) {
     _scene = scene;
     _model = std::make_shared<SpiritModel>(assets, scene, 3, 2, 30);
-    _view = std::make_shared<SpiritView>(_model->doors, assets->get<Texture>("lock_button"));
+    _view = std::make_shared<SpiritView>(_model->doors, _model->clams, assets->get<Texture>("lock_button"), assets->get<Texture>("trap_button"));
     _portraits = portraits;
     _screenSize = screenSize;
     _cameraCool = CAMERA_COOL;
@@ -104,7 +104,7 @@ void SpiritController::removeLastLock(const std::shared_ptr<cugl::Scene2>& scene
     _view->removeLastLock(scene);
 }
 
-bool SpiritController::touchInBound(Vec2 touchPos){
+bool SpiritController::touchInLockBound(Vec2 touchPos){
     if(_model->doors <= 0){
         return false;
     }

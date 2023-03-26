@@ -89,6 +89,9 @@
         },
         "lock_button": {
             "file": "textures/lock_button.png"
+        },
+        "trap_button": {
+            "file": "textures/trap_button.png"
         }
     },
     "fonts": {

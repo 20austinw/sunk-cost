@@ -207,9 +207,6 @@ public:
 
     void generateLevel();
 
-    void displayBattery(float battery, bool state,
-                        std::shared_ptr<cugl::SpriteBatch>& batch);
-
     /**
      * Processes data sent over the network.
      *

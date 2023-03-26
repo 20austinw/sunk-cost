@@ -171,6 +171,10 @@ class SpiritController {
     Vec2 getLastTrapPos() { return _lastTrapPos; }
     
     void setLastTrapPos(Vec2 pos) { _lastTrapPos = pos; }
+    
+    Vec2 getLastLockPos() {
+        return _view->getLastLockPos();
+    }
 
 #pragma mark Helpers
   public:

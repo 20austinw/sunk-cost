@@ -56,10 +56,6 @@ Rect SpiritController::screenToWorld(Rect rect) {
  */
 void SpiritController::render(std::shared_ptr<cugl::SpriteBatch>& batch,
                               Size size) {
-    //    Rect cameraView = getCameraView();
-    //    batch->setColor(Color4::YELLOW);
-    //    batch->fill(screenToWorld(cameraView.translate(-size.width/2,
-    //    -size.height/2)));
 }
 
 /**

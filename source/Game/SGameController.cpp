@@ -91,7 +91,6 @@ void SGameController::update(float dt) {
         Vec2 minimapOffset = Vec2(_scene->getSize().width, 0) - (_miniMap == nullptr ? Vec2::ZERO : Vec2(_miniMap->getSize().width, 0)) - Vec2(60, -30);
         
         if (!_levelLoaded) {
-            CULog("Level not loaded!");
             checkLevelLoaded();
             _portraits->setIndex(4);
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
@@ -108,17 +107,15 @@ void SGameController::update(float dt) {
         
         //logic for door lock
         if ((inputController->isTouchDown() || _spirit.getModel()->isOnLock) && _spirit.getModel()->doors >= 0){
-            float lockOffset = _scene->getSize().height;
             Vec2 touchPos = inputController->getTouchPos();
-            Vec2 screenPos = Vec2(touchPos.x, lockOffset-touchPos.y) + Vec2(- _spirit.getView()->getLockSize().width, - _spirit.getView()->getLockSize().height/2);
             bool start = inputController->didPress();
             bool release = inputController->didRelease();
-            if(_spirit.getModel()->isOnLock || _spirit.touchInBound(screenPos)){
+            Vec2 cameraPos = _scene->getCamera()->screenToWorldCoords(touchPos);
+            if(_spirit.getModel()->isOnLock || _spirit.touchInBound(cameraPos)){
                 canPlaceTrap = false;
                 _spirit.getModel()->setLockState(true);
                 bool isLocked = false;
-                _spirit.updateMovingLock(screenPos);
-                Vec2 cameraPos = _scene->getCamera()->screenToWorldCoords(touchPos);
+                _spirit.updateMovingLock(cameraPos);
                 for (int i=0; i<_doors.size();i++){
                     if(_doors.at(i)->update(start,release, cameraPos)){
                         isLocked = true;
@@ -198,11 +195,6 @@ void SGameController::update(float dt) {
         _portraits->setPrevState(_portraits->getCurState());
         _spirit.update(_tilemap, canPlaceTrap);
         
-//        // Redraw doors
-//        if (!blocked) {
-//            _tilemap->removeDoorFrom(_scene);
-//            _tilemap->addDoorTo(_scene);
-//        }
         // Draw minimap
         _miniMap->setPosition(_scene->getCamera()->screenToWorldCoords(
                                                                        _miniMap->getSize() / 2 * getZoom() + minimapOffset));
@@ -258,13 +250,6 @@ void SGameController::update(float dt) {
 void SGameController::render(std::shared_ptr<cugl::SpriteBatch>& batch) {
     // CULog("Rendering!");
     _scene->render(batch);
-    displayBattery(_portraits->getCurBattery(), _portraits->getCurState(),
-                   batch);
-}
-
-void SGameController::displayBattery(
-    float battery, bool state, std::shared_ptr<cugl::SpriteBatch>& batch) {
-    //    CULog("%f", battery);
 }
 
 void SGameController::checkLevelLoaded() {

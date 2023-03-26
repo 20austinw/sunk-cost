@@ -262,8 +262,7 @@ class PortraitSetController {
         }
     }
 
-    void updateBatteryNode(Vec2 offset,
-                           const std::shared_ptr<cugl::Scene2>& scene) {
+    void updateBatteryNode(const std::shared_ptr<cugl::Scene2>& scene) {
         float zoom =
             std::dynamic_pointer_cast<OrthographicCamera>(scene->getCamera())
                 ->getZoom();

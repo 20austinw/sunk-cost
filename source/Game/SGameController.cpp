@@ -135,8 +135,6 @@ void SGameController::update(float dt) {
         if (inputController->isTouchDown()) {
             auto screenPos = inputController->getTouchPos();
             
-            //    if (inputController->isMouseClicked()) {
-            //        auto screenPos = inputController->getLastMousePos();
             // Check if click is minimap
             auto inBound = [&](Vec2 pos) {
                 if (pos.x >= minimapOffset.x && pos.y >= minimapOffset.y &&
@@ -180,8 +178,43 @@ void SGameController::update(float dt) {
         _scene->getCamera()->setPosition(
                                          _portraits->getPosition(_portraits->getIndex()) + offset);
         
+        // Draw battery
+        _portraits->updateBattery();
+        _portraits->updateBatteryNode(_scene);
+        
+        // Black screen
+        if (!_portraits->getCurState() && _portraits->getPrevState()) {
+            CULog("Black screen drawn!");
+            // Redraw doors
+            _portraits->addBlock(_scene);
+            _portraits->refreshBatteryNodes(_scene);
+            blocked = true;
+        } else if (_portraits->getCurState() && !_portraits->getPrevState()) {
+            // Redraw doors
+            _portraits->removeBlock(_scene);
+            blocked = false;
+        }
+        
         _portraits->setPrevState(_portraits->getCurState());
         _spirit.update(_tilemap, canPlaceTrap);
+        
+//        // Redraw doors
+//        if (!blocked) {
+//            _tilemap->removeDoorFrom(_scene);
+//            _tilemap->addDoorTo(_scene);
+//        }
+        // Draw minimap
+        _miniMap->setPosition(_scene->getCamera()->screenToWorldCoords(
+                                                                       _miniMap->getSize() / 2 * getZoom() + minimapOffset));
+        _scene->removeChild(_miniMap);
+        _scene->addChild(_miniMap);
+        
+        if(!blocked){
+            // Draw locks
+            _spirit.updateLocksPos(_scene);
+            _scene->getCamera()->update();
+            
+        }
         
         if (_network) {
             _network->receive([this](const std::string source,
@@ -198,36 +231,6 @@ void SGameController::update(float dt) {
                 transmitTrap(pos);
                 _spirit.setTrapAdded(false);
             }
-        }
-        // Redraw doors
-        if (!blocked) {
-            _tilemap->removeDoorFrom(_scene);
-            _tilemap->addDoorTo(_scene);
-        }
-        // Draw minimap
-        _miniMap->setPosition(_scene->getCamera()->screenToWorldCoords(
-                                                                       _miniMap->getSize() / 2 * getZoom() + minimapOffset));
-        _scene->removeChild(_miniMap);
-        _scene->addChild(_miniMap);
-        
-        // Draw battery
-        _portraits->updateBattery();
-        _portraits->updateBatteryNode(offset, _scene);
-        // Draw locks
-        _spirit.updateLocksPos(_scene);
-        _scene->getCamera()->update();
-        
-        // Black screen
-        if (!_portraits->getCurState() && _portraits->getPrevState()) {
-            CULog("Black screen drawn!");
-            // Redraw doors
-            _portraits->addBlock(_scene);
-            _portraits->refreshBatteryNodes(_scene);
-            blocked = true;
-        } else if (_portraits->getCurState() && !_portraits->getPrevState()) {
-            // Redraw doors
-            _portraits->removeBlock(_scene);
-            blocked = false;
         }
     }else if(_gameStatus == 1){
         // Spirit won

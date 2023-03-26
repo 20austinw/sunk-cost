@@ -90,12 +90,14 @@ void SpiritController::update(const std::shared_ptr<TilemapController> _tilemap,
 }
 
 void SpiritController::updateLocksPos(const std::shared_ptr<cugl::Scene2>& scene){
-    float zoom = std::dynamic_pointer_cast<OrthographicCamera>(scene->getCamera()) ->getZoom();
-    Vec2 pos = scene->getCamera()->screenToWorldCoords(
-            _scene->getSize() - _view->getLockSize() / 2 * zoom);
-    _view->updateUnusedLocksPos(pos);
-    _view->removeLocksFrom(scene);
-    _view->addLocksTo(scene);
+    if (!_model->isOnLock){
+        float zoom = std::dynamic_pointer_cast<OrthographicCamera>(scene->getCamera()) ->getZoom();
+        Vec2 pos = scene->getCamera()->screenToWorldCoords(
+                _scene->getSize() - _view->getLockSize() / 2 * zoom);
+        _view->updateUnusedLocksPos(pos);
+        _view->removeLocksFrom(scene);
+        _view->addLocksTo(scene);
+    }
 }
 
 void SpiritController::removeLastLock(const std::shared_ptr<cugl::Scene2>& scene){
@@ -107,17 +109,14 @@ void SpiritController::removeLastLock(const std::shared_ptr<cugl::Scene2>& scene
 }
 
 bool SpiritController::touchInBound(Vec2 touchPos){
-    return true;
     if(_model->doors <= 0){
         return false;
     }
     float dist = _view->getLastLockPos().distance(touchPos);
-    bool result = abs(dist) <= _view->getLockSize().width/2 && abs(dist) <= _view->getLockSize().height/2;
-    if(result){
-        CULog("update lock");
-    }
-    CULog("touch pos: %f, %f", touchPos.x, touchPos.y);
-    CULog("lock pos: %f, %f", _view->getLastLockPos().x, _view->getLastLockPos().y);
-    return result;
+    return abs(dist) <= _view->getLockSize().width/2 && abs(dist) <= _view->getLockSize().height/2;
+}
+
+void SpiritController::updateMovingLock(Vec2 pos){
+    _view->updateLockInProgress(pos);
 }
 

@@ -54,6 +54,13 @@ public:
     
     
 #pragma mark Getters
+    Vec2 getPosition(){
+        return _model->getPosition();
+    }
+    
+    int getFrame(){
+        return _model->getFrame();
+    }
 
 #pragma mark Setters
     void setFrame(int frame){
@@ -65,7 +72,9 @@ public:
 private:
     void updateFrame(Vec2 touchPos);
     
-    bool isInBound();
+    bool isInBound(Vec2 pos);
+    
+    void setLockFrame();
 };
 
 #endif /* DoorController_hpp */

@@ -89,6 +89,7 @@ void SGameController::update(float dt) {
     if(_gameStatus == 0){
         bool canPlaceTrap = true;
         Vec2 minimapOffset = Vec2(_scene->getSize().width, 0) - (_miniMap == nullptr ? Vec2::ZERO : Vec2(_miniMap->getSize().width, 0)) - Vec2(60, -30);
+        
         if (!_levelLoaded) {
             CULog("Level not loaded!");
             checkLevelLoaded();
@@ -106,58 +107,33 @@ void SGameController::update(float dt) {
         bool didSwitch = false;
         
         //logic for door lock
-        if (inputController->isTouchDown() || _spirit.getModel()->isOnLock){
+        if ((inputController->isTouchDown() || _spirit.getModel()->isOnLock) && _spirit.getModel()->doors >= 0){
+            float lockOffset = _scene->getSize().height;
             Vec2 touchPos = inputController->getTouchPos();
-            if(_spirit.getModel()->doors >= 0){
-                bool start = inputController->didPress();
-                bool release = inputController->didRelease();
-                if(_spirit.getModel()->isOnLock || _spirit.touchInBound(touchPos)){
-                    canPlaceTrap = false;
-                    _spirit.getModel()->setLockState(true);
-                    bool isLocked = false;
-                    for (int i=0; i<_doors.size();i++){
-                        if(_doors.at(i)->update(start,release, touchPos)){
-                            isLocked = true;
-                        }
-                    }
-                    if (release){
-                        _spirit.getModel()->setLockState(false);
-                        if (isLocked){
-                            _spirit.removeLastLock(_scene);
-                        }
+            Vec2 screenPos = Vec2(touchPos.x, lockOffset-touchPos.y) + Vec2(- _spirit.getView()->getLockSize().width, - _spirit.getView()->getLockSize().height/2);
+            bool start = inputController->didPress();
+            bool release = inputController->didRelease();
+            if(_spirit.getModel()->isOnLock || _spirit.touchInBound(screenPos)){
+                canPlaceTrap = false;
+                _spirit.getModel()->setLockState(true);
+                bool isLocked = false;
+                _spirit.updateMovingLock(screenPos);
+                Vec2 cameraPos = _scene->getCamera()->screenToWorldCoords(touchPos);
+                for (int i=0; i<_doors.size();i++){
+                    if(_doors.at(i)->update(start,release, cameraPos)){
+                        isLocked = true;
                     }
                 }
-                
+                if (release){
+                    _spirit.getModel()->setLockState(false);
+                    if (isLocked){
+                        _spirit.removeLastLock(_scene);
+                    }
+                }
             }
         }
         if (inputController->isTouchDown()) {
             auto screenPos = inputController->getTouchPos();
-            
-//            auto inLockBound = [&](Vec2 pos) {
-//                if(_spirit.getModel()->doors <= 0){
-//                    return false;
-//                }
-//                float dist = _spirit.getView()->getLastLockPos().distance(pos);
-//                bool result = abs(dist) <= _spirit.getView()->getLockSize().width/2 && abs(dist) <= _spirit.getView()->getLockSize().height/2;
-//                if(result){
-//                    CULog("update lock");
-//                }
-////                CULog("touch pos: %f, %f", touchPos.x, touchPos.y);
-////                CULog("lock pos: %f, %f", _view->getLastLockPos().x, _view->getLastLockPos().y);
-//                return result;
-//
-//                if (pos.x >= minimapOffset.x && pos.y >= minimapOffset.y &&
-//                    pos.x <=
-//                    _miniMap->getSize().width * getZoom() + minimapOffset.x &&
-//                    pos.y <=
-//                    _miniMap->getSize().height * getZoom() + minimapOffset.y) {
-//                    return true;
-//                }
-//                return false;
-//            };
-            
-
-            
             
             //    if (inputController->isMouseClicked()) {
             //        auto screenPos = inputController->getLastMousePos();

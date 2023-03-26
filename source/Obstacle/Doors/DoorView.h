@@ -18,6 +18,7 @@ class DoorView {
 #pragma mark Internal References
 private:
     std::shared_ptr<scene2::SpriteNode> _door;
+    Size _size;
     
 #pragma mark Main Functions
     public:
@@ -27,10 +28,15 @@ private:
         }else if(type == 1){
             _door = scene2::SpriteNode::allocWithSheet(assets->get<Texture>("side_lock"),4,5,18);
         }
+        _size = _door->getSize();
         _door->setPosition(position);
         setFrame(0);
     }
 
+#pragma mark Getters
+    Size getSize(){
+        return _size;
+    }
 #pragma mark Setters
     void setFrame(int frame){
         _door->setFrame(frame);

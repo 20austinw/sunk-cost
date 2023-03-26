@@ -71,7 +71,7 @@ class SpiritView {
     }
     
     void updateLockInProgress(Vec2 touchPos){
-        
+        _locks.at(_locks.size()-1)->setPosition(touchPos);
     }
 
     /**

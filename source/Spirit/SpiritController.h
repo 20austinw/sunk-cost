@@ -200,6 +200,8 @@ class SpiritController {
     void addNewLock();
     
     bool touchInBound(Vec2 touchPos);
+    
+    void updateMovingLock(Vec2 pos);
 };
 
 #endif /* _SPIRIT_CONTROLLER_H */

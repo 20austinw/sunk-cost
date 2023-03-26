@@ -16,6 +16,12 @@ class SpiritView {
 #pragma mark Internal References
   private:
     std::shared_ptr<scene2::PolygonNode> _node;
+    
+    std::vector<std::shared_ptr<scene2::SpriteNode>> _locks;
+    
+    std::shared_ptr<cugl::Texture> _lockAsset;
+    
+    Size _size;
 
 #pragma mark Main Functions
   public:
@@ -30,7 +36,13 @@ class SpiritView {
      * @param size The width and height of a tile
      * @param color The tile color tint
      */
-    SpiritView(){};
+    SpiritView(int locks, std::shared_ptr<cugl::Texture> lock){
+        _lockAsset = lock;
+        for (int i=0; i<locks; i++){
+            _locks.emplace_back(scene2::SpriteNode::allocWithSheet(_lockAsset, 2, 8, 12));
+        }
+        _size = _locks.at(0)->getSize();
+    }
 
     /** Deletes this HunterView */
     ~SpiritView() { _node->removeFromParent(); }
@@ -42,8 +54,24 @@ class SpiritView {
      *
      * @param sceneNode The scenenode to add the view to
      */
-    void addChildTo(const std::shared_ptr<scene2::SceneNode>& sceneNode) {
-        sceneNode->addChild(_node);
+    void addChildTo(const std::shared_ptr<Scene2>& scene) {
+        scene->addChild(_node);
+    }
+    
+    void addLocksTo(const std::shared_ptr<Scene2>& scene) {
+        for (int i=0; i<_locks.size(); i++){
+            scene->addChild(_locks.at(i));
+        }
+    }
+    
+    void updateUnusedLocksPos(Vec2 pos){
+        for (int i=0 ; i<_locks.size(); i++){
+            _locks.at(i)->setPosition(pos + _size/15*i);
+        }
+    }
+    
+    void updateLockInProgress(Vec2 touchPos){
+        
     }
 
     /**
@@ -51,8 +79,23 @@ class SpiritView {
      *
      * @param sceneNode The scenenode to remove the view from
      */
-    void removeChildFrom(const std::shared_ptr<scene2::SceneNode>& sceneNode) {
-        sceneNode->removeChild(_node);
+    void removeChildFrom(const std::shared_ptr<Scene2>& scene) {
+        scene->removeChild(_node);
+    }
+    
+    void removeLocksFrom(const std::shared_ptr<Scene2>& scene) {
+        for (int i=0; i<_locks.size(); i++){
+            scene->removeChild(_locks.at(i));
+        }
+    }
+    
+    void removeLastLock(const std::shared_ptr<Scene2>& scene){
+        scene->removeChild(_locks.at(_locks.size()-1));
+        _locks.pop_back();
+    }
+    
+    Size getLockSize(){
+        return _size;
     }
 
 #pragma mark Setters

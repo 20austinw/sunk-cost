@@ -9,7 +9,7 @@
 #include "DoorModel.h"
 #include "DoorView.h"
 
-void DoorController::update(bool started, bool released, Vec2 touchPos){
+bool DoorController::update(bool started, bool released, Vec2 touchPos){
     //detect a drug action to enable the animation for an unlocked door, then update step for the frame number
     if (started && _model->getState() == 0){
         _model->setState(2);
@@ -18,11 +18,16 @@ void DoorController::update(bool started, bool released, Vec2 touchPos){
     //detect if ending pos for the drug is on an unlocked door, change to locked
     else if(released && isInBound() && _model->getState() == 2){
         _model->setState(1);
+        return true;
+    } else if (released && _model->getState() == 2) {
+        _model->setState(0);
+        setFrame(0);
     }
     //update the current frame number
     if(_model->getState() == 2){
         updateFrame(touchPos);
     }
+    return false;
 }
 
 void DoorController::updateFrame(Vec2 pos){

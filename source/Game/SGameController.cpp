@@ -185,6 +185,8 @@ void SGameController::update(float dt) {
         // Draw battery
         _portraits->updateBattery();
         _portraits->updateBatteryNode(offset, _scene);
+        // Draw locks
+        _spirit.updateLocksPos(_scene);
         _scene->getCamera()->update();
         
         // Black screen
@@ -291,6 +293,7 @@ void SGameController::checkLevelLoaded() {
                                      _assets->get<Texture>("redBattery"),
                                      _assets->get<Texture>("noBattery"));
         _portraits->initializeBatteryNodes(_scene);
+        _spirit.getView()->addLocksTo(_scene);
         
         initDoors();
     }

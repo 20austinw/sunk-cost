@@ -307,6 +307,10 @@ class InputController {
     Vec2 getTouchPos() {return _touchPos; }
     
     bool isTouchDown() {return _touchDown;}
+    
+//    bool isTouchHeld() {return _model->istouchHeld; }
+    
+//    bool isTouchReleased() {}
 };
 
 #endif /* __INPUT_CONTROLLER_H__ */

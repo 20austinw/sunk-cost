@@ -43,6 +43,8 @@ class SpiritModel {
     std::shared_ptr<HunterView> _hunterView;
     int forward = 0, right = 0;
     int _ticks = 0;
+    
+    bool _isOnLock;
 
   public:
     /** A public accessible, read-only version of the energy level */
@@ -57,6 +59,8 @@ class SpiritModel {
     float& clamCool;
     /** A public accessible, read-only version of the camera cool down */
     float& cameraCool;
+    /** A public accessible, read-only version of the isOnLock */
+    bool& isOnLock;
 
 #pragma mark Main Functions
   public:
@@ -71,7 +75,7 @@ class SpiritModel {
                 std::shared_ptr<cugl::Scene2> scene, int clams, int doors,
                 float energy)
         : clams(_clams), doors(_doors), energy(_energy),
-          cameraCool(_cameraCool), clamCool(_clamCool), doorCool(_doorCool) {
+          cameraCool(_cameraCool), clamCool(_clamCool), doorCool(_doorCool), isOnLock(_isOnLock) {
         setClams(clams);
         setDoors(doors);
         setEnergy(energy);
@@ -80,6 +84,7 @@ class SpiritModel {
         setDoorCooldown(0);
         _scene = scene;
         _assets = assets;
+              setLockState(false);
     }
 
 #pragma mark Setters
@@ -118,7 +123,11 @@ class SpiritModel {
      * @param doors the number of doors
      */
     void setDoors(int doors) { _doors = doors; };
-
+    
+    void setLockState(bool lock){
+        _isOnLock = lock;
+    }
+ 
     /**
      * Sets the available energy for the spirit
      *

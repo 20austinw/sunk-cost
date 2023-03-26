@@ -26,7 +26,7 @@ class SpiritController {
   private:
     /** The model for Spirit */
     std::unique_ptr<SpiritModel> _model;
-    std::unique_ptr<SpiritView> _view;
+    std::shared_ptr<SpiritView> _view;
 
 #pragma mark External References
   private:
@@ -187,6 +187,16 @@ class SpiritController {
     void alertTreasure(Vec2 pos) {
         _model->alertTreasure(pos);
     }
+    
+    std::shared_ptr<SpiritView> getView() {return _view;}
+    
+    void updateLocks(bool start, bool released, Vec2 touchPos);
+    
+    void updateLocksPos(const std::shared_ptr<cugl::Scene2>& scene);
+    
+    void removeLastLock(const std::shared_ptr<cugl::Scene2>& scene);
+    
+    void addNewLock();
 };
 
 #endif /* _SPIRIT_CONTROLLER_H */

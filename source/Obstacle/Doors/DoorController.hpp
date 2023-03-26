@@ -30,7 +30,7 @@ public:
         _view = std::make_unique<DoorView>(assets, position, type);
     }
     
-    void update(bool started, bool released, Vec2 touchPos);
+    bool update(bool started, bool released, Vec2 touchPos);
     
     /**
      * Adds the view components as children to the given `sceneNode`.

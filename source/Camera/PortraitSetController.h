@@ -268,7 +268,9 @@ class PortraitSetController {
             std::dynamic_pointer_cast<OrthographicCamera>(scene->getCamera())
                 ->getZoom();
         Vec2 pos = scene->getCamera()->screenToWorldCoords(
-            _scene->getSize() - _greenBattery->getSize() / 2 * zoom);
+            _scene->getSize() +Vec2(-_greenBattery->getSize().width / 2 * zoom, _greenBattery->getSize().height / 2 * zoom) - Vec2(0,_scene->getSize().height));
+//        Vec2 pos2 = scene->getCamera()->screenToWorldCoords(
+//            _scene->getSize() - _greenBattery->getSize() / 2 * zoom);
         bool curState = getCurState();
         int frame = getCurFrame();
         _greenBattery->setFrame(frame);

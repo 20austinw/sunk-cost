@@ -22,8 +22,8 @@ SpiritController::SpiritController(
     std::shared_ptr<cugl::Scene2> scene,
     std::shared_ptr<PortraitSetController> portraits, Size screenSize) {
     _scene = scene;
-    _model = std::make_unique<SpiritModel>(assets, scene, 3, 3, 30);
-    _view = std::make_unique<SpiritView>();
+    _model = std::make_unique<SpiritModel>(assets, scene, 3, 2, 30);
+    _view = std::make_shared<SpiritView>(_model->doors, assets->get<Texture>("lock_button"));
     _portraits = portraits;
     _screenSize = screenSize;
     _cameraCool = CAMERA_COOL;
@@ -87,5 +87,24 @@ void SpiritController::update(const std::shared_ptr<TilemapController> _tilemap,
     
     _model->update();
     _portraits->update();
+}
+
+void SpiritController::updateLocksPos(const std::shared_ptr<cugl::Scene2>& scene){
+    float zoom = std::dynamic_pointer_cast<OrthographicCamera>(scene->getCamera()) ->getZoom();
+    Vec2 pos2 = scene->getCamera()->screenToWorldCoords(
+        _scene->getSize() +Vec2(-_view->getLockSize().width / 2 * zoom, _view->getLockSize().height / 2 * zoom) - Vec2(0,_scene->getSize().height));
+    Vec2 pos = scene->getCamera()->screenToWorldCoords(
+            _scene->getSize() - _view->getLockSize() / 2 * zoom);
+    _view->updateUnusedLocksPos(pos);
+    _view->removeLocksFrom(scene);
+    _view->addLocksTo(scene);
+}
+
+void SpiritController::removeLastLock(const std::shared_ptr<cugl::Scene2>& scene){
+    if (_model->doors <= 0){
+        return;
+    }
+    _model->setDoors(_model->doors-1);
+    _view->removeLastLock(scene);
 }
 

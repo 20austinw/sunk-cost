@@ -266,7 +266,11 @@ void SGameController::update(float dt) {
         seconds = seconds.length() <= 1 ? "0"+seconds : seconds;
         _timerLabel->setText( minutes + ":" + seconds);
         _timerLabel->setScale(4);
-        _timerLabel->setPosition(Vec2(_scene->getCamera()->getPosition().x, 0)+Vec2(-_timerLabel->getSize().width/2, _timerLabel->getSize().height/2) + Vec2(0, 20));
+//        CULog("%f, %f", _scene->getCamera()->getPosition().x, _scene->getCamera()->getPosition().y);
+//        _timerLabel->setPosition(Vec2(_scene->getCamera()->getPosition().x, 0)+Vec2(-_timerLabel->getSize().width/2, _timerLabel->getSize().height/2) + Vec2(0, 20));
+        float vPos = _scene->getSize().height-20-_timerLabel->getSize().height/2;
+        float hPos = _scene->getSize().width/2-_timerLabel->getSize().width/2;
+        _timerLabel->setPosition(_scene->getCamera()->screenToWorldCoords(Vec2(hPos, vPos)));
         _timerLabel->setForeground(cugl::Color4::WHITE);
         _scene->removeChild(_timerLabel);
         _scene->addChild(_timerLabel);

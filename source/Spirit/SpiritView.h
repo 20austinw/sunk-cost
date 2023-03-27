@@ -28,6 +28,8 @@ class SpiritView {
     Size _lockSize;
     
     Size _trapSize;
+    
+    std::shared_ptr<cugl::Scene2> _scene;
 
 #pragma mark Main Functions
   public:
@@ -42,17 +44,20 @@ class SpiritView {
      * @param size The width and height of a tile
      * @param color The tile color tint
      */
-    SpiritView(int locks, int traps, std::shared_ptr<cugl::Texture> lock, std::shared_ptr<cugl::Texture> trap){
+    SpiritView(int locks, int traps, std::shared_ptr<cugl::Texture> lock, std::shared_ptr<cugl::Texture> trap, std::shared_ptr<cugl::Scene2> &scene){
+        _scene = scene;
         _lockAsset = lock;
         for (int i=0; i<locks; i++){
             _locks.emplace_back(scene2::SpriteNode::allocWithSheet(_lockAsset, 2, 8, 12));
             _locks.at(i)->setFrame(0);
+            _locks.at(i)->setScale(_lockAsset->getSize().height/_scene->getSize().height);
         }
         _lockSize = _locks.at(0)->getSize();
         
         _trapAsset = trap;
         for (int i=0; i<traps; i++){
             _trapButtons.emplace_back(scene2::PolygonNode::allocWithTexture(_trapAsset));
+            _trapButtons.at(i)->setScale(_lockSize.height/_trapAsset->getSize().height);
         }
         _trapSize = _trapButtons.at(0)->getSize();
     }
@@ -152,6 +157,7 @@ class SpiritView {
     
     void addNewTrap(const std::shared_ptr<Scene2>& scene){
         _trapButtons.emplace_back(scene2::PolygonNode::allocWithTexture(_trapAsset));
+        _trapButtons[_trapButtons.size()-1]->setScale(_lockSize.height/_trapAsset->getSize().height);
         scene->addChild(_trapButtons.at(_trapButtons.size()-1));
     }
 

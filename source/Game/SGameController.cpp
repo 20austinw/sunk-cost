@@ -60,6 +60,9 @@ SGameController::SGameController(
     _serializer = NetcodeSerializer::alloc();
     _deserializer = NetcodeDeserializer::alloc();
     _status = Status::START;
+    _font = assets->get<Font>("pixel32");
+    _timerLabel = cugl::scene2::Label::allocWithText(Vec2(800,800), std::to_string(_timeLeft/60/60) + ":" + std::to_string(_timeLeft/60%60), _assets->get<Font>("pixel32"));
+    _scene->addChild(_timerLabel);
 }
     
 #pragma mark Gameplay Handling
@@ -209,7 +212,6 @@ void SGameController::update(float dt) {
         
         // Black screen
         if (!_portraits->getCurState() && _portraits->getPrevState()) {
-            CULog("Black screen drawn!");
             // Redraw doors
             _portraits->addBlock(_scene);
             _portraits->refreshBatteryNodes(_scene);
@@ -256,6 +258,16 @@ void SGameController::update(float dt) {
                 transmitTrap(pos);
                 _spirit.setTrapAdded(false);
             }
+        }
+        _timerLabel->setText(std::to_string(_timeLeft/60/60) + ":" + std::to_string(_timeLeft/60%60));
+        _timerLabel->setScale(4);
+        _timerLabel->setPosition(Vec2(_scene->getCamera()->getPosition().x, 0)+Vec2(-_timerLabel->getSize().width/2, _timerLabel->getSize().height/2) + Vec2(0, 20));
+        _timerLabel->setForeground(cugl::Color4::WHITE);
+        _scene->removeChild(_timerLabel);
+        _scene->addChild(_timerLabel);
+        _timeLeft--;
+        if(_timeLeft <= 0) {
+            _gameStatus = -1;
         }
     }else if(_gameStatus == 1){
         // Spirit won

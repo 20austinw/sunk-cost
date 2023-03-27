@@ -109,6 +109,13 @@ class CameraController {
     void updateState(bool state) { _model->setState(state); }
 
     int getID() { return _model->id; }
+    
+    /**
+         * Updates camera zoom perspectives.
+         */
+        void setZoom(float value){
+            _camera -> setZoom(value);
+        }
 };
 
 #endif /* __CAMERA_CONTROLLER_H__ */

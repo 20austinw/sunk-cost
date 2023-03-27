@@ -25,9 +25,10 @@ private:
     
 #pragma mark Main Functions
 public:
-    DoorController(const std::shared_ptr<cugl::AssetManager>& assets, Vec2 position, int type){
+    //playerType: 0 for spirit; 1 for hunter
+    DoorController(const std::shared_ptr<cugl::AssetManager>& assets, Vec2 position, int type, int playerType){
         _model = std::make_unique<DoorModel>(position, type);
-        _view = std::make_unique<DoorView>(assets, position, type);
+        _view = std::make_unique<DoorView>(assets, position, type, playerType);
     }
     
     bool update(bool started, bool released, Vec2 touchPos);
@@ -63,6 +64,8 @@ public:
     int getFrame(){
         return _model->getFrame();
     }
+    
+    Vec2 getModelPosition();
 
 #pragma mark Setters
     void setFrame(int frame){

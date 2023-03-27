@@ -60,9 +60,9 @@ class HunterController {
      * TODO: Implement Me
      * The constructor should set up the model, view, and camera controller
      */
-    HunterController(const std::shared_ptr<cugl::AssetManager>& assets,
-                     Size screenSize, const std::shared_ptr<cugl::Scene2> scene);
 
+    HunterController(const std::shared_ptr<cugl::AssetManager>& assets, Size screenSize, const std::shared_ptr<cugl::Scene2> scene, Vec2 playerSize);
+    
     /**
      * Gets the viewpoint for the hunter's camera
      *
@@ -89,6 +89,8 @@ class HunterController {
 
     void update();
 
+    bool detectedDoor(cugl::Vec2 position);
+    
     void collisionWithTrap();
 
 #pragma mark Setters

@@ -27,7 +27,7 @@ private:
 public:
     TreasureController() {};
     
-    TreasureController(const std::shared_ptr<cugl::AssetManager>& assets, Size screenSize);
+    TreasureController(const std::shared_ptr<cugl::AssetManager>& assets, Size screenSize, Vec2 playerSize);
     
     std::shared_ptr<TreasureModel> getModel();
     void setViewFrame();

@@ -26,6 +26,7 @@ using namespace cugl;
 #include "CollisionController.hpp"
 #include "TreasureController.hpp"
 #include "TilemapController.h"
+#include "DoorController.hpp"
 
 /**
  * The primary controller for the game logic.
@@ -70,10 +71,27 @@ private:
     
     std::shared_ptr<PortraitSetController> _portraits;
 
-    
+    bool _inprogress;
     int _count;
+    
+    int _currdoor;
+    
+    bool _doortrigger;
+    int _frameNum;
+    
+    int _frameNumDoor;
+    
+    int _tick;
+    
+    int _lockcount;
+    
+    bool _triggered;
     /** The scale between the physics world and the screen (SCREEN UNITS / BOX2D
      * WORLD UNITS) */
+
+    /** camera need to pan back from exit to hunter */
+    bool _shiftback = false;
+    /** The scale between the physics world and the screen (SCREEN UNITS / BOX2D WORLD UNITS) */
     float _scale;
     
     int _tileWidth;
@@ -96,9 +114,14 @@ private:
     std::shared_ptr<scene2::PolygonNode>_outerJoystick;
     std::shared_ptr<scene2::PolygonNode>_innerJoystick;
     
+    std::shared_ptr<scene2::SpriteNode>_lockhunter;
+    
     std::shared_ptr<scene2::PolygonNode> _filter;
     std::shared_ptr<scene2::PolygonNode> _shadow;
     std::shared_ptr<scene2::PolygonNode> _map;
+    
+    std::shared_ptr<cugl::Texture> _spriteSheet;
+    std::shared_ptr<cugl::scene2::SpriteNode> _spriteNode;
     /** The Box2D world */
     std::shared_ptr<cugl::physics2::ObstacleWorld> _world;
     /** The Collision Controller instance */
@@ -109,10 +132,25 @@ private:
     std::shared_ptr<cugl::scene2::SceneNode> _debugnode;
     float _timer;
     std::shared_ptr<cugl::scene2::Label> _timerLabel;
+    
+    float _timerlock;
+    std::shared_ptr<cugl::scene2::Label> _timerLabellock;
     int _treasureCount;
     std::shared_ptr<cugl::scene2::Label> _treasureLabel;
     std::shared_ptr<cugl::scene2::Label> _loseLabel;
     bool _didLose;
+
+    std::shared_ptr<cugl::scene2::Label> _winLabel;
+    bool _didWin;
+    std::shared_ptr<cugl::scene2::Label> _finalWinLabel;
+    bool _didFinalwin;
+
+    /** The theme sound */
+    std::shared_ptr<cugl::Sound> _theme;
+    /** The sound of tension when time left is less than 1 min */
+    std::shared_ptr<cugl::Sound> _tension;
+    std::shared_ptr<cugl::Sound> _trapSound;
+    std::shared_ptr<cugl::Sound> _treasureSound;
     
     // MODELS should be shared pointers or a data structure of shared pointers
     
@@ -128,10 +166,15 @@ private:
     std::shared_ptr<cugl::Texture> _shadowTexture;
     /** The text with the current health */
     std::shared_ptr<cugl::TextLayout> _text;
+    std::vector<std::shared_ptr<DoorController>> _doors;
+    std::shared_ptr<cugl::scene2::Button> _unlockbutton;
     
     bool _levelLoaded;
     
     bool _ishost;
+    
+    bool _active;
+
     
     bool _quit;
     
@@ -189,6 +232,7 @@ public:
     
     void initCamera();
     void initJoystick();
+    void initLock();
     void updateJoystick(float forward,float rightward);
     void updateCamera(float timestep);
     
@@ -211,6 +255,10 @@ public:
     std::shared_ptr<cugl::net::NetcodeConnection> getConnection() const {
         return _network;
     }
+    
+    void initDoors();
+    
+    void animatelocks();
     
     /**
      * Returns the network connection (as made by this scene)

@@ -73,3 +73,8 @@ void DoorController::resetToUnlock(){
         setFrame(0);
     }
 }
+
+Vec2 DoorController::getModelPosition(){
+    return _model->getPosition();
+    
+}

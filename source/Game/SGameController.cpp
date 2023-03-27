@@ -356,7 +356,7 @@ void SGameController::checkLevelLoaded() {
 void SGameController::initDoors(){
     std::vector<std::pair<Vec2, int>> doors = _level->getDoors();
     for (int i=0; i<doors.size(); i++){
-        _doors.emplace_back(std::make_shared<DoorController>(_assets, doors[i].first, doors[i].second));
+        _doors.emplace_back(std::make_shared<DoorController>(_assets, doors[i].first, doors[i].second, 1));
         _doors.at(i)->addChildTo(_scene);
     }
 }

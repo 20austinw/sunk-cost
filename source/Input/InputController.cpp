@@ -275,14 +275,17 @@ void InputController::touchUpCB(const cugl::TouchEvent& event, bool focus) {
  * @param focus     Whether this device has focus (UNUSED)
  */
 void InputController::touchMotionCB(const cugl::TouchEvent& event, bool focus) {
-    if (_touchDown && event.touch == _touchID) {
-        _touchPos = event.position;
-        
-        Vec2 direction = Vec2(_touchPos - Vec2(590,920));
-                float sum = sqrt(direction.x *direction.x+direction.y*direction.y);
-                Vec2 norm_dir = direction/sum;
+    _touchPos = event.position;
 
-                _rightward = norm_dir.x;
-                _forward = norm_dir.y;
+    //        CULog("display x %f",_touchPos.x);
+    //        CULog("display y %f",_dimen.height);
+    if (_touchPos.x<900){
+        Vec2 direction = Vec2(_touchPos - Vec2(520,920));
+        //590 920
+        float sum = sqrt(direction.x *direction.x+direction.y*direction.y);
+        Vec2 norm_dir = direction/sum;
+
+        _rightward = norm_dir.x;
+        _forward = -norm_dir.y;
     }
 }

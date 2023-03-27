@@ -92,7 +92,19 @@
         },
         "trap_button": {
             "file": "textures/trap_button.png"
-        }
+        },
+        "lock_animation_hunter": {
+                    "file": "textures/lock_no_glass.png"
+        },
+        "door_animation_hunter": {
+                    "file": "textures/door_closing.png"
+        },
+        "joystick_bottom":{
+           "file":  "textures/joystick_bottom.png"
+       },
+       "joystick_top":{
+           "file":  "textures/joystick_top.png"
+       }
     },
     "fonts": {
         "pixel32": {
@@ -105,6 +117,22 @@
         }
     },
     "sounds": {
+        "trapSound": {
+            "type": "sample",
+            "file": "sounds/trap_triggered.wav"
+        },
+        "treasureSound": {
+            "type": "sample",
+            "file": "sounds/collect_treasure.wav"
+        },
+        "theme": {
+            "type": "sample",
+            "file": "sounds/sunk_cost_theme.ogg"
+        },
+        "tension": {
+            "type": "sample",
+            "file": "sounds/sunk_cost_tension.ogg"
+        },
         "fusion": {
             "type": "sample",
             "file": "sounds/fusion.ogg"

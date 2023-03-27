@@ -27,7 +27,6 @@ class TrapController {
 
   public:
     TrapController(){};
-
     TrapController(const std::shared_ptr<cugl::AssetManager>& assets,
                    Size screenSize);
 

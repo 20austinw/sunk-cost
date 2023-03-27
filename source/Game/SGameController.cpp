@@ -63,6 +63,7 @@ SGameController::SGameController(
     _font = assets->get<Font>("pixel32");
     _timerLabel = cugl::scene2::Label::allocWithText(Vec2(800,800), std::to_string(_timeLeft/60/60) + ":" + std::to_string(_timeLeft/60%60), _assets->get<Font>("pixel32"));
     _scene->addChild(_timerLabel);
+        _endScene = std::make_shared<EndScene>(assets, true);
 }
     
 #pragma mark Gameplay Handling
@@ -260,15 +261,23 @@ void SGameController::update(float dt) {
                 _spirit.setTrapAdded(false);
             }
         }
-        _timerLabel->setText(std::to_string(_timeLeft/60/60) + ":" + std::to_string(_timeLeft/60%60));
+        string minutes = std::to_string(_timeLeft/60/60);
+        string seconds =  std::to_string(_timeLeft/60%60);
+        seconds = seconds.length() <= 1 ? "0"+seconds : seconds;
+        _timerLabel->setText( minutes + ":" + seconds);
         _timerLabel->setScale(4);
-        _timerLabel->setPosition(Vec2(_scene->getCamera()->getPosition().x, 0)+Vec2(-_timerLabel->getSize().width/2, _timerLabel->getSize().height/2) + Vec2(0, 20));
+//        CULog("%f, %f", _scene->getCamera()->getPosition().x, _scene->getCamera()->getPosition().y);
+//        _timerLabel->setPosition(Vec2(_scene->getCamera()->getPosition().x, 0)+Vec2(-_timerLabel->getSize().width/2, _timerLabel->getSize().height/2) + Vec2(0, 20));
+        float vPos = _scene->getSize().height-20-_timerLabel->getSize().height/2;
+        float hPos = _scene->getSize().width/2-_timerLabel->getSize().width/2;
+        _timerLabel->setPosition(_scene->getCamera()->screenToWorldCoords(Vec2(hPos, vPos)));
         _timerLabel->setForeground(cugl::Color4::WHITE);
         _scene->removeChild(_timerLabel);
         _scene->addChild(_timerLabel);
         _timeLeft--;
         if(_timeLeft <= 0) {
             _gameStatus = -1;
+            _endScene = std::make_shared<EndScene>(_assets, false);
         }
     }else if(_gameStatus == 1){
         // Spirit won

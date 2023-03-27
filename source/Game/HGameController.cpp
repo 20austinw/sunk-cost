@@ -196,7 +196,7 @@ void HGameController::update(float dt) {
         _didWin = true;
     }
     
-    if(!_didFinalwin && _didWin && !_didLose && _hunter.getPosition().x < 600){
+    if(!_didFinalwin && _didWin && !_didLose && _hunter.getPosition().x < 400){
         _scene->removeChild(_winLabel);
         _scene->addChild(_finalWinLabel);
         _didFinalwin = true;
@@ -209,7 +209,7 @@ void HGameController::update(float dt) {
     
     
     _treasureLabel->setText(std::to_string(int(_treasureCount)) + " Treasure Collected");
-    _treasureLabel->setPosition(_scene->getCamera()->getPosition()+Vec2(120,320));
+    _treasureLabel->setPosition(_scene->getCamera()->getPosition()+Vec2(350,350));
     _treasureLabel->setForeground(cugl::Color4f::YELLOW);
     
 //    _collision.init(_hunter.getHunterBody(), _trap.getTrapBody(), _treasure.getTreasureBody());

@@ -98,6 +98,9 @@ public:
     std::shared_ptr<EndScene> _endScene;
     
     std::vector<std::shared_ptr<DoorController>> _doors;
+    std::shared_ptr<Font> _font;
+    std::shared_ptr<cugl::scene2::Label> _timerLabel;
+    int _timeLeft = 100*60;
 
 #pragma mark External References
   private:

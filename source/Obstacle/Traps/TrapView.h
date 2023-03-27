@@ -91,22 +91,13 @@ class TrapView {
 
 #pragma mark Setters
     void setPosition(Vec2 position) { _spriteNode->setPosition(position); }
-
+    
     void update() {
-        // For hunters: Probably want to have a parameter (i.e.
-        // update(hunter={true, false})) that determines which animation to use
-        //        if(_tick % 5 == 0 && _frameNum < _spriteNode->getSpan()-1) {
-        //            _tick = 0;
-        //            _frameNum++;
-        //            _spriteNode->setFrame(_frameNum);
-        //        }
-        //        _tick++;
-        if (_tick % 6 == 0) {
-            _tick = 0;
+        if (_tick % 4 == 0 && _frameNum < 3) {
             _frameNum = (_frameNum + 1) % _spriteNode->getSpan();
             _spriteNode->setFrame(_frameNum);
         }
-        _tick++;
+        _tick += 1;
     }
 };
 

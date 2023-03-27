@@ -331,6 +331,8 @@ private:
      * @param position The hunter's new position
      */
     void transmitPos(std::vector<float> position);
+    
+    void transmitTreasureStolen();
 };
 
 #endif /* __HGAME_CONTROLLER_H__ */

@@ -30,6 +30,9 @@
         "treasure":{
             "file":  "textures/treasureasset_1024x1024.png"
         },
+        "hunterrunning":{
+            "file":  "textures/diver_walking_animation.png"
+        },
         "filter":{
             "file":  "textures/filter.png"
         },

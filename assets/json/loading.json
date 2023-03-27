@@ -81,12 +81,11 @@
                             0.5,
                             0.5
                         ],
-                        "scale": 0.4
+                        "scale": 0.7
                     },
                     "layout": {
                         "x_anchor": "center",
                         "y_anchor": "middle",
-                        "x_offset": -50,
                         "absolute": true
                     }
                 },

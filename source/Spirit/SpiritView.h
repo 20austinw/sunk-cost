@@ -19,7 +19,7 @@ class SpiritView {
     
     std::vector<std::shared_ptr<scene2::SpriteNode>> _locks;
     
-    std::vector<std::shared_ptr<scene2::SpriteNode>> _trapButtons;
+    std::vector<std::shared_ptr<scene2::PolygonNode>> _trapButtons;
     
     std::shared_ptr<cugl::Texture> _lockAsset;
     
@@ -52,8 +52,7 @@ class SpiritView {
         
         _trapAsset = trap;
         for (int i=0; i<traps; i++){
-            _trapButtons.emplace_back(scene2::SpriteNode::allocWithSheet(_trapAsset, 2, 8, 12));
-            _trapButtons.at(i)->setFrame(0);
+            _trapButtons.emplace_back(scene2::PolygonNode::allocWithTexture(_trapAsset));
         }
         _trapSize = _trapButtons.at(0)->getSize();
     }
@@ -152,8 +151,7 @@ class SpiritView {
     }
     
     void addNewTrap(const std::shared_ptr<Scene2>& scene){
-        _trapButtons.emplace_back((scene2::SpriteNode::allocWithSheet(_trapAsset, 2, 8, 12)));
-        _trapButtons.at(_trapButtons.size()-1)->setFrame(0);
+        _trapButtons.emplace_back(scene2::PolygonNode::allocWithTexture(_trapAsset));
         scene->addChild(_trapButtons.at(_trapButtons.size()-1));
     }
 

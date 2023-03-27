@@ -264,6 +264,7 @@ void HGameController::update(float dt) {
     if(abs(_treasure.getPosition().x-_hunter.getPosition().x)<= 100 && abs(_treasure.getPosition().y-_hunter.getPosition().y)<= 100 && !_collision.didHitTreasure ){
         _collision.didHitTreasure = true;
         _treasure.getNode() ->setVisible(false);
+        transmitTreasureStolen();
         _treasureCount++;
     }
 
@@ -474,7 +475,13 @@ void HGameController::processData(const std::string source, const std::vector<st
     if (source == _network->getHost()) {
         _deserializer->receive(data);
         std::vector<float> mes = std::get<std::vector<float>>(_deserializer->read());
-        _hunter.addTrap(Vec2(mes[1], mes[2]));
+        if (mes[0] == 1) {
+            _hunter.addTrap(Vec2(mes[1], mes[2]));
+        } else if (mes[0] == 3) {
+            float idx = mes[1];
+            // TODO: handle active portrait
+        }
+        
         _deserializer->reset();
     }
 }
@@ -509,6 +516,15 @@ bool HGameController::checkConnection() {
 void HGameController::transmitPos(std::vector<float> position) {
     _serializer->writeFloatVector(position);
     _network->broadcast(_serializer->serialize());
+    _serializer->reset();
+}
+
+void HGameController::transmitTreasureStolen() {
+    std::vector<float> message = std::vector<float>();
+    message.push_back(4);
+    message.push_back(1);
+    _serializer->writeFloatVector(message);
+    _network->sendToHost(_serializer->serialize());
     _serializer->reset();
 }
 

@@ -238,6 +238,8 @@ public:
 
     void transmitTrap(std::vector<float> pos);
     
+    void transmitActiveCamIndex(int i);
+    
     void initDoors();
     
     void updateDoors();

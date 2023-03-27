@@ -190,6 +190,7 @@ void SGameController::update(float dt) {
                                                                   _scene->getCamera())
                     ->setZoom(1);
                     _spirit.resetCameraCool();
+                    transmitActiveCamIndex(idx);
                     didSwitch = true;
                 } else if (!_spirit.isSwitchable() &&
                            _portraits->getIndex() != idx) {
@@ -395,7 +396,7 @@ void SGameController::processData(const std::string source, const std::vector<st
     if (source != _network->getHost()) {
         _deserializer->receive(data);
         std::vector<float> mes = std::get<std::vector<float>>(_deserializer->read());
-        if (!_hunterAdded) {
+        if (mes[0] == 0 && !_hunterAdded) {
             _spirit.addHunter(Vec2(mes[1], mes[2]));
             _spirit.moveHunter(Vec2(400, 400));
             _hunterAdded = true;
@@ -403,8 +404,12 @@ void SGameController::processData(const std::string source, const std::vector<st
             _spirit.moveHunter(Vec2(mes[1], mes[2]));
         }
         
-        // Treasure picked up alert (not sure if position will be used)
-        //_spirit.treasureAlert(pos);
+        // lol i'll work out more coherent codes for each message later oops
+        if (mes[0] == 4) {
+            // Treasure picked up alert (not sure if position will be used)
+            // idt position will be used ?
+            //_spirit.treasureAlert(pos);
+        }
         
         // Win alert for spirit
         // _gameStatus = 1;
@@ -419,6 +424,15 @@ void SGameController::processData(const std::string source, const std::vector<st
 
 void SGameController::transmitTrap(std::vector<float> pos) {
     _serializer->writeFloatVector(pos);
+    _network->broadcast(_serializer->serialize());
+    _serializer->reset();
+}
+
+void SGameController::transmitActiveCamIndex(int i) {
+    std::vector<float> idx = std::vector<float>();
+    idx.push_back(3);
+    idx.push_back(i);
+    _serializer->writeFloatVector(idx);
     _network->broadcast(_serializer->serialize());
     _serializer->reset();
 }

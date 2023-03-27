@@ -87,7 +87,6 @@ bool blocked = false;
 
 void SGameController::update(float dt) {
     if(_gameStatus == 0){
-        bool canPlaceTrap = true;
         bool canSwitch = true;
         bool didSwitch = false;
         
@@ -107,15 +106,14 @@ void SGameController::update(float dt) {
             CULog("Reset!");
         }
         
+        bool start = inputController->didPress();
+        bool release = inputController->didRelease();
+        Vec2 cameraPos = _scene->getCamera()->screenToWorldCoords(inputController->getTouchPos());
+        
         //logic for door lock
         if ((inputController->isTouchDown() || _spirit.getModel()->isOnLock) && _spirit.getModel()->doors >= 0 && !blocked){
-            Vec2 touchPos = inputController->getTouchPos();
-            bool start = inputController->didPress();
-            bool release = inputController->didRelease();
-            Vec2 cameraPos = _scene->getCamera()->screenToWorldCoords(touchPos);
             if(_spirit.getModel()->isOnLock || _spirit.touchInLockBound(cameraPos)){
                 canSwitch = false;
-                canPlaceTrap = false;
                 _spirit.getModel()->setLockState(true);
                 bool isLocked = false;
                 _spirit.updateMovingLock(cameraPos);
@@ -137,6 +135,29 @@ void SGameController::update(float dt) {
                 _doors.at(i)->resetToUnlock();
             }
         }
+        
+        //logic for trap placement
+        if ((inputController->isTouchDown() || _spirit.getModel()->isOnTrap) && _spirit.getModel()->traps >= 0 && !_spirit.getModel()->isOnLock && !blocked){
+            if(_spirit.getModel()->isOnTrap || _spirit.touchInTrapBound(cameraPos)){
+                canSwitch = false;
+                _spirit.getModel()->setTrapState(true);
+                _spirit.getModel()->setLastTrapPos(cameraPos);
+                _spirit.updateMovingTrap(cameraPos);
+
+            }
+            if ( _spirit.getModel()->isOnTrap && release){
+                _spirit.getModel()->setTrapState(false);
+                
+                // A trap has been placed
+                if (_spirit.placeTrap(_tilemap, _spirit.getModel()->lastTrapPos)){
+                    _spirit.removeLastTrapBtn(_scene);
+                }
+            }
+        } else if (blocked&&_spirit.getModel()->isOnTrap){
+            _spirit.getModel()->setTrapState(false);
+        }
+        
+        //logic for camera switching & battery
         if (inputController->isTouchDown()) {
             auto screenPos = inputController->getTouchPos();
             
@@ -153,7 +174,6 @@ void SGameController::update(float dt) {
             };
             // Logic for switching cameras
             if (inBound(screenPos) && canSwitch) {
-                canPlaceTrap = false;
                 auto miniMapPos =
                 Vec2(screenPos.x - _miniMap->getSize().width / 2 * getZoom() -
                      minimapOffset.x,
@@ -201,7 +221,11 @@ void SGameController::update(float dt) {
         }
         
         _portraits->setPrevState(_portraits->getCurState());
-        _spirit.update(_tilemap, canPlaceTrap);
+        // detect if a trap on the map has been removed, add a new trap button to the scene
+        if(_spirit.update()){
+            _spirit.addNewTrapBtn(_scene);
+            
+        }
         
         // Draw minimap
         _miniMap->setPosition(_scene->getCamera()->screenToWorldCoords(
@@ -211,6 +235,7 @@ void SGameController::update(float dt) {
         
         // Draw locks
         _spirit.updateLocksPos(_scene);
+        _spirit.updateTrapBtnsPos(_scene);
         
         if(!blocked){
             _scene->getCamera()->update();
@@ -318,6 +343,7 @@ void SGameController::checkLevelLoaded() {
                                      _assets->get<Texture>("noBattery"));
         _portraits->initializeBatteryNodes(_scene);
         _spirit.getView()->addLocksTo(_scene);
+        _spirit.getView()->addTrapButtonsTo(_scene);
         
         initDoors();
     }

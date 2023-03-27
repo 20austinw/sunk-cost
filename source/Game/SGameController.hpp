@@ -15,6 +15,7 @@ using namespace cugl;
 #include "TilemapController.h"
 #include "EndScene.h"
 #include "DoorController.hpp"
+#include "TrapController.hpp"
 
 /**
  * The primary controller for the game logic.

@@ -23,7 +23,7 @@ SpiritController::SpiritController(
     std::shared_ptr<PortraitSetController> portraits, Size screenSize) {
     _scene = scene;
     _model = std::make_shared<SpiritModel>(assets, scene, 3, 2, 30);
-    _view = std::make_shared<SpiritView>(_model->doors, _model->clams, assets->get<Texture>("lock_button"), assets->get<Texture>("trap_button"));
+    _view = std::make_shared<SpiritView>(_model->doors, _model->traps, assets->get<Texture>("lock_button"), assets->get<Texture>("trap_button"));
     _portraits = portraits;
     _screenSize = screenSize;
     _cameraCool = CAMERA_COOL;
@@ -58,32 +58,33 @@ void SpiritController::render(std::shared_ptr<cugl::SpriteBatch>& batch,
                               Size size) {
 }
 
+
+bool SpiritController::placeTrap(const std::shared_ptr<TilemapController> _tilemap,
+                              Vec2 pos) {
+    if (_portraits->getCurState()) {
+        if (!_tilemap->isTileTraversable(pos) ||
+            _tilemap->mapPosToGridPos(pos).x < 0 ||
+            _tilemap->mapPosToGridPos(pos).y < 0)
+            return false;
+        _model->addTrap(pos);
+        _trapAdded = true;
+        setLastTrapPos(pos);
+    }
+    return true;
+}
+
 /**
  * TODO: Implement Me
  * This function should (for gameplay prototype)
  * (1) detect camera change
  * (2) modify portraitsetcontroller to reflect the change
  */
-void SpiritController::update(const std::shared_ptr<TilemapController> _tilemap,
-                              bool canPlaceTrap) {
-    auto inputController = InputController::getInstance();
-    auto pos = _scene->getCamera()->screenToWorldCoords(
-        inputController->getTouchPos());
-    if (inputController->isTouchDown() && _portraits->getCurState()) {
-        if (!_tilemap->isTileTraversable(pos) ||
-            _tilemap->mapPosToGridPos(pos).x < 0 ||
-            _tilemap->mapPosToGridPos(pos).y < 0)
-            return;
-        if (!canPlaceTrap)
-            return;
-        _model->addTrap(pos);
-        _trapAdded = true;
-        setLastTrapPos(pos);
-    }
-    
-    _model->update();
+bool SpiritController::update(){
+    bool result = _model->update();
     _portraits->update();
+    return result;
 }
+
 
 void SpiritController::updateLocksPos(const std::shared_ptr<cugl::Scene2>& scene){
     if (!_model->isOnLock){
@@ -96,12 +97,31 @@ void SpiritController::updateLocksPos(const std::shared_ptr<cugl::Scene2>& scene
     }
 }
 
+void SpiritController::updateTrapBtnsPos(const std::shared_ptr<cugl::Scene2>& scene){
+    if (!_model->isOnTrap){
+        float zoom = std::dynamic_pointer_cast<OrthographicCamera>(scene->getCamera()) ->getZoom();
+        Vec2 pos = scene->getCamera()->screenToWorldCoords(
+                _scene->getSize() - _view->getTrapSize() / 2 * zoom) + Vec2(0, +_view->getLockSize().height);
+        _view->updateUnusedTrapsPos(pos);
+        _view->removeTrapsFrom(scene);
+        _view->addTrapButtonsTo(scene);
+    }
+}
+
 void SpiritController::removeLastLock(const std::shared_ptr<cugl::Scene2>& scene){
     if (_model->doors <= 0){
         return;
     }
     _model->setDoors(_model->doors-1);
     _view->removeLastLock(scene);
+}
+
+void SpiritController::removeLastTrapBtn(const std::shared_ptr<cugl::Scene2> &scene){
+    if (_model->traps <= 0){
+        return;
+    }
+    _model->setTraps(_model->traps-1);
+    _view->removeLastTrapButton(scene);
 }
 
 bool SpiritController::touchInLockBound(Vec2 touchPos){
@@ -112,7 +132,25 @@ bool SpiritController::touchInLockBound(Vec2 touchPos){
     return abs(dist) <= _view->getLockSize().width/2 && abs(dist) <= _view->getLockSize().height/2;
 }
 
+bool SpiritController::touchInTrapBound(Vec2 touchPos){
+    if (_model->traps <= 0){
+        return false;
+    }
+    float dist = _view->getLastTrapBtnPos().distance(touchPos);
+    return abs(dist) <= _view->getTrapSize().width/2 && abs(dist) <= _view->getTrapSize().height/2;
+}
+
 void SpiritController::updateMovingLock(Vec2 pos){
     _view->updateLockInProgress(pos);
+}
+
+void SpiritController::updateMovingTrap(Vec2 pos){
+    _view->updateTrapInProgress(pos);
+}
+
+void SpiritController::addNewTrapBtn(const std::shared_ptr<Scene2>& scene){
+    _model->setTraps(_model->traps+1);
+    _view->addNewTrap(scene);
+    updateTrapBtnsPos(scene);
 }
 

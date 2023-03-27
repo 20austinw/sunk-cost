@@ -96,8 +96,10 @@ class SpiritController {
      * (1) detect camera change
      * (2) modify portraitsetcontroller to reflect the change
      */
-    void update(const std::shared_ptr<TilemapController> _tilemap,
-                bool canPlaceTrap);
+    bool placeTrap(const std::shared_ptr<TilemapController> _tilemap,
+                Vec2 trapPos);
+    
+    bool update();
 
 #pragma mark Setters
   public:
@@ -106,7 +108,7 @@ class SpiritController {
      *
      * @param clams the number of clams
      */
-    void updateClams(float clams) { _model->setClams(clams); }
+    void updateClams(float clams) { _model->setTraps(clams); }
 
     /**
      * Updates the number of close doors available.
@@ -207,7 +209,7 @@ class SpiritController {
     
     void removeLastLock(const std::shared_ptr<cugl::Scene2>& scene);
     
-    void addNewLock();
+    void addNewLock(const std::shared_ptr<Scene2>& scene);
     
     bool touchInLockBound(Vec2 touchPos);
     
@@ -221,7 +223,7 @@ class SpiritController {
     
     void removeLastTrapBtn(const std::shared_ptr<cugl::Scene2>& scene);
     
-    void addNewTrapBtn();
+    void addNewTrapBtn(const std::shared_ptr<Scene2>& scene);
     
     bool touchInTrapBound(Vec2 touchPos);
     

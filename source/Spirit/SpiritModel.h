@@ -47,6 +47,8 @@ class SpiritModel {
     bool _isOnLock;
     
     bool _isOnTrap;
+    
+    Vec2 _lastTrapPos;
 
   public:
     /** A public accessible, read-only version of the energy level */
@@ -65,6 +67,8 @@ class SpiritModel {
     bool& isOnLock;
     /** A public accessible, read-only version of the isOnTrap */
     bool& isOnTrap;
+    /** A public accessible, read-only version of the lastTrapPos */
+    Vec2& lastTrapPos;
 
 #pragma mark Main Functions
   public:
@@ -79,7 +83,7 @@ class SpiritModel {
                 std::shared_ptr<cugl::Scene2> scene, int clams, int doors,
                 float energy)
         : traps(_traps), doors(_doors), energy(_energy),
-          cameraCool(_cameraCool), clamCool(_clamCool), doorCool(_doorCool), isOnLock(_isOnLock), isOnTrap(_isOnTrap) {
+          cameraCool(_cameraCool), clamCool(_clamCool), doorCool(_doorCool), isOnLock(_isOnLock), isOnTrap(_isOnTrap), lastTrapPos(_lastTrapPos) {
         setTraps(clams);
         setDoors(doors);
         setEnergy(energy);
@@ -90,6 +94,7 @@ class SpiritModel {
         _assets = assets;
               setLockState(false);
               setTrapState(false);
+              setLastTrapPos(Vec2::ZERO);
     }
 
 #pragma mark Setters
@@ -136,6 +141,10 @@ class SpiritModel {
     void setTrapState(bool trap){
         _isOnTrap = trap;
     }
+    
+    void setLastTrapPos(Vec2 pos){
+        _lastTrapPos = pos;
+    }
  
     /**
      * Sets the available energy for the spirit
@@ -153,7 +162,8 @@ class SpiritModel {
         trap->addChildTo(_scene);
     }
 
-    void update() {
+    bool update() {
+        bool result = false;
         std::vector<std::shared_ptr<TrapModel>> pendingTrapModels;
         std::vector<std::shared_ptr<TrapView>> pendingTrapViews;
         for (int i = 0; i < _trapModels.size(); i++) {
@@ -163,6 +173,7 @@ class SpiritModel {
                 _trapViews[i]->update();
             } else {
                 _trapViews[i]->removeChildFrom(_scene);
+                result = true;
             }
         }
         _trapModels = pendingTrapModels;
@@ -174,6 +185,7 @@ class SpiritModel {
             right = 0;
         }
         _ticks = (_ticks+1)%6;
+        return result;
     }
     
     void addHunter(Vec2 position) {

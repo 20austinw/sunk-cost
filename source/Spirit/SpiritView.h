@@ -150,6 +150,12 @@ class SpiritView {
     Vec2 getLastTrapBtnPos() {
         return _trapButtons.at(_trapButtons.size()-1)->getPosition();
     }
+    
+    void addNewTrap(const std::shared_ptr<Scene2>& scene){
+        _trapButtons.emplace_back((scene2::SpriteNode::allocWithSheet(_trapAsset, 2, 8, 12)));
+        _trapButtons.at(_trapButtons.size()-1)->setFrame(0);
+        scene->addChild(_trapButtons.at(_trapButtons.size()-1));
+    }
 
 #pragma mark Setters
 };

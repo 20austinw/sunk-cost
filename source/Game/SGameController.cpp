@@ -273,7 +273,7 @@ void SGameController::update(float dt) {
         _timeLeft--;
         if(_timeLeft <= 0) {
             _gameStatus = -1;
-            _endScene = std::make_shared<EndScene>(assets, false);
+            _endScene = std::make_shared<EndScene>(_assets, false);
         }
     }else if(_gameStatus == 1){
         // Spirit won

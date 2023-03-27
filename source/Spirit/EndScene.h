@@ -37,7 +37,7 @@ class EndScene {
     EndScene(const std::shared_ptr<cugl::AssetManager>& assets, bool win) {
         _win = win;
         _frameNum = 0;
-        _spriteSheet = win ? assets->get<Texture>("spirit_win_animation") : assets->get<Texture>("diver_win_animation");
+        _spriteSheet = win ? assets->get<Texture>("spirit_win_animation") : assets->get<Texture>("spirit_win_animation");
         _spriteNode = scene2::SpriteNode::allocWithSheet(_spriteSheet, 7, 5, 32);
         _spriteNode->setScale(1);
         _spriteNode->setFrame(_frameNum);

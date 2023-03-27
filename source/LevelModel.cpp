@@ -63,7 +63,12 @@ bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json) {
     // type the object is.
     auto objects = json->get("layers")->get(0);
     loadObject(objects);
-    for (int i = 1; i < json->get("layers")->size(); i++) {
+    
+    //load the doors
+    objects = json->get("layers")->get(1);
+    loadObject(objects);
+    
+    for (int i = 2; i < json->get("layers")->size(); i++) {
         // Get the objects per layer
         objects = json->get("layers")->get(i)->get("objects");
         for (int j = 0; j < objects->size(); j++) {
@@ -104,6 +109,8 @@ bool LevelModel::loadObject(const std::shared_ptr<JsonValue>& json) {
         return loadPortraitSetAndDefault(json);
     } else if (type == PLAYER_FIELD) {
         return loadPlayer(json);
+    } else if (type == DOOR_FIELD) {
+        return loadDoors(json);
     }
     return false;
 }
@@ -169,6 +176,21 @@ bool LevelModel::loadPlayer(const std::shared_ptr<JsonValue>& json) {
         float x = json->getFloat("x");
         float y = json->getFloat("y");
         _player = Vec2(x, y);
+    }
+    return success;
+}
+
+bool LevelModel::loadDoors(const std::shared_ptr<JsonValue> &json) {
+    //TODO
+    auto doors = json->get("objects");
+    bool success = doors->get(0) != nullptr;
+    if (success) {
+        for (int i = 0; i < doors->size(); i++) {
+            auto door = doors->get(i);
+            _doors.push_back(
+                std::make_pair(Vec2(door->getFloat("x"), door->getFloat("y")),
+                               door->getInt("type")));
+        }
     }
     return success;
 }

@@ -19,16 +19,17 @@
 #include <cugl/cugl.h>
 using namespace std;
 using namespace cugl;
+using namespace cugl::net;
 
 #pragma mark Main Methods
-HGameController::HGameController(){
+HGameController::HGameController() {
     _hunter = HunterController();
     // Initialize SpiritController
 //    _spirit = SpiritController();
 //    _trap = TrapController();
     _treasure = TreasureController();
-    auto inputController = InputController::getInstance();
-    inputController->initListeners();
+//    auto inputController = InputController::getInstance();
+//    inputController->initListeners();
 }
 
 /**
@@ -40,9 +41,9 @@ HGameController::HGameController(){
  * @param displaySize   The display size of the game window
  * @param randoms        Reference to the random number generator
  */
-HGameController::HGameController(const Size displaySize, const std::shared_ptr<cugl::AssetManager>& assets):
-_scene(cugl::Scene2::alloc(displaySize)),
-_assets(assets){
+HGameController::HGameController(
+    const Size displaySize, const std::shared_ptr<cugl::AssetManager>& assets)
+    : _scene(cugl::Scene2::alloc(displaySize)), _assets(assets) {
     /// Initialize the tilemap and add it to the scene
     /// //    SCENE_WIDTH = 1024;
     //    SCENE_HEIGHT = 576;
@@ -53,23 +54,47 @@ _assets(assets){
     /** The default value of gravity (going down) */
     #define DEFAULT_GRAVITY 0.0f
     #define DEBUG_ON        0
+    #define PLAYER_SIZE     Vec2(40,40)
 
     Rect rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT);
     Vec2 gravity(0,DEFAULT_GRAVITY);
 
     _count = 0;
+    _triggered = false;
+    _inprogress=false;
+        
+    _frameNumDoor=12;
+        
+
+    _doortrigger=false;
+    _currdoor=0;
+    _tick = 0;
     _didLose = false;
     _dimen = Application::get()->getDisplaySize();
-//    _offset = Vec3((_dimen.width)/2.0f,(_dimen.height)/2.0f,50);
-    _offset = Vec3(0,0,50);
+    //    _offset = Vec3((_dimen.width)/2.0f,(_dimen.height)/2.0f,50);
+    _offset = Vec3(0, 0, 50);
     _tilemap = std::make_unique<TilemapController>();
     _tilemap->addChildTo(_scene);
+    _unlockbutton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_host"));
+    
+    _unlockbutton->addListener(
+        [=](const std::string& name, bool down) { this->_active = down; });
+    _unlockbutton->setVisible(true);
+    _unlockbutton->activate();
+
+
+        
+    auto inputController = InputController::getInstance();
+    inputController->initListeners();
+
 
     CULog("%f, %f", displaySize.width, displaySize.height);
-    _hunter = HunterController(assets, displaySize);
-//    _trap = TrapController(assets, displaySize);
-    _treasure = TreasureController(assets, displaySize);
+    _hunter = HunterController(assets, displaySize, _scene, PLAYER_SIZE);
+//    _trap = TrapController(assets, displaySize, PLAYER_SIZE);
+    _treasure = TreasureController(assets, displaySize, PLAYER_SIZE);
+
     
+        
     // Initialize SpiritController
     _spirit = SpiritController();
     
@@ -107,8 +132,11 @@ _assets(assets){
         _levelLoaded = false;
         CULog("Fail!");
     }
-    
+
     initCamera();
+        
+    _serializer = NetcodeSerializer::alloc();
+    _deserializer = NetcodeDeserializer::alloc();
     
 //    initJoystick();
 }
@@ -118,9 +146,7 @@ _assets(assets){
 /**
  * Resets the status of the game so that we can play again.
  */
-void HGameController::reset() {
-    CULog("reset");
-}
+void HGameController::reset() { CULog("reset"); }
 
 /**
  * Responds to the keyboard commands.
@@ -135,22 +161,55 @@ void HGameController::update(float dt) {
         checkLevelLoaded();
     }
      
+    AudioEngine::get()->play("theme", _theme, true, _theme->getVolume(), false);
     
     _loseLabel->setText("You Lose!");
-    _loseLabel->setPosition(_scene->getCamera()->getPosition()-Vec2(100,0));
+    _loseLabel->setPosition(_scene->getCamera()->getPosition()-Vec2(200,0));
     _loseLabel->setForeground(cugl::Color4f::RED);
     
-    _timer=_timer-1;
-    if(int(_timer/6000)==0 && int(_timer/100) % 60 ==0 && !_didLose){
+    if(_timer!=0){
+        _timer=_timer-1;
+    }
+    
+    _winLabel->setText("RUN to EXIT!");
+    _winLabel->setPosition(_scene->getCamera()->getPosition()-Vec2(200,0));
+    _winLabel->setForeground(cugl::Color4f::GREEN);
+    
+    _finalWinLabel->setText("You win!");
+    _finalWinLabel->setPosition(_scene->getCamera()->getPosition()-Vec2(200,0));
+    _finalWinLabel->setForeground(cugl::Color4f::YELLOW);
+    
+
+   
+    if(int(_timer/6000)==0){
+        AudioEngine::get()->play("tension", _tension, true, _theme->getVolume(), true);
+    }
+
+    if(int(_timer/6000)==0 && int(_timer/100) % 60 ==0 && !_didLose && !_didFinalwin){
         _scene->addChild(_loseLabel);
         _didLose = true;
     }
+    
+
+    if(_treasureCount>=1 && !_didWin && !_didLose){
+        _scene->addChild(_winLabel);
+        _didWin = true;
+    }
+    
+    if(!_didFinalwin && _didWin && !_didLose && _hunter.getPosition().x < 400){
+        _scene->removeChild(_winLabel);
+        _scene->addChild(_finalWinLabel);
+        _didFinalwin = true;
+    }
+    
     _timerLabel->setText(std::to_string(int(_timer/6000))+":"+std::to_string(int(_timer/100) % 60 ));
     _timerLabel->setPosition(_scene->getCamera()->getPosition()-Vec2(0,300));
     _timerLabel->setForeground(cugl::Color4f::WHITE);
     
+    
+    
     _treasureLabel->setText(std::to_string(int(_treasureCount)) + " Treasure Collected");
-    _treasureLabel->setPosition(_scene->getCamera()->getPosition()+Vec2(100,290));
+    _treasureLabel->setPosition(_scene->getCamera()->getPosition()+Vec2(350,350));
     _treasureLabel->setForeground(cugl::Color4f::YELLOW);
     
 //    _collision.init(_hunter.getHunterBody(), _trap.getTrapBody(), _treasure.getTreasureBody());
@@ -158,84 +217,135 @@ void HGameController::update(float dt) {
     _world->activateCollisionCallbacks(true);
     _world->onBeginContact = [this](b2Contact* contact) { _collision.beginContact(contact); };
     
+    
+    
+        
+
     auto inputController = InputController::getInstance();
-    inputController->readInput();
+//    inputController->readInput();
     inputController->update(dt);
     if (inputController->didPressReset()) {
         reset();
     }
-//    if(inputController->isKeyPressed(KeyCode::NUM_1)) {
-//        CULog("NUM_1");
-//    }
-//    if(inputController->isKeyPressed(KeyCode::NUM_2)) {
-//        CULog("NUM_2");
-//    }
-//    if(inputController->isKeyPressed(KeyCode::NUM_3)) {
-//        CULog("NUM_3");
-//    }
-//    if(inputController->isKeyPressed(KeyCode::NUM_4)) {
-//        CULog("NUM_4");
-//    }
     
-    // Will crash the program because the constructor doesn't set up the model/view yet (delete this comment later)
+    for (int i=0; i<_doors.size(); i++){
+        if(_hunter.detectedDoor(_doors.at(i)->getModelPosition())){
+            //            _unlockbutton->setVisible(true);
+            //            _unlockbutton->activate();
+            _lockhunter->setVisible(true);
+            _currdoor=i;
+            
+            
+           
+            if(abs(inputController->getPosition().x-_scene->worldToScreenCoords(_hunter.getPosition()).x)<100&&abs(inputController->getPosition().y-_scene->worldToScreenCoords(_hunter.getPosition()).y)<100){
+                
+                _triggered=true;
+                
+            }
+            _lockhunter->setPosition(_hunter.getPosition());
+        }
+        
+        else{
+            _lockhunter->setVisible(false);
+            // _triggered=false;
+        }
+    }
+        
+    if(_triggered or _inprogress){
+        if (_timerlock!=0) {
+            _inprogress=true;
+            _timerlock=_timerlock-1;
+            _timerLabellock->setVisible(true);
+            _timerLabellock->setPosition(_scene->getCamera()->getPosition()-Vec2(100,0));
+            _timerLabellock->setScale(8);
+        
+            _timerLabellock->setText(std::to_string(int(_timerlock/100) % 60 +1));
+           
+            _timerLabellock->setForeground(cugl::Color4f::RED);
+            
+        }
+        else {
+            _inprogress=true;
+            _timerLabellock->setVisible(false);
+            _tick = 0;
+            _frameNum = (_frameNum + 1) % _lockhunter->getSpan();
+            _lockhunter->setFrame(_frameNum);
+//            CULog("%d", _frameNum);
+//            CULog("%d", _lockhunter->getSpan());
+            if(_lockhunter->getSpan()-1==_frameNum){
+                _inprogress=false;
+                _doortrigger=true;
+                _frameNum=0;
+                _triggered=false;
+                _lockhunter->setFrame(6);
+            }
+        }
+        _tick++;
+    }
+    
+    if(_doortrigger){
+        _doors.at(0)->setFrame(_frameNumDoor%12);
+        _frameNumDoor=_frameNumDoor-1;
+        if(_frameNumDoor==0){
+            _frameNumDoor=12;
+            _doortrigger=false;
+        }
+    }
 
-//    _hunter.update();
-//    _spirit.update();
-    
     std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
     int posx;
     int posxup;
     int posyup;
     int posy;
-    
+
     int midx;
     int midy;
-    
+
     Vec3 currPos = (_hunter.getPosition());
-    posx =(int) (currPos.x)/_tileWidth;
-    posy=(int)((currPos.y))/_tileHeight;
-    
-    posxup =(int) (currPos.x+40)/_tileWidth;
-    posyup=(int)((currPos.y+40))/_tileHeight;
-    
-    midx =(int) (currPos.x+20)/_tileWidth;
-    midy=(int)((currPos.y+20))/_tileHeight;
-    
-    int forward = inputController->getForward();
-    int rightward = inputController->getRight();
-    
+    posx = (int)(currPos.x) / _tileWidth;
+    posy = (int)((currPos.y)) / _tileHeight;
+
+    posxup = (int)(currPos.x + 40) / _tileWidth;
+    posyup = (int)((currPos.y + 40)) / _tileHeight;
+
+    midx = (int)(currPos.x + 20) / _tileWidth;
+    midy = (int)((currPos.y + 20)) / _tileHeight;
+
+    float forward = inputController->getForward();
+    float rightward = inputController->getRight();
+
     _count++;
-    if(_count==6){
-        _hunter.setViewFrame((int)forward, (int)rightward);
-        _count=0;
+    if (_count == 6) {
+        _hunter.setViewFrame(forward, rightward);
+        _count = 0;
     }
-    
-    
+
     std::string left = tiles[midy][posx];
     std::string up = tiles[posyup][midx];
-    std::string bottom =tiles[posy][midx];
-    std::string right =tiles[midy][posxup];
-    
-    if (left == "black"){
-        if (rightward==-1 ){
+    std::string bottom = tiles[posy][midx];
+    std::string right = tiles[midy][posxup];
+
+    if (left == "black") {
+        if (rightward < 0) {
             rightward = 0;
         }
     }
-    if (right == "black"){
-        if (rightward==1 ){
+    if (right == "black") {
+        if (rightward > 0) {
             rightward = 0;
         }
     }
-    if (up == "black"){
-        if (forward==1 ){
+    if (up == "black") {
+        if (forward > 0) {
             forward = 0;
         }
     }
-    if (bottom == "black"){
-        if (forward==-1 ){
+    if (bottom == "black") {
+        if (forward < 0) {
             forward = 0;
         }
     }
+
 //    bool age = _trap.update(); //false means trap active
 //    if (!_trap.getTrigger()){
         _hunter.move(forward,rightward);
@@ -246,27 +356,47 @@ void HGameController::update(float dt) {
 //        _trap.setTrigger(true);
 //    }
     
-//    if(abs(_trap.getPosition().x-_hunter.getPosition().x)<= 80 && abs(_trap.getPosition().y-_hunter.getPosition().y)<= 80 && !age){
-//        _trap.setTrigger(true);
-//    }
-//    if (_trap.getTrigger()&& _count == 5){
-//        _trap.setViewFrame();
-//    }
+
+    // if(abs(_trap.getPosition().x-_hunter.getPosition().x)<= 80 && abs(_trap.getPosition().y-_hunter.getPosition().y)<= 80 && !age){
+    //     AudioEngine::get()->play("trapSound", _treasureSound, false, _theme->getVolume(), true);
+    //     _trap.setTrigger(true);
+    // }
+    // if (_trap.getTrigger()&& _count == 5){
+    //     _trap.setViewFrame();
+    // }
+
     
-    if(abs(_treasure.getPosition().x-_hunter.getPosition().x)<= 30 && abs(_treasure.getPosition().y-_hunter.getPosition().y)<= 30 && !_collision.didHitTreasure ){
+    if(abs(_treasure.getPosition().x-_hunter.getPosition().x)<= 100 && abs(_treasure.getPosition().y-_hunter.getPosition().y)<= 100 && !_collision.didHitTreasure ){
         _collision.didHitTreasure = true;
         _treasure.getNode() ->setVisible(false);
+        AudioEngine::get()->play("treasureSound", _treasureSound, false, _theme->getVolume(), true);
         _treasureCount++;
     }
-    
-    
 
-    _shadow->setPosition(_hunter.getPosition()-Vec2(300,370));
+    _shadow->setPosition(_hunter.getPosition()-Vec2(130,270));
+
     updateCamera(dt);
-    updateJoystick();
-
+    updateJoystick(forward,rightward);
+    
     // TODO: update direction index for portraits on spirit control
-//    _portraits->updateDirectionIndex(<#Vec3 direction#>, <#int index#>)
+    //    _portraits->updateDirectionIndex(<#Vec3 direction#>, <#int index#>)
+    
+    if (_network) {
+        _network->receive([this](const std::string source,
+                                 const std::vector<std::byte>& data) {
+            processData(source,data);
+        });
+        checkConnection();
+        
+        if (Vec2(currPos) != _lastpos) {
+            std::vector<float> pos = std::vector<float>();
+            pos.push_back(0);
+            pos.push_back(currPos.x);
+            pos.push_back(currPos.y);
+            transmitPos(pos);
+            _lastpos = Vec2(currPos);
+        }
+    }
 }
 
 /**
@@ -282,41 +412,55 @@ void HGameController::render(std::shared_ptr<cugl::SpriteBatch>& batch) {
     _scene->render(batch);
 }
 
+void HGameController::initDoors(){
+    std::vector<std::pair<Vec2, int>> doors = _level->getDoors();
+    
+    for (int i=0; i<doors.size(); i++){
+        _doors.emplace_back(std::make_shared<DoorController>(_assets, doors[i].first, doors[i].second, 0));
+        _doors.at(i)->addChildTo(_scene);
+        _doors.at(i)->setFrame(0);
+        
+    }
+    
+    _doors.at(0)->setFrame(11);
+}
+
+void HGameController::animatelocks(){
+    
+}
 
 void HGameController::checkLevelLoaded() {
-    _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
-    if (_level == nullptr) {
-        _levelLoaded = false;
-    }
-
+  _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
+  if (_level == nullptr) {
+    _levelLoaded = false;
+  }
 
     // Check to see if new level loaded yet
     if (!_levelLoaded && _assets->complete()) {
         _level = nullptr;
-        
+
         // Access and initialize level
         _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
         _level->setAssets(_assets);
         
-
         // Initialize SpiritController
         _spirit = SpiritController();
-        
-        
-        _tileHeight=256;
-        _tileWidth=256;
-        
+
+        _tileHeight = 128;
+        _tileWidth = 128;
+
         // TODO: implement direction and direction limits
         _tilemap->updatePosition(_scene->getSize() / 2);
         std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
         _tilemap->updateDimensions(Vec2(tiles[0].size(), tiles.size()));
         _tilemap->updateColor(Color4::WHITE);
         _tilemap->updateTileSize(Size(_tileWidth, _tileHeight));
-        
-        _map = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
-        _map->setPolygon(Rect(0, 0, 4608, 4608));
-                    //    _map = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 9216, 9216));
-                    //    _map ->setTexture(_assets->get<Texture>("map"));
+
+        _map =
+            scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
+        _map->setPolygon(Rect(0, 0, 2304, 2304));
+        //    _map = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 9216, 9216));
+        //    _map ->setTexture(_assets->get<Texture>("map"));
         _scene->addChild(_map);
         _scene->addChild(_worldnode);
         _scene->addChild(_debugnode);
@@ -328,63 +472,87 @@ void HGameController::checkLevelLoaded() {
                                     _level->getBattery());
         }
         
-        
-        for (int i = 0; i < tiles.size() * tiles[0].size(); ++i){
-            int c = i%tiles[0].size();
-            int r = i/tiles[0].size();
+        for (int i = 0; i < tiles.size() * tiles[0].size(); ++i) {
+            int c = i % tiles[0].size();
+            int r = i / tiles[0].size();
             
             if (tiles[r][c] == "black") {
-                _tilemap->addTile(c, r, Color4::BLACK, false, _assets->get<Texture>("black"));
+                _tilemap->addTile(c, r, Color4::BLACK, false,
+                                  _assets->get<Texture>("black"));
             } else if (tiles[r][c] == "green") {
-                _tilemap->addTile(c, r, Color4::GREEN, true, _assets->get<Texture>("green"));
+                _tilemap->addTile(c, r, Color4::GREEN, true,
+                                  _assets->get<Texture>("green"));
             } else if (tiles[r][c] == "door") {
                 _tilemap->addDoor(c, r, _assets->get<Texture>("fulldoor"));
             }
-            
         }
-        
+
         // Initialize HunterController
-        _hunter = HunterController(_assets, _scene->getSize());
+
+        _hunter = HunterController(_assets, _scene->getSize(),_scene, PLAYER_SIZE);
         
         // Draw hunter shadow
         _shadowTexture = _assets->get<Texture>("shadow");
         _shadow = scene2::PolygonNode::allocWithTexture(_shadowTexture);
-        _shadow->setPosition(_hunter.getPosition()-Vec2(300,370));
+
+        _shadow->setPosition(_hunter.getPosition()-Vec2(130,270));
+
         _shadow->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-//        _shadow->setScale(Vec2(_dimen.width/1280,_dimen.height/720));
+        //        _shadow->setScale(Vec2(_dimen.width/1280,_dimen.height/720));
         _scene->addChild(_shadow);
         
         //Draw hunter after shadow
         _hunter.addChildTo(_scene);
         
-//        _trap = TrapController(_assets, _scene->getSize());
-//        _trap.addChildTo(_scene);
-        _treasure = TreasureController(_assets, _scene->getSize());
+
+        // _trap = TrapController(_assets, _scene->getSize(), PLAYER_SIZE);
+        // _trap.addChildTo(_scene);
+        _treasure = TreasureController(_assets, _scene->getSize(), PLAYER_SIZE);
+
         _treasure.addChildTo(_scene);
         
         _tilemap->addDoorTo(_scene);
-        
+
         _filterTexture = _assets->get<Texture>("filter");
         _filter = scene2::PolygonNode::allocWithTexture(_filterTexture);
         _filter->setPosition(_scene->getCamera()->getPosition());
-      
+        
         _filter->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
         _filter->setScale(Vec2(_dimen.width/1280,_dimen.height/720));
         _scene->addChild(_filter);
         
-        _timer=12000;
-        _timerLabel= cugl::scene2::Label::allocWithText(Vec2(200,200), "2:00", _assets->get<Font>("pixel32"));
+        _timerlock = 500;
+        _timerLabellock = cugl::scene2::Label::allocWithText(
+            Vec2(200, 200), "5", _assets->get<Font>("pixel32"));
+        _scene->addChild(_timerLabellock);
+        _timerLabellock->setVisible(false);
+
+        _timer = 12000;
+        _timerLabel = cugl::scene2::Label::allocWithText(
+            Vec2(200, 200), "2:00", _assets->get<Font>("pixel32"));
         _scene->addChild(_timerLabel);
-        
+
         _treasureCount = 0;
         _treasureLabel= cugl::scene2::Label::allocWithText(Vec2(200,200), "0 Treasure Collected", _assets->get<Font>("pixel32"));
         _treasureLabel->setColor(cugl::Color4f::YELLOW);
         _scene->addChild(_treasureLabel);
         
+        //win-lose labels
         _loseLabel = cugl::scene2::Label::allocWithText(Vec2(800,800), "You Lose!", _assets->get<Font>("pixel32"));
+        _winLabel = cugl::scene2::Label::allocWithText(Vec2(800,800), "RUN to EXIT!", _assets->get<Font>("pixel32"));
+        _finalWinLabel = cugl::scene2::Label::allocWithText(Vec2(800,800), "You Win!", _assets->get<Font>("pixel32"));
 
-        initJoystick();
+
+        initLock();
+        initDoors();
+
+        //sounds
+        _theme = _assets->get<Sound>("theme");
+        _tension = _assets->get<Sound>("tension");
+        _trapSound = _assets->get<Sound>("trapSound");
+        _treasureSound = _assets->get<Sound>("treasureSound");
         
+        initJoystick();
         
         _levelLoaded = true;
     }
@@ -394,12 +562,14 @@ void HGameController::checkLevelLoaded() {
  *
  */
 void HGameController::initCamera() {
+
     
     Vec3 curr = _scene->getCamera()->getPosition();
     Vec3 next = _offset
     + (Vec3(_hunter.getPosition().x, _hunter.getPosition().y, 1));
     _scene->getCamera()->translate(next - curr);
-
+    _scene->getCamera()->setFar(100000);
+    _scene->getCamera()->setNear(0);
     _scene->getCamera()->update();
     
 }
@@ -408,52 +578,129 @@ void HGameController::initCamera() {
  * Updates camera based on the position of the controlled player
  */
 void HGameController::updateCamera(float timestep) {
+
+    if(!_didWin || _shiftback){
+        Vec2 curr = _scene->getCamera()->getPosition();
+        _filter->setPosition(_scene->getCamera()->getPosition());
+        _filter->setAnchor(Vec2::ANCHOR_CENTER);
+        Vec2 next = _offset
+            + ((Vec3(_hunter.getPosition().x, _hunter.getPosition().y, 1)));
+        int timeFactor = (_shiftback)? 5 : 2;
+        _scene->getCamera()->translate((next - curr) * timeFactor *timestep);
+        
+        _timerLabel->setPosition(_scene->getCamera()->getPosition()-Vec2(0,300));
+        
+    }
     
-    Vec2 curr = _scene->getCamera()->getPosition();
-    _filter->setPosition(_scene->getCamera()->getPosition());
-    _filter->setAnchor(Vec2::ANCHOR_CENTER);
-    Vec2 next = _offset
-        + ((Vec3(_hunter.getPosition().x, _hunter.getPosition().y, 1)));
-//    _scene->getCamera()->translate((next - curr) * timestep);
-    _scene->getCamera()->translate((next - curr) * 5*timestep);
-    
-    _timerLabel->setPosition(_scene->getCamera()->getPosition()-Vec2(0,300));
+    if(_didWin){
+        
+        Vec3 curr = _scene->getCamera()->getPosition();
+        Vec3 exit = Vec3(350,350,0);
+        // camera pans back to entry
+        // camera pans back to hunter
+        if(!_shiftback){
+            _scene->getCamera()->translate((exit - curr) * timestep);
+        }
+        if(_scene->getCamera()->getPosition().x < 400){
+            _shiftback = true;
+        }
+  
+    }
     
     _filter->setPosition(_scene->getCamera()->getPosition());
     _scene->getCamera()->update();
-   
 }
+
 
 void HGameController::generateLevel() {
     _tilemap->updateDimensions(_level->getDimensions());
+}
+
+void HGameController::initLock(){
+    CULog("lock initialized");
+    
+    _frameNum = 0;
+    _spriteSheet = _assets->get<Texture>("lock_animation_hunter");
+    _lockhunter =
+        scene2::SpriteNode::allocWithSheet(_spriteSheet, 2, 8, 16);
+    _lockhunter->setScale(0.5);
+    _lockhunter->setFrame(_frameNum);
+    _lockhunter->setAnchor(Vec2::ANCHOR_CENTER);
+    _lockhunter->setPosition(_hunter.getPosition());
+    _lockhunter->setVisible(false);
+    
+    
+    _scene->addChild(_lockhunter);
+    
+    // Reposition the joystick components
+    
     
 }
+
 
 void HGameController::initJoystick(){
     CULog("joystick initialized");
     // Create outer part of joystick
-    PolyFactory _pf = PolyFactory();
-    _outerJoystick = scene2::PolygonNode::allocWithPoly(_pf.makeCircle(Vec2(0,0), 60));
+    _outerJoystick = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("joystick_bottom"));
     _outerJoystick->setAnchor(cugl::Vec2::ANCHOR_CENTER);
-    _outerJoystick->setScale(1.0f);
-    _outerJoystick->setColor(Color4(Vec4(1, 1, 1, 0.25)));
+    _outerJoystick->setScale(0.7f);
+    //_outerJoystick->setPolygon(Rect(Vec2(0,0),Vec2(20,150)));
     _scene->addChild(_outerJoystick);
-    
-    // Create inner part of joystick view
-    _innerJoystick = scene2::PolygonNode::allocWithPoly(_pf.makeCircle(Vec2(0,0), 30));
-    _innerJoystick->setAnchor(cugl::Vec2::ANCHOR_CENTER);
-    _innerJoystick->setScale(1.0f);
-    _innerJoystick->setColor(Color4(Vec4(1, 1, 1,0.25)));
-    _scene->addChild(_innerJoystick);
-    
-    // Reposition the joystick components
     _outerJoystick->setPosition(Vec2(20,150));
+
+    // Create inner part of joystick view
+    _innerJoystick = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("joystick_top"));
+    _innerJoystick->setAnchor(cugl::Vec2::ANCHOR_CENTER);
+    _innerJoystick->setScale(0.7f);
+   // _innerJoystick->setPolygon(Rect(Vec2::ZERO,Vec2(20,150)));
     _innerJoystick->setPosition(Vec2(20,150));
+    _scene->addChild(_innerJoystick);
 }
 
-void HGameController::updateJoystick(){
-    
-    _outerJoystick->setPosition(_scene->getCamera()->getPosition()-Vec2(380,250));
-    _innerJoystick->setPosition(_scene->getCamera()->getPosition()-Vec2(380,250));
-    
+void HGameController::processData(const std::string source, const std::vector<std::byte> &data) {
+    if (source == _network->getHost()) {
+        _deserializer->receive(data);
+        std::vector<float> mes = std::get<std::vector<float>>(_deserializer->read());
+        _hunter.addTrap(Vec2(mes[1], mes[2]));
+        _deserializer->reset();
+    }
+}
+
+/**
+ * Checks that the network connection is still active.
+ *
+ * Even if you are not sending messages all that often, you need to be calling
+ * this method regularly. This method is used to determine the current state
+ * of the scene.
+ *
+ * @return true if the network connection is still active.
+ */
+bool HGameController::checkConnection() {
+    // IMPLEMENT ME
+    NetcodeConnection::State network_state = _network->getState();
+    switch (network_state) {
+        case NetcodeConnection::State::FAILED:
+        case NetcodeConnection::State::DISCONNECTED:
+            disconnect();
+            _quit = true;
+            return false;
+            break;
+        case NetcodeConnection::State::CONNECTED:
+            break;
+        default:
+            break;
+    }
+    return true;
+}
+
+void HGameController::transmitPos(std::vector<float> position) {
+    _serializer->writeFloatVector(position);
+    _network->broadcast(_serializer->serialize());
+    _serializer->reset();
+}
+
+void HGameController::updateJoystick(float forward,float rightward){
+
+    _outerJoystick->setPosition(_scene->getCamera()->getPosition()-Vec2(680,350));
+    _innerJoystick->setPosition(_scene->getCamera()->getPosition()-Vec2(680,350)+Vec2(rightward,forward)*100);
 }

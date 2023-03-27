@@ -13,6 +13,8 @@
 
 #include "TrapModel.hpp"
 #include "TrapView.h"
+#include "HunterModel.h"
+#include "HunterView.h"
 #include <cugl/cugl.h>
 
 class SpiritModel {
@@ -21,7 +23,7 @@ class SpiritModel {
     /** Energy that the spirit has left over */
     float _energy;
     /** Number of traps that the spirit has left */
-    int _clams;
+    int _traps;
     /** Number of doors that the spirit has left */
     int _doors;
     /** Cooldown time for close door */
@@ -36,12 +38,23 @@ class SpiritModel {
 
     std::shared_ptr<cugl::Scene2> _scene;
     std::shared_ptr<cugl::AssetManager> _assets;
+    
+    std::shared_ptr<HunterModel> _hunterModel;
+    std::shared_ptr<HunterView> _hunterView;
+    int forward = 0, right = 0;
+    int _ticks = 0;
+    
+    bool _isOnLock;
+    
+    bool _isOnTrap;
+    
+    Vec2 _lastTrapPos;
 
   public:
     /** A public accessible, read-only version of the energy level */
     float& energy;
     /** A public accessible, read-only version of the energy level */
-    int& clams;
+    int& traps;
     /** A public accessible, read-only version of the energy level */
     int& doors;
     /** A public accessible, read-only version of the door cool down */
@@ -50,6 +63,12 @@ class SpiritModel {
     float& clamCool;
     /** A public accessible, read-only version of the camera cool down */
     float& cameraCool;
+    /** A public accessible, read-only version of the isOnLock */
+    bool& isOnLock;
+    /** A public accessible, read-only version of the isOnTrap */
+    bool& isOnTrap;
+    /** A public accessible, read-only version of the lastTrapPos */
+    Vec2& lastTrapPos;
 
 #pragma mark Main Functions
   public:
@@ -63,9 +82,9 @@ class SpiritModel {
     SpiritModel(const std::shared_ptr<cugl::AssetManager>& assets,
                 std::shared_ptr<cugl::Scene2> scene, int clams, int doors,
                 float energy)
-        : clams(_clams), doors(_doors), energy(_energy),
-          cameraCool(_cameraCool), clamCool(_clamCool), doorCool(_doorCool) {
-        setClams(clams);
+        : traps(_traps), doors(_doors), energy(_energy),
+          cameraCool(_cameraCool), clamCool(_clamCool), doorCool(_doorCool), isOnLock(_isOnLock), isOnTrap(_isOnTrap), lastTrapPos(_lastTrapPos) {
+        setTraps(clams);
         setDoors(doors);
         setEnergy(energy);
         setCameraCooldown(0);
@@ -73,6 +92,9 @@ class SpiritModel {
         setDoorCooldown(0);
         _scene = scene;
         _assets = assets;
+              setLockState(false);
+              setTrapState(false);
+              setLastTrapPos(Vec2::ZERO);
     }
 
 #pragma mark Setters
@@ -103,7 +125,7 @@ class SpiritModel {
      *
      * @param clams the number of clams
      */
-    void setClams(int clams) { _clams = clams; };
+    void setTraps(int traps) { _traps = traps; };
 
     /**
      * Sets the number of available doors for the spirit
@@ -111,7 +133,19 @@ class SpiritModel {
      * @param doors the number of doors
      */
     void setDoors(int doors) { _doors = doors; };
-
+    
+    void setLockState(bool lock){
+        _isOnLock = lock;
+    }
+    
+    void setTrapState(bool trap){
+        _isOnTrap = trap;
+    }
+    
+    void setLastTrapPos(Vec2 pos){
+        _lastTrapPos = pos;
+    }
+ 
     /**
      * Sets the available energy for the spirit
      *
@@ -128,7 +162,8 @@ class SpiritModel {
         trap->addChildTo(_scene);
     }
 
-    void update() {
+    bool update() {
+        bool result = false;
         std::vector<std::shared_ptr<TrapModel>> pendingTrapModels;
         std::vector<std::shared_ptr<TrapView>> pendingTrapViews;
         for (int i = 0; i < _trapModels.size(); i++) {
@@ -138,10 +173,37 @@ class SpiritModel {
                 _trapViews[i]->update();
             } else {
                 _trapViews[i]->removeChildFrom(_scene);
+                result = true;
             }
         }
         _trapModels = pendingTrapModels;
         _trapViews = pendingTrapViews;
+        if(_hunterView && _ticks == 0) {
+//            CULog("%d, %d", right, forward);
+            _hunterView->advanceFrame(forward, right);
+            forward = 0;
+            right = 0;
+        }
+        _ticks = (_ticks+1)%6;
+        return result;
+    }
+    
+    void addHunter(Vec2 position) {
+        _hunterModel = std::make_shared<HunterModel>(_assets, _scene);
+        _hunterView = std::make_shared<HunterView>(_assets, position, Vec2(40, 40));
+        _hunterView->addChildTo(_scene);
+    }
+    
+    void moveHunter(Vec2 position) {
+        Vec2 diff = position-_hunterModel->position;
+        forward = diff.y;
+        right = diff.x;
+        _hunterModel->setPosition(position);
+        _hunterView->setPosition(position);
+    }
+    
+    void alertTreasure(Vec2 position) {
+        
     }
 };
 

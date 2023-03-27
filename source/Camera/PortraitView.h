@@ -38,8 +38,8 @@ class PortraitView {
         _frameNum = 0;
         _spriteSheet = assets->get<Texture>("painting_animation");
         _spriteNode =
-            scene2::SpriteNode::allocWithSheet(_spriteSheet, 2, 8, 16);
-        _spriteNode->setScale(1);
+            scene2::SpriteNode::allocWithSheet(_spriteSheet, 5, 5, 23);
+        _spriteNode->setScale(0.5);
         _spriteNode->setFrame(_frameNum);
         _spriteNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
         _spriteNode->setPosition(position - _spriteNode->getSize() / 2);
@@ -81,25 +81,12 @@ class PortraitView {
     }
     int v = 1;
     void update() {
-        // For hunters: Probably want to have a parameter (i.e.
-        // update(hunter={true, false})) that determines which animation to use
-        //        if(_tick % 5 == 0 && _frameNum < _spriteNode->getSpan()-1) {
-        //            _tick = 0;
-        //            _frameNum++;
-        //            _spriteNode->setFrame(_frameNum);
-        //        }
-        //        _tick++;
-        int threshold = 10;
-        if (_tick % threshold == 0) {
+        if(_tick % 15 == 0) {
             _tick = 0;
-            if (_frameNum == _spriteNode->getSpan() / 2 - 1)
-                v = -1;
-            if (_frameNum == 0)
-                v = 1;
-            _frameNum = _frameNum + v;
+            _frameNum = (_frameNum+1)%_spriteNode->getSpan();
             _spriteNode->setFrame(_frameNum);
         }
-        _tick += 1;
+        _tick++;
     }
 };
 

@@ -47,6 +47,10 @@ class LevelModel : public Asset {
 
     /** The battery limit for the protraits */
     float _battery;
+    
+    /** Position and type of the doors */
+    std::vector<std::pair<Vec2, int>> _doors;
+    
 
   public:
 #pragma mark Static Constructors
@@ -94,6 +98,8 @@ class LevelModel : public Asset {
     Size getMapSize() { return _mapSize; }
 
     float getBattery() { return _battery; }
+    
+    std::vector<std::pair<Vec2, int>> getDoors() {return _doors; }
 
 #pragma mark Physics Attributes
     /**
@@ -205,6 +211,15 @@ class LevelModel : public Asset {
      * @return true if the object was successfully loaded
      */
     bool loadTiles(const std::shared_ptr<JsonValue>& json);
+    
+    /**
+     * Parses JSON and extracts tile positions and textures from it
+     *
+     * @param reader a JSON reader with cursor ready to read the tiles
+     *
+     * @return true if the object was successfully loaded
+     */
+    bool loadDoors(const std::shared_ptr<JsonValue>& json);
 };
 
 #endif //_LEVEL_MODEL_H

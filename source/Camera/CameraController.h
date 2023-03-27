@@ -109,6 +109,7 @@ class CameraController {
     void updateState(bool state) { _model->setState(state); }
 
     int getID() { return _model->id; }
+    
 };
 
 #endif /* __CAMERA_CONTROLLER_H__ */

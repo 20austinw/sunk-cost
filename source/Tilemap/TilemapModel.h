@@ -99,6 +99,10 @@ class TilemapModel {
      *  @param tileSize  The width and height of a tile
      */
     void setTileSize(Size tileSize) { _tileSize = tileSize; }
+    
+    Vec2 getDimensions(){
+        return _dimensions;
+    }
 };
 
 #endif /* _TILEMAP_MODEL_H__ */

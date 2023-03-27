@@ -15,13 +15,12 @@
  * The constructor should set up the model, view, and camera controller
  */
 
-TreasureController::TreasureController(const std::shared_ptr<cugl::AssetManager>& assets, Size screenSize) {
-    _model = std::make_shared<TreasureModel>(Vec2(800,500),1000);
-    _model->setPosition(Vec2(800,500));
-    _view = std::make_unique<TreasureView>(assets, Vec2(800,500), Vec2(1000,1000));
+TreasureController::TreasureController(const std::shared_ptr<cugl::AssetManager>& assets, Size screenSize,Vec2 playerSize) {
+    #define TREASURE_SIZERATIO 25
+    _model = std::make_shared<TreasureModel>(Vec2(1800,500),1000);
+    _model->setPosition(Vec2(1800,500));
+    _view = std::make_unique<TreasureView>(assets, Vec2(1800,500), playerSize * TREASURE_SIZERATIO);
     _screenSize = screenSize;
-
-   
 }
 
 

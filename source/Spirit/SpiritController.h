@@ -25,8 +25,8 @@ class SpiritController {
 #pragma mark Internal References
   private:
     /** The model for Spirit */
-    std::unique_ptr<SpiritModel> _model;
-    std::unique_ptr<SpiritView> _view;
+    std::shared_ptr<SpiritModel> _model;
+    std::shared_ptr<SpiritView> _view;
 
 #pragma mark External References
   private:
@@ -34,6 +34,8 @@ class SpiritController {
     std::shared_ptr<PortraitSetController> _portraits;
     Size _screenSize;
     std::shared_ptr<cugl::Scene2> _scene;
+    bool _trapAdded;
+    Vec2 _lastTrapPos;
 
 #pragma mark Constants
   private:
@@ -94,8 +96,10 @@ class SpiritController {
      * (1) detect camera change
      * (2) modify portraitsetcontroller to reflect the change
      */
-    void update(const std::shared_ptr<TilemapController> _tilemap,
-                bool canPlaceTrap);
+    bool placeTrap(const std::shared_ptr<TilemapController> _tilemap,
+                Vec2 trapPos);
+    
+    bool update();
 
 #pragma mark Setters
   public:
@@ -104,7 +108,7 @@ class SpiritController {
      *
      * @param clams the number of clams
      */
-    void updateClams(float clams) { _model->setClams(clams); }
+    void updateClams(float clams) { _model->setTraps(clams); }
 
     /**
      * Updates the number of close doors available.
@@ -157,11 +161,76 @@ class SpiritController {
         _model->setCameraCooldown(_cameraCool);
     }
 
-    bool isSwitchable() { return _cameraCool <= 0; }
+    bool isSwitchable() {
+        return _cameraCool <= 0;
+        
+    }
+    
+    bool getTrapAdded() { return _trapAdded; }
+    
+    void setTrapAdded(bool trapAdded) { _trapAdded = trapAdded; }
+    
+    Vec2 getLastTrapPos() { return _lastTrapPos; }
+    
+    void setLastTrapPos(Vec2 pos) { _lastTrapPos = pos; }
+    
+    Vec2 getLastLockPos() {
+        return _view->getLastLockPos();
+    }
+    
+    Vec2 getLastTrapBtnPos() {
+        return _view->getLastTrapBtnPos();
+    }
 
 #pragma mark Helpers
   public:
     Rect screenToWorld(Rect rect);
+    
+    void addHunter(Vec2 pos) {
+        _model->addHunter(pos);
+    }
+    
+    void moveHunter(Vec2 pos) {
+        _model->moveHunter(pos);
+    }
+    
+    void alertTreasure(Vec2 pos) {
+        _model->alertTreasure(pos);
+    }
+    
+    std::shared_ptr<SpiritView> getView() {return _view;}
+    std::shared_ptr<SpiritModel> getModel() {return _model;}
+    
+    //Lock button functions
+    
+    void updateLocks(bool start, bool released, Vec2 touchPos);
+    
+    void updateLocksPos(const std::shared_ptr<cugl::Scene2>& scene);
+    
+    void removeLastLock(const std::shared_ptr<cugl::Scene2>& scene);
+    
+    void addNewLock(const std::shared_ptr<Scene2>& scene);
+    
+    bool touchInLockBound(Vec2 touchPos);
+    
+    void updateMovingLock(Vec2 pos);
+    
+    void updateTrapBtns(bool start, bool released, Vec2 touchPos);
+    
+    //Trap button functions
+    
+    void updateTrapBtnsPos(const std::shared_ptr<cugl::Scene2>& scene);
+    
+    void removeLastTrapBtn(const std::shared_ptr<cugl::Scene2>& scene);
+    
+    void addNewTrapBtn(const std::shared_ptr<Scene2>& scene);
+    
+    bool touchInTrapBound(Vec2 touchPos);
+    
+    void updateMovingTrap(Vec2 pos);
+    
+    
+    
 };
 
 #endif /* _SPIRIT_CONTROLLER_H */

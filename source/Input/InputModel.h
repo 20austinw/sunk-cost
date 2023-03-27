@@ -32,6 +32,7 @@ class InputModel {
     bool isMouseHeld;
     /** The last position that the mouse was recorded in any mouse callback */
     Vec2 lastMousePos;
+    
 
 #pragma mark Main Functions
   public:

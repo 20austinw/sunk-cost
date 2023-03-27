@@ -41,6 +41,7 @@ class InputController {
     Uint32 _kkey;
     /** The unique key for the mouse listeners */
     Uint32 _mkey;
+    bool _joyStickPressed;
 
 #pragma mark External References
   private:
@@ -48,10 +49,11 @@ class InputController {
     Keyboard* _keyboard;
     /** Mouse reference */
     Mouse* _mouse;
+    
+    /** Touchscreen reference */
+    Touchscreen* _ts;
 
     /** Touch screen **/
-    /** Whether it is in mobile mode with touch screen */
-    bool _ts;
     /** The ID for the touch */
     cugl::TouchID _touchID;
     /** The key for the touch */
@@ -60,6 +62,7 @@ class InputController {
     cugl::Vec2 _touchPos;
     /** Whether the finger touch is down */
     bool _touchDown;
+    bool _touchUp;
 
     /** The current touch/mouse position */
     cugl::Vec2 _currPos;
@@ -300,6 +303,11 @@ class InputController {
 
     /** Returns the mouse's last recorded position. */
     Vec2 getLastMousePos() { return _model->lastMousePos; }
+    
+    /** Returns the touchscreen's last recorded position. */
+    Vec2 getTouchPos() {return _touchPos; }
+    
+    bool isTouchDown() {return _touchDown;}
 };
 
 #endif /* __INPUT_CONTROLLER_H__ */

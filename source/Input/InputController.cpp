@@ -22,24 +22,29 @@
  */
 InputController::InputController()
     : _model(std::make_unique<InputModel>()), _forward(0), _rightward(0),
-      _active(false), _ts(false) {}
+      _active(false),
+        _currDown(false),
+        _prevDown(false),
+        _touchDown(false),
+        _touchID(0),
+        _touchKey(0),
+        _joyStickPressed(false) {}
 
 bool InputController::initListeners() {
-    Touchscreen* ts = Input::get<Touchscreen>();
+    _ts = Input::get<Touchscreen>();
     _keyboard = Input::get<Keyboard>();
     _mouse = Input::get<Mouse>();
-    if (ts) {
-        _ts = true;
-        _touchKey = ts->acquireKey();
-        ts->addBeginListener(
+    if (_ts) {
+        _touchKey = _ts->acquireKey();
+        _ts->addBeginListener(
             _touchKey, [=](const cugl::TouchEvent& event, bool focus) {
-                this->touchDownCB(event, ts->touchPressed(event.touch));
+                this->touchDownCB(event, _ts->touchPressed(event.touch));
             });
-        ts->addEndListener(
+        _ts->addEndListener(
             _touchKey, [=](const cugl::TouchEvent& event, bool focus) {
-                this->touchUpCB(event, ts->touchReleased(event.touch));
+                this->touchUpCB(event, _ts->touchReleased(event.touch));
             });
-        ts->addMotionListener(
+        _ts->addMotionListener(
             _touchKey, [=](const cugl::TouchEvent& event, Vec2 previous,
                            bool focus) { this->touchMotionCB(event, focus); });
         _active = true;
@@ -130,6 +135,10 @@ void InputController::readInput() {
         if (keys->keyDown(reset)) {
             _didReset = true;
         }
+    }
+    
+    if(_ts){
+        
     }
 }
 
@@ -256,6 +265,7 @@ void InputController::touchUpCB(const cugl::TouchEvent& event, bool focus) {
     if (_touchDown && event.touch == _touchID && focus) {
         _touchDown = false;
     }
+    _rightward = _forward = 0;
 }
 
 /**
@@ -265,7 +275,17 @@ void InputController::touchUpCB(const cugl::TouchEvent& event, bool focus) {
  * @param focus     Whether this device has focus (UNUSED)
  */
 void InputController::touchMotionCB(const cugl::TouchEvent& event, bool focus) {
-    if (_touchDown && event.touch == _touchID) {
-        _touchPos = event.position;
+    _touchPos = event.position;
+
+    //        CULog("display x %f",_touchPos.x);
+    //        CULog("display y %f",_dimen.height);
+    if (_touchPos.x<900){
+        Vec2 direction = Vec2(_touchPos - Vec2(520,920));
+        //590 920
+        float sum = sqrt(direction.x *direction.x+direction.y*direction.y);
+        Vec2 norm_dir = direction/sum;
+
+        _rightward = norm_dir.x;
+        _forward = -norm_dir.y;
     }
 }

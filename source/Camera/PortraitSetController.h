@@ -26,6 +26,7 @@ class PortraitSetController {
     std::shared_ptr<cugl::AssetManager> _assets;
     std::shared_ptr<cugl::Scene2> _scene;
     Size _screenSize;
+
     /** The max battery */
     float _maxBattery;
 
@@ -78,8 +79,7 @@ class PortraitSetController {
      * default camera is camera that is viewing a black screen
      */
     void addPortrait(int id, Vec3 cameraPosition, Vec3 portraitPosition,
-                     Vec3 direction, Vec2 directionLimits, float battery = 600,
-                     int type = 2) {
+                     Vec3 direction, Vec2 directionLimits, float battery = 600,                     int type = 2) {
         _portraits.push_back(makePortrait(id, cameraPosition, portraitPosition,
                                           direction, directionLimits, battery,
                                           type));
@@ -262,13 +262,14 @@ class PortraitSetController {
         }
     }
 
-    void updateBatteryNode(Vec2 offset,
-                           const std::shared_ptr<cugl::Scene2>& scene) {
+    void updateBatteryNode(const std::shared_ptr<cugl::Scene2>& scene, float offset) {
         float zoom =
             std::dynamic_pointer_cast<OrthographicCamera>(scene->getCamera())
                 ->getZoom();
         Vec2 pos = scene->getCamera()->screenToWorldCoords(
-            _scene->getSize() - _greenBattery->getSize() / 2 * zoom);
+            _scene->getSize() +Vec2(-_greenBattery->getSize().width / 2 * zoom, _greenBattery->getSize().height / 2 * zoom) - Vec2(offset,_scene->getSize().height)) ;
+//        Vec2 pos2 = scene->getCamera()->screenToWorldCoords(
+//            _scene->getSize() - _greenBattery->getSize() / 2 * zoom);
         bool curState = getCurState();
         int frame = getCurFrame();
         _greenBattery->setFrame(frame);
@@ -322,7 +323,7 @@ class PortraitSetController {
     }
 
     void initializeBatteryNodes(const std::shared_ptr<cugl::Scene2>& scene) {
-        _block = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 4608, 4608));
+        _block = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 2304, 2304));
         _block->setColor(Color4::BLACK);
         _greenBattery->setFrame(0);
         scene->addChild(_greenBattery);
@@ -347,6 +348,8 @@ class PortraitSetController {
         camera->updateBattery(battery);
         _portraitModels.push_back(
             std::make_unique<PortraitModel>(cameraPosition));
+        
+        
         _portraitViews.push_back(std::make_unique<PortraitView>(
             _assets, portraitPosition +
                          Vec2(_assets->get<Texture>("map")->getSize() / 2)));

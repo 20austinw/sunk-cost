@@ -115,7 +115,7 @@ void SGameController::update(float dt) {
         Vec2 cameraPos = _scene->getCamera()->screenToWorldCoords(inputController->getTouchPos());
         
         //logic for door lock
-        if ((inputController->isTouchDown() || _spirit.getModel()->isOnLock) && _spirit.getModel()->doors >= 0 && !blocked){
+        if ((inputController->isTouchDown() || _spirit.getModel()->isOnLock) && _spirit.getModel()->doors >= 0 && !blocked && !_spirit.getModel()->isOnTrap){
             if(_spirit.getModel()->isOnLock || _spirit.touchInLockBound(cameraPos)){
                 canSwitch = false;
                 _spirit.getModel()->setLockState(true);

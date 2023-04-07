@@ -40,7 +40,8 @@ public:
         /** Time to start the game */
         START,
         /** Game was aborted; back to main menu */
-        ABORT
+        ABORT,
+        JOIN
     };
 
 #pragma mark Internal References

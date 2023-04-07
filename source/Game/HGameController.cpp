@@ -73,6 +73,14 @@ HGameController::HGameController(
     _dimen = Application::get()->getDisplaySize();
     //    _offset = Vec3((_dimen.width)/2.0f,(_dimen.height)/2.0f,50);
     _offset = Vec3(0, 0, 50);
+        
+    std::shared_ptr<scene2::PolygonNode> background =
+        scene2::PolygonNode::allocWithPoly(cugl::Rect(0, 0, 20000, 20000));
+    background->setColor(Color4::BLACK);
+    background->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    background->setPosition(-1 * Size(9000, 9000) / 2);
+    _scene->addChild(background);
+        
     _tilemap = std::make_unique<TilemapController>();
     _tilemap->addChildTo(_scene);
     _unlockbutton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_host"));

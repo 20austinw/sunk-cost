@@ -73,6 +73,14 @@ HGameController::HGameController(
     _dimen = Application::get()->getDisplaySize();
     //    _offset = Vec3((_dimen.width)/2.0f,(_dimen.height)/2.0f,50);
     _offset = Vec3(0, 0, 50);
+        
+    std::shared_ptr<scene2::PolygonNode> background =
+        scene2::PolygonNode::allocWithPoly(cugl::Rect(0, 0, 20000, 20000));
+    background->setColor(Color4::BLACK);
+    background->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    background->setPosition(-1 * Size(9000, 9000) / 2);
+    _scene->addChild(background);
+        
     _tilemap = std::make_unique<TilemapController>();
     _tilemap->addChildTo(_scene);
     _unlockbutton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_host"));
@@ -319,11 +327,11 @@ void HGameController::update(float dt) {
         _hunter.setViewFrame(forward, rightward);
         _count = 0;
     }
-
-    std::string left = tiles[midy][posx];
-    std::string up = tiles[posyup][midx];
-    std::string bottom = tiles[posy][midx];
-    std::string right = tiles[midy][posxup];
+    
+    std::string left = (midy<18 && posx <18 && midy>-1 && posx >-1) ? tiles[midy][posx]: "black";
+    std::string up = (posyup<18 && midx <18 && posyup>-1 && midx >-1) ? tiles[posyup][midx]: "black";
+    std::string bottom = (posy<18 && midx <18 && posy>-1 && midx >-1) ? tiles[posy][midx]: "black";
+    std::string right = (midy<18 && posxup <18 && midy>-1 && posxup >-1) ? tiles[midy][posxup]: "black";
 
     if (left == "black") {
         if (rightward < 0) {

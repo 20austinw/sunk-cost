@@ -67,7 +67,7 @@ class HunterModel : public cugl::physics2::CapsuleObstacle {
         physics2::CapsuleObstacle::init(_position, Vec2(20,20));
         
         // Set physics properties for the body
-        setBodyType(b2_staticBody);
+        cugl::physics2::SimpleObstacle::setBodyType(b2_dynamicBody);
         setDensity(DEFAULT_DENSITY);
         setFriction(DEFAULT_FRICTION);
         setRestitution(DEFAULT_RESTITUTION);

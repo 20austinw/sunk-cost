@@ -37,7 +37,7 @@ HunterController::HunterController(const std::shared_ptr<cugl::AssetManager>& as
 }
 
 bool HunterController::detectedDoor(cugl::Vec2 position){
-    if (_model->getPosition().x-position.x<0.1 && _model->getPosition().y-position.y<0.1){
+    if (abs(_model->getPosition().x-position.x)<300 && abs(_model->getPosition().y-position.y)<300){
         return true;
     }
     return false;

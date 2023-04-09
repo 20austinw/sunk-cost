@@ -69,6 +69,7 @@ HGameController::HGameController(
     _doortrigger=false;
     _currdoor=0;
     _tick = 0;
+    _frameNumClose=0;
     _didLose = false;
     _dimen = Application::get()->getDisplaySize();
     //    _offset = Vec3((_dimen.width)/2.0f,(_dimen.height)/2.0f,50);
@@ -187,15 +188,13 @@ void HGameController::update(float dt) {
     _finalWinLabel->setPosition(_scene->getCamera()->getPosition()-Vec2(200,0));
     _finalWinLabel->setForeground(cugl::Color4f::YELLOW);
     
-    _winNode->setPosition(_scene->getCamera()->getPosition()-Vec2(700,710));
-    _loseNode->setPosition(_scene->getCamera()->getPosition()-Vec2(950,1050));
 
+   
     if(int(_timer/6000)==0){
         AudioEngine::get()->play("tension", _tension, true, _theme->getVolume(), true);
     }
 
-    if(int(_timer/6000)==1 && int(_timer/100) % 60 ==55 && !_didLose && !_didFinalwin){
-        _scene->addChild(_loseNode);
+    if(int(_timer/6000)==0 && int(_timer/100) % 60 ==0 && !_didLose && !_didFinalwin){
         _scene->addChild(_loseLabel);
         _didLose = true;
     }
@@ -208,7 +207,6 @@ void HGameController::update(float dt) {
     
     if(!_didFinalwin && _didWin && !_didLose && _hunter.getPosition().x < 400){
         _scene->removeChild(_winLabel);
-        _scene->addChild(_winNode);
         _scene->addChild(_finalWinLabel);
         _didFinalwin = true;
     }
@@ -233,21 +231,18 @@ void HGameController::update(float dt) {
         
 
     auto inputController = InputController::getInstance();
-//    inputController->readInput();
+
     inputController->update(dt);
     if (inputController->didPressReset()) {
         reset();
     }
     
-    for (int i=0; i<_doors.size(); i++){
-        if(_hunter.detectedDoor(_doors.at(i)->getModelPosition())){
-            //            _unlockbutton->setVisible(true);
-            //            _unlockbutton->activate();
+    for (int i=0; i<_doorslocked.size(); i++){
+        if(_hunter.detectedDoor(_doors.at(_doorslocked[i])->getModelPosition())){
             _lockhunter->setVisible(true);
-            _currdoor=i;
+            _currdoor=_doorslocked[i];
+            _currdoorindex=i;
             
-            
-           
             if(abs(inputController->getPosition().x-_scene->worldToScreenCoords(_hunter.getPosition()).x)<100&&abs(inputController->getPosition().y-_scene->worldToScreenCoords(_hunter.getPosition()).y)<100){
                 
                 _triggered=true;
@@ -258,7 +253,6 @@ void HGameController::update(float dt) {
         
         else{
             _lockhunter->setVisible(false);
-            // _triggered=false;
         }
     }
         
@@ -270,7 +264,7 @@ void HGameController::update(float dt) {
             _timerLabellock->setPosition(_scene->getCamera()->getPosition()-Vec2(100,0));
             _timerLabellock->setScale(8);
         
-            _timerLabellock->setText(std::to_string(int(_timerlock/100) % 60 +1));
+            _timerLabellock->setText(std::to_string(int(_timerlock/60) % 60 +1));
            
             _timerLabellock->setForeground(cugl::Color4f::RED);
             
@@ -281,13 +275,12 @@ void HGameController::update(float dt) {
             _tick = 0;
             _frameNum = (_frameNum + 1) % _lockhunter->getSpan();
             _lockhunter->setFrame(_frameNum);
-//            CULog("%d", _frameNum);
-//            CULog("%d", _lockhunter->getSpan());
             if(_lockhunter->getSpan()-1==_frameNum){
                 _inprogress=false;
                 _doortrigger=true;
                 _frameNum=0;
                 _triggered=false;
+                _doorslocked.erase(_doorslocked.begin()+_currdoorindex);
                 _lockhunter->setFrame(6);
             }
         }
@@ -295,10 +288,10 @@ void HGameController::update(float dt) {
     }
     
     if(_doortrigger){
-        _doors.at(0)->setFrame(_frameNumDoor%12);
+        _doors.at(_currdoor)->setFrame(_frameNumDoor%12);
         _frameNumDoor=_frameNumDoor-1;
         if(_frameNumDoor==0){
-            _frameNumDoor=12;
+//            _frameNumDoor=12;
             _doortrigger=false;
         }
     }
@@ -434,11 +427,26 @@ void HGameController::initDoors(){
         
     }
     
-    _doors.at(0)->setFrame(11);
 }
 
 void HGameController::animatelocks(){
+    for (int i=0;i<_doorslocked.size();i++){
+        _doors.at(_doorslocked[i])->setFrame(11);
+    }
     
+}
+
+void HGameController::addlocks(int index){
+    _doorslocked.push_back(index);
+    _stopanim=false;
+    if(!_stopanim){
+        _doors.at(index)->setFrame(_frameNumClose);
+        _frameNumClose+=1;
+        if(_frameNumClose==_doors.at(index)->getFrame()){
+            _stopanim=true;
+            _frameNumClose=0;
+        }
+    }
 }
 
 void HGameController::checkLevelLoaded() {
@@ -516,17 +524,6 @@ void HGameController::checkLevelLoaded() {
         //Draw hunter after shadow
         _hunter.addChildTo(_scene);
         
-        // Load win and lose scene
-        _winTexture = _assets->get<Texture>("hunterwin");
-        _winNode = scene2::PolygonNode::allocWithTexture(_winTexture);
-        _winNode->setScale(3);
-        _winNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-        
-        _loseTexture = _assets->get<Texture>("hunterlose");
-        _loseNode = scene2::PolygonNode::allocWithTexture(_loseTexture);
-        _loseNode->setScale(0.45);
-        _loseNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-        
 
         // _trap = TrapController(_assets, _scene->getSize(), PLAYER_SIZE);
         // _trap.addChildTo(_scene);
@@ -544,7 +541,7 @@ void HGameController::checkLevelLoaded() {
         _filter->setScale(Vec2(_dimen.width/1280,_dimen.height/720));
         _scene->addChild(_filter);
         
-        _timerlock = 500;
+        _timerlock = 300;
         _timerLabellock = cugl::scene2::Label::allocWithText(
             Vec2(200, 200), "5", _assets->get<Font>("pixel32"));
         _scene->addChild(_timerLabellock);
@@ -568,6 +565,11 @@ void HGameController::checkLevelLoaded() {
 
         initLock();
         initDoors();
+        
+        //for testing only, delete when network added
+        _doorslocked.push_back(3);
+        
+        animatelocks();
 
         //sounds
         _theme = _assets->get<Sound>("theme");

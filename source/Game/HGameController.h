@@ -76,10 +76,19 @@ private:
     
     int _currdoor;
     
+    int _currdoorindex;
+    
     bool _doortrigger;
+    
+    bool _stopanim;
+    
     int _frameNum;
     
+    std::vector<int> _doorslocked;
+    
     int _frameNumDoor;
+    
+    int _frameNumClose;
     
     int _tick;
     
@@ -259,6 +268,9 @@ public:
     void initDoors();
     
     void animatelocks();
+    
+    void addlocks(int index);
+    
     
     /**
      * Returns the network connection (as made by this scene)

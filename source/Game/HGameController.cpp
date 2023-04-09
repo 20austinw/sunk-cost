@@ -188,13 +188,15 @@ void HGameController::update(float dt) {
     _finalWinLabel->setPosition(_scene->getCamera()->getPosition()-Vec2(200,0));
     _finalWinLabel->setForeground(cugl::Color4f::YELLOW);
     
-
+    _winNode->setPosition(_scene->getCamera()->getPosition()-Vec2(700,710));
+    _loseNode->setPosition(_scene->getCamera()->getPosition()-Vec2(950,1050));
    
     if(int(_timer/6000)==0){
         AudioEngine::get()->play("tension", _tension, true, _theme->getVolume(), true);
     }
 
     if(int(_timer/6000)==0 && int(_timer/100) % 60 ==0 && !_didLose && !_didFinalwin){
+        _scene->addChild(_loseNode);
         _scene->addChild(_loseLabel);
         _didLose = true;
     }
@@ -207,6 +209,7 @@ void HGameController::update(float dt) {
     
     if(!_didFinalwin && _didWin && !_didLose && _hunter.getPosition().x < 400){
         _scene->removeChild(_winLabel);
+        _scene->addChild(_winNode);
         _scene->addChild(_finalWinLabel);
         _didFinalwin = true;
     }
@@ -524,7 +527,18 @@ void HGameController::checkLevelLoaded() {
         //Draw hunter after shadow
         _hunter.addChildTo(_scene);
         
+        // Load win and lose scene
+        _winTexture = _assets->get<Texture>("hunterwin");
+        _winNode = scene2::PolygonNode::allocWithTexture(_winTexture);
+        _winNode->setScale(3);
+        _winNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
 
+        _loseTexture = _assets->get<Texture>("hunterlose");
+        _loseNode = scene2::PolygonNode::allocWithTexture(_loseTexture);
+        _loseNode->setScale(0.45);
+        _loseNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+
+        
         // _trap = TrapController(_assets, _scene->getSize(), PLAYER_SIZE);
         // _trap.addChildTo(_scene);
         _treasure = TreasureController(_assets, _scene->getSize(), PLAYER_SIZE);

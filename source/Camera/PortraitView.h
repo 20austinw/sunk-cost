@@ -88,6 +88,11 @@ class PortraitView {
         }
         _tick++;
     }
+    
+    int getTick() {
+        return _tick;
+    }
+    
 };
 
 #endif /* PortraitView_h */

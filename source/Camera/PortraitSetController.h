@@ -68,6 +68,21 @@ class PortraitSetController {
             }
         }
     }
+
+    void updatespecific(int id) {
+        for (int i = 0; i < _portraitViews.size(); i++) {
+            if (i == id) {
+                _portraitViews[i]->update();
+            } else {
+                _portraitViews[i]->reset();
+            }
+        }
+    }
+    
+    int getTickSpec(int id){
+        return _portraitViews[id]->getTick();
+    }
+    
     /**
      * Adds a new portrait to the portraitset
      *
@@ -84,6 +99,8 @@ class PortraitSetController {
                                           direction, directionLimits, battery,
                                           type));
     }
+    
+    
 
     /**
      * Adds a new portrait to the portraitset

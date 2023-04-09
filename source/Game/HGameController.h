@@ -72,6 +72,11 @@ private:
     std::shared_ptr<PortraitSetController> _portraits;
 
     bool _inprogress;
+    
+    bool _animates;
+    
+    int _indexfromspirit;
+    
     int _count;
     
     int _currdoor;

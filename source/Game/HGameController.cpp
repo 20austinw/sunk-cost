@@ -119,6 +119,8 @@ HGameController::HGameController(
 //    _collision.init(_hunter.getHunterBody(), _trap.getTrapBody(), _treasure.getTreasureBody());
     _world->activateCollisionCallbacks(true);
     _world->onBeginContact = [this](b2Contact* contact) { _collision.beginContact(contact); };
+        
+        
     
 //    _world->onEndContact = [this](b2Contact* contact) { _collision.endContact(contact); };
     // Create the world node
@@ -227,7 +229,10 @@ void HGameController::update(float dt) {
     _world->onBeginContact = [this](b2Contact* contact) { _collision.beginContact(contact); };
     
     
-    
+    if(_animates){
+             _portraits->updatespecific(_indexfromspirit);
+         }
+
         
 
     auto inputController = InputController::getInstance();

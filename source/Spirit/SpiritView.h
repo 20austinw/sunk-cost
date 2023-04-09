@@ -21,9 +21,17 @@ class SpiritView {
     
     std::vector<std::shared_ptr<scene2::PolygonNode>> _trapButtons;
     
+    std::vector<std::shared_ptr<scene2::PolygonNode>> _lockExtra;
+    
+    std::vector<std::shared_ptr<scene2::PolygonNode>> _trapExtra;
+    
     std::shared_ptr<cugl::Texture> _lockAsset;
     
     std::shared_ptr<cugl::Texture> _trapAsset;
+     
+    std::shared_ptr<cugl::Texture> _twoBtnAsset;
+    
+    std::shared_ptr<cugl::Texture> _threeBtnAsset;
     
     Size _lockSize;
     
@@ -46,22 +54,27 @@ class SpiritView {
      * @param size The width and height of a tile
      * @param color The tile color tint
      */
-    SpiritView(int locks, int traps, std::shared_ptr<cugl::Texture> lock, std::shared_ptr<cugl::Texture> trap, std::shared_ptr<cugl::Scene2> &scene){
+    SpiritView(int locks, int traps, const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<cugl::Scene2> &scene){
         _scene = scene;
-        _lockAsset = lock;
+        _twoBtnAsset = assets->get<Texture>("extra_1");
+        _threeBtnAsset = assets->get<Texture>("extra_2");
+        
+        _lockAsset = assets->get<Texture>("lock_button");
         _scaleFactor = 0.5/(_lockAsset->getSize().height/_scene->getSize().height);
         CULog("%f", _scaleFactor);
         for (int i=0; i<locks; i++){
             _locks.emplace_back(scene2::SpriteNode::allocWithSheet(_lockAsset, 2, 8, 12));
             _locks.at(i)->setFrame(0);
             _locks.at(i)->setScale(_scaleFactor);
+            addExtra(_lockExtra, i+1);
         }
         _lockSize = _locks.at(0)->getSize();
         
-        _trapAsset = trap;
+        _trapAsset = assets->get<Texture>("trap_button");
         for (int i=0; i<traps; i++){
             _trapButtons.emplace_back(scene2::PolygonNode::allocWithTexture(_trapAsset));
             _trapButtons.at(i)->setScale(_scaleFactor);
+            addExtra(_trapExtra, i+1);
         }
         _trapSize = _trapButtons.at(0)->getSize();
     }
@@ -80,9 +93,30 @@ class SpiritView {
         scene->addChild(_node);
     }
     
+    void addLastLockExtraTo(const std::shared_ptr<Scene2>& scene){
+        addExtra(_lockExtra, _locks.size());
+        scene->addChild(_lockExtra.at(_lockExtra.size()-1));
+    }
+    
+    void addLastTrapExtraTo(const std::shared_ptr<Scene2>& scene){
+        addExtra(_trapExtra, _trapButtons.size());
+        scene->addChild(_trapExtra.at(_trapExtra.size()-1));
+    }
+    
+    void removeLastLockExtraTo(const std::shared_ptr<Scene2>& scene){
+        removeExtra(scene, _lockExtra);
+    }
+    
+    void removeLastTrapExtraTo(const std::shared_ptr<Scene2>& scene){
+        removeExtra(scene, _trapExtra);
+    }
+    
     void addLocksTo(const std::shared_ptr<Scene2>& scene) {
         for (int i=0; i<_locks.size(); i++){
             scene->addChild(_locks.at(i));
+        }
+        for (int i=0; i<_lockExtra.size(); i++){
+            scene->addChild(_lockExtra.at(i));
         }
     }
     
@@ -90,17 +124,26 @@ class SpiritView {
         for (int i=0; i<_trapButtons.size(); i++){
             scene->addChild(_trapButtons.at(i));
         }
+        for (int i=0; i<_trapExtra.size(); i++){
+            scene->addChild(_trapExtra.at(i));
+        }
     }
     
     void updateUnusedLocksPos(Vec2 pos){
         for (int i=0 ; i<_locks.size(); i++){
-            _locks.at(i)->setPosition(pos + _lockSize/15*i);
+            _locks.at(i)->setPosition(pos);
+        }
+        for (int i=0; i<_lockExtra.size(); i++){
+            _lockExtra.at(i)->setPosition(pos);
         }
     }
     
     void updateUnusedTrapsPos(Vec2 pos){
         for (int i=0 ; i<_trapButtons.size(); i++){
-            _trapButtons.at(i)->setPosition(pos + _trapSize/15*i);
+            _trapButtons.at(i)->setPosition(pos);
+        }
+        for (int i=0; i<_trapExtra.size(); i++){
+            _trapExtra.at(i)->setPosition(pos);
         }
     }
     
@@ -125,11 +168,17 @@ class SpiritView {
         for (int i=0; i<_locks.size(); i++){
             scene->removeChild(_locks.at(i));
         }
+        for (int i=0; i<_lockExtra.size(); i++){
+            scene->removeChild(_lockExtra.at(i));
+        }
     }
     
     void removeTrapsFrom(const std::shared_ptr<Scene2>& scene) {
         for (int i=0; i<_trapButtons.size(); i++){
             scene->removeChild(_trapButtons.at(i));
+        }
+        for (int i=0; i<_trapExtra.size(); i++){
+            scene->removeChild(_trapExtra.at(i));
         }
     }
     
@@ -163,6 +212,23 @@ class SpiritView {
         _trapButtons.emplace_back(scene2::PolygonNode::allocWithTexture(_trapAsset));
         _trapButtons[_trapButtons.size()-1]->setScale(_scaleFactor);
         scene->addChild(_trapButtons.at(_trapButtons.size()-1));
+    }
+    
+    void addExtra(std::vector<std::shared_ptr<scene2::PolygonNode>>& extra, int size){
+        if (size <2 || size>3){
+            return;
+        }
+        if(size == 2){
+            extra.emplace_back(scene2::PolygonNode::allocWithTexture(_twoBtnAsset));
+        }else if (size == 3) {
+            extra.emplace_back(scene2::PolygonNode::allocWithTexture(_threeBtnAsset));
+        }
+        extra.at(extra.size()-1)->setScale(_scaleFactor);
+    }
+    
+    void removeExtra(const std::shared_ptr<Scene2>& scene, std::vector<std::shared_ptr<scene2::PolygonNode>>& extra){
+        scene->removeChild(extra.at(extra.size()-1));
+        extra.pop_back();
     }
 
 #pragma mark Setters

@@ -23,7 +23,7 @@ SpiritController::SpiritController(
     std::shared_ptr<PortraitSetController> portraits, Size screenSize) {
     _scene = scene;
     _model = std::make_shared<SpiritModel>(assets, scene, 3, 2, 30);
-    _view = std::make_shared<SpiritView>(_model->doors, _model->traps, assets->get<Texture>("lock_button"), assets->get<Texture>("trap_button"), _scene);
+    _view = std::make_shared<SpiritView>(_model->doors, _model->traps, assets,  _scene);
     _portraits = portraits;
     _screenSize = screenSize;
     _cameraCool = CAMERA_COOL;

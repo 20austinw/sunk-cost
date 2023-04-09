@@ -118,7 +118,12 @@ void SGameController::update(float dt) {
         if ((inputController->isTouchDown() || _spirit.getModel()->isOnLock) && _spirit.getModel()->doors >= 0 && !blocked && !_spirit.getModel()->isOnTrap){
             if(_spirit.getModel()->isOnLock || _spirit.touchInLockBound(cameraPos)){
                 canSwitch = false;
-                _spirit.getModel()->setLockState(true);
+                if (!_spirit.getModel()->isOnLock){
+                    if (_spirit.getModel()->doors > 1){
+                        _spirit.getView()->removeLastLockExtraTo(_scene);
+                    }
+                    _spirit.getModel()->setLockState(true);
+                }
                 bool isLocked = false;
                 _spirit.updateMovingLock(cameraPos);
                 for (int i=0; i<_doors.size();i++){
@@ -130,6 +135,10 @@ void SGameController::update(float dt) {
                     _spirit.getModel()->setLockState(false);
                     if (isLocked){
                         _spirit.removeLastLock(_scene);
+                    } else {
+                        if (_spirit.getModel()->doors > 1){
+                            _spirit.getView()->addLastLockExtraTo(_scene);
+                        }
                     }
                 }
             }
@@ -144,7 +153,13 @@ void SGameController::update(float dt) {
         if ((inputController->isTouchDown() || _spirit.getModel()->isOnTrap) && _spirit.getModel()->traps >= 0 && !_spirit.getModel()->isOnLock && !blocked){
             if(_spirit.getModel()->isOnTrap || _spirit.touchInTrapBound(cameraPos)){
                 canSwitch = false;
-                _spirit.getModel()->setTrapState(true);
+                if (! _spirit.getModel()->isOnTrap){
+                    if (_spirit.getModel()->traps > 1){
+                        _spirit.getView()->removeLastTrapExtraTo(_scene);
+                    }
+                    
+                    _spirit.getModel()->setTrapState(true);
+                }
                 _spirit.getModel()->setLastTrapPos(cameraPos);
                 _spirit.updateMovingTrap(cameraPos);
 
@@ -155,6 +170,10 @@ void SGameController::update(float dt) {
                 // A trap has been placed
                 if (_spirit.placeTrap(_tilemap, _spirit.getModel()->lastTrapPos)){
                     _spirit.removeLastTrapBtn(_scene);
+                } else {
+                    if (_spirit.getModel()->traps > 1){
+                        _spirit.getView()->addLastTrapExtraTo(_scene);
+                    }
                 }
             }
         } else if (blocked&&_spirit.getModel()->isOnTrap){

@@ -75,7 +75,7 @@
         "left": {
             "file":  "textures/left_arrow.png"
         },
-        "lose_screen": {
+        "hunters_lose": {
             "file": "textures/live_painting.png"
         },
         "spirit_win_animation": {

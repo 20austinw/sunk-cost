@@ -61,7 +61,11 @@ SGameController::SGameController(
     _deserializer = NetcodeDeserializer::alloc();
     _status = Status::START;
     _font = assets->get<Font>("pixel32");
-    _timerLabel = cugl::scene2::Label::allocWithText(Vec2(800,800), std::to_string(_timeLeft/60/60) + ":" + std::to_string(_timeLeft/60%60), _assets->get<Font>("pixel32"));
+        string minutes = std::to_string(_timeLeft/60/60);
+        string seconds =  std::to_string(_timeLeft/60%60);
+        seconds = seconds.length() <= 1 ? "0"+seconds : seconds;
+    _timerLabel = cugl::scene2::Label::allocWithText(Vec2(800,800), minutes + ":" + seconds, _assets->get<Font>("pixel32"));
+        _timerLabel->setScale(4);
     _scene->addChild(_timerLabel);
         _endScene = std::make_shared<EndScene>(assets, true);
 }
@@ -264,8 +268,9 @@ void SGameController::update(float dt) {
         string minutes = std::to_string(_timeLeft/60/60);
         string seconds =  std::to_string(_timeLeft/60%60);
         seconds = seconds.length() <= 1 ? "0"+seconds : seconds;
-        _timerLabel->setText( minutes + ":" + seconds);
+        _timerLabel->setText(minutes + ":" + seconds);
         _timerLabel->setScale(4);
+        CULog("%f, %f", _timerLabel->getSize().width, _timerLabel->getSize().height);
 //        CULog("%f, %f", _scene->getCamera()->getPosition().x, _scene->getCamera()->getPosition().y);
 //        _timerLabel->setPosition(Vec2(_scene->getCamera()->getPosition().x, 0)+Vec2(-_timerLabel->getSize().width/2, _timerLabel->getSize().height/2) + Vec2(0, 20));
         float vPos = _scene->getSize().height-20-_timerLabel->getSize().height/2;
@@ -276,11 +281,13 @@ void SGameController::update(float dt) {
         _scene->addChild(_timerLabel);
         _timeLeft--;
         if(_timeLeft <= 0) {
-            _gameStatus = -1;
-            _endScene = std::make_shared<EndScene>(_assets, false);
+            _gameStatus = 1;
+            _endScene = std::make_shared<EndScene>(_assets, true);
+            _endScene->addChildTo(_scene);
         }
     }else if(_gameStatus == 1){
         // Spirit won
+        CULog("Spirit wins!");
         _endScene->update();
     }else{
         // Spirit lost

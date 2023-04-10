@@ -28,6 +28,8 @@ class SpiritView {
     std::shared_ptr<cugl::Texture> _lockAsset;
     
     std::shared_ptr<cugl::Texture> _trapAsset;
+    
+    std::shared_ptr<cugl::Texture> _oneBtnAsset;
      
     std::shared_ptr<cugl::Texture> _twoBtnAsset;
     
@@ -56,6 +58,7 @@ class SpiritView {
      */
     SpiritView(int locks, int traps, const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<cugl::Scene2> &scene){
         _scene = scene;
+        _oneBtnAsset = assets->get<Texture>("extra");
         _twoBtnAsset = assets->get<Texture>("extra_1");
         _threeBtnAsset = assets->get<Texture>("extra_2");
         
@@ -79,8 +82,8 @@ class SpiritView {
         _trapSize = _trapButtons.at(0)->getSize();
     }
 
-    /** Deletes this HunterView */
-    ~SpiritView() { _node->removeFromParent(); }
+//    /** Deletes this HunterView */
+//    ~SpiritView() { _node->removeFromParent(); }
 
 #pragma mark Scene Methods
   public:
@@ -211,14 +214,27 @@ class SpiritView {
     void addNewTrap(const std::shared_ptr<Scene2>& scene){
         _trapButtons.emplace_back(scene2::PolygonNode::allocWithTexture(_trapAsset));
         _trapButtons[_trapButtons.size()-1]->setScale(_scaleFactor);
+        addExtra(_trapExtra, _trapButtons.size());
         scene->addChild(_trapButtons.at(_trapButtons.size()-1));
+        scene->addChild(_trapExtra.at(_trapExtra.size()-1));
+    }
+    
+    void addNewLock(const std::shared_ptr<Scene2>& scene){
+        _locks.emplace_back(scene2::SpriteNode::allocWithSheet(_lockAsset, 2, 8, 12));
+        _locks.at(_locks.size()-1)->setFrame(0);
+        _locks.at(_locks.size()-1)->setScale(_scaleFactor);
+        addExtra(_lockExtra, _locks.size());
+        scene->addChild(_locks.at(_locks.size()-1));
+        scene->addChild(_lockExtra.at(_lockExtra.size()-1));
     }
     
     void addExtra(std::vector<std::shared_ptr<scene2::PolygonNode>>& extra, int size){
-        if (size <2 || size>3){
+        if (size <1 || size>3){
             return;
         }
-        if(size == 2){
+        if (size == 1){
+            extra.emplace_back(scene2::PolygonNode::allocWithTexture(_oneBtnAsset));
+        }else if(size == 2){
             extra.emplace_back(scene2::PolygonNode::allocWithTexture(_twoBtnAsset));
         }else if (size == 3) {
             extra.emplace_back(scene2::PolygonNode::allocWithTexture(_threeBtnAsset));

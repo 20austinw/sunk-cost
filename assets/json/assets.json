@@ -113,6 +113,9 @@
        },
        "extra_2":{
            "file":  "textures/extra_item_2.png"
+       },
+       "extra":{
+           "file":  "textures/empty_bubble.png"
        }
     },
     "fonts": {

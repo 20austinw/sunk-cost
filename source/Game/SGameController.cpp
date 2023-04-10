@@ -119,9 +119,7 @@ void SGameController::update(float dt) {
             if(_spirit.getModel()->isOnLock || _spirit.touchInLockBound(cameraPos)){
                 canSwitch = false;
                 if (!_spirit.getModel()->isOnLock){
-                    if (_spirit.getModel()->doors > 1){
-                        _spirit.getView()->removeLastLockExtraTo(_scene);
-                    }
+                    _spirit.getView()->removeLastLockExtraTo(_scene);
                     _spirit.getModel()->setLockState(true);
                 }
                 bool isLocked = false;
@@ -136,9 +134,7 @@ void SGameController::update(float dt) {
                     if (isLocked){
                         _spirit.removeLastLock(_scene);
                     } else {
-                        if (_spirit.getModel()->doors > 1){
-                            _spirit.getView()->addLastLockExtraTo(_scene);
-                        }
+                        _spirit.getView()->addLastLockExtraTo(_scene);
                     }
                 }
             }
@@ -154,9 +150,7 @@ void SGameController::update(float dt) {
             if(_spirit.getModel()->isOnTrap || _spirit.touchInTrapBound(cameraPos)){
                 canSwitch = false;
                 if (! _spirit.getModel()->isOnTrap){
-                    if (_spirit.getModel()->traps > 1){
-                        _spirit.getView()->removeLastTrapExtraTo(_scene);
-                    }
+                    _spirit.getView()->removeLastTrapExtraTo(_scene);
                     
                     _spirit.getModel()->setTrapState(true);
                 }
@@ -171,9 +165,7 @@ void SGameController::update(float dt) {
                 if (_spirit.placeTrap(_tilemap, _spirit.getModel()->lastTrapPos)){
                     _spirit.removeLastTrapBtn(_scene);
                 } else {
-                    if (_spirit.getModel()->traps > 1){
-                        _spirit.getView()->addLastTrapExtraTo(_scene);
-                    }
+                    _spirit.getView()->addLastTrapExtraTo(_scene);
                 }
             }
         } else if (blocked&&_spirit.getModel()->isOnTrap){
@@ -244,10 +236,10 @@ void SGameController::update(float dt) {
         }
         
         _portraits->setPrevState(_portraits->getCurState());
+        
         // detect if a trap on the map has been removed, add a new trap button to the scene
         if(_spirit.update()){
             _spirit.addNewTrapBtn(_scene);
-            
         }
         
         // Draw minimap

@@ -154,3 +154,9 @@ void SpiritController::addNewTrapBtn(const std::shared_ptr<Scene2>& scene){
     updateTrapBtnsPos(scene);
 }
 
+void SpiritController::addNewLock(const std::shared_ptr<Scene2>& scene){
+    _model->setDoors(_model->doors+1);
+    _view->addNewLock(scene);
+    updateLocksPos(scene);
+}
+

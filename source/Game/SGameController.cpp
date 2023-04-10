@@ -68,6 +68,9 @@ SGameController::SGameController(
         _timerLabel->setScale(4);
     _scene->addChild(_timerLabel);
         _endScene = std::make_shared<EndScene>(assets, true);
+        
+        _trapTriggered = false;
+        _doorUnlocked = false;
 }
     
 #pragma mark Gameplay Handling

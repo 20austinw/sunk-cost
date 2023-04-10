@@ -156,14 +156,16 @@ class SpiritModel {
     void addTrap(Vec2 position) {
         if (_trapModels.size() >= 3)
             return;
-        _trapModels.emplace_back(std::make_shared<TrapModel>(position, 300));
+        //a trap will last for 15s for now
+        _trapModels.emplace_back(std::make_shared<TrapModel>(position, 900));
         auto trap = std::make_shared<TrapView>(_assets, position, 20);
         _trapViews.emplace_back(trap);
         trap->addChildTo(_scene);
     }
 
-    bool update() {
-        bool result = false;
+    // 0: nothing; 1:remove trap; 2:unlock door, 3: remove 2 traps, 4: remove 1 door and 1 trap
+    int update(bool trapTriggered, bool doorUnlock) {
+        bool result = 0;
         std::vector<std::shared_ptr<TrapModel>> pendingTrapModels;
         std::vector<std::shared_ptr<TrapView>> pendingTrapViews;
         for (int i = 0; i < _trapModels.size(); i++) {
@@ -173,7 +175,7 @@ class SpiritModel {
                 _trapViews[i]->update();
             } else {
                 _trapViews[i]->removeChildFrom(_scene);
-                result = true;
+                result = 1;
             }
         }
         _trapModels = pendingTrapModels;
@@ -185,6 +187,23 @@ class SpiritModel {
             right = 0;
         }
         _ticks = (_ticks+1)%6;
+        
+        if (trapTriggered){
+            if(result == 1){
+                result = 3;
+            } else {
+                result = 1;
+            }
+            //TODO: remove the trap closest to the hunter position
+        }
+        if(doorUnlock){
+            if(result == 1){
+                result = 4;
+            } else {
+                result = 2;
+            }
+            //TODO: unlock the door closest to the hunter position
+        }
         return result;
     }
     
@@ -204,6 +223,10 @@ class SpiritModel {
     
     void alertTreasure(Vec2 position) {
         
+    }
+    
+    Vec2 getHunterPos(){
+        return _hunterModel->getPosition();
     }
 };
 

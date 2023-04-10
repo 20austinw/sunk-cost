@@ -101,6 +101,11 @@ public:
     std::shared_ptr<Font> _font;
     std::shared_ptr<cugl::scene2::Label> _timerLabel;
     int _timeLeft = 100*60;
+    
+    /** If hunter trigger the trap */
+    bool _trapTriggered;
+    /** If hunter unlock a door */
+    bool _doorUnlocked;
 
 #pragma mark External References
   private:

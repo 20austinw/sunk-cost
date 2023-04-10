@@ -237,9 +237,18 @@ void SGameController::update(float dt) {
         
         _portraits->setPrevState(_portraits->getCurState());
         
-        // detect if a trap on the map has been removed, add a new trap button to the scene
-        if(_spirit.update()){
+        // detect if a trap or door on the map has been removed, add a new trap button to the scene
+        int result = _spirit.update(_trapTriggered, _doorUnlocked);
+        if(result == 1){
             _spirit.addNewTrapBtn(_scene);
+        } else if (result == 2){
+            _spirit.addNewLock(_scene);
+        } else if (result == 3){
+            _spirit.addNewTrapBtn(_scene);
+            _spirit.addNewTrapBtn(_scene);
+        } else if (result == 4){
+            _spirit.addNewTrapBtn(_scene);
+            _spirit.addNewLock(_scene);
         }
         
         // Draw minimap

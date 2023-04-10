@@ -99,7 +99,7 @@ class SpiritController {
     bool placeTrap(const std::shared_ptr<TilemapController> _tilemap,
                 Vec2 trapPos);
     
-    bool update();
+    int update(bool trap, bool door);
 
 #pragma mark Setters
   public:

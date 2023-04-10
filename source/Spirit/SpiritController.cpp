@@ -79,8 +79,8 @@ bool SpiritController::placeTrap(const std::shared_ptr<TilemapController> _tilem
  * (1) detect camera change
  * (2) modify portraitsetcontroller to reflect the change
  */
-bool SpiritController::update(){
-    bool result = _model->update();
+int SpiritController::update(bool trap, bool door){
+    int result = _model->update(trap, door);
     _portraits->update();
     return result;
 }

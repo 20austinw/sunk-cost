@@ -445,7 +445,7 @@ void HGameController::animatelocks(){
 void HGameController::addlocks(int index){
     _doorslocked.push_back(index);
     _stopanim=false;
-    if(!_stopanim){
+    while(!_stopanim){
         _doors.at(index)->setFrame(_frameNumClose);
         _frameNumClose+=1;
         if(_frameNumClose==_doors.at(index)->getFrame()){

@@ -370,6 +370,10 @@ void HGameController::update(float dt) {
 if (_hunter.getTraps().size()!= 0 && !_hunter.getTraps()[0]->getTrigger()){
         _hunter.move(forward,rightward);
     }
+    
+if (_hunter.getTraps().size()== 0){
+        _hunter.move(forward,rightward);
+    }
     //trap collision
    
 //    if(_collision.didHitTrap){

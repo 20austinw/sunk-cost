@@ -88,7 +88,8 @@ HGameController::HGameController(
     _unlockbutton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_host"));
     
     _unlockbutton->addListener(
-        [=](const std::string& name, bool down) { this->_active = down; });
+        [=](const std::string& name, bool down) { this->_active = down;
+        });
     _unlockbutton->setVisible(true);
     _unlockbutton->activate();
 
@@ -98,7 +99,7 @@ HGameController::HGameController(
     inputController->initListeners();
 
 
-    CULog("%f, %f", displaySize.width, displaySize.height);
+//    CULog("%f, %f", displaySize.width, displaySize.height);
     _hunter = HunterController(assets, displaySize, _scene, PLAYER_SIZE);
 //    _trap = TrapController(assets, displaySize, PLAYER_SIZE);
     _treasure = TreasureController(assets, displaySize, PLAYER_SIZE);
@@ -294,10 +295,11 @@ void HGameController::update(float dt) {
     if(_doortrigger){
         _doors.at(_currdoor)->setFrame(_frameNumDoor%12);
         _frameNumDoor=_frameNumDoor-1;
-        if(_frameNumDoor==0){
+        if(_frameNumDoor<=0){
 //            _frameNumDoor=12;
             _doortrigger=false;
         }
+        transmitUnlockDoor(_currdoorindex);
     }
 
     std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
@@ -698,7 +700,8 @@ void HGameController::processData(const std::string source, const std::vector<st
             _indexfromspirit = idx;
         } else if (mes[0] == 5) {
             int idx = static_cast<int>(mes[1]);
-            _doorslocked.push_back(idx);
+            CULog("door index: %d", idx);
+            addlocks(idx);
         }
         
         _deserializer->reset();

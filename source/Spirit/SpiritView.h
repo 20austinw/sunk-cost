@@ -64,7 +64,7 @@ class SpiritView {
         
         _lockAsset = assets->get<Texture>("lock_button");
         _scaleFactor = 0.5/(_lockAsset->getSize().height/_scene->getSize().height);
-        CULog("%f", _scaleFactor);
+//        CULog("%f", _scaleFactor);
         for (int i=0; i<locks; i++){
             _locks.emplace_back(scene2::SpriteNode::allocWithSheet(_lockAsset, 2, 8, 12));
             _locks.at(i)->setFrame(0);

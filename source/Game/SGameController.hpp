@@ -113,6 +113,8 @@ public:
     std::shared_ptr<cugl::scene2::Label> _alertLabel;
     
     int _alertTimer;
+    
+    int _doorToUnlock;
 
 #pragma mark External References
   private:

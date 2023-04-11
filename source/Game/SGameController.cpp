@@ -166,12 +166,15 @@ void SGameController::update(float dt) {
                     if(_doors.at(i)->update(start,release, cameraPos)){
                         //a door is locked
                         isLocked = true;
+                        CULog("transmitting locked door");
+                        transmitLockedDoor(i);
                     }
                 }
                 if (release){
                     _spirit.getModel()->setLockState(false);
                     if (isLocked){
                         _spirit.removeLastLock(_scene);
+                        
                     } else {
                         _spirit.getView()->addLastLockExtraTo(_scene);
                     }
@@ -276,9 +279,11 @@ void SGameController::update(float dt) {
         
         _portraits->setPrevState(_portraits->getCurState());
         
-        if (_doorUnlocked){
-            //TODO: unlock the current door
+        if (_doorUnlocked && _doorToUnlock != -1){
             _spirit.addNewLock(_scene);
+            _doors.at(_doorToUnlock)->resetHunterUnlock();
+            _doorUnlocked = false;
+            _doorToUnlock == -1;
         }
         
         // detect if a trap or door on the map has been removed, add a new trap button to the scene
@@ -325,7 +330,7 @@ void SGameController::update(float dt) {
         seconds = seconds.length() <= 1 ? "0"+seconds : seconds;
         _timerLabel->setText(minutes + ":" + seconds);
         _timerLabel->setScale(4);
-        CULog("%f, %f", _timerLabel->getSize().width, _timerLabel->getSize().height);
+//        CULog("%f, %f", _timerLabel->getSize().width, _timerLabel->getSize().height);
         //        CULog("%f, %f", _scene->getCamera()->getPosition().x, _scene->getCamera()->getPosition().y);
         //        _timerLabel->setPosition(Vec2(_scene->getCamera()->getPosition().x, 0)+Vec2(-_timerLabel->getSize().width/2, _timerLabel->getSize().height/2) + Vec2(0, 20));
         float vPos = _scene->getSize().height-20-_timerLabel->getSize().height/2;
@@ -488,7 +493,8 @@ void SGameController::processData(const std::string source, const std::vector<st
         
         if (mes[0] == 6) {
             // TODO: handle index of door for unlocking
-            _doors.at(mes[1])->resetHunterUnlock();
+            _doorUnlocked = true;
+            _doorToUnlock = static_cast<int>(mes[1]);
         }
         
         // Win alert for spirit

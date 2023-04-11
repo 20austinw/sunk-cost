@@ -106,6 +106,13 @@ public:
     bool _trapTriggered;
     /** If hunter unlock a door */
     bool _doorUnlocked;
+    
+    bool _treasureStolen;
+    
+    // place holder for treasure alert
+    std::shared_ptr<cugl::scene2::Label> _alertLabel;
+    
+    int _alertTimer;
 
 #pragma mark External References
   private:
@@ -251,6 +258,8 @@ public:
     void initDoors();
 
     void updateDoors();
+    
+    void transmitLockedDoor(int i);
 
 };
 

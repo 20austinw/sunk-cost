@@ -28,12 +28,12 @@ using namespace std;
  * @param randoms        Reference to the random number generator
  */
 SGameController::SGameController(
-    const Size displaySize, const std::shared_ptr<cugl::AssetManager>& assets)
-    : _assets(assets) {
+                                 const Size displaySize, const std::shared_ptr<cugl::AssetManager>& assets)
+: _assets(assets) {
     /// Initialize the tilemap and add it to the scene
     _scene = cugl::Scene2::alloc(displaySize);
     std::shared_ptr<scene2::PolygonNode> background =
-        scene2::PolygonNode::allocWithPoly(cugl::Rect(0, 0, 20000, 20000));
+    scene2::PolygonNode::allocWithPoly(cugl::Rect(0, 0, 20000, 20000));
     background->setColor(Color4::BLACK);
     background->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     background->setPosition(-1 * Size(9000, 9000) / 2);
@@ -47,7 +47,7 @@ SGameController::SGameController(
     // Initialize HunterController
     
     //        _hunter.updatePosition(_level->getPlayerPosition());
-
+    
     // Initialize SpiritController
     _spirit = SpiritController(_assets, _scene, _portraits, _scene->getSize());
     _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
@@ -55,24 +55,30 @@ SGameController::SGameController(
         _levelLoaded = false;
         CULog("Fail!");
     }
-        
+    
     _hunterAdded = false;
     _serializer = NetcodeSerializer::alloc();
     _deserializer = NetcodeDeserializer::alloc();
     _status = Status::START;
+    _alertTimer = 0;
     _font = assets->get<Font>("pixel32");
-        string minutes = std::to_string(_timeLeft/60/60);
-        string seconds =  std::to_string(_timeLeft/60%60);
-        seconds = seconds.length() <= 1 ? "0"+seconds : seconds;
+    string minutes = std::to_string(_timeLeft/60/60);
+    string seconds =  std::to_string(_timeLeft/60%60);
+    seconds = seconds.length() <= 1 ? "0"+seconds : seconds;
     _timerLabel = cugl::scene2::Label::allocWithText(Vec2(800,800), minutes + ":" + seconds, _assets->get<Font>("pixel32"));
-        _timerLabel->setScale(4);
+    _timerLabel->setScale(4);
     _scene->addChild(_timerLabel);
-        _endScene = std::make_shared<EndScene>(assets, true);
-        
-        _trapTriggered = false;
-        _doorUnlocked = false;
-}
+    _endScene = std::make_shared<EndScene>(assets, true);
     
+    _trapTriggered = false;
+    _doorUnlocked = false;
+    _treasureStolen = false;
+    
+    _alertLabel= cugl::scene2::Label::allocWithText(Vec2(0,displaySize.height/2), "The treasure has been STOLEN", _assets->get<Font>("pixel32"));
+    _alertLabel->setPosition(_scene->getCamera()->getPosition()+Vec2(350,350));
+    _alertLabel->setForeground(cugl::Color4f::RED);
+}
+
 #pragma mark Gameplay Handling
 
 /**
@@ -90,7 +96,7 @@ void SGameController::reset() { CULog("reset"); }
  */
 float SGameController::getZoom() {
     return std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-        ->getZoom();
+    ->getZoom();
 }
 
 int cnt = 0;
@@ -109,6 +115,31 @@ void SGameController::update(float dt) {
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
             ->setZoom(1);
         }
+        
+//        if (_trapTriggered) {
+//            _alertLabel->setText("Trap triggered");
+//        } else
+        if (_treasureStolen) {
+            _alertLabel->setText("The treasure has been stolen");
+        }
+        
+//        if (_alertTimer == 0 && (_treasureStolen || _trapTriggered)) {
+        if (_alertTimer == 0 && _treasureStolen) {
+            _scene->addChild(_alertLabel);
+            _alertTimer++;
+        }
+        else if (_alertTimer > 0 && _alertTimer != 300) {
+            _alertTimer++;
+            
+        }
+        
+        if (_alertTimer == 300) {
+            _alertTimer = 0;
+            _treasureStolen = false;
+            _scene->removeChild(_alertLabel);
+        }
+        
+        
         auto inputController = InputController::getInstance();
         inputController->update(dt);
         inputController->readInput();
@@ -163,7 +194,7 @@ void SGameController::update(float dt) {
                 }
                 _spirit.getModel()->setLastTrapPos(cameraPos);
                 _spirit.updateMovingTrap(cameraPos);
-
+                
             }
             if ( _spirit.getModel()->isOnTrap && release){
                 _spirit.getModel()->setTrapState(false);
@@ -294,11 +325,14 @@ void SGameController::update(float dt) {
         _timerLabel->setText(minutes + ":" + seconds);
         _timerLabel->setScale(4);
         CULog("%f, %f", _timerLabel->getSize().width, _timerLabel->getSize().height);
-//        CULog("%f, %f", _scene->getCamera()->getPosition().x, _scene->getCamera()->getPosition().y);
-//        _timerLabel->setPosition(Vec2(_scene->getCamera()->getPosition().x, 0)+Vec2(-_timerLabel->getSize().width/2, _timerLabel->getSize().height/2) + Vec2(0, 20));
+        //        CULog("%f, %f", _scene->getCamera()->getPosition().x, _scene->getCamera()->getPosition().y);
+        //        _timerLabel->setPosition(Vec2(_scene->getCamera()->getPosition().x, 0)+Vec2(-_timerLabel->getSize().width/2, _timerLabel->getSize().height/2) + Vec2(0, 20));
         float vPos = _scene->getSize().height-20-_timerLabel->getSize().height/2;
         float hPos = _scene->getSize().width/2-_timerLabel->getSize().width/2;
         _timerLabel->setPosition(_scene->getCamera()->screenToWorldCoords(Vec2(hPos, vPos)));
+        vPos = _scene->getSize().height/2-_alertLabel->getSize().height/2;
+        hPos = _scene->getSize().width/2-_alertLabel->getSize().width/2;
+        _alertLabel->setPosition(_scene->getCamera()->screenToWorldCoords(Vec2(hPos, vPos)));
         _timerLabel->setForeground(cugl::Color4::WHITE);
         _scene->removeChild(_timerLabel);
         _scene->addChild(_timerLabel);
@@ -315,12 +349,12 @@ void SGameController::update(float dt) {
     }else{
         // Spirit lost
     }
-//    cnt++;
-//    if(cnt == 100) {
-//        _gameStatus = 1;
-//        _endScene = make_shared<EndScene>(_assets, true);
-//        _endScene->addChildTo(_scene);
-//    }
+    //    cnt++;
+    //    if(cnt == 100) {
+    //        _gameStatus = 1;
+    //        _endScene = make_shared<EndScene>(_assets, true);
+    //        _endScene->addChildTo(_scene);
+    //    }
 }
 
 /**
@@ -342,17 +376,17 @@ void SGameController::checkLevelLoaded() {
     if (_level == nullptr) {
         _levelLoaded = false;
     }
-
+    
     // Check to see if new level loaded yet
     if (!_levelLoaded && _assets->complete()) {
         _level = nullptr;
-
+        
         // Access and initialize level
         _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
         _level->setAssets(_assets);
-
+        
         CULog("Loading level!");
-
+        
         _tilemap->updatePosition(_scene->getSize() / 2);
         std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
         _tilemap->updateDimensions(Vec2(tiles[0].size(), tiles.size()));
@@ -372,11 +406,11 @@ void SGameController::checkLevelLoaded() {
             }
         }
         _map =
-            scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
+        scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
         
         _scene->addChild(_map);
         _miniMap = scene2::PolygonNode::allocWithTexture(
-            _assets->get<Texture>("minimap"));
+                                                         _assets->get<Texture>("minimap"));
         _miniMap->setScale(0.1);
         _scene->addChild(_miniMap);
         _tilemap->addDoorTo(_scene);
@@ -400,10 +434,10 @@ void SGameController::checkLevelLoaded() {
         initDoors();
     }
 }
-    
-    void SGameController::generateLevel() {
-        _tilemap->updateDimensions(_level->getDimensions());
-    }
+
+void SGameController::generateLevel() {
+    _tilemap->updateDimensions(_level->getDimensions());
+}
 
 void SGameController::initDoors(){
     std::vector<std::pair<Vec2, int>> doors = _level->getDoors();
@@ -447,7 +481,13 @@ void SGameController::processData(const std::string source, const std::vector<st
         if (mes[0] == 4) {
             // Treasure picked up alert (not sure if position will be used)
             // idt position will be used ?
+            _treasureStolen = true;
             //_spirit.treasureAlert(pos);
+        }
+        
+        if (mes[0] == 6) {
+            // TODO: handle index of door for unlocking
+            _doors.at(mes[1])->resetHunterUnlock();
         }
         
         // Win alert for spirit
@@ -456,7 +496,7 @@ void SGameController::processData(const std::string source, const std::vector<st
         // Lose alert for spirit
         // _gameStatus = -1;
         
-//        CULog("%f", mes[0]);
+        //        CULog("%f", mes[0]);
         _deserializer->reset();
     }
 }
@@ -470,6 +510,15 @@ void SGameController::transmitTrap(std::vector<float> pos) {
 void SGameController::transmitActiveCamIndex(int i) {
     std::vector<float> idx = std::vector<float>();
     idx.push_back(3);
+    idx.push_back(i);
+    _serializer->writeFloatVector(idx);
+    _network->broadcast(_serializer->serialize());
+    _serializer->reset();
+}
+
+void SGameController::transmitLockedDoor(int i) {
+    std::vector<float> idx = std::vector<float>();
+    idx.push_back(5);
     idx.push_back(i);
     _serializer->writeFloatVector(idx);
     _network->broadcast(_serializer->serialize());

@@ -71,6 +71,7 @@ HGameController::HGameController(
     _tick = 0;
     _frameNumClose=0;
     _didLose = false;
+    _animates = true;
     _dimen = Application::get()->getDisplaySize();
     //    _offset = Vec3((_dimen.width)/2.0f,(_dimen.height)/2.0f,50);
     _offset = Vec3(0, 0, 50);
@@ -172,7 +173,7 @@ void HGameController::update(float dt) {
         checkLevelLoaded();
     }
      
-    AudioEngine::get()->play("theme", _theme, true, _theme->getVolume(), false);
+//    AudioEngine::get()->play("theme", _theme, true, _theme->getVolume(), false);
     
     _loseLabel->setText("You Lose!");
     _loseLabel->setPosition(_scene->getCamera()->getPosition()-Vec2(200,0));
@@ -192,9 +193,9 @@ void HGameController::update(float dt) {
     
 
    
-    if(int(_timer/6000)==0){
-        AudioEngine::get()->play("tension", _tension, true, _theme->getVolume(), true);
-    }
+//    if(int(_timer/6000)==0){
+//        AudioEngine::get()->play("tension", _tension, true, _theme->getVolume(), true);
+//    }
 
     if(int(_timer/6000)==0 && int(_timer/100) % 60 ==0 && !_didLose && !_didFinalwin){
         _scene->addChild(_loseLabel);
@@ -249,9 +250,7 @@ void HGameController::update(float dt) {
             _currdoorindex=i;
             
             if(abs(inputController->getPosition().x-_scene->worldToScreenCoords(_hunter.getPosition()).x)<100&&abs(inputController->getPosition().y-_scene->worldToScreenCoords(_hunter.getPosition()).y)<100){
-                
                 _triggered=true;
-                
             }
             _lockhunter->setPosition(_hunter.getPosition());
         }
@@ -378,7 +377,7 @@ void HGameController::update(float dt) {
     if(abs(_treasure.getPosition().x-_hunter.getPosition().x)<= 100 && abs(_treasure.getPosition().y-_hunter.getPosition().y)<= 100 && !_collision.didHitTreasure ){
         _collision.didHitTreasure = true;
         _treasure.getNode() ->setVisible(false);
-        AudioEngine::get()->play("treasureSound", _treasureSound, false, _theme->getVolume(), true);
+//        AudioEngine::get()->play("treasureSound", _treasureSound, false, _theme->getVolume(), true);
         transmitTreasureStolen();
         _treasureCount++;
     }
@@ -572,7 +571,7 @@ void HGameController::checkLevelLoaded() {
         initDoors();
         
         //for testing only, delete when network added
-        _doorslocked.push_back(3);
+//        _doorslocked.push_back(3);
         
         animatelocks();
 
@@ -694,8 +693,12 @@ void HGameController::processData(const std::string source, const std::vector<st
         if (mes[0] == 1) {
             _hunter.addTrap(Vec2(mes[1], mes[2]));
         } else if (mes[0] == 3) {
-            float idx = mes[1];
-            // TODO: handle active portrait
+            CULog("portrait received");
+            int idx = static_cast<int>(mes[1]);
+            _indexfromspirit = idx;
+        } else if (mes[0] == 5) {
+            int idx = static_cast<int>(mes[1]);
+            _doorslocked.push_back(idx);
         }
         
         _deserializer->reset();
@@ -739,6 +742,15 @@ void HGameController::transmitTreasureStolen() {
     std::vector<float> message = std::vector<float>();
     message.push_back(4);
     message.push_back(1);
+    _serializer->writeFloatVector(message);
+    _network->sendToHost(_serializer->serialize());
+    _serializer->reset();
+}
+
+void HGameController::transmitUnlockDoor(int idx) {
+    std::vector<float> message = std::vector<float>();
+    message.push_back(6);
+    message.push_back(idx);
     _serializer->writeFloatVector(message);
     _network->sendToHost(_serializer->serialize());
     _serializer->reset();

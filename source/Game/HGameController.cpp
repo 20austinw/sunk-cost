@@ -355,6 +355,16 @@ void HGameController::update(float dt) {
             forward = 0;
         }
     }
+    
+    if(_doorslocked.size()!=0){
+        for (int i=0; i<_doorslocked.size(); i++){
+        Vec2 position = _doors.at(_doorslocked[i])->getModelPosition();
+            if(abs(_hunter.getPosition().x-position.x)<150 && abs(_hunter.getPosition().y-position.y)<150){
+                rightward = -1;
+                forward = -1;
+            }
+        }
+    }
 
 //    bool age = _trap.update(); //false means trap active
 //    if (!_trap.getTrigger()){

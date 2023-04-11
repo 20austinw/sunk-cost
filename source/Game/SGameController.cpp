@@ -53,7 +53,7 @@ SGameController::SGameController(
     _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
     if (_level == nullptr) {
         _levelLoaded = false;
-        CULog("Fail!");
+//        CULog("Fail!");
     }
     
     _hunterAdded = false;
@@ -145,7 +145,7 @@ void SGameController::update(float dt) {
         inputController->readInput();
         if (inputController->didPressReset()) {
             reset();
-            CULog("Reset!");
+//            CULog("Reset!");
         }
         
         bool start = inputController->didPress();
@@ -166,7 +166,7 @@ void SGameController::update(float dt) {
                     if(_doors.at(i)->update(start,release, cameraPos)){
                         //a door is locked
                         isLocked = true;
-                        CULog("transmitting locked door");
+//                        CULog("transmitting locked door");
                         transmitLockedDoor(i);
                     }
                 }
@@ -280,7 +280,9 @@ void SGameController::update(float dt) {
         _portraits->setPrevState(_portraits->getCurState());
         
         if (_doorUnlocked && _doorToUnlock != -1){
-            if (!_doors.at(_doorToUnlock)->isLocked()){
+            CULog("add un Lock: %i", _doorToUnlock);
+            if (_doors.at(_doorToUnlock)->isLocked()){
+                CULog("addLock: %i", _doorToUnlock);
                 _doors.at(_doorToUnlock)->resetHunterUnlock();
                 _spirit.addNewLock(_scene);
                 _doorUnlocked = false;

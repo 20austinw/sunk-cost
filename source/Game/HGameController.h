@@ -352,6 +352,7 @@ private:
     void transmitTreasureStolen();
     
     void transmitUnlockDoor(int idx);
+    
 };
 
 #endif /* __HGAME_CONTROLLER_H__ */

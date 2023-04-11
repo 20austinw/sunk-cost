@@ -298,8 +298,8 @@ void HGameController::update(float dt) {
         if(_frameNumDoor<=0){
 //            _frameNumDoor=12;
             _doortrigger=false;
+            transmitUnlockDoor(_doorslocked[_currdoorindex]);
         }
-        transmitUnlockDoor(_currdoorindex);
     }
 
     std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
@@ -775,3 +775,4 @@ void HGameController::updateJoystick(float forward,float rightward){
     _outerJoystick->setPosition(_scene->getCamera()->getPosition()-Vec2(680,350));
     _innerJoystick->setPosition(_scene->getCamera()->getPosition()-Vec2(680,350)+Vec2(rightward,forward)*100);
 }
+

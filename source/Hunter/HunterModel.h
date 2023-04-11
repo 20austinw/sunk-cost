@@ -92,6 +92,10 @@ class HunterModel : public cugl::physics2::CapsuleObstacle {
         return _position;
     }
     
+    std::vector<std::shared_ptr<TrapModel>> getTraps(){
+        return _trapModels;
+    }
+    
 #pragma mark Setters
   public:
     /**

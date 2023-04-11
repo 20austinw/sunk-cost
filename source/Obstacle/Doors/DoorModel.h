@@ -49,7 +49,12 @@ public:
     }
     
     int getFrame(){
-        return _frame;
+        if(_type == 0){
+            return FRAME_NUM_FRONT-1;
+        }
+        else{
+            return FRAME_NUM_SIDE-1;
+        }
     }
     
     int getType(){

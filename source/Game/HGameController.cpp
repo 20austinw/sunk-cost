@@ -586,6 +586,7 @@ void HGameController::checkLevelLoaded() {
         initJoystick();
         
         _levelLoaded = true;
+        
     }
 }
 

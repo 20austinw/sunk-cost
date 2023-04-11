@@ -285,6 +285,7 @@ void HGameController::update(float dt) {
                 _doortrigger=true;
                 _frameNum=0;
                 _triggered=false;
+                _timerlock=300;
                 _doorslocked.erase(_doorslocked.begin()+_currdoorindex);
                 _lockhunter->setFrame(6);
             }

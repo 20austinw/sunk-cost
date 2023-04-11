@@ -92,6 +92,8 @@ class HunterController {
     bool detectedDoor(cugl::Vec2 position);
     
     void collisionWithTrap();
+  
+    std::vector<std::shared_ptr<TrapModel>> getTraps();
 
 #pragma mark Setters
   public:

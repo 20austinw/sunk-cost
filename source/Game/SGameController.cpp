@@ -133,6 +133,7 @@ void SGameController::update(float dt) {
                 _spirit.updateMovingLock(cameraPos);
                 for (int i=0; i<_doors.size();i++){
                     if(_doors.at(i)->update(start,release, cameraPos)){
+                        //a door is locked
                         isLocked = true;
                     }
                 }
@@ -244,18 +245,18 @@ void SGameController::update(float dt) {
         
         _portraits->setPrevState(_portraits->getCurState());
         
+        if (_doorUnlocked){
+            //TODO: unlock the current door
+            _spirit.addNewLock(_scene);
+        }
+        
         // detect if a trap or door on the map has been removed, add a new trap button to the scene
-        int result = _spirit.update(_trapTriggered, _doorUnlocked);
+        int result = _spirit.update(_trapTriggered);
         if(result == 1){
             _spirit.addNewTrapBtn(_scene);
         } else if (result == 2){
-            _spirit.addNewLock(_scene);
-        } else if (result == 3){
             _spirit.addNewTrapBtn(_scene);
             _spirit.addNewTrapBtn(_scene);
-        } else if (result == 4){
-            _spirit.addNewTrapBtn(_scene);
-            _spirit.addNewLock(_scene);
         }
         
         // Draw minimap

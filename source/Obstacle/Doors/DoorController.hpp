@@ -53,8 +53,7 @@ public:
     
     void resetToUnlock();
     
-    
-    
+    void resetHunterUnlock();
     
 #pragma mark Getters
     Vec2 getPosition(){

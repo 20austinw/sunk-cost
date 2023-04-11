@@ -163,21 +163,36 @@ class SpiritModel {
         trap->addChildTo(_scene);
     }
 
-    // 0: nothing; 1:remove trap; 2:unlock door, 3: remove 2 traps, 4: remove 1 door and 1 trap
-    int update(bool trapTriggered, bool doorUnlock) {
+    // 0: nothing; 1: remove 1 trap; 2: remove 2 traps
+    int update(bool trapTriggered) {
         bool result = 0;
         std::vector<std::shared_ptr<TrapModel>> pendingTrapModels;
         std::vector<std::shared_ptr<TrapView>> pendingTrapViews;
+        
+        if (trapTriggered){
+            result = 1;
+            //remove the trap closest to the hunter position
+            int target = cloestTrapToHunter();
+            _trapViews[target]->removeChildFrom(_scene);
+        }
+        
         for (int i = 0; i < _trapModels.size(); i++) {
-            if (!_trapModels[i]->update()) {
-                pendingTrapModels.emplace_back(_trapModels[i]);
-                pendingTrapViews.emplace_back(_trapViews[i]);
-                _trapViews[i]->update();
-            } else {
-                _trapViews[i]->removeChildFrom(_scene);
-                result = 1;
+            if (!(trapTriggered && cloestTrapToHunter() == i)){
+                if (!_trapModels[i]->update()) {
+                    pendingTrapModels.emplace_back(_trapModels[i]);
+                    pendingTrapViews.emplace_back(_trapViews[i]);
+                    _trapViews[i]->update();
+                } else {
+                    _trapViews[i]->removeChildFrom(_scene);
+                    if(result == 1){
+                        result = 2;
+                    } else {
+                        result = 1;
+                    }
+                }
             }
         }
+        
         _trapModels = pendingTrapModels;
         _trapViews = pendingTrapViews;
         if(_hunterView && _ticks == 0) {
@@ -188,22 +203,6 @@ class SpiritModel {
         }
         _ticks = (_ticks+1)%6;
         
-        if (trapTriggered){
-            if(result == 1){
-                result = 3;
-            } else {
-                result = 1;
-            }
-            //TODO: remove the trap closest to the hunter position
-        }
-        if(doorUnlock){
-            if(result == 1){
-                result = 4;
-            } else {
-                result = 2;
-            }
-            //TODO: unlock the door closest to the hunter position
-        }
         return result;
     }
     
@@ -225,8 +224,19 @@ class SpiritModel {
         
     }
     
-    Vec2 getHunterPos(){
-        return _hunterModel->getPosition();
+    int cloestTrapToHunter(){
+        Vec2 hunterPos = _hunterModel->getPosition();
+        int result = -1;
+        float minDis = 100000;
+        for (int i = 0; i < _trapModels.size(); i++){
+            Vec2 trapPos = _trapModels[i]->getPosition();
+            float dis = trapPos.distance(hunterPos);
+            if(dis<minDis){
+                minDis = dis;
+                result = i;
+            }
+        }
+        return result;
     }
 };
 

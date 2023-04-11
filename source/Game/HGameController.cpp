@@ -174,7 +174,7 @@ void HGameController::update(float dt) {
         checkLevelLoaded();
     }
      
-//    AudioEngine::get()->play("theme", _theme, true, _theme->getVolume(), false);
+    AudioEngine::get()->play("theme", _theme, true, _theme->getVolume(), false);
     
     _loseLabel->setText("You Lose!");
     _loseLabel->setPosition(_scene->getCamera()->getPosition()-Vec2(200,0));
@@ -194,9 +194,9 @@ void HGameController::update(float dt) {
     
 
    
-//    if(int(_timer/6000)==0){
-//        AudioEngine::get()->play("tension", _tension, true, _theme->getVolume(), true);
-//    }
+    if(int(_timer/6000)==0){
+       AudioEngine::get()->play("tension", _tension, true, _theme->getVolume(), true);
+   }
 
     if(int(_timer/6000)==0 && int(_timer/100) % 60 ==0 && !_didLose && !_didFinalwin){
         _scene->addChild(_loseLabel);
@@ -367,30 +367,36 @@ void HGameController::update(float dt) {
         }
     }
 
-//    bool age = _trap.update(); //false means trap active
-//    if (!_trap.getTrigger()){
+if (_hunter.getTraps().size()!= 0 && !_hunter.getTraps()[0]->getTrigger()){
         _hunter.move(forward,rightward);
-//    }
+    }
     //trap collision
    
 //    if(_collision.didHitTrap){
 //        _trap.setTrigger(true);
 //    }
     
+    
+    
+if(_hunter.getTraps().size()!=0){
+    for (int i=0;i<_hunter.getTraps().size();i++){
+        if(abs(_hunter.getTraps()[i]->getPosition().x-_hunter.getPosition().x)<= 100 && abs(_hunter.getTraps()[i]->getPosition().y-_hunter.getPosition().y)<= 100 ){
+            AudioEngine::get()->play("trapSound", _trapSound, false, _theme->getVolume(), true);
+            _hunter.getTraps()[i]->setTrigger(true);
+        }
 
-    // if(abs(_trap.getPosition().x-_hunter.getPosition().x)<= 80 && abs(_trap.getPosition().y-_hunter.getPosition().y)<= 80 && !age){
-    //     AudioEngine::get()->play("trapSound", _treasureSound, false, _theme->getVolume(), true);
-    //     _trap.setTrigger(true);
-    // }
-    // if (_trap.getTrigger()&& _count == 5){
-    //     _trap.setViewFrame();
-    // }
+        if (_hunter.getTraps()[i]->getTrigger()&& _count == 5){
+            _hunter.getTraps()[i]->setTrigger(false);
+        }
+    }
+}
+    
 
     
     if(abs(_treasure.getPosition().x-_hunter.getPosition().x)<= 100 && abs(_treasure.getPosition().y-_hunter.getPosition().y)<= 100 && !_collision.didHitTreasure ){
         _collision.didHitTreasure = true;
         _treasure.getNode() ->setVisible(false);
-//        AudioEngine::get()->play("treasureSound", _treasureSound, false, _theme->getVolume(), true);
+        AudioEngine::get()->play("treasureSound", _treasureSound, false, _theme->getVolume(), true);
         transmitTreasureStolen();
         _treasureCount++;
     }

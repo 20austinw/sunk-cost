@@ -66,6 +66,11 @@ void HunterController::setViewFrame(float forward, float right) {
     _view->advanceFrame(forward, right);
 }
 
+std::vector<std::shared_ptr<TrapModel>> HunterController::getTraps(){
+    return _model->getTraps();
+}
+
+
 /**
  * TODO: Implement Me
  * This function should (for gameplay prototype)

@@ -25,7 +25,7 @@ using namespace std;
  * on creation.
  *
  * @param displaySize   The display size of the game window
- * @param randoms        Reference to the random number generator
+ * @param randoms        Reference to the random number generator 
  */
 SGameController::SGameController(
                                  const Size displaySize, const std::shared_ptr<cugl::AssetManager>& assets)
@@ -280,10 +280,12 @@ void SGameController::update(float dt) {
         _portraits->setPrevState(_portraits->getCurState());
         
         if (_doorUnlocked && _doorToUnlock != -1){
-            _spirit.addNewLock(_scene);
-            _doors.at(_doorToUnlock)->resetHunterUnlock();
-            _doorUnlocked = false;
-            _doorToUnlock == -1;
+            if (!_doors.at(_doorToUnlock)->isLocked()){
+                _doors.at(_doorToUnlock)->resetHunterUnlock();
+                _spirit.addNewLock(_scene);
+                _doorUnlocked = false;
+                _doorToUnlock = -1;
+            }
         }
         
         // detect if a trap or door on the map has been removed, add a new trap button to the scene

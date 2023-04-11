@@ -65,6 +65,8 @@ public:
     }
     
     Vec2 getModelPosition();
+    
+    bool isLocked();
 
 #pragma mark Setters
     void setFrame(int frame){

@@ -83,3 +83,7 @@ Vec2 DoorController::getModelPosition(){
     return _model->getPosition();
     
 }
+
+bool DoorController::isLocked(){
+    return _model->getState() == 1;
+}

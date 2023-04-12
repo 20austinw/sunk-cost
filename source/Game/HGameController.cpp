@@ -801,6 +801,7 @@ void HGameController::transmitTrapTriggered(Vec2 position) {
     message.push_back(7);
     message.push_back(position.x);
     message.push_back(position.y);
+    _serializer->writeFloatVector(message);
     _network->sendToHost(_serializer->serialize());
     _serializer->reset();
 }

@@ -292,6 +292,9 @@ void SGameController::update(float dt) {
         
         // detect if a trap or door on the map has been removed, add a new trap button to the scene
         int result = _spirit.update(_trapTriggered);
+        if (_trapTriggered){
+            _trapTriggered = false;
+        }
         if(result == 1){
             _spirit.addNewTrapBtn(_scene);
         } else if (result == 2){

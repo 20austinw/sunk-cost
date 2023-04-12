@@ -178,18 +178,23 @@ class SpiritModel {
         
         for (int i = 0; i < _trapModels.size(); i++) {
             if (!(trapTriggered && cloestTrapToHunter() == i)){
-                if (!_trapModels[i]->update()) {
-                    pendingTrapModels.emplace_back(_trapModels[i]);
-                    pendingTrapViews.emplace_back(_trapViews[i]);
-                    _trapViews[i]->update();
-                } else {
-                    _trapViews[i]->removeChildFrom(_scene);
-                    if(result == 1){
-                        result = 2;
-                    } else {
-                        result = 1;
-                    }
-                }
+                pendingTrapModels.emplace_back(_trapModels[i]);
+                pendingTrapViews.emplace_back(_trapViews[i]);
+                
+//                if (!_trapModels[i]->update()) {
+//                    pendingTrapModels.emplace_back(_trapModels[i]);
+//                    pendingTrapViews.emplace_back(_trapViews[i]);
+//                    _trapViews[i]->update();
+//                }
+                
+//                else {
+//                    _trapViews[i]->removeChildFrom(_scene);
+//                    if(result == 1){
+//                        result = 2;
+//                    } else {
+//                        result = 1;
+//                    }
+//                }
             }
         }
         

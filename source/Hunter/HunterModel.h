@@ -135,6 +135,10 @@ class HunterModel : public cugl::physics2::CapsuleObstacle {
         trap->addChildTo(_scene);
     }
     
+    void removeTrap(int index){
+        _trapViews[index]->removeChildFrom(_scene);
+    }
+    
     void update() {
         std::vector<std::shared_ptr<TrapModel>> pendingTrapModels;
         std::vector<std::shared_ptr<TrapView>> pendingTrapViews;

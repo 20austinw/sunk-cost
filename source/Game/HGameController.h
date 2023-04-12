@@ -83,6 +83,8 @@ private:
     
     bool _timertriggered;
     
+    bool _removedvar;
+    
     int _currdoor;
     
     int _currdoorindex;

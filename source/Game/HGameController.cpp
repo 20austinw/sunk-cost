@@ -398,6 +398,11 @@ if (_hunter.getTraps().size()== 0){
                 
                 if (_hunter.getTraps()[i]->getTrigger()&& _countfortimer >= 300){
                     _hunter.getTraps()[i]->setTrigger(false);
+                    if(_removedvar){
+                        _hunter.removeTrap(i);
+                        _removedvar=false;
+                    }
+                   
                 }
             }
         }
@@ -600,6 +605,7 @@ void HGameController::checkLevelLoaded() {
         _timertriggered=false;
         initLock();
         initDoors();
+        _removedvar=true;
         
         //for testing only, delete when network added
 //        _doorslocked.push_back(3);

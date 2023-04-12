@@ -39,6 +39,7 @@ class TrapController {
     bool getTrigger();
     void addChildTo(const std::shared_ptr<cugl::Scene2>& scene);
     void removeChildFrom(const std::shared_ptr<cugl::Scene2>& scene);
+    void removeView(const std::shared_ptr<cugl::Scene2>& scene);
 };
 
 #endif /* TrapController_hpp */

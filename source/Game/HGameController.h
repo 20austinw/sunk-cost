@@ -139,6 +139,8 @@ private:
     std::shared_ptr<scene2::PolygonNode> _filter;
     std::shared_ptr<scene2::PolygonNode> _shadow;
     std::shared_ptr<scene2::PolygonNode> _map;
+    std::shared_ptr<scene2::PolygonNode> _winNode;
+    std::shared_ptr<scene2::PolygonNode> _loseNode;
     
     std::shared_ptr<cugl::Texture> _spriteSheet;
     std::shared_ptr<cugl::scene2::SpriteNode> _spriteNode;
@@ -184,6 +186,8 @@ private:
     
     std::shared_ptr<cugl::Texture> _filterTexture;
     std::shared_ptr<cugl::Texture> _shadowTexture;
+    std::shared_ptr<cugl::Texture> _winTexture;
+    std::shared_ptr<cugl::Texture> _loseTexture;
     /** The text with the current health */
     std::shared_ptr<cugl::TextLayout> _text;
     std::vector<std::shared_ptr<DoorController>> _doors;
@@ -224,7 +228,7 @@ public:
      * on creation.
      *
      * @param displaySize   The display size of the game window
-     * @param randoms		Reference to the random number generator
+     * @param randoms        Reference to the random number generator
      */
     HGameController(const Size displaySize,
                     const std::shared_ptr<AssetManager>& assets);

@@ -79,6 +79,10 @@ private:
     
     int _count;
     
+    int _countfortimer;
+    
+    bool _timertriggered;
+    
     int _currdoor;
     
     int _currdoorindex;

@@ -60,6 +60,7 @@ HGameController::HGameController(
     Vec2 gravity(0,DEFAULT_GRAVITY);
 
     _count = 0;
+   
     _triggered = false;
     _inprogress=false;
         
@@ -330,6 +331,7 @@ void HGameController::update(float dt) {
         _hunter.setViewFrame(forward, rightward);
         _count = 0;
     }
+    _countfortimer++;
     
     std::string left = (midy<18 && posx <18 && midy>-1 && posx >-1) ? tiles[midy][posx]: "black";
     std::string up = (posyup<18 && midx <18 && posyup>-1 && midx >-1) ? tiles[posyup][midx]: "black";
@@ -382,18 +384,23 @@ if (_hunter.getTraps().size()== 0){
     
     
     
-if(_hunter.getTraps().size()!=0){
-    for (int i=0;i<_hunter.getTraps().size();i++){
-        if(abs(_hunter.getTraps()[i]->getPosition().x-_hunter.getPosition().x)<= 100 && abs(_hunter.getTraps()[i]->getPosition().y-_hunter.getPosition().y)<= 100 ){
-            AudioEngine::get()->play("trapSound", _trapSound, false, _theme->getVolume(), true);
-            _hunter.getTraps()[i]->setTrigger(true);
+    if(_hunter.getTraps().size()!=0){
+            for (int i=0;i<_hunter.getTraps().size();i++){
+                if(abs(_hunter.getTraps()[i]->getPosition().x-_hunter.getPosition().x)<= 100 && abs(_hunter.getTraps()[i]->getPosition().y-_hunter.getPosition().y)<= 100){
+                    AudioEngine::get()->play("trapSound", _trapSound, false, _theme->getVolume(), true);
+                    _hunter.getTraps()[i]->setTrigger(true);
+                    if(!_timertriggered){
+                        _countfortimer=0;
+                        _timertriggered=true;
+                    }
+                   
+                }
+                
+                if (_hunter.getTraps()[i]->getTrigger()&& _countfortimer >= 300){
+                    _hunter.getTraps()[i]->setTrigger(false);
+                }
+            }
         }
-
-        if (_hunter.getTraps()[i]->getTrigger()&& _count == 5){
-            _hunter.getTraps()[i]->setTrigger(false);
-        }
-    }
-}
     
 
     
@@ -590,6 +597,7 @@ void HGameController::checkLevelLoaded() {
         _finalWinLabel = cugl::scene2::Label::allocWithText(Vec2(800,800), "You Win!", _assets->get<Font>("pixel32"));
 
 
+        _timertriggered=false;
         initLock();
         initDoors();
         

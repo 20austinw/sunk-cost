@@ -137,6 +137,7 @@ class HunterModel : public cugl::physics2::CapsuleObstacle {
     
     void removeTrap(int index){
         _trapViews[index]->removeChildFrom(_scene);
+        _trapModels.erase(_trapModels.begin()+index);
     }
     
     void update() {

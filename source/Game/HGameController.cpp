@@ -369,13 +369,20 @@ void HGameController::update(float dt) {
         }
     }
 
-if (_hunter.getTraps().size()!= 0 && !_hunter.getTraps()[0]->getTrigger()){
+    if (_hunter.getTraps().size()== 0 ){
         _hunter.move(forward,rightward);
-    }
-    
-if (_hunter.getTraps().size()== 0){
-        _hunter.move(forward,rightward);
-    }
+            }
+    else{
+        _ismovedonece=false;
+            for (int i=0;i<_hunter.getTraps().size();i++){
+                if(_hunter.getTraps()[i]->getTrigger()){
+                    _ismovedonece=true;
+                }
+            }
+        if(!_ismovedonece){
+            _hunter.move(forward,rightward);
+        }
+        }
     //trap collision
    
 //    if(_collision.didHitTrap){
@@ -396,19 +403,20 @@ if (_hunter.getTraps().size()== 0){
                    
                 }
                 
-                if (_hunter.getTraps()[i]->getTrigger()&& _countfortimer >= 300){
-                    _hunter.getTraps()[i]->setTrigger(false);
-                    if(_removedvar){
-                        _hunter.removeTrap(i);
-                        _removedvar=false;
-                        transmitTrapTriggered(_hunter.getPosition());
-                    }
-                   
+                }
+        for (int i=0;i<_hunter.getTraps().size();i++){
+            if (_hunter.getTraps()[i]->getTrigger()&& _countfortimer >= 300){
+                _hunter.getTraps()[i]->setTrigger(false);
+                if(_removedvar){
+                    _hunter.removeTrap(i);
+                    _removedvar=false;
+                    _timertriggered=false;
+                    transmitTrapTriggered(_hunter.getPosition());
                 }
             }
         }
-    
 
+        }
     
     if(abs(_treasure.getPosition().x-_hunter.getPosition().x)<= 100 && abs(_treasure.getPosition().y-_hunter.getPosition().y)<= 100 && !_collision.didHitTreasure ){
         _collision.didHitTreasure = true;

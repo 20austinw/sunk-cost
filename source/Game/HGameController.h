@@ -357,6 +357,8 @@ private:
     
     void transmitTreasureStolen();
     
+    bool _ismovedonece;
+    
     void transmitUnlockDoor(int idx);
     
     void transmitTrapTriggered(Vec2 position);

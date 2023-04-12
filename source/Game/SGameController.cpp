@@ -501,6 +501,11 @@ void SGameController::processData(const std::string source, const std::vector<st
             _doorToUnlock = static_cast<int>(mes[1]);
         }
         
+        if (mes[0] == 7) {
+            _trapTriggered = true;
+            Vec2 trapPos = Vec2(mes[1], mes[2]);
+        }
+        
         // Win alert for spirit
         // _gameStatus = 1;
         

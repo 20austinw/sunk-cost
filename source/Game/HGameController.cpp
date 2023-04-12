@@ -401,6 +401,7 @@ if (_hunter.getTraps().size()== 0){
                     if(_removedvar){
                         _hunter.removeTrap(i);
                         _removedvar=false;
+                        transmitTrapTriggered(_hunter.getPosition());
                     }
                    
                 }
@@ -791,6 +792,15 @@ void HGameController::transmitUnlockDoor(int idx) {
     message.push_back(6);
     message.push_back(idx);
     _serializer->writeFloatVector(message);
+    _network->sendToHost(_serializer->serialize());
+    _serializer->reset();
+}
+
+void HGameController::transmitTrapTriggered(Vec2 position) {
+    std::vector<float> message = std::vector<float>();
+    message.push_back(7);
+    message.push_back(position.x);
+    message.push_back(position.y);
     _network->sendToHost(_serializer->serialize());
     _serializer->reset();
 }

@@ -359,6 +359,7 @@ private:
     
     void transmitUnlockDoor(int idx);
     
+    void transmitTrapTriggered(Vec2 position);
 };
 
 #endif /* __HGAME_CONTROLLER_H__ */

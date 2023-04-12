@@ -15,6 +15,7 @@ using namespace cugl;
 class DoorModel {
 #define FRAME_NUM_FRONT 21
 #define FRAME_NUM_SIDE 18
+#define FRAME_NUM_Front_Hunter 13
 #pragma mark States
 private:
     /** door type (0 for front, 1 for side) */
@@ -49,7 +50,12 @@ public:
     }
     
     int getFrame(){
-        return _frame;
+        if(_type == 0){
+            return FRAME_NUM_Front_Hunter-1;
+        }
+        else{
+            return FRAME_NUM_SIDE-1;
+        }
     }
     
     int getType(){

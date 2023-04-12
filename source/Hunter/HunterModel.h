@@ -92,6 +92,10 @@ class HunterModel : public cugl::physics2::CapsuleObstacle {
         return _position;
     }
     
+    std::vector<std::shared_ptr<TrapModel>> getTraps(){
+        return _trapModels;
+    }
+    
 #pragma mark Setters
   public:
     /**
@@ -129,6 +133,11 @@ class HunterModel : public cugl::physics2::CapsuleObstacle {
         auto trap = std::make_shared<TrapView>(_assets, position, 20);
         _trapViews.emplace_back(trap);
         trap->addChildTo(_scene);
+    }
+    
+    void removeTrap(int index){
+        _trapViews[index]->removeChildFrom(_scene);
+        _trapModels.erase(_trapModels.begin()+index);
     }
     
     void update() {

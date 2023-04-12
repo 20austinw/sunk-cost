@@ -156,26 +156,48 @@ class SpiritModel {
     void addTrap(Vec2 position) {
         if (_trapModels.size() >= 3)
             return;
-        _trapModels.emplace_back(std::make_shared<TrapModel>(position, 300));
+        //a trap will last for 15s for now
+        _trapModels.emplace_back(std::make_shared<TrapModel>(position, 900));
         auto trap = std::make_shared<TrapView>(_assets, position, 20);
         _trapViews.emplace_back(trap);
         trap->addChildTo(_scene);
     }
 
-    bool update() {
-        bool result = false;
+    // 0: nothing; 1: remove 1 trap; 2: remove 2 traps
+    int update(bool trapTriggered) {
+        bool result = 0;
         std::vector<std::shared_ptr<TrapModel>> pendingTrapModels;
         std::vector<std::shared_ptr<TrapView>> pendingTrapViews;
+        
+        if (trapTriggered){
+            result = 1;
+            //remove the trap closest to the hunter position
+            int target = cloestTrapToHunter();
+            _trapViews[target]->removeChildFrom(_scene);
+        }
+        
         for (int i = 0; i < _trapModels.size(); i++) {
-            if (!_trapModels[i]->update()) {
+            if (!(trapTriggered && cloestTrapToHunter() == i)){
                 pendingTrapModels.emplace_back(_trapModels[i]);
                 pendingTrapViews.emplace_back(_trapViews[i]);
-                _trapViews[i]->update();
-            } else {
-                _trapViews[i]->removeChildFrom(_scene);
-                result = true;
+                
+//                if (!_trapModels[i]->update()) {
+//                    pendingTrapModels.emplace_back(_trapModels[i]);
+//                    pendingTrapViews.emplace_back(_trapViews[i]);
+//                    _trapViews[i]->update();
+//                }
+                
+//                else {
+//                    _trapViews[i]->removeChildFrom(_scene);
+//                    if(result == 1){
+//                        result = 2;
+//                    } else {
+//                        result = 1;
+//                    }
+//                }
             }
         }
+        
         _trapModels = pendingTrapModels;
         _trapViews = pendingTrapViews;
         if(_hunterView && _ticks == 0) {
@@ -185,6 +207,7 @@ class SpiritModel {
             right = 0;
         }
         _ticks = (_ticks+1)%6;
+        
         return result;
     }
     
@@ -204,6 +227,21 @@ class SpiritModel {
     
     void alertTreasure(Vec2 position) {
         
+    }
+    
+    int cloestTrapToHunter(){
+        Vec2 hunterPos = _hunterModel->getPosition();
+        int result = -1;
+        float minDis = 100000;
+        for (int i = 0; i < _trapModels.size(); i++){
+            Vec2 trapPos = _trapModels[i]->getPosition();
+            float dis = trapPos.distance(hunterPos);
+            if(dis<minDis){
+                minDis = dis;
+                result = i;
+            }
+        }
+        return result;
     }
 };
 

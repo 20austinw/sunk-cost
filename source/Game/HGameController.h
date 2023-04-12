@@ -72,7 +72,18 @@ private:
     std::shared_ptr<PortraitSetController> _portraits;
 
     bool _inprogress;
+    
+    bool _animates;
+    
+    int _indexfromspirit;
+    
     int _count;
+    
+    int _countfortimer;
+    
+    bool _timertriggered;
+    
+    bool _removedvar;
     
     int _currdoor;
     
@@ -349,6 +360,12 @@ private:
     void transmitPos(std::vector<float> position);
     
     void transmitTreasureStolen();
+    
+    bool _ismovedonece;
+    
+    void transmitUnlockDoor(int idx);
+    
+    void transmitTrapTriggered(Vec2 position);
 };
 
 #endif /* __HGAME_CONTROLLER_H__ */

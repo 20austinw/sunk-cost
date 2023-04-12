@@ -23,7 +23,7 @@ SpiritController::SpiritController(
     std::shared_ptr<PortraitSetController> portraits, Size screenSize) {
     _scene = scene;
     _model = std::make_shared<SpiritModel>(assets, scene, 3, 2, 30);
-    _view = std::make_shared<SpiritView>(_model->doors, _model->traps, assets->get<Texture>("lock_button"), assets->get<Texture>("trap_button"), _scene);
+    _view = std::make_shared<SpiritView>(_model->doors, _model->traps, assets,  _scene);
     _portraits = portraits;
     _screenSize = screenSize;
     _cameraCool = CAMERA_COOL;
@@ -79,8 +79,8 @@ bool SpiritController::placeTrap(const std::shared_ptr<TilemapController> _tilem
  * (1) detect camera change
  * (2) modify portraitsetcontroller to reflect the change
  */
-bool SpiritController::update(){
-    bool result = _model->update();
+int SpiritController::update(bool trap){
+    int result = _model->update(trap);
     _portraits->update();
     return result;
 }
@@ -152,5 +152,11 @@ void SpiritController::addNewTrapBtn(const std::shared_ptr<Scene2>& scene){
     _model->setTraps(_model->traps+1);
     _view->addNewTrap(scene);
     updateTrapBtnsPos(scene);
+}
+
+void SpiritController::addNewLock(const std::shared_ptr<Scene2>& scene){
+    _model->setDoors(_model->doors+1);
+    _view->addNewLock(scene);
+    updateLocksPos(scene);
 }
 

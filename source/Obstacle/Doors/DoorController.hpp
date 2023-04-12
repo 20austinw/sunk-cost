@@ -53,8 +53,7 @@ public:
     
     void resetToUnlock();
     
-    
-    
+    void resetHunterUnlock();
     
 #pragma mark Getters
     Vec2 getPosition(){
@@ -66,6 +65,8 @@ public:
     }
     
     Vec2 getModelPosition();
+    
+    bool isLocked();
 
 #pragma mark Setters
     void setFrame(int frame){

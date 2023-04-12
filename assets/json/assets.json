@@ -81,7 +81,7 @@
         "left": {
             "file":  "textures/left_arrow.png"
         },
-        "lose_screen": {
+        "hunters_lose": {
             "file": "textures/live_painting.png"
         },
         "spirit_win_animation": {
@@ -113,6 +113,15 @@
        },
        "joystick_top":{
            "file":  "textures/joystick_top.png"
+       },
+       "extra_1":{
+           "file":  "textures/extra_item_1.png"
+       },
+       "extra_2":{
+           "file":  "textures/extra_item_2.png"
+       },
+       "extra":{
+           "file":  "textures/empty_bubble.png"
        }
     },
     "fonts": {

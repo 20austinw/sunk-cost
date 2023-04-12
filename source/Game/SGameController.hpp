@@ -71,7 +71,7 @@ public:
     std::shared_ptr<cugl::Texture> _background;
     /** The text with the current health */
     std::shared_ptr<cugl::TextLayout> _text;
-    
+
     /** The network connection (as made by this scene) */
     std::shared_ptr<cugl::net::NetcodeConnection> _network;
 
@@ -81,26 +81,40 @@ public:
     std::shared_ptr<scene2::PolygonNode> _miniMap;
 
     Status _status;
-    
+
     bool _ishost;
-    
+
     /** Whether we quit the game */
     bool _quit;
-    
+
     std::shared_ptr<cugl::net::NetcodeSerializer> _serializer;
-    
+
     std::shared_ptr<cugl::net::NetcodeDeserializer> _deserializer;
-    
+
     bool _hunterAdded;
-    
+
     bool _gameStatus = 0;
-    
+
     std::shared_ptr<EndScene> _endScene;
-    
+
     std::vector<std::shared_ptr<DoorController>> _doors;
     std::shared_ptr<Font> _font;
     std::shared_ptr<cugl::scene2::Label> _timerLabel;
     int _timeLeft = 100*60;
+
+    /** If hunter trigger the trap */
+    bool _trapTriggered;
+    /** If hunter unlock a door */
+    bool _doorUnlocked;
+    
+    bool _treasureStolen;
+    
+    // place holder for treasure alert
+    std::shared_ptr<cugl::scene2::Label> _alertLabel;
+    
+    int _alertTimer;
+    
+    int _doorToUnlock;
 
 #pragma mark External References
   private:
@@ -145,11 +159,11 @@ public:
      * @param batch The SpriteBatch used to render this scene
      */
     void render(std::shared_ptr<SpriteBatch>& batch);
-    
+
     Status getStatus() {
         return _status;
     }
-    
+
     /**
      * Returns the network connection (as made by this scene)
      *
@@ -160,7 +174,7 @@ public:
     std::shared_ptr<cugl::net::NetcodeConnection> getConnection() const {
         return _network;
     }
-    
+
     /**
      * Returns the network connection (as made by this scene)
      *
@@ -171,7 +185,7 @@ public:
     void setConnection(const std::shared_ptr<cugl::net::NetcodeConnection>& network) {
         _network = network;
     }
-    
+
     /**
      * Returns true if the player is host.
      *
@@ -196,7 +210,7 @@ public:
      * @return true if the player quits the game.
      */
     bool didQuit() const { return _quit; }
- 
+
     /**
      * Disconnects this scene from the network controller.
      *
@@ -240,12 +254,15 @@ public:
     bool checkConnection();
 
     void transmitTrap(std::vector<float> pos);
-    
+
     void transmitActiveCamIndex(int i);
-    
+
     void initDoors();
-    
+
     void updateDoors();
+    
+    void transmitLockedDoor(int i);
+
 
 };
 

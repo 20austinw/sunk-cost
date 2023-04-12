@@ -60,6 +60,7 @@ HGameController::HGameController(
     Vec2 gravity(0,DEFAULT_GRAVITY);
 
     _count = 0;
+   
     _triggered = false;
     _inprogress=false;
         
@@ -71,6 +72,7 @@ HGameController::HGameController(
     _tick = 0;
     _frameNumClose=0;
     _didLose = false;
+    _animates = true;
     _dimen = Application::get()->getDisplaySize();
     //    _offset = Vec3((_dimen.width)/2.0f,(_dimen.height)/2.0f,50);
     _offset = Vec3(0, 0, 50);
@@ -87,7 +89,8 @@ HGameController::HGameController(
     _unlockbutton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_host"));
     
     _unlockbutton->addListener(
-        [=](const std::string& name, bool down) { this->_active = down; });
+        [=](const std::string& name, bool down) { this->_active = down;
+        });
     _unlockbutton->setVisible(true);
     _unlockbutton->activate();
 
@@ -97,7 +100,7 @@ HGameController::HGameController(
     inputController->initListeners();
 
 
-    CULog("%f, %f", displaySize.width, displaySize.height);
+//    CULog("%f, %f", displaySize.width, displaySize.height);
     _hunter = HunterController(assets, displaySize, _scene, PLAYER_SIZE);
 //    _trap = TrapController(assets, displaySize, PLAYER_SIZE);
     _treasure = TreasureController(assets, displaySize, PLAYER_SIZE);
@@ -119,6 +122,8 @@ HGameController::HGameController(
 //    _collision.init(_hunter.getHunterBody(), _trap.getTrapBody(), _treasure.getTreasureBody());
     _world->activateCollisionCallbacks(true);
     _world->onBeginContact = [this](b2Contact* contact) { _collision.beginContact(contact); };
+        
+        
     
 //    _world->onEndContact = [this](b2Contact* contact) { _collision.endContact(contact); };
     // Create the world node
@@ -192,8 +197,8 @@ void HGameController::update(float dt) {
     _loseNode->setPosition(_scene->getCamera()->getPosition()-Vec2(950,1050));
    
     if(int(_timer/6000)==0){
-        AudioEngine::get()->play("tension", _tension, true, _theme->getVolume(), true);
-    }
+       AudioEngine::get()->play("tension", _tension, true, _theme->getVolume(), true);
+   }
 
     if(int(_timer/6000)==0 && int(_timer/100) % 60 ==0 && !_didLose && !_didFinalwin){
         _scene->addChild(_loseNode);
@@ -230,7 +235,10 @@ void HGameController::update(float dt) {
     _world->onBeginContact = [this](b2Contact* contact) { _collision.beginContact(contact); };
     
     
-    
+    if(_animates){
+             _portraits->updatespecific(_indexfromspirit);
+         }
+
         
 
     auto inputController = InputController::getInstance();
@@ -247,9 +255,7 @@ void HGameController::update(float dt) {
             _currdoorindex=i;
             
             if(abs(inputController->getPosition().x-_scene->worldToScreenCoords(_hunter.getPosition()).x)<100&&abs(inputController->getPosition().y-_scene->worldToScreenCoords(_hunter.getPosition()).y)<100){
-                
                 _triggered=true;
-                
             }
             _lockhunter->setPosition(_hunter.getPosition());
         }
@@ -283,6 +289,7 @@ void HGameController::update(float dt) {
                 _doortrigger=true;
                 _frameNum=0;
                 _triggered=false;
+                _timerlock=300;
                 _doorslocked.erase(_doorslocked.begin()+_currdoorindex);
                 _lockhunter->setFrame(6);
             }
@@ -293,9 +300,10 @@ void HGameController::update(float dt) {
     if(_doortrigger){
         _doors.at(_currdoor)->setFrame(_frameNumDoor%12);
         _frameNumDoor=_frameNumDoor-1;
-        if(_frameNumDoor==0){
+        if(_frameNumDoor<=0){
 //            _frameNumDoor=12;
             _doortrigger=false;
+            transmitUnlockDoor(_doorslocked[_currdoorindex]);
         }
     }
 
@@ -326,6 +334,7 @@ void HGameController::update(float dt) {
         _hunter.setViewFrame(forward, rightward);
         _count = 0;
     }
+    _countfortimer++;
     
     std::string left = (midy<18 && posx <18 && midy>-1 && posx >-1) ? tiles[midy][posx]: "black";
     std::string up = (posyup<18 && midx <18 && posyup>-1 && midx >-1) ? tiles[posyup][midx]: "black";
@@ -352,26 +361,65 @@ void HGameController::update(float dt) {
             forward = 0;
         }
     }
+    
+    if(_doorslocked.size()!=0){
+        for (int i=0; i<_doorslocked.size(); i++){
+        Vec2 position = _doors.at(_doorslocked[i])->getModelPosition();
+            if(abs(_hunter.getPosition().x-position.x)<150 && abs(_hunter.getPosition().y-position.y)<150){
+                rightward = -1;
+                forward = -1;
+            }
+        }
+    }
 
-//    bool age = _trap.update(); //false means trap active
-//    if (!_trap.getTrigger()){
+    if (_hunter.getTraps().size()== 0 ){
         _hunter.move(forward,rightward);
-//    }
+            }
+    else{
+        _ismovedonece=false;
+            for (int i=0;i<_hunter.getTraps().size();i++){
+                if(_hunter.getTraps()[i]->getTrigger()){
+                    _ismovedonece=true;
+                }
+            }
+        if(!_ismovedonece){
+            _hunter.move(forward,rightward);
+        }
+        }
     //trap collision
    
 //    if(_collision.didHitTrap){
 //        _trap.setTrigger(true);
 //    }
     
+    
+    
+    if(_hunter.getTraps().size()!=0){
+            for (int i=0;i<_hunter.getTraps().size();i++){
+                if(abs(_hunter.getTraps()[i]->getPosition().x-_hunter.getPosition().x)<= 100 && abs(_hunter.getTraps()[i]->getPosition().y-_hunter.getPosition().y)<= 100){
+                    AudioEngine::get()->play("trapSound", _trapSound, false, _theme->getVolume(), true);
+                    _hunter.getTraps()[i]->setTrigger(true);
+                    if(!_timertriggered){
+                        _countfortimer=0;
+                        _timertriggered=true;
+                    }
+                   
+                }
+                
+                }
+        for (int i=0;i<_hunter.getTraps().size();i++){
+            if (_hunter.getTraps()[i]->getTrigger()&& _countfortimer >= 300){
+                _hunter.getTraps()[i]->setTrigger(false);
+                if(_removedvar){
+                    _hunter.removeTrap(i);
+                    _removedvar=false;
+                    _timertriggered=false;
+                    transmitTrapTriggered(_hunter.getPosition());
+                }
+            }
+        }
 
-    // if(abs(_trap.getPosition().x-_hunter.getPosition().x)<= 80 && abs(_trap.getPosition().y-_hunter.getPosition().y)<= 80 && !age){
-    //     AudioEngine::get()->play("trapSound", _treasureSound, false, _theme->getVolume(), true);
-    //     _trap.setTrigger(true);
-    // }
-    // if (_trap.getTrigger()&& _count == 5){
-    //     _trap.setViewFrame();
-    // }
-
+        }
     
     if(abs(_treasure.getPosition().x-_hunter.getPosition().x)<= 100 && abs(_treasure.getPosition().y-_hunter.getPosition().y)<= 100 && !_collision.didHitTreasure ){
         _collision.didHitTreasure = true;
@@ -442,7 +490,7 @@ void HGameController::animatelocks(){
 void HGameController::addlocks(int index){
     _doorslocked.push_back(index);
     _stopanim=false;
-    if(!_stopanim){
+    while(!_stopanim){
         _doors.at(index)->setFrame(_frameNumClose);
         _frameNumClose+=1;
         if(_frameNumClose==_doors.at(index)->getFrame()){
@@ -577,11 +625,13 @@ void HGameController::checkLevelLoaded() {
         _finalWinLabel = cugl::scene2::Label::allocWithText(Vec2(800,800), "You Win!", _assets->get<Font>("pixel32"));
 
 
+        _timertriggered=false;
         initLock();
         initDoors();
+        _removedvar=true;
         
         //for testing only, delete when network added
-        _doorslocked.push_back(3);
+//        _doorslocked.push_back(3);
         
         animatelocks();
 
@@ -594,6 +644,7 @@ void HGameController::checkLevelLoaded() {
         initJoystick();
         
         _levelLoaded = true;
+        
     }
 }
 
@@ -703,8 +754,13 @@ void HGameController::processData(const std::string source, const std::vector<st
         if (mes[0] == 1) {
             _hunter.addTrap(Vec2(mes[1], mes[2]));
         } else if (mes[0] == 3) {
-            float idx = mes[1];
-            // TODO: handle active portrait
+            CULog("portrait received");
+            int idx = static_cast<int>(mes[1]);
+            _indexfromspirit = idx;
+        } else if (mes[0] == 5) {
+            int idx = static_cast<int>(mes[1]);
+            CULog("door index: %d", idx);
+            addlocks(idx);
         }
         
         _deserializer->reset();
@@ -753,8 +809,28 @@ void HGameController::transmitTreasureStolen() {
     _serializer->reset();
 }
 
+void HGameController::transmitUnlockDoor(int idx) {
+    std::vector<float> message = std::vector<float>();
+    message.push_back(6);
+    message.push_back(idx);
+    _serializer->writeFloatVector(message);
+    _network->sendToHost(_serializer->serialize());
+    _serializer->reset();
+}
+
+void HGameController::transmitTrapTriggered(Vec2 position) {
+    std::vector<float> message = std::vector<float>();
+    message.push_back(7);
+    message.push_back(position.x);
+    message.push_back(position.y);
+    _serializer->writeFloatVector(message);
+    _network->sendToHost(_serializer->serialize());
+    _serializer->reset();
+}
+
 void HGameController::updateJoystick(float forward,float rightward){
 
     _outerJoystick->setPosition(_scene->getCamera()->getPosition()-Vec2(680,350));
     _innerJoystick->setPosition(_scene->getCamera()->getPosition()-Vec2(680,350)+Vec2(rightward,forward)*100);
 }
+

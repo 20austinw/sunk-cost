@@ -145,6 +145,14 @@ HGameController::HGameController(
         CULog("Fail!");
     }
 
+    for (int i = 0; i < 3; i++){
+        initHunter(i);
+    }
+
+    _hunter = _hunterSet[_currplayerid];
+
+        
+        
     initCamera();
         
     _serializer = NetcodeSerializer::alloc();
@@ -555,12 +563,7 @@ void HGameController::checkLevelLoaded() {
 
         // Initialize HunterController
         
-        for (int i = 0; i < 3; i++){
-            initHunter(i);
-        }
-
-        _hunter = _hunterSet[_currplayerid];
-
+        
 //        _hunter = HunterController(_assets, _scene->getSize(),_scene, PLAYER_SIZE);
         
         // Draw hunter shadow

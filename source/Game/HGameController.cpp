@@ -216,7 +216,7 @@ void HGameController::update(float dt) {
         _didWin = true;
     }
     
-    if(!_didFinalwin && _didWin && !_didLose && _hunter->getPosition().x < 400){
+    if(!_didFinalwin && _didWin && !_didLose && _hunter->getPosition().x < 400 && _hunter->getPosition().y < 400){
         _scene->removeChild(_winLabel);
         _scene->addChild(_finalWinLabel);
         _didFinalwin = true;
@@ -682,7 +682,25 @@ void HGameController::updateCamera(float timestep) {
         _filter->setAnchor(Vec2::ANCHOR_CENTER);
         Vec2 next = _offset
         + ((Vec3(_hunter->getPosition().x, _hunter->getPosition().y, 1)));
+        
         int timeFactor = (_shiftback)? 5 : 2;
+
+        // restrict camera focus within 300<x<1800, 300<y<1900 window
+        int cameraXmin = 300;
+        int cameraXmax = 1800;
+        int cameraYmin = 300;
+        int cameraYmax = 1900;
+        if(_hunter->getPosition().x < cameraXmin){
+            next.x = cameraXmin;
+        }
+        else if(_hunter->getPosition().x > cameraXmax){
+            next.x = cameraXmax;
+        }
+        if(_hunter->getPosition().y < cameraYmin){
+            next.y = cameraYmin;
+        }else if(_hunter->getPosition().y > cameraYmax){
+            next.y = cameraYmax;
+        }
         _scene->getCamera()->translate((next - curr) * timeFactor *timestep);
         
         _timerLabel->setPosition(_scene->getCamera()->getPosition()-Vec2(0,300));

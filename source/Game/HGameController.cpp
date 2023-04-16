@@ -23,7 +23,7 @@ using namespace cugl::net;
 
 #pragma mark Main Methods
 HGameController::HGameController() {
-    _hunter = HunterController();
+    _hunter = std::make_shared<HunterController>();
     // Initialize SpiritController
 //    _spirit = SpiritController();
 //    _trap = TrapController();
@@ -98,11 +98,9 @@ HGameController::HGameController(
         
     auto inputController = InputController::getInstance();
     inputController->initListeners();
-
-
-//    CULog("%f, %f", displaySize.width, displaySize.height);
-    _hunter = HunterController(assets, displaySize, _scene, PLAYER_SIZE);
-//    _trap = TrapController(assets, displaySize, PLAYER_SIZE);
+        
+   
+        
     _treasure = TreasureController(assets, displaySize, PLAYER_SIZE);
 
     
@@ -113,12 +111,12 @@ HGameController::HGameController(
     
     // Initialize the world
     _world = physics2::ObstacleWorld::alloc(rect,gravity);
-    _hunter.setAsObstacle(_world);
+   // _hunter.setAsObstacle(_world);
 //    _trap.setAsObstacle(_world);
     _treasure.setAsObstacle(_world);
     
     // Add callbacks for entering/leaving collisions
-    _collision.init(_hunter.getHunterBody(), _treasure.getTreasureBody());
+ //
 //    _collision.init(_hunter.getHunterBody(), _trap.getTrapBody(), _treasure.getTreasureBody());
     _world->activateCollisionCallbacks(true);
     _world->onBeginContact = [this](b2Contact* contact) { _collision.beginContact(contact); };
@@ -210,7 +208,7 @@ void HGameController::update(float dt) {
         _didWin = true;
     }
     
-    if(!_didFinalwin && _didWin && !_didLose && _hunter.getPosition().x < 400){
+    if(!_didFinalwin && _didWin && !_didLose && _hunter->getPosition().x < 400){
         _scene->removeChild(_winLabel);
         _scene->addChild(_finalWinLabel);
         _didFinalwin = true;
@@ -246,15 +244,15 @@ void HGameController::update(float dt) {
     }
     
     for (int i=0; i<_doorslocked.size(); i++){
-        if(_hunter.detectedDoor(_doors.at(_doorslocked[i])->getModelPosition())){
+        if(_hunter->detectedDoor(_doors.at(_doorslocked[i])->getModelPosition())){
             _lockhunter->setVisible(true);
             _currdoor=_doorslocked[i];
             _currdoorindex=i;
             
-            if(abs(inputController->getPosition().x-_scene->worldToScreenCoords(_hunter.getPosition()).x)<100&&abs(inputController->getPosition().y-_scene->worldToScreenCoords(_hunter.getPosition()).y)<100){
+            if(abs(inputController->getPosition().x-_scene->worldToScreenCoords(_hunter->getPosition()).x)<100&&abs(inputController->getPosition().y-_scene->worldToScreenCoords(_hunter->getPosition()).y)<100){
                 _triggered=true;
             }
-            _lockhunter->setPosition(_hunter.getPosition());
+            _lockhunter->setPosition(_hunter->getPosition());
         }
         
         else{
@@ -313,7 +311,7 @@ void HGameController::update(float dt) {
     int midx;
     int midy;
 
-    Vec3 currPos = (_hunter.getPosition());
+    Vec3 currPos = (_hunter->getPosition());
     posx = (int)(currPos.x) / _tileWidth;
     posy = (int)((currPos.y)) / _tileHeight;
 
@@ -328,7 +326,7 @@ void HGameController::update(float dt) {
 
     _count++;
     if (_count == 6) {
-        _hunter.setViewFrame(forward, rightward);
+        _hunter->setViewFrame(forward, rightward);
         _count = 0;
     }
     _countfortimer++;
@@ -362,25 +360,25 @@ void HGameController::update(float dt) {
     if(_doorslocked.size()!=0){
         for (int i=0; i<_doorslocked.size(); i++){
         Vec2 position = _doors.at(_doorslocked[i])->getModelPosition();
-            if(abs(_hunter.getPosition().x-position.x)<150 && abs(_hunter.getPosition().y-position.y)<150){
+            if(abs(_hunter->getPosition().x-position.x)<150 && abs(_hunter->getPosition().y-position.y)<150){
                 rightward = -1;
                 forward = -1;
             }
         }
     }
 
-    if (_hunter.getTraps().size()== 0 ){
-        _hunter.move(forward,rightward);
+    if (_hunter->getTraps().size()== 0 ){
+        _hunter->move(forward,rightward);
             }
     else{
         _ismovedonece=false;
-            for (int i=0;i<_hunter.getTraps().size();i++){
-                if(_hunter.getTraps()[i]->getTrigger()){
+        for (int i=0;i<_hunter->getTraps().size();i++){
+            if(_hunter->getTraps()[i]->getTrigger()){
                     _ismovedonece=true;
                 }
             }
         if(!_ismovedonece){
-            _hunter.move(forward,rightward);
+            _hunter->move(forward,rightward);
         }
         }
     //trap collision
@@ -391,11 +389,11 @@ void HGameController::update(float dt) {
     
     
     
-    if(_hunter.getTraps().size()!=0){
-            for (int i=0;i<_hunter.getTraps().size();i++){
-                if(abs(_hunter.getTraps()[i]->getPosition().x-_hunter.getPosition().x)<= 100 && abs(_hunter.getTraps()[i]->getPosition().y-_hunter.getPosition().y)<= 100){
+    if(_hunter->getTraps().size()!=0){
+        for (int i=0;i<_hunter->getTraps().size();i++){
+            if(abs(_hunter->getTraps()[i]->getPosition().x-_hunter->getPosition().x)<= 100 && abs(_hunter->getTraps()[i]->getPosition().y-_hunter->getPosition().y)<= 100){
                     AudioEngine::get()->play("trapSound", _trapSound, false, _theme->getVolume(), true);
-                    _hunter.getTraps()[i]->setTrigger(true);
+                _hunter->getTraps()[i]->setTrigger(true);
                     if(!_timertriggered){
                         _countfortimer=0;
                         _timertriggered=true;
@@ -404,21 +402,21 @@ void HGameController::update(float dt) {
                 }
                 
                 }
-        for (int i=0;i<_hunter.getTraps().size();i++){
-            if (_hunter.getTraps()[i]->getTrigger()&& _countfortimer >= 300){
-                _hunter.getTraps()[i]->setTrigger(false);
+        for (int i=0;i<_hunter->getTraps().size();i++){
+            if (_hunter->getTraps()[i]->getTrigger()&& _countfortimer >= 300){
+                _hunter->getTraps()[i]->setTrigger(false);
                 if(_removedvar){
-                    _hunter.removeTrap(i);
+                    _hunter->removeTrap(i);
                     _removedvar=false;
                     _timertriggered=false;
-                    transmitTrapTriggered(_hunter.getPosition());
+                    transmitTrapTriggered(_hunter->getPosition());
                 }
             }
         }
 
         }
     
-    if(abs(_treasure.getPosition().x-_hunter.getPosition().x)<= 100 && abs(_treasure.getPosition().y-_hunter.getPosition().y)<= 100 && !_collision.didHitTreasure ){
+    if(abs(_treasure.getPosition().x-_hunter->getPosition().x)<= 100 && abs(_treasure.getPosition().y-_hunter->getPosition().y)<= 100 && !_collision.didHitTreasure ){
         _collision.didHitTreasure = true;
         _treasure.getNode() ->setVisible(false);
         AudioEngine::get()->play("treasureSound", _treasureSound, false, _theme->getVolume(), true);
@@ -426,7 +424,7 @@ void HGameController::update(float dt) {
         _treasureCount++;
     }
 
-    _shadow->setPosition(_hunter.getPosition()-Vec2(130,270));
+    _shadow->setPosition(_hunter->getPosition()-Vec2(130,270));
 
     updateCamera(dt);
     updateJoystick(forward,rightward);
@@ -556,21 +554,41 @@ void HGameController::checkLevelLoaded() {
         }
 
         // Initialize HunterController
+        
+        for (int i = 0; i < 3; i++){
+            initHunter(i);
+        }
 
-        _hunter = HunterController(_assets, _scene->getSize(),_scene, PLAYER_SIZE);
+        _hunter = _hunterSet[_currplayerid];
+
+//        _hunter = HunterController(_assets, _scene->getSize(),_scene, PLAYER_SIZE);
         
         // Draw hunter shadow
-        _shadowTexture = _assets->get<Texture>("shadow");
-        _shadow = scene2::PolygonNode::allocWithTexture(_shadowTexture);
-
-        _shadow->setPosition(_hunter.getPosition()-Vec2(130,270));
-
-        _shadow->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+        for (int i = 0; i < 3; i++){
+            _shadowTexture = _assets->get<Texture>("shadow");
+            std::shared_ptr<scene2::PolygonNode> shadownow = scene2::PolygonNode::allocWithTexture(_shadowTexture);
+            
+            shadownow->setPosition(_hunterSet[i]->getPosition()-Vec2(130,270));
+            
+            shadownow->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+            
+            _shadowSet[i]=shadownow;
+        }
+        
+        
+        _shadow=_shadowSet[_currplayerid];
         //        _shadow->setScale(Vec2(_dimen.width/1280,_dimen.height/720));
-        _scene->addChild(_shadow);
+        
+        for (int i = 0; i < 3; i++){
+            _scene->addChild(_shadowSet[i]);
+        }
+        
         
         //Draw hunter after shadow
-        _hunter.addChildTo(_scene);
+        for (int i = 0; i < 3; i++){
+            _hunterSet[i]->addChildTo(_scene);
+        }
+        
         
 
         // _trap = TrapController(_assets, _scene->getSize(), PLAYER_SIZE);
@@ -642,7 +660,7 @@ void HGameController::initCamera() {
     
     Vec3 curr = _scene->getCamera()->getPosition();
     Vec3 next = _offset
-    + (Vec3(_hunter.getPosition().x, _hunter.getPosition().y, 1));
+    + (Vec3(_hunter->getPosition().x, _hunter->getPosition().y, 1));
     _scene->getCamera()->translate(next - curr);
     _scene->getCamera()->setFar(100000);
     _scene->getCamera()->setNear(0);
@@ -660,7 +678,7 @@ void HGameController::updateCamera(float timestep) {
         _filter->setPosition(_scene->getCamera()->getPosition());
         _filter->setAnchor(Vec2::ANCHOR_CENTER);
         Vec2 next = _offset
-            + ((Vec3(_hunter.getPosition().x, _hunter.getPosition().y, 1)));
+        + ((Vec3(_hunter->getPosition().x, _hunter->getPosition().y, 1)));
         int timeFactor = (_shiftback)? 5 : 2;
         _scene->getCamera()->translate((next - curr) * timeFactor *timestep);
         
@@ -692,6 +710,11 @@ void HGameController::generateLevel() {
     _tilemap->updateDimensions(_level->getDimensions());
 }
 
+void HGameController::initHunter(int hunterId) {
+   
+    _hunterSet[hunterId]=std::make_shared<HunterController>(_assets, _scene->getSize(),_scene, PLAYER_SIZE);
+}
+
 void HGameController::initLock(){
     CULog("lock initialized");
     
@@ -702,7 +725,7 @@ void HGameController::initLock(){
     _lockhunter->setScale(0.5);
     _lockhunter->setFrame(_frameNum);
     _lockhunter->setAnchor(Vec2::ANCHOR_CENTER);
-    _lockhunter->setPosition(_hunter.getPosition());
+    _lockhunter->setPosition(_hunter->getPosition());
     _lockhunter->setVisible(false);
     
     
@@ -738,7 +761,7 @@ void HGameController::processData(const std::string source, const std::vector<st
         _deserializer->receive(data);
         std::vector<float> mes = std::get<std::vector<float>>(_deserializer->read());
         if (mes[0] == 1) {
-            _hunter.addTrap(Vec2(mes[1], mes[2]));
+            _hunter->addTrap(Vec2(mes[1], mes[2]));
         } else if (mes[0] == 3) {
             CULog("portrait received");
             int idx = static_cast<int>(mes[1]);

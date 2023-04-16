@@ -81,6 +81,8 @@ private:
     
     int _countfortimer;
     
+    int _currplayerid;
+    
     bool _timertriggered;
     
     bool _removedvar;
@@ -124,7 +126,10 @@ private:
     /** The controller to manage the ship */
     InputController _input;
     
-    HunterController _hunter;
+    std::shared_ptr<HunterController> _hunter;
+    
+    std::unordered_map<int, std::shared_ptr<HunterController>> _hunterSet;
+
     
     SpiritController _spirit;
     
@@ -138,6 +143,7 @@ private:
     
     std::shared_ptr<scene2::PolygonNode> _filter;
     std::shared_ptr<scene2::PolygonNode> _shadow;
+    std::unordered_map<int,std::shared_ptr<scene2::PolygonNode>> _shadowSet;
     std::shared_ptr<scene2::PolygonNode> _map;
     
     std::shared_ptr<cugl::Texture> _spriteSheet;
@@ -362,6 +368,8 @@ private:
     void transmitUnlockDoor(int idx);
     
     void transmitTrapTriggered(Vec2 position);
+    
+    void initHunter(int hunterId);
 };
 
 #endif /* __HGAME_CONTROLLER_H__ */

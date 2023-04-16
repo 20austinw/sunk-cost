@@ -24,12 +24,6 @@
         "hunterleft": {
             "file": "textures/diver_walking_animation_L.png"
         },
-        "hunterwin": {
-            "file": "textures/hunter_win.png"
-        },
-        "hunterlose": {
-            "file": "textures/hunter_lose.png"
-        },
         "trap":{
             "file":  "textures/trap.png"
         },

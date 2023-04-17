@@ -145,11 +145,12 @@ HGameController::HGameController(
         CULog("Fail!");
     }
 
+    // TODO: Replace with networking request to find other players ID
     for (int i = 0; i < 3; i++){
         initHunter(i);
     }
 
-    _hunter = _hunterSet[_currplayerid];
+    _hunter = _hunterSet[0];
 
         
         
@@ -419,7 +420,7 @@ void HGameController::update(float dt) {
             if(abs(_hunter->getTraps()[i]->getPosition().x-_hunter->getPosition().x)<= 100 && abs(_hunter->getTraps()[i]->getPosition().y-_hunter->getPosition().y)<= 100){
                     AudioEngine::get()->play("trapSound", _trapSound, false, _theme->getVolume(), true);
                 _hunter->getTraps()[i]->setTrigger(true);
-                _hunter->getTrapViews()[i]->addChildTo(_scene);
+//                _hunter->getTrapViews()[i]->addChildTo(_scene);
                     if(!_timertriggered){
                         _countfortimer=0;
                         _timertriggered=true;
@@ -600,7 +601,7 @@ void HGameController::checkLevelLoaded() {
         }
         
         
-        _shadow=_shadowSet[_currplayerid];
+        _shadow=_shadowSet[0];
         //        _shadow->setScale(Vec2(_dimen.width/1280,_dimen.height/720));
         
         for (int i = 0; i < 3; i++){
@@ -683,8 +684,7 @@ void HGameController::initCamera() {
 
     
     Vec3 curr = _scene->getCamera()->getPosition();
-    Vec3 next = _offset
-    + (Vec3(_hunter->getPosition().x, _hunter->getPosition().y, 1));
+    Vec3 next = _offset + (Vec3(_hunter->getPosition().x, _hunter->getPosition().y, 1));
     _scene->getCamera()->translate(next - curr);
     _scene->getCamera()->setFar(100000);
     _scene->getCamera()->setNear(0);

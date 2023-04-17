@@ -206,8 +206,20 @@ void HGameController::update(float dt) {
    }
 
     if(int(_timer/6000)==0 && int(_timer/100) % 60 ==0 && !_didLose && !_didFinalwin){
-        _scene->addChild(_loseLabel);
+//        _scene->addChild(_loseNode);
+//        _scene->addChild(_loseLabel);
+        _gameStatus = 1;
+        _endScene = std::make_shared<EndScene>(_assets, true);
+        _endScene->addChildTo(_scene);
         _didLose = true;
+    }
+    else if(_gameStatus == 1){
+        // Hunter lose
+        CULog("Hunter lose!");
+        _endScene->update();
+    }else{
+        // Hunter win!
+        
     }
     
 
@@ -374,7 +386,12 @@ void HGameController::update(float dt) {
             }
         }
     }
-
+    if(_didLose || _didFinalwin){
+        //Freeze movement after lose/win
+        forward=0;
+        rightward=0;
+        _hunter->setViewFrame(forward, rightward);
+    }
     if (_hunter->getTraps().size()== 0 ){
         _hunter->move(forward,rightward);
             }
@@ -435,7 +452,10 @@ void HGameController::update(float dt) {
     _shadow->setPosition(_hunter->getPosition()-Vec2(130,270));
 
     updateCamera(dt);
-    updateJoystick(forward,rightward);
+    if(!(_didLose || _didFinalwin)){
+        updateJoystick(forward,rightward);
+    }
+    
     
     // TODO: update direction index for portraits on spirit control
     //    _portraits->updateDirectionIndex(<#Vec3 direction#>, <#int index#>)

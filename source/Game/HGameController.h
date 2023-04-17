@@ -27,6 +27,7 @@ using namespace cugl;
 #include "TreasureController.hpp"
 #include "TilemapController.h"
 #include "DoorController.hpp"
+#include "EndScene.h"
 
 /**
  * The primary controller for the game logic.
@@ -113,6 +114,8 @@ private:
 
     /** camera need to pan back from exit to hunter */
     bool _shiftback = false;
+    /** inidicate camera shift back has finished */
+    bool _finishShiftback =false;
     /** The scale between the physics world and the screen (SCREEN UNITS / BOX2D WORLD UNITS) */
     float _scale;
     
@@ -213,6 +216,10 @@ private:
     std::shared_ptr<cugl::net::NetcodeSerializer> _serializer;
     
     std::shared_ptr<cugl::net::NetcodeDeserializer> _deserializer;
+    
+    bool _gameStatus = 0;
+    
+    std::shared_ptr<EndScene> _endScene;
     
 #pragma mark External References
 private:

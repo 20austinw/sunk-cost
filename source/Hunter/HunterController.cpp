@@ -70,6 +70,10 @@ std::vector<std::shared_ptr<TrapModel>> HunterController::getTraps(){
     return _model->getTraps();
 }
 
+std::vector<std::shared_ptr<TrapView>> HunterController::getTrapViews(){
+    return _model->getTrapViews();
+}
+
 
 /**
  * TODO: Implement Me

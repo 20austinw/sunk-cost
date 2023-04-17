@@ -94,6 +94,8 @@ class HunterController {
     void collisionWithTrap();
   
     std::vector<std::shared_ptr<TrapModel>> getTraps();
+    
+    std::vector<std::shared_ptr<TrapView>> getTrapViews();
 
 #pragma mark Setters
   public:

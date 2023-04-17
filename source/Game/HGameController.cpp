@@ -419,6 +419,7 @@ void HGameController::update(float dt) {
             if(abs(_hunter->getTraps()[i]->getPosition().x-_hunter->getPosition().x)<= 100 && abs(_hunter->getTraps()[i]->getPosition().y-_hunter->getPosition().y)<= 100){
                     AudioEngine::get()->play("trapSound", _trapSound, false, _theme->getVolume(), true);
                 _hunter->getTraps()[i]->setTrigger(true);
+                _hunter->getTrapViews()[i]->addChildTo(_scene);
                     if(!_timertriggered){
                         _countfortimer=0;
                         _timertriggered=true;

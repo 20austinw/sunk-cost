@@ -264,7 +264,6 @@ void InputController::touchDownCB(const cugl::TouchEvent& event, bool focus) {
 void InputController::touchUpCB(const cugl::TouchEvent& event, bool focus) {
     if (_touchDown && event.touch == _touchID && focus) {
         _touchDown = false;
-        _touchPos=Vec2(0,0);
     }
     _rightward = _forward = 0;
 }

@@ -25,6 +25,7 @@
 #define PORTRAIT_FIELD "portrait"
 #define PLAYER_FIELD "player"
 #define DOOR_FIELD "doors"
+#define WALL_FIELD "wall"
 
 /** The physics fields for each object */
 #define POSITION_FIELD "pos"

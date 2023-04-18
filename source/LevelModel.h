@@ -23,6 +23,8 @@ class LevelModel : public Asset {
 
     /** Vector of textures for tiles */
     std::vector<std::vector<int>> _tiles;
+    
+    std::vector<std::vector<int>> _walls;
 
     /** Dimenisons of this tilemap */
     Size _dimensions;
@@ -84,6 +86,8 @@ class LevelModel : public Asset {
 #pragma mark Getters
 
     std::vector<std::vector<int>> getTileTextures() { return _tiles; }
+    
+    std::vector<std::vector<int>> getWallTextures() { return _walls; }
 
     Size getDimensions() { return _dimensions; }
 
@@ -210,8 +214,7 @@ class LevelModel : public Asset {
      *
      * @return true if the object was successfully loaded
      */
-    bool loadTiles(const std::shared_ptr<JsonValue>& json);
-    
+    bool loadTiles(const std::shared_ptr<JsonValue>& json, std::vector<std::vector<int>>& list);
     /**
      * Parses JSON and extracts tile positions and textures from it
      *

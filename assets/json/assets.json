@@ -128,6 +128,9 @@
        },
        "floor":{
            "file":  "textures/floor_tilesheet.png"
+       },
+       "wall":{
+           "file":  "textures/walls_tilesheet.png"
        }
     },
     "fonts": {

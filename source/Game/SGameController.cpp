@@ -38,8 +38,20 @@ SGameController::SGameController(
 //    background->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
 //    background->setPosition(-1 * Size(9000, 9000) / 2);
 //    _scene->addChild(background);
+    
     _tilemap = std::make_shared<TilemapController>();
+//    _maps.emplace_back(_tilemap);
+    
+    //idk why but this is the only way to init another tilemapcontroller that the game won't crash so don't touch this line of code (although ik this is so shitty
+    
     _tilemap->addChildTo(_scene);
+    
+    _wallNode = scene2::PolygonNode::alloc();
+    _scene->addChild(_wallNode);
+    
+//    _walls = std::make_shared<TilemapController>();
+//    _walls->addChildTo(_scene);
+    
     // Initialize PortraitSetController
     _portraits = std::make_shared<PortraitSetController>(_assets, _scene, 0,
                                                          displaySize);
@@ -415,7 +427,21 @@ void SGameController::checkLevelLoaded() {
             int type = tiles[r][c];
             addFloorTile(type, c, width-1-r);
         }
-        _map =
+        
+//        _walls->updatePosition(_scene->getSize() / 2);
+        std::vector<std::vector<int>> walls = _level->getWallTextures();
+        height = walls[0].size();
+        width = walls.size();
+//        _walls->updateDimensions(Vec2(height, width));
+//        _walls->updateColor(Color4::WHITE);
+//        _walls->updateTileSize(Size(128, 128));
+        for (int i = 0; i < walls.size() * walls[0].size(); ++i) {
+            int c = i % walls[0].size();
+            int r = i / walls[0].size();
+            int type = walls[r][c];
+            addWallTile(type, c, width-1-r);
+        }
+        
 //        scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
 //
 //        _scene->addChild(_map);
@@ -552,10 +578,22 @@ void SGameController::addFloorTile(int type, int c, int r){
     }
 }
 
+void SGameController::addWallTile(int type, int c, int r){
+    if(type == 0) {
+        return;
+    }
+    std::shared_ptr< Texture > wall = _assets->get<Texture>("wall");
+    modifyTexture(wall, type-1, 8, 8);
+    Vec2 pos(128 * c, 128 * r);
+    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall);
+    _walls.emplace_back(tile);
+    tile->addChildTo(_wallNode);
+}
+
 void SGameController::modifyTexture(std::shared_ptr<Texture>& texture, int index, int row, int col){
     float x = 1.0/row;
     float y = 1.0/col;
     int c = index % row;
     int r = index / row;
-    texture = texture->getSubTexture(r*y, (r+1)*y, c*x, (c+1)*x);
+    texture = texture->getSubTexture(c*y, (c+1)*y, r*x, (r+1)*x);
 }

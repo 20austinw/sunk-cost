@@ -64,11 +64,15 @@ bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json) {
     auto objects = json->get("layers")->get(0);
     loadObject(objects);
     
-    //load the doors
+    //load the walls
     objects = json->get("layers")->get(1);
     loadObject(objects);
     
-    for (int i = 2; i < json->get("layers")->size(); i++) {
+    //load the doors
+    objects = json->get("layers")->get(2);
+    loadObject(objects);
+    
+    for (int i = 3; i < json->get("layers")->size(); i++) {
         // Get the objects per layer
         objects = json->get("layers")->get(i)->get("objects");
         for (int j = 0; j < objects->size(); j++) {
@@ -89,6 +93,7 @@ bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json) {
 void LevelModel::unload() {
     _bounds = Rect::ZERO;
     _tiles.clear();
+    _walls.clear();
     _dimensions = Size::ZERO;
     _tileSize = Size::ZERO;
     _defaultcam = Vec2::ZERO;
@@ -104,13 +109,15 @@ void LevelModel::unload() {
 bool LevelModel::loadObject(const std::shared_ptr<JsonValue>& json) {
     auto type = json->get("class")->asString();
     if (type == TILE_FIELD) {
-        return loadTiles(json);
+        return loadTiles(json, _tiles);
     } else if (type == PORTRAIT_FIELD) {
         return loadPortraitSetAndDefault(json);
     } else if (type == PLAYER_FIELD) {
         return loadPlayer(json);
     } else if (type == DOOR_FIELD) {
         return loadDoors(json);
+    } else if (type == WALL_FIELD) {
+        return loadTiles(json, _walls);
     }
     return false;
 }
@@ -125,8 +132,10 @@ bool LevelModel::loadObject(const std::shared_ptr<JsonValue>& json) {
  *
  * @return true if the exit door was successfully loaded
  */
-bool LevelModel::loadTiles(const std::shared_ptr<JsonValue>& json) {
+bool LevelModel::loadTiles(const std::shared_ptr<JsonValue>& json, std::vector<std::vector<int>>& list) {
     auto tiles = json->get("chunks");
+    int startx = json->get("startx")->asInt();
+    int starty = json->get("starty")->asInt();
     int width = json->get("width")->asInt();
     int height = json->get("height")->asInt();
     _dimensions = Size(width, height);
@@ -136,7 +145,7 @@ bool LevelModel::loadTiles(const std::shared_ptr<JsonValue>& json) {
         for (int n = 0; n < width; ++n){
             vec.emplace_back(0);
         }
-        _tiles.push_back(vec);
+        list.push_back(vec);
     }
     
     bool success = tiles->get(0) != nullptr;
@@ -151,35 +160,12 @@ bool LevelModel::loadTiles(const std::shared_ptr<JsonValue>& json) {
                 int c = n % w;
                 int r = n / w;
                 int type = tile->get(n)->asInt();
-                _tiles[y+r][x+c+32] = type;
+                list[y+r-starty][x+c-startx] = type;
             }
         }
-        
-        
-//        for (int i = 0; i < width * height; ++i) {
-//            int c = i % width;
-//            int r = i / width;
-//            int type = tiles->get(c + r * width)->asInt();
-//            if (type == 1) {
-//                _tiles[r].push_back("black");
-//            } else if (type == 3) {
-//                _tiles[r].push_back("door");
-//            } else {
-//                _tiles[r].push_back("green");
-//            }
-
-            //              if (type > 24 && type < 27) {
-            //            _tiles[r].push_back("green");
-            //          } else if (type == 29) {
-            //            _tiles[r].push_back("blue");
-            //          } else if (type == 11) {
-            //            _tiles[r].push_back("red");
-            //          }
-//        }
     }
     return success;
 }
-
 /**
  * Loads the singular exit door
  *

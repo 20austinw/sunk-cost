@@ -12,6 +12,7 @@ using namespace cugl;
 #include "LevelModel.h"
 #include "PortraitSetController.h"
 #include "SpiritController.h"
+#include "TileController.h"
 #include "TilemapController.h"
 #include "EndScene.h"
 #include "DoorController.hpp"
@@ -121,7 +122,11 @@ public:
 #pragma mark External References
   private:
     /** The tilemap to procedurally generate */
+//    std::vector<std::shared_ptr<TilemapController>> _maps;
     std::shared_ptr<TilemapController> _tilemap;
+    std::vector<std::shared_ptr<TileController>> _walls;
+    std::shared_ptr<scene2::PolygonNode> _wallNode;
+//    std::shared_ptr<TilemapController> _walls;
 
 #pragma mark Main Methods
   public:
@@ -266,6 +271,8 @@ public:
     void transmitLockedDoor(int i);
     
     void addFloorTile(int type, int c, int r);
+    
+    void addWallTile(int type, int c, int r);
     
     void modifyTexture(std::shared_ptr< Texture >& texture, int index, int row, int col);
 

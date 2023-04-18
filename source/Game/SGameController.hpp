@@ -115,6 +115,8 @@ public:
     int _alertTimer;
     
     int _doorToUnlock;
+    
+    Vec2 _trapPos;
 
 #pragma mark External References
   private:

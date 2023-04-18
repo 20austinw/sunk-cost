@@ -73,6 +73,7 @@ SGameController::SGameController(
     _trapTriggered = false;
     _doorUnlocked = false;
     _treasureStolen = false;
+    _trapPos = Vec2::ZERO;
     
     _alertLabel= cugl::scene2::Label::allocWithText(Vec2(0,displaySize.height/2), "The treasure has been STOLEN", _assets->get<Font>("pixel32"));
     _alertLabel->setPosition(_scene->getCamera()->getPosition()+Vec2(350,350));
@@ -291,9 +292,10 @@ void SGameController::update(float dt) {
         }
         
         // detect if a trap or door on the map has been removed, add a new trap button to the scene
-        int result = _spirit.update(_trapTriggered);
+        int result = _spirit.update(_trapTriggered, _trapPos);
         if (_trapTriggered){
             _trapTriggered = false;
+            _trapPos = Vec2::ZERO;
         }
         if(result == 1){
             _spirit.addNewTrapBtn(_scene);
@@ -506,7 +508,7 @@ void SGameController::processData(const std::string source, const std::vector<st
         
         if (mes[0] == 7) {
             _trapTriggered = true;
-            Vec2 trapPos = Vec2(mes[1], mes[2]);
+            _trapPos = Vec2(mes[1], mes[2]);
         }
         
         // Win alert for spirit

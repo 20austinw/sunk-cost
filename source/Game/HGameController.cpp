@@ -417,8 +417,12 @@ void HGameController::update(float dt) {
     
     if(_hunter->getTrapSize()!=0){
         for (int i=0;i<_hunter->getTrapSize();i++){
-            if(abs(_hunter->getTraps()[i]->getPosition().x-_hunter->getPosition().x)<= 100 && abs(_hunter->getTraps()[i]->getPosition().y-_hunter->getPosition().y)<= 100){
+            if(abs(_hunter->getTraps()[i]->getPosition().x-_hunter->getPosition().x)<= 50 && abs(_hunter->getTraps()[i]->getPosition().y-_hunter->getPosition().y)<= 50){
+                if(_neverPlayed){
                     AudioEngine::get()->play("trapSound", _trapSound, false, _theme->getVolume(), true);
+                    _neverPlayed = false;
+                }
+                    
                 _hunter->getTraps()[i]->setTrigger(true);
                 _hunter->getTrapViews()[i]->setVisible(true);
                
@@ -435,6 +439,7 @@ void HGameController::update(float dt) {
                 _hunter->getTraps()[i]->setTrigger(false);
                 _hunter->getTrapViews()[i]->setVisible(false);
                 _hunter->removeTrap(i);
+                _neverPlayed = true;
                 _timertriggered=false;
                 transmitTrapTriggered(_hunter->getPosition());
 //                if(_removedvar){

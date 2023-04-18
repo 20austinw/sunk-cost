@@ -132,6 +132,8 @@ private:
     std::shared_ptr<HunterController> _hunter;
     
     std::unordered_map<int, std::shared_ptr<HunterController>> _hunterSet;
+    
+    bool _neverPlayed = true;
 
     
     SpiritController _spirit;

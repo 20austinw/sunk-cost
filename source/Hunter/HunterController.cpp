@@ -14,7 +14,7 @@
  * TODO: Implement Me
  * The constructor should set up the model, view, and camera controller
  */
-HunterController::HunterController(const std::shared_ptr<cugl::AssetManager>& assets, Size screenSize, const std::shared_ptr<cugl::Scene2> scene, Vec2 playerSize) {
+HunterController::HunterController(const std::shared_ptr<cugl::AssetManager>& assets, Size screenSize, const std::shared_ptr<cugl::Scene2> scene, Vec2 playerSize, int color) {
 
     CULog("Called!");
     _model = std::make_shared<HunterModel>(assets, scene);
@@ -22,7 +22,7 @@ HunterController::HunterController(const std::shared_ptr<cugl::AssetManager>& as
 
     _scene = scene;
 
-    _view = std::make_unique<HunterView>(assets, Vec2(300,300), playerSize);
+    _view = std::make_unique<HunterView>(assets, Vec2(300,300), playerSize, color);
 
     _screenSize = screenSize;
     // A default camera ID = 1 if not specified

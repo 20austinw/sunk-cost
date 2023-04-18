@@ -61,7 +61,7 @@ class HunterController {
      * The constructor should set up the model, view, and camera controller
      */
 
-    HunterController(const std::shared_ptr<cugl::AssetManager>& assets, Size screenSize, const std::shared_ptr<cugl::Scene2> scene, Vec2 playerSize);
+    HunterController(const std::shared_ptr<cugl::AssetManager>& assets, Size screenSize, const std::shared_ptr<cugl::Scene2> scene, Vec2 playerSize, int color);
     
     /**
      * Gets the viewpoint for the hunter's camera

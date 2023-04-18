@@ -764,7 +764,7 @@ void HGameController::generateLevel() {
 
 void HGameController::initHunter(int hunterId) {
    
-    _hunterSet[hunterId]=std::make_shared<HunterController>(_assets, _scene->getSize(),_scene, PLAYER_SIZE);
+    _hunterSet[hunterId]=std::make_shared<HunterController>(_assets, _scene->getSize(),_scene, PLAYER_SIZE, hunterId);
 }
 
 void HGameController::initLock(){

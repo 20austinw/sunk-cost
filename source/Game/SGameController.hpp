@@ -264,7 +264,10 @@ public:
     void updateDoors();
     
     void transmitLockedDoor(int i);
-
+    
+    void addFloorTile(int type, int c, int r);
+    
+    void modifyTexture(std::shared_ptr< Texture >& texture, int index, int row, int col);
 
 };
 

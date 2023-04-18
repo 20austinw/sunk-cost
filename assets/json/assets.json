@@ -125,6 +125,9 @@
        },
        "extra":{
            "file":  "textures/empty_bubble.png"
+       },
+       "floor":{
+           "file":  "textures/floor_tilesheet.png"
        }
     },
     "fonts": {

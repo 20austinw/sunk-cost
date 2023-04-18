@@ -139,7 +139,7 @@ HGameController::HGameController(
     _portraits = std::make_shared<PortraitSetController>(_assets, _scene, 0,
                                                          displaySize);
     
-    _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
+    _level = _assets->get<LevelModel>(LEVEL_THREE_KEY);
     if (_level == nullptr) {
         _levelLoaded = false;
         CULog("Fail!");
@@ -325,7 +325,7 @@ void HGameController::update(float dt) {
         }
     }
 
-    std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
+    std::vector<std::vector<int>> tiles = _level->getTileTextures();
     int posx;
     int posxup;
     int posyup;
@@ -354,31 +354,31 @@ void HGameController::update(float dt) {
     }
     _countfortimer++;
     
-    std::string left = (midy<18 && posx <18 && midy>-1 && posx >-1) ? tiles[midy][posx]: "black";
-    std::string up = (posyup<18 && midx <18 && posyup>-1 && midx >-1) ? tiles[posyup][midx]: "black";
-    std::string bottom = (posy<18 && midx <18 && posy>-1 && midx >-1) ? tiles[posy][midx]: "black";
-    std::string right = (midy<18 && posxup <18 && midy>-1 && posxup >-1) ? tiles[midy][posxup]: "black";
-
-    if (left == "black") {
-        if (rightward < 0) {
-            rightward = 0;
-        }
-    }
-    if (right == "black") {
-        if (rightward > 0) {
-            rightward = 0;
-        }
-    }
-    if (up == "black") {
-        if (forward > 0) {
-            forward = 0;
-        }
-    }
-    if (bottom == "black") {
-        if (forward < 0) {
-            forward = 0;
-        }
-    }
+//    std::string left = (midy<18 && posx <18 && midy>-1 && posx >-1) ? tiles[midy][posx]: "black";
+//    std::string up = (posyup<18 && midx <18 && posyup>-1 && midx >-1) ? tiles[posyup][midx]: "black";
+//    std::string bottom = (posy<18 && midx <18 && posy>-1 && midx >-1) ? tiles[posy][midx]: "black";
+//    std::string right = (midy<18 && posxup <18 && midy>-1 && posxup >-1) ? tiles[midy][posxup]: "black";
+//
+//    if (left == "black") {
+//        if (rightward < 0) {
+//            rightward = 0;
+//        }
+//    }
+//    if (right == "black") {
+//        if (rightward > 0) {
+//            rightward = 0;
+//        }
+//    }
+//    if (up == "black") {
+//        if (forward > 0) {
+//            forward = 0;
+//        }
+//    }
+//    if (bottom == "black") {
+//        if (forward < 0) {
+//            forward = 0;
+//        }
+//    }
     
     if(_doorslocked.size()!=0){
         for (int i=0; i<_doorslocked.size(); i++){
@@ -538,7 +538,7 @@ void HGameController::addlocks(int index){
 }
 
 void HGameController::checkLevelLoaded() {
-  _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
+  _level = _assets->get<LevelModel>(LEVEL_THREE_KEY);
   if (_level == nullptr) {
     _levelLoaded = false;
   }
@@ -548,7 +548,7 @@ void HGameController::checkLevelLoaded() {
         _level = nullptr;
 
         // Access and initialize level
-        _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
+        _level = _assets->get<LevelModel>(LEVEL_THREE_KEY);
         _level->setAssets(_assets);
         
         // Initialize SpiritController
@@ -559,7 +559,7 @@ void HGameController::checkLevelLoaded() {
 
         // TODO: implement direction and direction limits
         _tilemap->updatePosition(_scene->getSize() / 2);
-        std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
+        std::vector<std::vector<int>> tiles = _level->getTileTextures();
         _tilemap->updateDimensions(Vec2(tiles[0].size(), tiles.size()));
         _tilemap->updateColor(Color4::WHITE);
         _tilemap->updateTileSize(Size(_tileWidth, _tileHeight));
@@ -580,20 +580,20 @@ void HGameController::checkLevelLoaded() {
                                     _level->getBattery());
         }
         
-        for (int i = 0; i < tiles.size() * tiles[0].size(); ++i) {
-            int c = i % tiles[0].size();
-            int r = i / tiles[0].size();
-            
-            if (tiles[r][c] == "black") {
-                _tilemap->addTile(c, r, Color4::BLACK, false,
-                                  _assets->get<Texture>("black"));
-            } else if (tiles[r][c] == "green") {
-                _tilemap->addTile(c, r, Color4::GREEN, true,
-                                  _assets->get<Texture>("green"));
-            } else if (tiles[r][c] == "door") {
-                _tilemap->addDoor(c, r, _assets->get<Texture>("fulldoor"));
-            }
-        }
+//        for (int i = 0; i < tiles.size() * tiles[0].size(); ++i) {
+//            int c = i % tiles[0].size();
+//            int r = i / tiles[0].size();
+//
+//            if (tiles[r][c] == "black") {
+//                _tilemap->addTile(c, r, Color4::BLACK, false,
+//                                  _assets->get<Texture>("black"));
+//            } else if (tiles[r][c] == "green") {
+//                _tilemap->addTile(c, r, Color4::GREEN, true,
+//                                  _assets->get<Texture>("green"));
+//            } else if (tiles[r][c] == "door") {
+//                _tilemap->addDoor(c, r, _assets->get<Texture>("fulldoor"));
+//            }
+//        }
 
         // Initialize HunterController
         

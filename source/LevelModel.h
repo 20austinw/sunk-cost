@@ -22,7 +22,7 @@ class LevelModel : public Asset {
     Rect _bounds;
 
     /** Vector of textures for tiles */
-    std::vector<std::vector<std::string>> _tiles;
+    std::vector<std::vector<int>> _tiles;
 
     /** Dimenisons of this tilemap */
     Size _dimensions;
@@ -83,7 +83,7 @@ class LevelModel : public Asset {
 
 #pragma mark Getters
 
-    std::vector<std::vector<std::string>> getTileTextures() { return _tiles; }
+    std::vector<std::vector<int>> getTileTextures() { return _tiles; }
 
     Size getDimensions() { return _dimensions; }
 

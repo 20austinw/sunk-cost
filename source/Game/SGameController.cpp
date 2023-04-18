@@ -32,12 +32,12 @@ SGameController::SGameController(
 : _assets(assets) {
     /// Initialize the tilemap and add it to the scene
     _scene = cugl::Scene2::alloc(displaySize);
-    std::shared_ptr<scene2::PolygonNode> background =
-    scene2::PolygonNode::allocWithPoly(cugl::Rect(0, 0, 20000, 20000));
-    background->setColor(Color4::BLACK);
-    background->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-    background->setPosition(-1 * Size(9000, 9000) / 2);
-    _scene->addChild(background);
+//    std::shared_ptr<scene2::PolygonNode> background =
+//    scene2::PolygonNode::allocWithPoly(cugl::Rect(0, 0, 20000, 20000));
+//    background->setColor(Color4::BLACK);
+//    background->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+//    background->setPosition(-1 * Size(9000, 9000) / 2);
+//    _scene->addChild(background);
     _tilemap = std::make_shared<TilemapController>();
     _tilemap->addChildTo(_scene);
     // Initialize PortraitSetController
@@ -50,7 +50,7 @@ SGameController::SGameController(
     
     // Initialize SpiritController
     _spirit = SpiritController(_assets, _scene, _portraits, _scene->getSize());
-    _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
+    _level = _assets->get<LevelModel>(LEVEL_THREE_KEY);
     if (_level == nullptr) {
         _levelLoaded = false;
 //        CULog("Fail!");
@@ -114,7 +114,7 @@ void SGameController::update(float dt) {
             checkLevelLoaded();
             _portraits->setIndex(4);
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(1);
+            ->setZoom(0.15);
         }
         
 //        if (_trapTriggered) {
@@ -281,9 +281,9 @@ void SGameController::update(float dt) {
         _portraits->setPrevState(_portraits->getCurState());
         
         if (_doorUnlocked && _doorToUnlock != -1){
-            CULog("add un Lock: %i", _doorToUnlock);
+//            CULog("add un Lock: %i", _doorToUnlock);
             if (_doors.at(_doorToUnlock)->isLocked()){
-                CULog("addLock: %i", _doorToUnlock);
+//                CULog("addLock: %i", _doorToUnlock);
                 _doors.at(_doorToUnlock)->resetHunterUnlock();
                 _spirit.addNewLock(_scene);
                 _doorUnlocked = false;
@@ -387,7 +387,7 @@ void SGameController::render(std::shared_ptr<cugl::SpriteBatch>& batch) {
 }
 
 void SGameController::checkLevelLoaded() {
-    _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
+    _level = _assets->get<LevelModel>(LEVEL_THREE_KEY);
     if (_level == nullptr) {
         _levelLoaded = false;
     }
@@ -397,38 +397,33 @@ void SGameController::checkLevelLoaded() {
         _level = nullptr;
         
         // Access and initialize level
-        _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
+        _level = _assets->get<LevelModel>(LEVEL_THREE_KEY);
         _level->setAssets(_assets);
         
-        CULog("Loading level!");
+//        CULog("Loading level!");
         
         _tilemap->updatePosition(_scene->getSize() / 2);
-        std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
-        _tilemap->updateDimensions(Vec2(tiles[0].size(), tiles.size()));
-        _tilemap->updateColor(Color4::BLACK);
+        std::vector<std::vector<int>> tiles = _level->getTileTextures();
+        int height = tiles[0].size();
+        int width = tiles.size();
+        _tilemap->updateDimensions(Vec2(height, width));
+        _tilemap->updateColor(Color4::WHITE);
         _tilemap->updateTileSize(Size(128, 128));
         for (int i = 0; i < tiles.size() * tiles[0].size(); ++i) {
             int c = i % tiles[0].size();
             int r = i / tiles[0].size();
-            if (tiles[r][c] == "black") {
-                _tilemap->addTile(c, r, Color4::BLACK, false,
-                                  _assets->get<Texture>("black"));
-            } else if (tiles[r][c] == "green") {
-                _tilemap->addTile(c, r, Color4::GREEN, true,
-                                  _assets->get<Texture>("green"));
-            } else if (tiles[r][c] == "door") {
-                _tilemap->addDoor(c, r, _assets->get<Texture>("fulldoor"));
-            }
+            int type = tiles[r][c];
+            addFloorTile(type, c, width-1-r);
         }
         _map =
-        scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
-        
-        _scene->addChild(_map);
+//        scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
+//
+//        _scene->addChild(_map);
         _miniMap = scene2::PolygonNode::allocWithTexture(
                                                          _assets->get<Texture>("minimap"));
         _miniMap->setScale(0.1);
         _scene->addChild(_miniMap);
-        _tilemap->addDoorTo(_scene);
+//        _tilemap->addDoorTo(_scene);
         for (int i = 0; i < _level->getPortaits().size(); i++) {
             _portraits->addPortrait(i + 1, _level->getPortaits()[i].first,
                                     _level->getPortaits()[i].second,
@@ -544,4 +539,23 @@ void SGameController::transmitLockedDoor(int i) {
     _serializer->writeFloatVector(idx);
     _network->broadcast(_serializer->serialize());
     _serializer->reset();
+}
+
+void SGameController::addFloorTile(int type, int c, int r){
+    if (type == 0) {
+        _tilemap->addTile(c, r, Color4::BLACK, false,
+                          _assets->get<Texture>("black"));
+    }else{
+        std::shared_ptr< Texture > floor = _assets->get<Texture>("floor");
+        modifyTexture(floor, type-65, 8, 8);
+        _tilemap->addTile(c, r, Color4::WHITE, true, floor);
+    }
+}
+
+void SGameController::modifyTexture(std::shared_ptr<Texture>& texture, int index, int row, int col){
+    float x = 1.0/row;
+    float y = 1.0/col;
+    int c = index % row;
+    int r = index / row;
+    texture = texture->getSubTexture(r*y, (r+1)*y, c*x, (c+1)*x);
 }

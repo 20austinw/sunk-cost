@@ -16,7 +16,7 @@
  */
 //bool init(b2Body* hunterBody, b2Body* trapBody, b2Body* treasureBody);
 bool CollisionController::init( b2Body* hunterBody, b2Body* treasureBody) {
-    CULog("collision init!!");
+//    CULog("collision init!!");
     _hunterBody = hunterBody;
 //    _trapBody = trapBody;
     _treasureBody = treasureBody;
@@ -34,7 +34,7 @@ bool CollisionController::init( b2Body* hunterBody, b2Body* treasureBody) {
 void CollisionController::beginContact(b2Contact* contact) {
     b2Body* body1 = contact->GetFixtureA()->GetBody();
     b2Body* body2 = contact->GetFixtureB()->GetBody();
-    CULog("Collision begin Contact");
+//    CULog("Collision begin Contact");
     if (body1 == _hunterBody || body2 == _hunterBody) {
         CULog("Hunter body here");
         didHitObstacle = true;
@@ -53,7 +53,6 @@ void CollisionController::beginContact(b2Contact* contact) {
 //        didHitTrap = true;
 //    }
     
-    didHitObstacle = didHitObstacle;
 //
 //    didHitObstacle = didHitObstacle && !didHitTrap;
 }

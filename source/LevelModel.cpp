@@ -126,27 +126,47 @@ bool LevelModel::loadObject(const std::shared_ptr<JsonValue>& json) {
  * @return true if the exit door was successfully loaded
  */
 bool LevelModel::loadTiles(const std::shared_ptr<JsonValue>& json) {
-    auto tiles = json->get("data");
+    auto tiles = json->get("chunks");
     int width = json->get("width")->asInt();
     int height = json->get("height")->asInt();
     _dimensions = Size(width, height);
+    
     for (int i = 0; i < height; ++i) {
-        std::vector<std::string> vec;
+        std::vector<int> vec;
+        for (int n = 0; n < width; ++n){
+            vec.emplace_back(0);
+        }
         _tiles.push_back(vec);
     }
+    
     bool success = tiles->get(0) != nullptr;
     if (success) {
-        for (int i = 0; i < width * height; ++i) {
-            int c = i % width;
-            int r = i / width;
-            int type = tiles->get(c + r * width)->asInt();
-            if (type == 1) {
-                _tiles[r].push_back("black");
-            } else if (type == 3) {
-                _tiles[r].push_back("door");
-            } else {
-                _tiles[r].push_back("green");
+        for(int i=0; i<tiles->size(); i++){
+            auto chunk = tiles->get(i);
+            auto tile = chunk->get("data");
+            int x = chunk->get("x")->asInt();
+            int y = chunk->get("y")->asInt();
+            int w = chunk->get("width")->asInt();
+            for(int n = 0; n<tile->size(); n++){
+                int c = n % w;
+                int r = n / w;
+                int type = tile->get(n)->asInt();
+                _tiles[y+r][x+c+32] = type;
             }
+        }
+        
+        
+//        for (int i = 0; i < width * height; ++i) {
+//            int c = i % width;
+//            int r = i / width;
+//            int type = tiles->get(c + r * width)->asInt();
+//            if (type == 1) {
+//                _tiles[r].push_back("black");
+//            } else if (type == 3) {
+//                _tiles[r].push_back("door");
+//            } else {
+//                _tiles[r].push_back("green");
+//            }
 
             //              if (type > 24 && type < 27) {
             //            _tiles[r].push_back("green");
@@ -155,7 +175,7 @@ bool LevelModel::loadTiles(const std::shared_ptr<JsonValue>& json) {
             //          } else if (type == 11) {
             //            _tiles[r].push_back("red");
             //          }
-        }
+//        }
     }
     return success;
 }

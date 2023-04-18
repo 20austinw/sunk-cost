@@ -393,7 +393,7 @@ void HGameController::update(float dt) {
         rightward=0;
         _hunter->setViewFrame(forward, rightward);
     }
-    if (_hunter->getTraps().size()== 0 ){
+    if (_hunter->getTrapSize()== 0 ){
         _hunter->move(forward,rightward);
             }
     else{
@@ -415,12 +415,13 @@ void HGameController::update(float dt) {
     
     
     
-    if(_hunter->getTraps().size()!=0){
-        for (int i=0;i<_hunter->getTraps().size();i++){
+    if(_hunter->getTrapSize()!=0){
+        for (int i=0;i<_hunter->getTrapSize();i++){
             if(abs(_hunter->getTraps()[i]->getPosition().x-_hunter->getPosition().x)<= 100 && abs(_hunter->getTraps()[i]->getPosition().y-_hunter->getPosition().y)<= 100){
                     AudioEngine::get()->play("trapSound", _trapSound, false, _theme->getVolume(), true);
                 _hunter->getTraps()[i]->setTrigger(true);
-//                _hunter->getTrapViews()[i]->addChildTo(_scene);
+                _hunter->getTrapViews()[i]->setVisible(true);
+               
                     if(!_timertriggered){
                         _countfortimer=0;
                         _timertriggered=true;
@@ -432,12 +433,16 @@ void HGameController::update(float dt) {
         for (int i=0;i<_hunter->getTraps().size();i++){
             if (_hunter->getTraps()[i]->getTrigger()&& _countfortimer >= 300){
                 _hunter->getTraps()[i]->setTrigger(false);
-                if(_removedvar){
-                    _hunter->removeTrap(i);
-                    _removedvar=false;
-                    _timertriggered=false;
-                    transmitTrapTriggered(_hunter->getPosition());
-                }
+                _hunter->getTrapViews()[i]->setVisible(false);
+                _hunter->removeTrap(i);
+                _timertriggered=false;
+                transmitTrapTriggered(_hunter->getPosition());
+//                if(_removedvar){
+//                    _hunter->removeTrap(i);
+//                    _removedvar=false;
+//                    _timertriggered=false;
+//                    transmitTrapTriggered(_hunter->getPosition());
+//                }
             }
         }
 

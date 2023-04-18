@@ -162,5 +162,7 @@ class HunterController {
     void addTrap(Vec2 position) { _model->addTrap(position); }
     
     void removeTrap(int index) { _model->removeTrap(index); }
+    
+    int getTrapSize(){ return _model->getTrapSize();}
 };
 #endif /* _HUNTER_CONTROLLER_H__ */

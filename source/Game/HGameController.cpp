@@ -215,12 +215,11 @@ void HGameController::update(float dt) {
         _didLose = true;
     }
     else if(_gameStatus == 1){
-        // Hunter lose
-        CULog("Hunter lose!");
+        // Hunter lose or win
         _endScene->update();
     }else{
         // Hunter win!
-        
+//        _endScene->update();
     }
     
 
@@ -232,6 +231,9 @@ void HGameController::update(float dt) {
     if(!_didFinalwin && _didWin && !_didLose && _hunter->getPosition().x < 400 && _hunter->getPosition().y < 400){
         _scene->removeChild(_winLabel);
         _scene->addChild(_finalWinLabel);
+        _gameStatus = 1;
+        _endScene = std::make_shared<EndScene>(_assets, false);
+        _endScene->addChildTo(_scene);
         _didFinalwin = true;
     }
     

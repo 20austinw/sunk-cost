@@ -37,8 +37,8 @@ class EndScene {
     EndScene(const std::shared_ptr<cugl::AssetManager>& assets, bool win) {
         _win = win;
         _frameNum = 0;
-        _spriteSheet = win ? assets->get<Texture>("hunters_lose") : assets->get<Texture>("spirit_win_animation");
-        _spriteNode = scene2::SpriteNode::allocWithSheet(_spriteSheet, 7, 5, 32);
+        _spriteSheet = win ? assets->get<Texture>("hunters_lose") : assets->get<Texture>("hunters_win");
+        _spriteNode = win ? scene2::SpriteNode::allocWithSheet(_spriteSheet, 1, 8, 8) : scene2::SpriteNode::allocWithSheet(_spriteSheet, 5, 4, 20);
         _spriteNode->setScale(1);
         _spriteNode->setFrame(_frameNum);
         _spriteNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
@@ -98,7 +98,8 @@ class EndScene {
             _tick++;
             // Second round
         }else{
-            
+            _spriteNode->setFrame(_frameNum % 17);
+            _frameNum++;
         }
     }
 };

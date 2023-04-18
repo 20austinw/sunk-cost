@@ -81,6 +81,9 @@
         "left": {
             "file":  "textures/left_arrow.png"
         },
+        "hunters_win": {
+            "file": "textures/hunter_win_animation.png"
+        },
         "hunters_lose": {
             "file": "textures/live_painting.png"
         },

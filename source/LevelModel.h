@@ -25,6 +25,16 @@ class LevelModel : public Asset {
     std::vector<std::vector<int>> _tiles;
     
     std::vector<std::vector<int>> _walls;
+    
+    std::vector<std::vector<int>> _wallUpper;
+    
+    std::vector<std::vector<int>> _wallGrime;
+    
+    std::vector<std::vector<int>> _wallLower;
+    
+    std::vector<std::vector<int>> _furnitures;
+    
+    std::vector<std::vector<int>> _candles;
 
     /** Dimenisons of this tilemap */
     Size _dimensions;
@@ -88,6 +98,16 @@ class LevelModel : public Asset {
     std::vector<std::vector<int>> getTileTextures() { return _tiles; }
     
     std::vector<std::vector<int>> getWallTextures() { return _walls; }
+    
+    std::vector<std::vector<int>> getWallUpperTextures() { return _wallUpper; }
+    
+    std::vector<std::vector<int>> getWallGrimeTextures() { return _wallGrime; }
+    
+    std::vector<std::vector<int>> getWallLowerTextures() { return _wallLower; }
+    
+    std::vector<std::vector<int>> getFurnitureTextures() { return _furnitures; }
+    
+    std::vector<std::vector<int>> getCandleTextures() { return _candles; }
 
     Size getDimensions() { return _dimensions; }
 

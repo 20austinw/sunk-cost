@@ -26,6 +26,11 @@
 #define PLAYER_FIELD "player"
 #define DOOR_FIELD "doors"
 #define WALL_FIELD "wall"
+#define WALL_UPPER_FIELD "wall_upper"
+#define WALL_GRIME_FIELD "wall_grime"
+#define WALL_LOWER_FIELD "wall_lower"
+#define FURNITURE_FIELD "furnitures"
+#define CANDLE_FIELD "candles"
 
 /** The physics fields for each object */
 #define POSITION_FIELD "pos"

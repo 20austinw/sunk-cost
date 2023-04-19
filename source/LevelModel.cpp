@@ -62,17 +62,13 @@ bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json) {
     // Get each object in each layer, then decide what to do based off of what
     // type the object is.
     auto objects = json->get("layers")->get(0);
-    loadObject(objects);
     
-    //load the walls
-    objects = json->get("layers")->get(1);
-    loadObject(objects);
+    for (int i=0; i<8; i++){
+        objects = json->get("layers")->get(i);
+        loadObject(objects);
+    }
     
-    //load the doors
-    objects = json->get("layers")->get(2);
-    loadObject(objects);
-    
-    for (int i = 3; i < json->get("layers")->size(); i++) {
+    for (int i = 8; i < json->get("layers")->size(); i++) {
         // Get the objects per layer
         objects = json->get("layers")->get(i)->get("objects");
         for (int j = 0; j < objects->size(); j++) {
@@ -118,6 +114,16 @@ bool LevelModel::loadObject(const std::shared_ptr<JsonValue>& json) {
         return loadDoors(json);
     } else if (type == WALL_FIELD) {
         return loadTiles(json, _walls);
+    } else if (type == WALL_UPPER_FIELD) {
+        return loadTiles(json, _wallUpper);
+    } else if (type == WALL_GRIME_FIELD) {
+        return loadTiles(json, _wallGrime);
+    } else if (type == WALL_LOWER_FIELD) {
+        return loadTiles(json, _wallLower);
+    } else if (type == FURNITURE_FIELD) {
+        return loadTiles(json, _furnitures);
+    } else if (type == CANDLE_FIELD) {
+        return loadTiles(json, _candles);
     }
     return false;
 }

@@ -131,6 +131,21 @@
        },
        "wall":{
            "file":  "textures/walls_tilesheet.png"
+       },
+       "wall_upper":{
+           "file":  "textures/wall_upper.png"
+       },
+       "wall_grime":{
+           "file":  "textures/wall_grime.png"
+       },
+       "wall_lower":{
+           "file":  "textures/wall_lower.png"
+       },
+       "furnitures":{
+           "file":  "textures/furnitures.png"
+       },
+       "candle":{
+           "file":  "textures/candle.png"
        }
     },
     "fonts": {

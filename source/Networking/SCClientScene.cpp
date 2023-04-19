@@ -351,7 +351,7 @@ bool ClientScene::checkConnection() {
             if (_status != Status::START) {
                 _status = Status::WAIT;
             }
-            _player->setText(std::to_string(_network->getNumPlayers()));
+//            _player->setText(std::to_string(_network->getNumPlayers()));
             break;
         case NetcodeConnection::State::DENIED:
         case NetcodeConnection::State::MISMATCHED:
@@ -389,7 +389,7 @@ void ClientScene::configureStartButton() {
 void ClientScene::addToCode(int i) {
     std::shared_ptr<Texture> numberTexture = _assets->get<Texture>(numToFile(i));
     std::shared_ptr<scene2::PolygonNode> number = scene2::PolygonNode::allocWithTexture(numberTexture);
-    number->setPosition(Vec2(415 + _codePos * 110, Application::get()->getDisplaySize().height/2 + 150));
+    number->setPosition(Vec2(555 + _codePos * 110, Application::get()->getDisplaySize().height/2 - 60));
     number->setScale(0.7);
     addChild(number);
     _code  = _code + std::to_string(i);

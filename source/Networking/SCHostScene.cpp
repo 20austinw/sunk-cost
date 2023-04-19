@@ -319,7 +319,7 @@ void HostScene::displayCode(std::string code) {
     for(auto it = code.cbegin(); it != code.cend(); ++it) {
         std::shared_ptr<Texture> numberTexture = _assets->get<Texture>(numToFile(*it));
         std::shared_ptr<scene2::PolygonNode> number = scene2::PolygonNode::allocWithTexture(numberTexture);
-        number->setPosition(Vec2(200 + position * 220, Application::get()->getDisplaySize().height/2));
+        number->setPosition(Vec2(300 + position * 230, Application::get()->getDisplaySize().height/2 - 250));
         number->setScale(1.5);
         addChild(number);
         position++;

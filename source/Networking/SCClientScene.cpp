@@ -166,6 +166,13 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
         }
     });
     
+    _delete = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("client_center_row2_delete"));
+    _delete->addListener([this](const std::string& name, bool down) {
+        if (down && _code.size() > 0) {
+            deleteLastDigit();
+        }
+    });
+    
 //    _gameid->addExitListener([this](const std::string& name, const std::string& value) {
 //        connect(value);
 //    });
@@ -217,6 +224,7 @@ void ClientScene::setActive(bool value) {
             _eight->activate();
             _nine->activate();
             _zero->activate();
+            _delete->activate();
 //            _player->setText("1");
             configureStartButton();
             // Don't reset the room id
@@ -234,6 +242,7 @@ void ClientScene::setActive(bool value) {
             _eight->deactivate();
             _nine->deactivate();
             _zero->deactivate();
+            _delete->deactivate();
             // If any were pressed, reset them
 //            _startgame->setDown(false);
             _backout->setDown(false);
@@ -391,7 +400,7 @@ void ClientScene::addToCode(int i) {
     std::shared_ptr<scene2::PolygonNode> number = scene2::PolygonNode::allocWithTexture(numberTexture);
     number->setPosition(Vec2(555 + _codePos * 110, Application::get()->getDisplaySize().height/2 - 60));
     number->setScale(0.7);
-    addChild(number);
+    addChildWithName(number, "code " + std::to_string(_codePos));
     _code  = _code + std::to_string(i);
    _codePos++;
 }
@@ -419,4 +428,10 @@ std::string ClientScene::numToFile(int num) {
         default:
             return "zero_button";
     }
+}
+
+void ClientScene::deleteLastDigit() {
+    _codePos--;
+    removeChildByName("code " + std::to_string(_codePos));
+    _code = _code.substr(0, _codePos);
 }

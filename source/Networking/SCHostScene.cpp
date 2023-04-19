@@ -97,7 +97,8 @@ bool HostScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
         if (down) {
             disconnect();
             _status = Status::ABORT;
-//            removeCode();
+            removeCode();
+            _codeDisplayed = false;
         }
     });
 
@@ -321,7 +322,7 @@ void HostScene::displayCode(std::string code) {
         std::shared_ptr<scene2::PolygonNode> number = scene2::PolygonNode::allocWithTexture(numberTexture);
         number->setPosition(Vec2(300 + position * 230, Application::get()->getDisplaySize().height/2 - 250));
         number->setScale(1.5);
-        addChild(number);
+        addChildWithName(number, "code " + std::to_string(position));
         position++;
     }
     if (position == 5) {
@@ -351,6 +352,12 @@ std::string HostScene::numToFile(char num) {
             return "nine_button";
         default:
             return "zero_button";
+    }
+}
+
+void HostScene::removeCode() {
+    for(int i = 0; i < 5; i++) {
+        removeChildByName("code " + std::to_string(i));
     }
 }
 

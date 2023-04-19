@@ -70,6 +70,8 @@ protected:
     std::shared_ptr<cugl::scene2::Button> _nine;
     std::shared_ptr<cugl::scene2::Button> _zero;
     
+    std::shared_ptr<cugl::scene2::Button> _delete;
+    
     int _codePos;
     
     std::string _code;
@@ -231,6 +233,8 @@ private:
     void addToCode(int i);
     
     std::string numToFile(int num);
+    
+    void deleteLastDigit();
 
 };
 

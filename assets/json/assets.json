@@ -884,7 +884,33 @@
                                         "y_offset": -175,
                                         "absolute": true
                                     }
-                                    
+                                },
+                                "delete": {
+                                    "type": "Button",
+                                    "data": {
+                                        "upnode": "up",
+                                        "visible": true,
+                                        "pushsize": true,
+                                        "anchor": [
+                                            0.5,
+                                            0.5
+                                        ],
+                                        "scale": 0.7
+                                    },
+                                    "children": {
+                                        "up": {
+                                            "type": "Image",
+                                            "data": {
+                                                "texture": "left"
+                                            }
+                                        }
+                                    },
+                                    "layout": {
+                                        "priority": 1,
+                                        "x_anchor": "right",
+                                        "y_anchor": "middle",
+                                        "absolute": true
+                                    }
                                 }
                             },
                             "layout" : {

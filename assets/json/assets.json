@@ -112,10 +112,10 @@
             "file": "textures/trap_button.png"
         },
         "lock_animation_hunter": {
-                    "file": "textures/lock_no_glass.png"
+            "file": "textures/lock_no_glass.png"
         },
         "door_animation_hunter": {
-                    "file": "textures/door_closing.png"
+            "file": "textures/door_closing.png"
         },
         "joystick_bottom":{
            "file":  "textures/joystick_bottom.png"
@@ -287,12 +287,12 @@
                         "scale": 0.5
                     },
                     "children": {
-                      "up": {
-                          "type": "Image",
-                          "data": {
-                              "texture": "host_button"
-                          }
-                      }
+                        "up": {
+                            "type": "Image",
+                            "data": {
+                                "texture": "host_button"
+                            }
+                        }
                     },
                     "layout" : {
                         "priority" : 1,
@@ -313,12 +313,12 @@
                         "scale": 0.5
                     },
                     "children": {
-                      "up": {
-                          "type": "Image",
-                          "data": {
-                              "texture": "client_button"
-                          }
-                      }
+                        "up": {
+                            "type": "Image",
+                            "data": {
+                                "texture": "client_button"
+                            }
+                        }
                     },
                     "layout" : {
                         "priority" : 1,
@@ -423,7 +423,7 @@
                     "layout" : {
                         "x_anchor" : "center",
                         "y_anchor" : "middle",
-                        "y_offset": -15,
+                        "y_offset": -100,
                         "absolute" : true
                     }
                 },
@@ -447,6 +447,40 @@
                         "y_anchor" : "bottom",
                         "y_offset" : 10,
                         "absolute" : true
+                    }
+                },
+                "center" : {
+                    "type"      : "Node",
+                    "format"    : {
+                        "type"        : "Float",
+                        "orientation" : "vertical",
+                        "x_alignment" : "center",
+                        "y_alignment" : "middle"
+                    },
+                    "data" : {
+                        "anchor"  : [0.5,0.0],
+                        "size" : [500,500]
+                    },
+                    "children":  {
+                        "start": {
+                            "type"   : "Widget",
+                            "data"   : {
+                                "key"     : "textbutton",
+                                "variables" : {
+                                    "size": [400,100],
+                                    "text": "Waiting",
+                                    "color": "#000088"
+                                }
+                            },
+                            "layout" : {
+                                "priority" : 3,
+                                "padding"  : [0,50,0,250]
+                            }
+                        }
+                    },
+                    "layout" : {
+                        "x_anchor" : "center",
+                        "y_anchor" : "bottom"
                     }
                 }
             }

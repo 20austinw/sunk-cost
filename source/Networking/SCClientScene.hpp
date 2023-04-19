@@ -58,6 +58,22 @@ protected:
     
     /** The current status */
     Status _status;
+    
+    std::shared_ptr<cugl::scene2::Button> _one;
+    std::shared_ptr<cugl::scene2::Button> _two;
+    std::shared_ptr<cugl::scene2::Button> _three;
+    std::shared_ptr<cugl::scene2::Button> _four;
+    std::shared_ptr<cugl::scene2::Button> _five;
+    std::shared_ptr<cugl::scene2::Button> _six;
+    std::shared_ptr<cugl::scene2::Button> _seven;
+    std::shared_ptr<cugl::scene2::Button> _eight;
+    std::shared_ptr<cugl::scene2::Button> _nine;
+    std::shared_ptr<cugl::scene2::Button> _zero;
+    
+    int _codePos;
+    
+    std::string _code;
+    
 
 public:
 #pragma mark -
@@ -211,6 +227,10 @@ private:
      * @return true if the network connection is still active.
      */
     bool checkConnection();
+    
+    void addToCode(int i);
+    
+    std::string numToFile(int num);
 
 };
 

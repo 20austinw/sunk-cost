@@ -66,15 +66,18 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
         return false;
     }
     
+    _codePos = 0;
     // Start up the input handler
     _assets = assets;
+    
+    _code = "";
     
     // Acquire the scene built by the asset loader and resize it the scene
     std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("client");
     scene->setContentSize(dimen);
     scene->doLayout(); // Repositions the HUD
     
-//    _startgame = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("client_center_start"));
+    _startgame = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("client_center_start"));
     _backout = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("client_back"));
     _status = Status::IDLE;
     
@@ -84,13 +87,84 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             _status = Status::ABORT;
         }
     });
+    
+    _one = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("client_center_row1_one"));
+    _one->addListener([this](const std::string& name, bool down) {
+        if (down && _codePos < 5) {
+            addToCode(1);
+        }
+    });
+    
+    _two = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("client_center_row1_two"));
+    _two->addListener([this](const std::string& name, bool down) {
+        if (down && _codePos < 5) {
+            addToCode(2);
+        }
+    });
+    
+    _three = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("client_center_row1_three"));
+    _three->addListener([this](const std::string& name, bool down) {
+        if (down && _codePos < 5) {
+            addToCode(3);
+        }
+    });
+    
+    _four = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("client_center_row1_four"));
+    _four->addListener([this](const std::string& name, bool down) {
+        if (down && _codePos < 5) {
+            addToCode(4);
+        }
+    });
+    
+    _five = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("client_center_row1_five"));
+    _five->addListener([this](const std::string& name, bool down) {
+        if (down && _codePos < 5) {
+            addToCode(5);
+        }
+    });
 
-//    _startgame->addListener([=](const std::string& name, bool down) {
-//        if (down) {
-//            // This will call the _gameid listener
-////            _gameid->releaseFocus();
-//        }
-//    });
+    _six = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("client_center_row2_six"));
+    _six->addListener([this](const std::string& name, bool down) {
+        if (down && _codePos < 5) {
+            addToCode(6);
+        }
+    });
+    
+    _seven = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("client_center_row2_seven"));
+    _seven->addListener([this](const std::string& name, bool down) {
+        if (down && _codePos < 5) {
+            addToCode(7);
+        }
+    });
+    
+    _eight = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("client_center_row2_eight"));
+    _eight->addListener([this](const std::string& name, bool down) {
+        if (down && _codePos < 5) {
+            addToCode(8);
+        }
+    });
+    
+    _nine = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("client_center_row2_nine"));
+    _nine->addListener([this](const std::string& name, bool down) {
+        if (down && _codePos < 5) {
+            addToCode(9);
+        }
+    });
+    
+    _zero = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("client_center_row2_zero"));
+    _zero->addListener([this](const std::string& name, bool down) {
+        if (down && _codePos < 5) {
+            addToCode(0);
+        }
+    });
+    
+    _startgame->addListener([=](const std::string& name, bool down) {
+        if (down && _code.size() == 5) {
+            // This will call the _gameid listener
+//            _gameid->releaseFocus();
+            connect(_code);
+        }
+    });
     
 //    _gameid->addExitListener([this](const std::string& name, const std::string& value) {
 //        connect(value);
@@ -133,16 +207,46 @@ void ClientScene::setActive(bool value) {
 //            _gameid->activate();
             _backout->activate();
             _network = nullptr;
+            _one->activate();
+            _two->activate();
+            _three->activate();
+            _four->activate();
+            _five->activate();
+            _six->activate();
+            _seven->activate();
+            _eight->activate();
+            _nine->activate();
+            _zero->activate();
 //            _player->setText("1");
-//            configureStartButton();
+            configureStartButton();
             // Don't reset the room id
         } else {
 //            _gameid->deactivate();
 //            _startgame->deactivate();
             _backout->deactivate();
+            _one->deactivate();
+            _two->deactivate();
+            _three->deactivate();
+            _four->deactivate();
+            _five->deactivate();
+            _six->deactivate();
+            _seven->deactivate();
+            _eight->deactivate();
+            _nine->deactivate();
+            _zero->deactivate();
             // If any were pressed, reset them
 //            _startgame->setDown(false);
             _backout->setDown(false);
+            _one->setDown(false);
+            _two->setDown(false);
+            _three->setDown(false);
+            _four->setDown(false);
+            _five->setDown(false);
+            _six->setDown(false);
+            _seven->setDown(false);
+            _eight->setDown(false);
+            _nine->setDown(false);
+            _zero->setDown(false);
         }
     }
 }
@@ -280,4 +384,39 @@ void ClientScene::configureStartButton() {
         updateText(_startgame, "Waiting");
     }
         
+}
+
+void ClientScene::addToCode(int i) {
+    std::shared_ptr<Texture> numberTexture = _assets->get<Texture>(numToFile(i));
+    std::shared_ptr<scene2::PolygonNode> number = scene2::PolygonNode::allocWithTexture(numberTexture);
+    number->setPosition(Vec2(415 + _codePos * 110, Application::get()->getDisplaySize().height/2 + 150));
+    number->setScale(0.7);
+    addChild(number);
+    _code  = _code + std::to_string(i);
+   _codePos++;
+}
+
+std::string ClientScene::numToFile(int num) {
+    switch (num) {
+        case 1:
+            return "one_button";
+        case 2:
+            return "two_button";
+        case 3:
+            return "three_button";
+        case 4:
+            return "four_button";
+        case 5:
+            return "five_button";
+        case 6:
+            return "six_button";
+        case 7:
+            return "seven_button";
+        case 8:
+            return "eight_button";
+        case 9:
+            return "nine_button";
+        default:
+            return "zero_button";
+    }
 }

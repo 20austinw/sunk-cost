@@ -370,18 +370,19 @@ void SGameController::update(float dt) {
         _scene->removeChild(_timerLabel);
         _scene->addChild(_timerLabel);
         _timeLeft--;
-        if(_timeLeft <= 0) {
-            _gameStatus = 1;
-            _endScene = std::make_shared<EndScene>(_assets, true);
-            _endScene->addChildTo(_scene);
-        }
-    }else if(_gameStatus == 1){
-        // Spirit won
-        CULog("Spirit wins!");
-        _endScene->update();
-    }else{
-        // Spirit lost
+//        if(_timeLeft <= 0) {
+//            _gameStatus = 1;
+//            _endScene = std::make_shared<EndScene>(_assets, true);
+//            _endScene->addChildTo(_scene);
+//        }
     }
+//    else if(_gameStatus == 1){
+//        // Spirit won
+//        CULog("Spirit wins!");
+//        _endScene->update();
+//    }else{
+//        // Spirit lost
+//    }
     //    cnt++;
     //    if(cnt == 100) {
     //        _gameStatus = 1;

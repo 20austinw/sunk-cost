@@ -74,10 +74,8 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     scene->setContentSize(dimen);
     scene->doLayout(); // Repositions the HUD
     
-    _startgame = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("client_center_start"));
+//    _startgame = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("client_center_start"));
     _backout = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("client_back"));
-    _gameid = std::dynamic_pointer_cast<scene2::TextField>(_assets->get<scene2::SceneNode>("client_center_game_field_text"));
-    _player = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("client_center_players_field_text"));
     _status = Status::IDLE;
     
     _backout->addListener([this](const std::string& name, bool down) {
@@ -87,16 +85,16 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
         }
     });
 
-    _startgame->addListener([=](const std::string& name, bool down) {
-        if (down) {
-            // This will call the _gameid listener
-            _gameid->releaseFocus();
-        }
-    });
+//    _startgame->addListener([=](const std::string& name, bool down) {
+//        if (down) {
+//            // This will call the _gameid listener
+////            _gameid->releaseFocus();
+//        }
+//    });
     
-    _gameid->addExitListener([this](const std::string& name, const std::string& value) {
-        connect(value);
-    });
+//    _gameid->addExitListener([this](const std::string& name, const std::string& value) {
+//        connect(value);
+//    });
 
     // Create the server configuration
     auto json = _assets->get<JsonValue>("server");
@@ -132,18 +130,18 @@ void ClientScene::setActive(bool value) {
         Scene2::setActive(value);
         if (value) {
             _status = IDLE;
-            _gameid->activate();
+//            _gameid->activate();
             _backout->activate();
             _network = nullptr;
-            _player->setText("1");
-            configureStartButton();
+//            _player->setText("1");
+//            configureStartButton();
             // Don't reset the room id
         } else {
-            _gameid->deactivate();
-            _startgame->deactivate();
+//            _gameid->deactivate();
+//            _startgame->deactivate();
             _backout->deactivate();
             // If any were pressed, reset them
-            _startgame->setDown(false);
+//            _startgame->setDown(false);
             _backout->setDown(false);
         }
     }

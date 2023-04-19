@@ -82,10 +82,10 @@ bool HostScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     scene->setContentSize(dimen);
     scene->doLayout(); // Repositions the HUD
 
-    _startgame = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("host_center_start"));
+//    _startgame = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("host_center_start"));
     _backout = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("host_back"));
-    _gameid = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("host_center_game_field_text"));
-    _player = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("host_center_players_field_text"));
+//    _gameid = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("host_center_game_field_text"));
+//    _player = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("host_center_players_field_text"));
     _status = Status::WAIT;
     
     // Program the buttons
@@ -96,11 +96,11 @@ bool HostScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
         }
     });
 
-    _startgame->addListener([this](const std::string& name, bool down) {
-        if (down) {
-            startGame();
-        }
-    });
+//    _startgame->addListener([this](const std::string& name, bool down) {
+//        if (down) {
+//            startGame();
+//        }
+//    });
     
     // Create the server configuration
     auto json = _assets->get<JsonValue>("server");
@@ -139,15 +139,15 @@ void HostScene::setActive(bool value) {
         if (value) {
             CULog("activating");
             _status = WAIT;
-            configureStartButton();
+//            configureStartButton();
             _backout->activate();
             
             connect();
         } else {
-            _startgame->deactivate();
+//            _startgame->deactivate();
             _backout->deactivate();
             // If any were pressed, reset them
-            _startgame->setDown(false);
+//            _startgame->setDown(false);
             _backout->setDown(false);
         }
     }
@@ -189,7 +189,7 @@ void HostScene::update(float timestep) {
         });
         checkConnection();
         // Do this last for button safety
-        configureStartButton();
+//        configureStartButton();
     }
 }
 
@@ -253,8 +253,8 @@ bool HostScene::checkConnection() {
             if (_status != Status::START) {
                 _status = Status::IDLE;
             }
-            _gameid->setText(hex2dec(_network->getRoom()));
-            _player->setText(std::to_string(_network->getNumPlayers()));
+//            _gameid->setText(hex2dec(_network->getRoom()));
+//            _player->setText(std::to_string(_network->getNumPlayers()));
             break;
         case NetcodeConnection::State::DENIED:
         case NetcodeConnection::State::MISMATCHED:

@@ -89,6 +89,9 @@ SGameController::SGameController(
     _alertLabel= cugl::scene2::Label::allocWithText(Vec2(0,displaySize.height/2), "The treasure has been STOLEN", _assets->get<Font>("pixel32"));
     _alertLabel->setPosition(_scene->getCamera()->getPosition()+Vec2(350,350));
     _alertLabel->setForeground(cugl::Color4f::RED);
+    
+    _miniMap = make_shared<Minimap>( _assets, _scene);
+    _miniMap->addChildTo(_scene);
 }
 
 #pragma mark Gameplay Handling
@@ -304,6 +307,13 @@ void SGameController::update(float dt) {
                 _spirit.setTrapAdded(false);
             }
         }
+        
+        // Draw minimap
+        _miniMap->update();
+        _miniMap->removeChildFrom(_scene);
+        _miniMap->addChildTo(_scene);
+        
+        // Draw timer and alert labels
         string minutes = std::to_string(_timeLeft/60/60);
         string seconds =  std::to_string(_timeLeft/60%60);
         seconds = seconds.length() <= 1 ? "0"+seconds : seconds;

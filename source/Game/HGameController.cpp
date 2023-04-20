@@ -97,7 +97,7 @@ HGameController::HGameController(
 
         
     auto inputController = InputController::getInstance();
-    inputController->initListeners();
+//    inputController->initListeners();
         
    
         

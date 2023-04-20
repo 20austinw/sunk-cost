@@ -90,7 +90,7 @@ SGameController::SGameController(
     _alertLabel->setPosition(_scene->getCamera()->getPosition()+Vec2(350,350));
     _alertLabel->setForeground(cugl::Color4f::RED);
     
-    _miniMap = make_shared<Minimap>( _assets, _scene);
+    _miniMap = make_shared<Minimap>( _assets, _scene, _level);
     _miniMap->addChildTo(_scene);
 }
 
@@ -124,9 +124,9 @@ void SGameController::update(float dt) {
         
         if (!_levelLoaded) {
             checkLevelLoaded();
-            _portraits->setIndex(5);
+            _portraits->setIndex(1);
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(1.5);
+            ->setZoom(1);
         }
         
 //        if (_trapTriggered) {
@@ -231,7 +231,6 @@ void SGameController::update(float dt) {
         if (inputController->isTouchDown()) {
             auto screenPos = inputController->getTouchPos();
             
-            
         }
         if (!didSwitch) {
             _spirit.decreaseCameraCool();
@@ -309,6 +308,11 @@ void SGameController::update(float dt) {
         }
         
         // Draw minimap
+        if(inputController->isTouchDown()) {
+            if(_miniMap->isClicked(inputController->getPosition())){
+                _miniMap->getMapPosition();
+            }
+        }
         _miniMap->update();
         _miniMap->removeChildFrom(_scene);
         _miniMap->addChildTo(_scene);
@@ -453,7 +457,7 @@ void SGameController::checkLevelLoaded() {
                                     _level->getPortaits()[i].second,
                                     Vec3(0, 0, -1), Vec2::ZERO,
                                     _level->getBattery());
-            
+            CULog("Portrait %i at position %f, %f", i, _portraits->getPosition(i).x, _portraits->getPosition(i).y);
             _levelLoaded = true;
         }
         _portraits->setMaxbattery(_level->getBattery());

@@ -38,7 +38,7 @@ class EndScene {
         _win = win;
         _frameNum = 0;
         _spriteSheet = win ? assets->get<Texture>("hunters_lose") : assets->get<Texture>("hunters_win");
-        _spriteNode = win ? scene2::SpriteNode::allocWithSheet(_spriteSheet, 1, 8, 8) : scene2::SpriteNode::allocWithSheet(_spriteSheet, 5, 4, 20);
+        _spriteNode = win ? scene2::SpriteNode::allocWithSheet(_spriteSheet, 2, 8, 14) : scene2::SpriteNode::allocWithSheet(_spriteSheet, 5, 4, 20);
         _spriteNode->setScale(1);
         _spriteNode->setFrame(_frameNum);
         _spriteNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
@@ -84,15 +84,18 @@ class EndScene {
 #pragma mark Setters
     void setPosition(Vec2 position) { _spriteNode->setPosition(position); }
     
+    int v = 1;
     void update() {
         if(_win) {
             // First round full animation
             if(_tick % 10 == 0) {
                 if(_frameNum == _spriteNode->getSpan() - 1){
-                    _frameNum = 11;
+                    v = -1;
+                }else if(_frameNum == 8) {
+                    v = 1;
                 }
                 _tick = 0;
-                _frameNum++;
+                _frameNum += v;
                 _spriteNode->setFrame(_frameNum);
             }
             _tick++;

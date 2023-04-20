@@ -35,13 +35,23 @@ class PortraitSetController {
     int _index;
 
     /** The scale for noBattery*/
-    float _scale;
+    float _noBatteryScale;
+    float _greenBatteryScale;
+    float _redBatteryScale;
+    
+    float _buttonSize = 400;
 
     std::shared_ptr<scene2::PolygonNode> _block;
 
     std::shared_ptr<scene2::SpriteNode> _redBattery;
     std::shared_ptr<scene2::SpriteNode> _greenBattery;
     std::shared_ptr<scene2::PolygonNode> _noBattery;
+    
+private:
+    float getZoom() {
+        return std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+        ->getZoom();
+    }
 
 #pragma mark Main Functions
   public:
@@ -142,7 +152,6 @@ class PortraitSetController {
                                           type));
         _index = 0;
         _prevState = true;
-        _scale = 0;
     }
 
     void initializeSheets(std::shared_ptr<cugl::Texture> green,
@@ -151,7 +160,9 @@ class PortraitSetController {
         _greenBattery = scene2::SpriteNode::allocWithSheet(green, 2, 8, 16);
         _redBattery = scene2::SpriteNode::allocWithSheet(red, 2, 8, 16);
         _noBattery = scene2::PolygonNode::allocWithTexture(no);
-        _noBattery->setScale(_scale);
+        _greenBatteryScale = _buttonSize/_greenBattery->getSize().width;
+        _redBatteryScale = _buttonSize/_redBattery->getSize().width;
+        _noBatteryScale = 0;
     }
 
     /**
@@ -280,13 +291,11 @@ class PortraitSetController {
     }
 
     void updateBatteryNode(const std::shared_ptr<cugl::Scene2>& scene, float offset) {
-        float zoom =
-            std::dynamic_pointer_cast<OrthographicCamera>(scene->getCamera())
-                ->getZoom();
+        _greenBattery->setScale(_greenBatteryScale/getZoom());
+        _redBattery->setScale(_redBatteryScale/getZoom());
+        _noBattery->setScale(_noBatteryScale/getZoom());
         Vec2 pos = scene->getCamera()->screenToWorldCoords(
-            _scene->getSize() +Vec2(-_greenBattery->getSize().width / 2 * zoom, _greenBattery->getSize().height / 2 * zoom) - Vec2(offset,_scene->getSize().height)) ;
-//        Vec2 pos2 = scene->getCamera()->screenToWorldCoords(
-//            _scene->getSize() - _greenBattery->getSize() / 2 * zoom);
+            Vec2(_greenBattery->getSize().width*getZoom()/2, scene->getSize().height-_greenBattery->getSize().height*getZoom()/2)) ;
         bool curState = getCurState();
         int frame = getCurFrame();
         _greenBattery->setFrame(frame);
@@ -294,9 +303,8 @@ class PortraitSetController {
         _greenBattery->setPosition(pos);
         _redBattery->setPosition(pos);
         _noBattery->setPosition(pos);
-        _noBattery->setScale(_scale);
-        if (_scale > 0) {
-            _scale -= 0.01;
+        if (_noBatteryScale > 0) {
+            _noBatteryScale -= 0.01;
         }
         if (curState != _prevState) {
             if (curState) {
@@ -347,7 +355,7 @@ class PortraitSetController {
         scene->addChild(_noBattery);
     }
 
-    void resetScale() { _scale = 0.5; }
+    void resetScale() { _noBatteryScale = _buttonSize/_noBattery->getSize().width; }
 
 #pragma mark Helpers
   private:

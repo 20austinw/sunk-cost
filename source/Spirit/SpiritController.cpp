@@ -104,7 +104,7 @@ void SpiritController::updateTrapBtnsPos(const std::shared_ptr<cugl::Scene2>& sc
                 _scene->getSize() - _view->getTrapSize() / 2 * zoom) + Vec2(0, +_view->getLockSize().height);
         _view->updateUnusedTrapsPos(pos);
         _view->removeTrapsFrom(scene);
-        _view->addTrapButtonsTo(scene);
+        _view->addTrapButtonsTo(scene); 
     }
 }
 

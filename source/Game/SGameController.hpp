@@ -6,7 +6,6 @@
 #include <cugl/cugl.h>
 #include <unordered_set>
 #include <vector>
-using namespace cugl;
 #include "HunterController.h"
 #include "InputController.h"
 #include "LevelModel.h"
@@ -17,6 +16,10 @@ using namespace cugl;
 #include "EndScene.h"
 #include "DoorController.hpp"
 #include "TrapController.hpp"
+#include "Minimap.h"
+
+using namespace cugl;
+
 
 /**
  * The primary controller for the game logic.
@@ -79,7 +82,7 @@ public:
     bool _levelLoaded;
 
     std::shared_ptr<scene2::PolygonNode> _map;
-    std::shared_ptr<scene2::PolygonNode> _miniMap;
+    std::shared_ptr<Minimap> _miniMap;
 
     Status _status;
 
@@ -101,7 +104,7 @@ public:
     std::vector<std::shared_ptr<DoorController>> _doors;
     std::shared_ptr<Font> _font;
     std::shared_ptr<cugl::scene2::Label> _timerLabel;
-    int _timeLeft = 100*60;
+    int _timeLeft = 90*60;
 
     /** If hunter trigger the trap */
     bool _trapTriggered;
@@ -143,12 +146,11 @@ public:
                     const std::shared_ptr<AssetManager>& assets);
 
 #pragma mark Gameplay Handling
-    float getZoom();
     /**
      * Resets the status of the game so that we can play again.
      */
     void reset();
-
+    float getZoom();
     /**
      * Responds to the keyboard commands.
      *

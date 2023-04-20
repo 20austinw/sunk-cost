@@ -119,13 +119,11 @@ void SGameController::update(float dt) {
         bool canSwitch = true;
         bool didSwitch = false;
         
-        Vec2 minimapOffset = Vec2(_scene->getSize().width, 0) - (_miniMap == nullptr ? Vec2::ZERO : Vec2(_miniMap->getSize().width, 0)) - Vec2(60, -30);
-        
         if (!_levelLoaded) {
             checkLevelLoaded();
             _portraits->setIndex(5);
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.3);
+            ->setZoom(1.5);
         }
         
 //        if (_trapTriggered) {
@@ -230,46 +228,6 @@ void SGameController::update(float dt) {
         if (inputController->isTouchDown()) {
             auto screenPos = inputController->getTouchPos();
             
-            // Check if click is minimap
-            auto inBound = [&](Vec2 pos) {
-                if (pos.x >= minimapOffset.x && pos.y >= minimapOffset.y &&
-                    pos.x <=
-                    _miniMap->getSize().width * getZoom() + minimapOffset.x &&
-                    pos.y <=
-                    _miniMap->getSize().height * getZoom() + minimapOffset.y) {
-                    return true;
-                }
-                return false;
-            };
-            // Logic for switching cameras
-            if (inBound(screenPos) && canSwitch) {
-                auto miniMapPos =
-                Vec2(screenPos.x - _miniMap->getSize().width / 2 * getZoom() -
-                     minimapOffset.x,
-                     _miniMap->getSize().height / 2 * getZoom() +
-                     minimapOffset.y - screenPos.y);
-                auto mapPos = miniMapPos / _miniMap->getScale() / getZoom();
-                int idx = _portraits->getNearest(mapPos);
-                if (_spirit.isSwitchable() && _portraits->getIndex() != idx) {
-                    _portraits->setIndex(idx);
-                    if (idx != 5){
-                        std::dynamic_pointer_cast<OrthographicCamera>(
-                                                                      _scene->getCamera())
-                        ->setZoom(1);
-                    } else {
-                        std::dynamic_pointer_cast<OrthographicCamera>(
-                                                                      _scene->getCamera())
-                        ->setZoom(0.3);
-                    }
-                    
-                    _spirit.resetCameraCool();
-                    transmitActiveCamIndex(idx);
-                    didSwitch = true;
-                } else if (!_spirit.isSwitchable() &&
-                           _portraits->getIndex() != idx) {
-                    _portraits->resetScale();
-                }
-            }
             
         }
         if (!didSwitch) {
@@ -282,7 +240,7 @@ void SGameController::update(float dt) {
         
         // Draw battery
         _portraits->updateBattery();
-        _portraits->updateBatteryNode(_scene, _miniMap->getSize().width);
+        _portraits->updateBatteryNode(_scene, 50);
         
         // Black screen
         if (!_portraits->getCurState() && _portraits->getPrevState()) {
@@ -321,12 +279,6 @@ void SGameController::update(float dt) {
             _spirit.addNewTrapBtn(_scene);
             _spirit.addNewTrapBtn(_scene);
         }
-        
-        // Draw minimap
-        _miniMap->setPosition(_scene->getCamera()->screenToWorldCoords(
-                                                                       _miniMap->getSize() / 2 * getZoom() + minimapOffset));
-        _scene->removeChild(_miniMap);
-        _scene->addChild(_miniMap);
         
         // Draw locks
         _spirit.updateLocksPos(_scene);
@@ -370,25 +322,18 @@ void SGameController::update(float dt) {
         _scene->removeChild(_timerLabel);
         _scene->addChild(_timerLabel);
         _timeLeft--;
-//        if(_timeLeft <= 0) {
-//            _gameStatus = 1;
-//            _endScene = std::make_shared<EndScene>(_assets, true);
-//            _endScene->addChildTo(_scene);
-//        }
+        if(_timeLeft <= 0) {
+            _gameStatus = 1;
+            _endScene = std::make_shared<EndScene>(_assets, true);
+            _endScene->addChildTo(_scene);
+        }
     }
-//    else if(_gameStatus == 1){
-//        // Spirit won
-//        CULog("Spirit wins!");
-//        _endScene->update();
-//    }else{
-//        // Spirit lost
-//    }
-    //    cnt++;
-    //    if(cnt == 100) {
-    //        _gameStatus = 1;
-    //        _endScene = make_shared<EndScene>(_assets, true);
-    //        _endScene->addChildTo(_scene);
-    //    }
+    else if(_gameStatus == 1){
+        // Spirit won
+        _endScene->update();
+    }else{
+        // Spirit lost
+    }
 }
 
 /**
@@ -494,11 +439,7 @@ void SGameController::checkLevelLoaded() {
             int type = walls[r][c];
             addCandles(type, c, width-1-r);
         }
-        
-        _miniMap = scene2::PolygonNode::allocWithTexture(
-                                                         _assets->get<Texture>("minimap"));
-        _miniMap->setScale(0.1);
-        _scene->addChild(_miniMap);
+
 //        _tilemap->addDoorTo(_scene);
         for (int i = 0; i < _level->getPortaits().size(); i++) {
             _portraits->addPortrait(i + 1, _level->getPortaits()[i].first,

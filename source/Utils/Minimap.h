@@ -18,7 +18,6 @@ private:
     std::shared_ptr<scene2::PolygonNode> _node;
     std::shared_ptr<Scene2> _scene;
     std::shared_ptr<cugl::AssetManager> _assets;
-    std::shared_ptr<LevelModel> _level;
     float _minHeight;
     float _maxHeight;
     float _scale;
@@ -48,8 +47,7 @@ public:
         ->getZoom();
     }
 
-    Minimap(const std::shared_ptr<cugl::AssetManager>& assets, const std::shared_ptr<Scene2>& scene, const std::shared_ptr<LevelModel> level) {
-        _level = level;
+    Minimap(const std::shared_ptr<cugl::AssetManager>& assets, const std::shared_ptr<Scene2>& scene) {
         _minHeight = 300;
         _maxHeight = scene->getSize().height-100;
         _inTransition = false;
@@ -131,9 +129,9 @@ public:
         if(!_minimized && !_inTransition) {
             // Translate screen position to map position
             float xScale = (worldPos.x-_node->getPosition().x)/size.width;
-            float yScale = (worldPos.y-_node->getPosition().y)/size.width;
+            float yScale = (worldPos.y-_node->getPosition().y)/size.height;
             CULog("Clicked!");
-            clickedPos = Vec2(xScale*_level->getDimensions().width, yScale*_level->getDimensions().height);
+            clickedPos = Vec2(xScale*6000, yScale*3000);
             return true;
         }
         if(_minimized && !_inTransition) {

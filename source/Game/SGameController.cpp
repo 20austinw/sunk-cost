@@ -90,7 +90,7 @@ SGameController::SGameController(
     _alertLabel->setPosition(_scene->getCamera()->getPosition()+Vec2(350,350));
     _alertLabel->setForeground(cugl::Color4f::RED);
     
-    _miniMap = make_shared<Minimap>( _assets, _scene, _level);
+    _miniMap = make_shared<Minimap>( _assets, _scene);
     _miniMap->addChildTo(_scene);
 }
 
@@ -310,7 +310,8 @@ void SGameController::update(float dt) {
         // Draw minimap
         if(inputController->isTouchDown()) {
             if(_miniMap->isClicked(inputController->getPosition())){
-                _miniMap->getMapPosition();
+                Vec2 mapPos = _miniMap->getMapPosition();
+                _portraits->setIndex(_portraits->getNearest(mapPos));
             }
         }
         _miniMap->update();

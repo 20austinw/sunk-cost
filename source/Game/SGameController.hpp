@@ -103,6 +103,8 @@ public:
 
     std::vector<std::shared_ptr<DoorController>> _doors;
     std::shared_ptr<Font> _font;
+    float _textHeight = 100;
+    float _timerScale;
     std::shared_ptr<cugl::scene2::Label> _timerLabel;
     int _timeLeft = 90*60;
 

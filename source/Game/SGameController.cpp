@@ -76,8 +76,8 @@ SGameController::SGameController(
     string minutes = std::to_string(_timeLeft/60/60);
     string seconds =  std::to_string(_timeLeft/60%60);
     seconds = seconds.length() <= 1 ? "0"+seconds : seconds;
-    _timerLabel = cugl::scene2::Label::allocWithText(Vec2(800,800), minutes + ":" + seconds, _assets->get<Font>("pixel32"));
-    _timerLabel->setScale(4);
+    _timerLabel = cugl::scene2::Label::allocWithText(Vec2(0, 0), minutes + ":" + seconds, _assets->get<Font>("pixel32"));
+    _timerScale = _textHeight/_timerLabel->getSize().height;
     _scene->addChild(_timerLabel);
     _endScene = std::make_shared<EndScene>(assets, true);
     
@@ -308,15 +308,12 @@ void SGameController::update(float dt) {
         string seconds =  std::to_string(_timeLeft/60%60);
         seconds = seconds.length() <= 1 ? "0"+seconds : seconds;
         _timerLabel->setText(minutes + ":" + seconds);
-        _timerLabel->setScale(4);
-//        CULog("%f, %f", _timerLabel->getSize().width, _timerLabel->getSize().height);
-        //        CULog("%f, %f", _scene->getCamera()->getPosition().x, _scene->getCamera()->getPosition().y);
-        //        _timerLabel->setPosition(Vec2(_scene->getCamera()->getPosition().x, 0)+Vec2(-_timerLabel->getSize().width/2, _timerLabel->getSize().height/2) + Vec2(0, 20));
-        float vPos = _scene->getSize().height-20-_timerLabel->getSize().height/2;
-        float hPos = _scene->getSize().width/2-_timerLabel->getSize().width/2;
+        _timerLabel->setScale(_timerScale/getZoom());
+        float vPos = _scene->getSize().height-20-_timerLabel->getSize().height*getZoom()/2;
+        float hPos = _scene->getSize().width/2-_timerLabel->getSize().width*getZoom()/2;
         _timerLabel->setPosition(_scene->getCamera()->screenToWorldCoords(Vec2(hPos, vPos)));
-        vPos = _scene->getSize().height/2-_alertLabel->getSize().height/2;
-        hPos = _scene->getSize().width/2-_alertLabel->getSize().width/2;
+        vPos = _scene->getSize().height/2-_alertLabel->getSize().height*getZoom()/2;
+        hPos = _scene->getSize().width/2-_alertLabel->getSize().width*getZoom()/2;
         _alertLabel->setPosition(_scene->getCamera()->screenToWorldCoords(Vec2(hPos, vPos)));
         _timerLabel->setForeground(cugl::Color4::WHITE);
         _scene->removeChild(_timerLabel);

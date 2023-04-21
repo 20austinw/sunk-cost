@@ -263,9 +263,9 @@ void SCApp::updateHostScene(float timestep) {
             _hostgame.setActive(false);
             _scene = State::HOSTGAME;
             // Transfer connection ownership
-            _hunterGameplay.setConnection(_hostgame.getConnection());
+            _spiritGameplay.setConnection(_hostgame.getConnection());
             _hostgame.disconnect();
-            _hunterGameplay.setHost(true);
+            _spiritGameplay.setHost(true);
             break;
         case HostScene::Status::WAIT:
         case HostScene::Status::IDLE:
@@ -322,7 +322,7 @@ void SCApp::updateHGameController(float timestep) {
             _scene = State::MENU;
             break;
         case HGameController::Status::START:
-            _scene = State::HOSTGAME;
+            _scene = State::CLIENTGAME;
             // Transfer connection ownership
             _hunterGameplay.setHost(true);
             break;
@@ -344,7 +344,7 @@ void SCApp::updateSGameController(float timestep) {
             _scene = State::MENU;
             break;
         case SGameController::Status::START:
-            _scene = State::CLIENTGAME;
+            _scene = State::HOSTGAME;
             _spiritGameplay.setHost(false);
             break;
         case SGameController::Status::WAIT:

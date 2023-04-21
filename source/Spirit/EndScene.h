@@ -20,7 +20,7 @@ class EndScene {
     bool _win;
     std::shared_ptr<cugl::Texture> _spriteSheet;
     std::shared_ptr<cugl::scene2::SpriteNode> _spriteNode;
-    std::shared_ptr<scene2::PolygonNode> _blurNode;
+    std::shared_ptr<cugl::Scene2> _scene;
 #pragma mark Main Functions
   public:
     /**
@@ -34,19 +34,21 @@ class EndScene {
      * @param size The width and height of a tile
      * @param color The tile color tint
      */
-    EndScene(const std::shared_ptr<cugl::AssetManager>& assets, bool win) {
+    float getZoom() {
+        return std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+        ->getZoom();
+    }
+
+    EndScene(const std::shared_ptr<cugl::Scene2>& scene, const std::shared_ptr<cugl::AssetManager>& assets, bool win) {
+        _scene = scene;
         _win = win;
         _frameNum = 0;
         _spriteSheet = win ? assets->get<Texture>("hunters_lose") : assets->get<Texture>("hunters_win");
         _spriteNode = win ? scene2::SpriteNode::allocWithSheet(_spriteSheet, 2, 8, 14) : scene2::SpriteNode::allocWithSheet(_spriteSheet, 5, 4, 20);
-        _spriteNode->setScale(1);
+        _spriteNode->setScale(_scene->getSize().height*0.7/_spriteNode->getSize().height/getZoom());
         _spriteNode->setFrame(_frameNum);
         _spriteNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
         _spriteNode->setVisible(true);
-        _blurNode = scene2::PolygonNode::allocWithTexture(assets->get<Texture>("blur"));
-        _blurNode->setScale(5);
-        _blurNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-        _blurNode->setVisible(true);
     };
 
     /** Deletes this HunterView */
@@ -66,8 +68,6 @@ class EndScene {
      * @param sceneNode The scenenode to add the view to
      */
     void addChildTo(const std::shared_ptr<cugl::Scene2>& scene) {
-        _blurNode->setPosition(Vec2(scene->getCamera()->getPosition()) - _blurNode->getSize()/2);
-        scene->addChild(_blurNode);
         _spriteNode->setPosition(Vec2(scene->getCamera()->getPosition()) - _spriteNode->getSize()/2);
         scene->addChild(_spriteNode);
     }

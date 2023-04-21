@@ -36,7 +36,7 @@ SGameController::SGameController(
     scene2::PolygonNode::allocWithPoly(cugl::Rect(0, 0, 20000, 20000));
     background->setColor(Color4::BLACK);
     background->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-    background->setPosition(-1 * Size(9000, 9000) / 2);
+    background->setPosition(-1 * background->getSize()/2);
     _scene->addChild(background);
     
     _tilemap = std::make_shared<TilemapController>();
@@ -79,7 +79,7 @@ SGameController::SGameController(
     _timerLabel = cugl::scene2::Label::allocWithText(Vec2(0, 0), minutes + ":" + seconds, _assets->get<Font>("pixel32"));
     _timerScale = _textHeight/_timerLabel->getSize().height;
     _scene->addChild(_timerLabel);
-    _endScene = std::make_shared<EndScene>(assets, true);
+    _endScene = std::make_shared<EndScene>(_scene, assets, true);
     
     _trapTriggered = false;
     _doorUnlocked = false;
@@ -126,7 +126,7 @@ void SGameController::update(float dt) {
             checkLevelLoaded();
             _portraits->setIndex(1);
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.5);
+            ->setZoom(1.2);
         }
         
 //        if (_trapTriggered) {
@@ -240,9 +240,6 @@ void SGameController::update(float dt) {
         _scene->getCamera()->setPosition(
                                          _portraits->getPosition(_portraits->getIndex()) + offset);
         
-        // Draw battery
-        _portraits->updateBattery();
-        _portraits->updateBatteryNode(_scene, 50);
         
         // Black screen
         if (!_portraits->getCurState() && _portraits->getPrevState()) {
@@ -308,6 +305,10 @@ void SGameController::update(float dt) {
             }
         }
         
+        // Draw battery
+        _portraits->updateBattery();
+        _portraits->updateBatteryNode(_scene, 50);
+        
         // Draw minimap
         if(inputController->isTouchDown() && _miniMap->isClicked(inputController->getPosition())){
             Vec2 mapPos = _miniMap->getMapPosition();
@@ -342,15 +343,12 @@ void SGameController::update(float dt) {
         _timeLeft--;
         if(_timeLeft <= 0) {
             _gameStatus = 1;
-            _endScene = std::make_shared<EndScene>(_assets, true);
+            _endScene = std::make_shared<EndScene>(_scene, _assets, true);
             _endScene->addChildTo(_scene);
         }
     }
-    else if(_gameStatus == 1){
-        // Spirit won
+    else{
         _endScene->update();
-    }else{
-        // Spirit lost
     }
 }
 

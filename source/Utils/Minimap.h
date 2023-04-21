@@ -161,10 +161,8 @@ public:
             // Translate screen position to map position
             float xScale = (worldPos.x-_node->getPosition().x)/size.width;
             float yScale = (worldPos.y-_node->getPosition().y)/size.height;
-            CULog("Clicked!");
             float mapWidth = _tilemap->getDimensions().width*_tilemap->getTileSize().width;
             float mapHeight = _tilemap->getDimensions().height*_tilemap->getTileSize().height;
-            CULog("%f, %f", mapWidth, mapHeight);
             clickedPos = Vec2(xScale*mapWidth, yScale*mapHeight);
             return true;
         }
@@ -178,7 +176,6 @@ public:
 #pragma mark Getter Methods
 public:
     Vec2 getMapPosition() {
-        CULog("Cliked on map: %f, %f", clickedPos.x, clickedPos.y);
         return clickedPos;
     }
 };

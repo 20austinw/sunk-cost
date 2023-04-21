@@ -75,6 +75,9 @@
         "minimap": {
             "file": "textures/minimap.png"
         },
+        "minimaplarge": {
+            "file": "textures/hunter_minimap_big.png"
+        },
         "button": {
             "file":  "textures/button.png"
         },

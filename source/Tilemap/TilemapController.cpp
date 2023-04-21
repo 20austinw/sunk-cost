@@ -221,3 +221,11 @@ void TilemapController::clearMap() {
     _tilemap.clear();
     initializeTilemap();
 }
+
+Size TilemapController::getDimensions(){
+    return _model->getDimensions();
+}
+
+Size TilemapController::getTileSize(){
+    return _model->getTileSize();
+}

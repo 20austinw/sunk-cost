@@ -90,7 +90,7 @@ SGameController::SGameController(
     _alertLabel->setPosition(_scene->getCamera()->getPosition()+Vec2(350,350));
     _alertLabel->setForeground(cugl::Color4f::RED);
     
-    _miniMap = make_shared<Minimap>( _assets, _scene);
+    _miniMap = make_shared<Minimap>( _assets, _scene, _tilemap);
     _miniMap->addChildTo(_scene);
 }
 

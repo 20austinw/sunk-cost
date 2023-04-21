@@ -15,6 +15,9 @@
         "blue": {
             "file": "textures/blue.png"
         },
+        "spawn": {
+            "file": "textures/Spawn_Animation.png"
+        },
         "hunter": {
             "file": "textures/hunter.png"
         },
@@ -241,6 +244,47 @@
                     "layout" : {
                         "priority" : 1,
                         "padding"  : [0,0,0,0]
+                    }
+                }
+            }
+        },
+        "resett": {
+            "type"      : "Node",
+            "format"    : {
+                "type"        : "Float",
+                "orientation" : "vertical",
+                "x_alignment" : "center",
+                "y_alignment" : "middle"
+            },
+            "children":  {
+                "leave": {
+                    "type"   : "Widget",
+                    "data"   : {
+                        "key"     : "textbutton",
+                        "variables" : {
+                            "size": [400,100],
+                            "text": "Leave the ship",
+                            "color": "#DB9D00"
+                        }
+                    },
+                    "layout" : {
+                        "priority" : 1,
+                        "padding"  : [50,50,50,50]
+                    }
+                },
+                "replay": {
+                    "type"   : "Widget",
+                    "data"   : {
+                        "key"     : "textbutton",
+                        "variables" : {
+                            "size": [400,100],
+                            "text": "Start new round",
+                            "color": "#DB9D00"
+                        }
+                    },
+                    "layout" : {
+                        "priority" : 1,
+                        "padding"  : [50,50,50,50]
                     }
                 }
             }

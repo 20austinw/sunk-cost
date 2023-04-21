@@ -17,9 +17,11 @@
 #include "SGameController.hpp"
 #include <cugl/cugl.h>
 #include "SCMenuScene.h"
+#include "SCResetScene.hpp"
 #include "SGameController.hpp"
 #include "SCHostScene.hpp"
 #include "SCClientScene.hpp"
+#include "SCSpawnScene.hpp"
 #include <cugl/cugl.h>
 
 /**
@@ -35,6 +37,7 @@ protected:
         LOAD,
         /** The main menu scene */
         MENU,
+        SPAWN,
         /** The scene to host a game */
         HOST,
         /** The scene to join a game */
@@ -42,7 +45,9 @@ protected:
         
         HOSTGAME,
         
-        CLIENTGAME
+        CLIENTGAME,
+        
+        RESET
     };
     
 protected:
@@ -64,12 +69,17 @@ protected:
     ClientScene _joingame;
     
     MenuScene _menu;
+    SpawnScene _spawn;
+    
+    ResetScene _reset;
     
     /** Whether or not we have finished loading all assets */
     bool _loaded;
     
     /** The current active scene */
     SCApp::State _scene;
+    int _count;
+    bool _played;
     
 public:
     /**
@@ -178,6 +188,17 @@ public:
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     void updateMenuScene(float timestep);
+    void updateSpawnScene(float timestep);
+    
+    /**
+     * Inidividualized update method for the menu scene.
+     *
+     * This method keeps the primary {@link #update} from being a mess of switch
+     * statements. It also handles the transition logic from the reset scene.
+     *
+     * @param timestep  The amount of time (in seconds) since the last frame
+     */
+    void updateResetScene(float timestep);
     
     /**
      * Inidividualized update method for the host scene.

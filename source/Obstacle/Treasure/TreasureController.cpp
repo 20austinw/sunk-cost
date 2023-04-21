@@ -106,3 +106,7 @@ void TreasureController::setAsObstacle(std::shared_ptr<cugl::physics2::ObstacleW
 
     }
 
+    std::shared_ptr<TreasureModel> TreasureController::getModel(){
+        return _model;
+    }
+

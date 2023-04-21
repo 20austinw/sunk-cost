@@ -21,7 +21,7 @@
 
 using namespace cugl;
 
-class HunterModel : public cugl::physics2::CapsuleObstacle {
+class HunterModel : public cugl::physics2::WheelObstacle {
 #pragma mark State
   private:
     /** Position of the hunter */
@@ -40,8 +40,8 @@ class HunterModel : public cugl::physics2::CapsuleObstacle {
     std::vector<std::shared_ptr<TrapView>> _trapViews;
 
   public:
-    /** A public accessible, read-only version of the  hunter position */
     cugl::Vec2& position;
+
     /** A public accessible, read-only version of the  hunter direction  */
     cugl::Vec2& direction;
     /** A public accessible, read-only version of the  hunter speed */
@@ -58,25 +58,24 @@ class HunterModel : public cugl::physics2::CapsuleObstacle {
      * @param direction the hunter's direction
      * @param speed the hunter's movement speed
      */
-    HunterModel(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<cugl::Scene2> scene) :
+    HunterModel(const std::shared_ptr<cugl::AssetManager>& assets, std::shared_ptr<cugl::Scene2> scene,float scale) :
     position(_position),
     direction(_direction),
     speed(_speed),
     hideCool(_hideCool) {
+
         // Call the parent's initializer
-        physics2::CapsuleObstacle::init(_position, Vec2(20,20));
-        
+        physics2::WheelObstacle::init(Vec2(10000,10000), 10);
         // Set physics properties for the body
-        setBodyType(b2_staticBody);
+        setBodyType(b2_dynamicBody);
         setDensity(DEFAULT_DENSITY);
-        setFriction(DEFAULT_FRICTION);
-        setRestitution(DEFAULT_RESTITUTION);
+        //setFriction(DEFAULT_FRICTION);
+        //setRestitution(DEFAULT_RESTITUTION);
         setFixedRotation(true);
-        setDebugColor(Color4::RED);
-        setPosition(_position);
-        setDirection(_direction);
-        setSpeed(0);
-        setHideCooldown(0);
+//        setDebugColor(Color4::RED);
+        //setPosition(Vec2(100000,100000)*scale);
+//        setDirection(_direction);
+        //setSpeed(_speed);
         _assets = assets;
         _scene = scene;
     }
@@ -113,7 +112,14 @@ class HunterModel : public cugl::physics2::CapsuleObstacle {
      *
      * @param position hunter position
      */
-    void setPosition(cugl::Vec2 position) { _position = position; }
+//    void setPosition(cugl::Vec2 position) { _position = position;
+//
+//    }
+    
+//    void setBody(cugl::Vec2 position){
+//        _body->SetTransform(b2Vec2(position.x,position.y),0);
+//        setPosition(Vec2(_body->GetPosition().x,_body->GetPosition().y));
+//    }
 
     /**
      * Sets direction for this hunter
@@ -150,6 +156,32 @@ class HunterModel : public cugl::physics2::CapsuleObstacle {
         _trapViews[index]->removeChildFrom(_scene);
         _trapModels.erase(_trapModels.begin()+index);
     }
+    
+    void applyForce(cugl::Vec2 force) {
+            // Push the player in the direction they want to go
+            b2Vec2 b2force(force.y*50000, force.x*50000);
+//        CULog(" forceeee x%f",force.x);
+//        CULog(" forceeee y%f",force.y);
+            
+            // If the player has reached max speed
+            if (getLinearVelocity() >= Vec2(20,20)) {
+                _body->SetLinearVelocity(b2force);
+                _body->ApplyForceToCenter(b2force, true);
+            }
+            else{
+                _body->SetLinearVelocity(b2force);
+                _body->ApplyForceToCenter(b2force, true);
+            }
+            float a=_body->GetPosition().x;
+            float b=_body->GetPosition().y;
+            _position = Vec2(a,b);
+        CULog("position xxxxxxx%f",_position.x);
+        CULog("position yyyyyyyy%f",_position.y);
+        
+        
+
+            }
+
     
     void update() {
         std::vector<std::shared_ptr<TrapModel>> pendingTrapModels;

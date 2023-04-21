@@ -55,7 +55,9 @@ public:
         /** Time to start the game */
         START,
         /** Game was aborted; back to main menu */
-        ABORT
+        ABORT,
+        /** Game was ended; back to reset screen */
+        RESET
     };
 #pragma mark Internal References
 private:
@@ -88,6 +90,8 @@ private:
     
     bool _removedvar;
     
+    int _countEndAnim=0;
+    
     int _currdoor;
     
     int _currdoorindex;
@@ -108,7 +112,13 @@ private:
     
     int _lockcount;
     
+    float _scale;
+    
+    bool _counterbool;
+    
     bool _triggered;
+    
+    std::shared_ptr<scene2::PolygonNode> _miniMap;
     /** The scale between the physics world and the screen (SCREEN UNITS / BOX2D
      * WORLD UNITS) */
 
@@ -117,11 +127,15 @@ private:
     /** inidicate camera shift back has finished */
     bool _finishShiftback =false;
     /** The scale between the physics world and the screen (SCREEN UNITS / BOX2D WORLD UNITS) */
-    float _scale;
+    float _scale2;
     
     int _tileWidth;
     
+    std::shared_ptr<cugl::scene2::PolygonNode> ea;
+    
     int _tileHeight;
+    
+    std::shared_ptr<cugl::physics2::PolygonObstacle> _star;
     
     cugl::Vec2 old_place;
     
@@ -143,6 +157,12 @@ private:
     TreasureController _treasure;
     std::shared_ptr<scene2::PolygonNode>_outerJoystick;
     std::shared_ptr<scene2::PolygonNode>_innerJoystick;
+    
+    std::shared_ptr<scene2::PolygonNode>_hunternow;
+    
+    std::shared_ptr<scene2::PolygonNode>_hunterone;
+    
+    std::shared_ptr<scene2::PolygonNode>_huntertwo;
     
     std::shared_ptr<scene2::SpriteNode>_lockhunter;
     
@@ -227,6 +247,9 @@ private:
 private:
     /** The tilemap to procedurally generate */
     std::unique_ptr<TilemapController> _tilemap;
+    std::vector<std::shared_ptr<TileController>> _obstacles;
+    std::shared_ptr<scene2::PolygonNode> _obstacleNode;
+    std::vector<std::shared_ptr<scene2::SpriteNode>> _candleNodes;
     
 #pragma mark Main Methods
 public:
@@ -249,6 +272,8 @@ public:
      * Resets the status of the game so that we can play again.
      */
     void reset();
+    
+    float getZoom();
     /**
      * Responds to the keyboard commands.
      *
@@ -267,8 +292,9 @@ public:
     
     void initCamera();
     void initJoystick();
+    void removeJoystick();
     void initLock();
-    void updateJoystick(float forward,float rightward);
+    void updateJoystick(float forward,float rightward,cugl::Vec2 center);
     void updateCamera(float timestep);
     
     Status getStatus() {
@@ -379,6 +405,22 @@ private:
     void transmitTrapTriggered(Vec2 position);
     
     void initHunter(int hunterId);
+    
+    void addFloorTile(int type, int c, int r);
+        
+    void addWallTile(int type, int c, int r);
+    
+    void addWallUpper(int type, int c, int r);
+    
+    void addWallGrime(int type, int c, int r);
+    
+    void addWallLower(int type, int c, int r);
+    
+    void addFurnitures(int type, int c, int r);
+    
+    void addCandles(int type, int c, int r);
+    
+    void modifyTexture(std::shared_ptr< Texture >& texture, int index, int row, int col);
 };
 
 #endif /* __HGAME_CONTROLLER_H__ */

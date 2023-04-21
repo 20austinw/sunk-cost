@@ -24,6 +24,7 @@ private:
     /** View reference */
     std::unique_ptr<TreasureView> _view;
     Size _screenSize;
+    float _scale;
 public:
     TreasureController() {};
     

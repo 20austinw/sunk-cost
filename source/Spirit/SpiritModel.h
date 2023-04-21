@@ -212,7 +212,7 @@ class SpiritModel {
     }
     
     void addHunter(Vec2 position) {
-        _hunterModel = std::make_shared<HunterModel>(_assets, _scene);
+        _hunterModel = std::make_shared<HunterModel>(_assets, _scene, 1024);
         // A place holder for hunterID, 0 is blue, 1 is orange, 2 is green
         int hunterID = 0;
         _hunterView = std::make_shared<HunterView>(_assets, position, Vec2(40, 40), hunterID);

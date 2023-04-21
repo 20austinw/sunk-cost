@@ -52,13 +52,13 @@ public:
         physics2::WheelObstacle::init(position, 20);
         
         // Set physics properties for the body
-        setBodyType(b2_dynamicBody);
+        setBodyType(b2_staticBody);
         setDensity(DEFAULT_DENSITY);
         setFriction(DEFAULT_FRICTION);
         setRestitution(DEFAULT_RESTITUTION);
         setFixedRotation(true);
         setDebugColor(Color4::RED);
-        setPosition(position);
+//        setPosition(position);
         _position = position;
         
     };

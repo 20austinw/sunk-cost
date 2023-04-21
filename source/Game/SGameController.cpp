@@ -126,7 +126,7 @@ void SGameController::update(float dt) {
             checkLevelLoaded();
             _portraits->setIndex(1);
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(1);
+            ->setZoom(0.5);
         }
         
 //        if (_trapTriggered) {
@@ -247,6 +247,7 @@ void SGameController::update(float dt) {
         // Black screen
         if (!_portraits->getCurState() && _portraits->getPrevState()) {
             // Redraw doors
+            CULog("Adding block!");
             _portraits->addBlock(_scene);
             _portraits->refreshBatteryNodes(_scene);
             blocked = true;
@@ -308,7 +309,7 @@ void SGameController::update(float dt) {
         }
         
         // Draw minimap
-        if(inputController->isTouchDown()) {
+        if(inputController->isTouchDown() && !blocked) {
             if(_miniMap->isClicked(inputController->getPosition())){
                 Vec2 mapPos = _miniMap->getMapPosition();
                 _portraits->setIndex(_portraits->getNearest(mapPos));

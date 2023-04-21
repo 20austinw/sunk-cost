@@ -328,6 +328,9 @@ private:
     void setMaxbattery(float maxBattery) { _maxBattery = maxBattery; }
 
     void addBlock(const std::shared_ptr<cugl::Scene2>& scene) {
+        CULog("%f, %f", _block->getSize().width, _block->getSize().height);
+        _block->setPosition(scene->getCamera()->screenToWorldCoords(Vec2(0, _block->getSize().height)));
+        _block->setScale(1/getZoom());
         scene->addChild(_block);
     }
 
@@ -348,8 +351,9 @@ private:
     }
 
     void initializeBatteryNodes(const std::shared_ptr<cugl::Scene2>& scene) {
-        _block = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 2304, 2304));
+        _block = scene2::PolygonNode::allocWithPoly(Rect(0, 0, _scene->getSize().width, _scene->getSize().height));
         _block->setColor(Color4::BLACK);
+        _block->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
         _greenBattery->setFrame(0);
         scene->addChild(_greenBattery);
         scene->addChild(_noBattery);

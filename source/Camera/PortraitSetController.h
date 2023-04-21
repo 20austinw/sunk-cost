@@ -359,7 +359,7 @@ private:
         scene->addChild(_noBattery);
     }
 
-    void resetScale() { _noBatteryScale = _buttonSize/_noBattery->getSize().width; }
+    void resetScale() { _noBatteryScale = _greenBatteryScale*1.2*getZoom(); }
 
 #pragma mark Helpers
   private:

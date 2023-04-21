@@ -309,12 +309,17 @@ void SGameController::update(float dt) {
         }
         
         // Draw minimap
-        if(inputController->isTouchDown() && !blocked) {
-            if(_miniMap->isClicked(inputController->getPosition())){
-                Vec2 mapPos = _miniMap->getMapPosition();
+        if(inputController->isTouchDown() && _miniMap->isClicked(inputController->getPosition())){
+            Vec2 mapPos = _miniMap->getMapPosition();
+            int idx = _portraits->getNearest(mapPos);
+            if (_portraits->getIndex() != idx && _spirit.isSwitchable()){
                 _portraits->setIndex(_portraits->getNearest(mapPos));
+                _spirit.resetCameraCool();
+            } else if (! _spirit.isSwitchable() && _portraits->getIndex() != idx){
+                _portraits->resetScale();
             }
         }
+        
         _miniMap->update();
         _miniMap->removeChildFrom(_scene);
         _miniMap->addChildTo(_scene);

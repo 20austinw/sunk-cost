@@ -38,6 +38,7 @@ class PortraitSetController {
     float _noBatteryScale;
     float _greenBatteryScale;
     float _redBatteryScale;
+    float _resetScale;
     
     float _buttonSize = 400;
 
@@ -163,6 +164,7 @@ private:
         _greenBatteryScale = _buttonSize/_greenBattery->getSize().width;
         _redBatteryScale = _buttonSize/_redBattery->getSize().width;
         _noBatteryScale = 0;
+        _resetScale = _greenBattery->getSize().width/_noBattery->getSize().width;
     }
 
     /**
@@ -359,7 +361,11 @@ private:
         scene->addChild(_noBattery);
     }
 
-    void resetScale() { _noBatteryScale = _greenBatteryScale*1.2*getZoom(); }
+    void resetScale() {
+        CULog("%f", _greenBattery->getSize().width/_noBattery->getSize().width);
+        _noBatteryScale = _resetScale*_greenBatteryScale* 1.2;
+        
+    }
 
 #pragma mark Helpers
   private:

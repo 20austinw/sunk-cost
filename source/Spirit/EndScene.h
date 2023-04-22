@@ -21,6 +21,7 @@ class EndScene {
     std::shared_ptr<cugl::Texture> _spriteSheet;
     std::shared_ptr<cugl::scene2::SpriteNode> _spriteNode;
     std::shared_ptr<cugl::Scene2> _scene;
+    std::shared_ptr<cugl::scene2::Label> _endLabel;
 #pragma mark Main Functions
   public:
     /**
@@ -45,6 +46,8 @@ class EndScene {
         _frameNum = 0;
         _spriteSheet = win ? assets->get<Texture>("hunters_lose") : assets->get<Texture>("hunters_win");
         _spriteNode = win ? scene2::SpriteNode::allocWithSheet(_spriteSheet, 2, 8, 14) : scene2::SpriteNode::allocWithSheet(_spriteSheet, 5, 4, 20);
+        std::string endText = win ? "You win!" : "You lose!";
+        _endLabel = cugl::scene2::Label::allocWithText(Vec2(0, 0), endText, assets->get<Font>("pixel32"));
         _spriteNode->setScale(_scene->getSize().height*0.7/_spriteNode->getSize().height/getZoom());
         _spriteNode->setFrame(_frameNum);
         _spriteNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);

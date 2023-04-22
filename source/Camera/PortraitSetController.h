@@ -157,8 +157,8 @@ private:
     void initializeSheets(std::shared_ptr<cugl::Texture> green,
                           std::shared_ptr<cugl::Texture> red,
                           std::shared_ptr<cugl::Texture> no) {
-        _greenBattery = scene2::SpriteNode::allocWithSheet(green, 2, 8, 16);
-        _redBattery = scene2::SpriteNode::allocWithSheet(red, 2, 8, 16);
+        _greenBattery = scene2::SpriteNode::allocWithSheet(green, 5, 8, 40);
+        _redBattery = scene2::SpriteNode::allocWithSheet(red, 5, 8, 40);
         _noBattery = scene2::PolygonNode::allocWithTexture(no);
         _greenBatteryScale = _buttonSize/_greenBattery->getSize().width;
         _redBatteryScale = _buttonSize/_redBattery->getSize().width;
@@ -397,17 +397,19 @@ private:
     }
 
     int getCurFrame() {
-        int i = getCurBattery() * 16;
+        int i = getCurBattery() * _greenBattery->getSpan();
         if (getCurState()) {
             if (i > 0) {
-                return 16 - i;
+                return _greenBattery->getSpan()-i;
             }
-            return 15;
+            return _greenBattery->getSpan()-1;
+        }else{
+            return _greenBattery->getSpan()-i-1;
         }
-        if (i < 16) {
+        if (i < _greenBattery->getSpan()) {
             return i;
         }
-        return 15;
+        return _greenBattery->getSpan()-1;
     }
 };
 

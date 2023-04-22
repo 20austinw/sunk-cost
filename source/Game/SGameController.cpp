@@ -305,21 +305,23 @@ void SGameController::update(float dt) {
             }
         }
         
-        // Draw battery
-        _portraits->updateBattery();
-        _portraits->updateBatteryNode(_scene, 50);
-        
         // Draw minimap
         if(inputController->isTouchDown() && _miniMap->isClicked(inputController->getPosition())){
             Vec2 mapPos = _miniMap->getMapPosition();
             int idx = _portraits->getNearest(mapPos);
             if (_portraits->getIndex() != idx && _spirit.isSwitchable()){
                 _portraits->setIndex(idx);
+                CULog("%i", _portraits->getIndex());
                 _spirit.resetCameraCool();
             } else if (! _spirit.isSwitchable() && _portraits->getIndex() != idx){
                 _portraits->resetScale();
             }
         }
+        
+        
+        // Draw battery (has to come after the minimap update)
+        _portraits->updateBattery();
+        _portraits->updateBatteryNode(_scene, 50);
         
         _miniMap->update();
         _miniMap->removeChildFrom(_scene);

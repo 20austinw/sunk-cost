@@ -43,7 +43,6 @@ class PortraitSetController {
     float _buttonSize = 400;
 
     std::shared_ptr<scene2::PolygonNode> _block;
-
     std::shared_ptr<scene2::SpriteNode> _redBattery;
     std::shared_ptr<scene2::SpriteNode> _greenBattery;
     std::shared_ptr<scene2::PolygonNode> _noBattery;

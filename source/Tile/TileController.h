@@ -50,6 +50,10 @@ class TileController {
      *  Returns whether the tile is traversable
      */
     bool isTraversable() { return _model->traversable; }
+    
+    Vec2 getPosition() {
+        return _model->getPosition();
+    }
 
 #pragma mark Update Methods
   public:

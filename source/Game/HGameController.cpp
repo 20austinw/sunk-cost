@@ -276,7 +276,7 @@ void HGameController::update(float dt) {
         if (!_levelLoaded) {
             checkLevelLoaded();
         }
-         
+        
         AudioEngine::get()->play("theme", _theme, true, _theme->getVolume(), false);
         
         _loseLabel->setText("You Lose!");
@@ -318,22 +318,22 @@ void HGameController::update(float dt) {
         }
         
         if(int(_timer/60/60)==0){
-               AudioEngine::get()->play("tension", _tension, true, _theme->getVolume(), true);
-           }
-
-            if(int(_timer/60/60)==0 && int(_timer/60) % 60 ==0 && !_didLose && !_didFinalwin){
-        //        _scene->addChild(_loseNode);
-        //        _scene->addChild(_loseLabel);
-                _endScene = std::make_shared<EndScene>(_scene,_assets, true);
-                _endScene->addChildTo(_scene);
-                _didLose = true;
-                _gameStatus = 1;
-            }
+            AudioEngine::get()->play("tension", _tension, true, _theme->getVolume(), true);
+        }
         
-
+        if(int(_timer/60/60)==0 && int(_timer/60) % 60 ==0 && !_didLose && !_didFinalwin){
+            //        _scene->addChild(_loseNode);
+            //        _scene->addChild(_loseLabel);
+            _endScene = std::make_shared<EndScene>(_scene,_assets, true);
+            _endScene->addChildTo(_scene);
+            _didLose = true;
+            _gameStatus = 1;
+        }
         
-//        float a=_star->getBody()->GetPosition().x;
-//        float b=_star->getBody()->GetPosition().y;
+        
+        
+        //        float a=_star->getBody()->GetPosition().x;
+        //        float b=_star->getBody()->GetPosition().y;
         if(_treasureCount>=1 && !_didWin && !_didLose){
             _scene->addChild(_winLabel);
             _didWin = true;
@@ -359,7 +359,7 @@ void HGameController::update(float dt) {
         _treasureLabel->setForeground(cugl::Color4f::YELLOW);
         
         ea->setPosition(Vec2(_star->getBody()->GetTransform().p.x,_star->getBody()->GetTransform().p.y));
-    //    _collision.init(_hunter.getHunterBody(), _trap.getTrapBody(), _treasure.getTreasureBody());
+        //    _collision.init(_hunter.getHunterBody(), _trap.getTrapBody(), _treasure.getTreasureBody());
         _world->update(dt);
         _world->activateCollisionCallbacks(true);
         _world->onBeginContact = [this](b2Contact* contact) {
@@ -371,13 +371,13 @@ void HGameController::update(float dt) {
         
         
         if(_animates){
-                 _portraits->updatespecific(_indexfromspirit);
-             }
-
-            
-
+            _portraits->updatespecific(_indexfromspirit);
+        }
+        
+        
+        
         auto inputController = InputController::getInstance();
-
+        
         inputController->update(dt);
         if (inputController->didPressReset()) {
             reset();
@@ -399,7 +399,7 @@ void HGameController::update(float dt) {
                 _lockhunter->setVisible(false);
             }
         }
-            
+        
         if(_triggered or _inprogress){
             if (_timerlock!=0) {
                 _inprogress=true;
@@ -407,9 +407,9 @@ void HGameController::update(float dt) {
                 _timerLabellock->setVisible(true);
                 _timerLabellock->setPosition(_scene->getCamera()->getPosition()-Vec2(100,0));
                 _timerLabellock->setScale(8);
-            
+                
                 _timerLabellock->setText(std::to_string(int(_timerlock/60) % 60 +1));
-               
+                
                 _timerLabellock->setForeground(cugl::Color4f::RED);
                 
             }
@@ -436,38 +436,38 @@ void HGameController::update(float dt) {
             _doors.at(_currdoor)->setFrame(_frameNumDoor%12);
             _frameNumDoor=_frameNumDoor-1;
             if(_frameNumDoor<=0){
-    //            _frameNumDoor=12;
+                //            _frameNumDoor=12;
                 _doortrigger=false;
                 transmitUnlockDoor(_doorslocked[_currdoorindex]);
             }
         }
-
+        
         std::vector<std::vector<int>> tiles = _level->getTileTextures();
         int posx;
         int posxup;
         int posyup;
         int posy;
-
+        
         int midx;
         int midy;
-
+        
         Vec3 currPos = (_hunter->getPosition());
         
         Vec3 currPosAdj = (_hunter->getPosition());
         posx = (int)(currPosAdj.x) / _tileWidth;
         posy = (int)((currPosAdj.y)) / _tileHeight;
-
+        
         posxup = (int)(currPosAdj.x + 40) / _tileWidth;
         posyup = (int)((currPosAdj.y + 40)) / _tileHeight;
-
+        
         midx = (int)(currPosAdj.x + 20) / _tileWidth;
         midy = (int)((currPosAdj.y + 20)) / _tileHeight;
-
+        
         float forward = inputController->getForward();
         
         float rightward = inputController->getRight();
-
-
+        
+        
         _count++;
         if (_count == 6) {
             _hunter->setViewFrame(forward, rightward);
@@ -475,15 +475,93 @@ void HGameController::update(float dt) {
         }
         _countfortimer++;
         
-//        std::string left = (midy<18 && posx <18 && midy>-1 && posx >-1) ? tiles[midy][posx]: "black";
-//        std::string up = (posyup<18 && midx <18 && posyup>-1 && midx >-1) ? tiles[posyup][midx]: "black";
-//        std::string bottom = (posy<18 && midx <18 && posy>-1 && midx >-1) ? tiles[posy][midx]: "black";
-//        std::string right = (midy<18 && posxup <18 && midy>-1 && posxup >-1) ? tiles[midy][posxup]: "black";
+        //        std::string left = (midy<18 && posx <18 && midy>-1 && posx >-1) ? tiles[midy][posx]: "black";
+        //        std::string up = (posyup<18 && midx <18 && posyup>-1 && midx >-1) ? tiles[posyup][midx]: "black";
+        //        std::string bottom = (posy<18 && midx <18 && posy>-1 && midx >-1) ? tiles[posy][midx]: "black";
+        //        std::string right = (midy<18 && posxup <18 && midy>-1 && posxup >-1) ? tiles[midy][posxup]: "black";
         
-//        int left = tiles[midy][posx+32];
-//        int up = tiles[posyup][midx+32];
-//        int bottom = tiles[posy][midx+32];
-//        int right = tiles[midy][posxup+32];
+        for (auto obs:_obstacles){
+            Vec3 currPosAdj = (_hunter->getPosition());
+            
+            Vec2 p=obs->getPosition();
+            
+            if(abs((currPosAdj-p).x)<64 && abs((currPosAdj-p).y)<64){
+                if (rightward > 0) {
+                    if((p-currPosAdj).x<64 && (p-currPosAdj).x>0){
+                        if ((p-currPosAdj).x<20) {
+                            rightward = 0;
+                        }
+                    }
+                }
+                
+                if (rightward < 0) {
+                    if((currPosAdj-p).x<64 && (currPosAdj-p).x>0){
+                        if ((currPosAdj-p).x<60) {
+                            rightward = 0;
+                        }
+                    }
+                }
+                
+                if (forward > 0) {
+                    if((p-currPosAdj).y<64 && (p-currPosAdj).y>0){
+                        if ((p-currPosAdj).y<1) {
+                            forward = 0;
+                        }
+                    }
+                }
+                
+                if (forward < 0) {
+                    if((currPosAdj-p).y<64 && (currPosAdj-p).y>0){
+                        if ((currPosAdj-p).y<1) {
+                            forward = 0;
+                        }
+                    }
+                }
+            }
+            
+            //            if(abs((currPosAdj-p).x)<64 && abs((currPosAdj-p).y)<64){
+            //                if ((currPosAdj-p).x<-40) {
+            //                    if (rightward < 0) {
+            //                        rightward = 0;
+            //                    }
+            //                }
+            //                if ((p-currPosAdj).x<0) {
+            //                    if (rightward > 0) {
+            //                        rightward = 0;
+            //                    }
+            //                }
+            //                if ((p-currPosAdj).y<-20) {
+            //                    if (forward > 0) {
+            //                        forward = 0;
+            //                    }
+            //                }
+            //                if ((currPosAdj-p).y<-1) {
+            //                    if (forward < 0) {
+            //                        forward = 0;
+            //                    }
+            //                }
+        
+//            if (abs(p-currPosAdj).x<1) {
+//                if (rightward > 0) {
+//                    rightward = 0;
+//                }
+//            }
+            //            if ((p-currPosAdj).x-40<1) {
+            //                if (forward > 0) {
+            //                    forward = 0;
+            //                }
+            //            }
+            //            if ((currPosAdj-p).y<1) {
+            //                if (forward < 0) {
+            //                    forward = 0;
+            //                }
+            //            }
+        }
+        
+//        int left = tiles[midy][posx];
+//        int up = tiles[posyup][midx];
+//        int bottom = tiles[posy][midx];
+//        int right = tiles[midy][posxup];
 //
 //        if (left == 0) {
 //            if (rightward < 0) {
@@ -905,7 +983,7 @@ void HGameController::checkLevelLoaded() {
         
         _world->addObstacle(_star);
        
-        _scene->addChild(ea);
+        //_scene->addChild(ea);
         
         _scene->addChild(_worldnode);
         

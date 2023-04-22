@@ -61,6 +61,8 @@ class TileModel {
      *  @param position Bottom left corner of tile
      */
     void setPosition(Vec2 position) { _position = position; }
+    
+    Vec2 getPosition() { return _position; }
 
     /**
      *  Sets the size of the tile.

@@ -21,7 +21,7 @@
 
 using namespace cugl;
 
-class HunterModel : public cugl::physics2::WheelObstacle {
+class HunterModel : public physics2::WheelObstacle {
 #pragma mark State
   private:
     /** Position of the hunter */
@@ -65,7 +65,7 @@ class HunterModel : public cugl::physics2::WheelObstacle {
     hideCool(_hideCool) {
 
         // Call the parent's initializer
-        physics2::WheelObstacle::init(Vec2(10000,10000), 10);
+        physics2::WheelObstacle::init(Vec2(3000,3000), 40);
         // Set physics properties for the body
         setBodyType(b2_dynamicBody);
         setDensity(DEFAULT_DENSITY);
@@ -73,14 +73,13 @@ class HunterModel : public cugl::physics2::WheelObstacle {
         //setRestitution(DEFAULT_RESTITUTION);
         setFixedRotation(true);
 //        setDebugColor(Color4::RED);
-        //setPosition(Vec2(100000,100000)*scale);
 //        setDirection(_direction);
         //setSpeed(_speed);
         _assets = assets;
         _scene = scene;
     }
 
-#pragma mark Getters
+
   public:
     /**
      * Get position of the hunter
@@ -105,29 +104,19 @@ class HunterModel : public cugl::physics2::WheelObstacle {
         return _trapModels.size();
     }
     
-#pragma mark Setters
-  public:
-    /**
-     * Sets position for this hunter
-     *
-     * @param position hunter position
-     */
-//    void setPosition(cugl::Vec2 position) { _position = position;
-//
-//    }
-    
-//    void setBody(cugl::Vec2 position){
-//        _body->SetTransform(b2Vec2(position.x,position.y),0);
-//        setPosition(Vec2(_body->GetPosition().x,_body->GetPosition().y));
-//    }
 
     /**
      * Sets direction for this hunter
      *
      * @param direction hunter direction
      */
-    void setDirection(cugl::Vec2 direction) { _direction = direction; }
-
+    //void setDirection(cugl::Vec2 direction) { _direction = direction; }
+    void setPosition(Vec2 position){
+        if(getBody()!=nullptr){
+            getBody()->SetTransform(b2Vec2(position.x, position.y), 0);
+        }
+        
+    };
     /**
      * Sets speed for this hunter
      *
@@ -159,18 +148,20 @@ class HunterModel : public cugl::physics2::WheelObstacle {
     
     void applyForce(cugl::Vec2 force) {
             // Push the player in the direction they want to go
-            b2Vec2 b2force(force.y*50000, force.x*50000);
+            b2Vec2 b2force(force.y*500, force.x*500);
 //        CULog(" forceeee x%f",force.x);
 //        CULog(" forceeee y%f",force.y);
             
             // If the player has reached max speed
             if (getLinearVelocity() >= Vec2(20,20)) {
-                _body->SetLinearVelocity(b2force);
-                _body->ApplyForceToCenter(b2force, true);
+
+                _body->SetLinearVelocity(1000*b2force);
+               // _body->ApplyForceToCenter(b2force, true);
             }
             else{
-                _body->SetLinearVelocity(b2force);
-                _body->ApplyForceToCenter(b2force, true);
+                CULog("ELSE ");
+                _body->SetLinearVelocity(1000*b2force);
+              //  _body->ApplyForceToCenter(b2force, true);
             }
             float a=_body->GetPosition().x;
             float b=_body->GetPosition().y;

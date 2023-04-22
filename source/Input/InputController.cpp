@@ -250,6 +250,8 @@ void InputController::touchDownCB(const cugl::TouchEvent& event, bool focus) {
         _touchDown = true;
         _touchID = event.touch;
         _touchPos = event.position;
+        _center =event.position;
+
     }
 }
 

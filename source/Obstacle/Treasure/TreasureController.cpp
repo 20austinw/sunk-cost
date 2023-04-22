@@ -17,9 +17,9 @@
 
 TreasureController::TreasureController(const std::shared_ptr<cugl::AssetManager>& assets, Size screenSize,Vec2 playerSize) {
     #define TREASURE_SIZERATIO 25
-    _model = std::make_shared<TreasureModel>(Vec2(1800,500),1000);
-    _model->setPosition(Vec2(1800,500));
-    _view = std::make_unique<TreasureView>(assets, Vec2(1800,500), playerSize * TREASURE_SIZERATIO);
+    _model = std::make_shared<TreasureModel>(Vec2(4100,3500),1000);
+    _model->setPosition(Vec2(5000,6000));
+    _view = std::make_unique<TreasureView>(assets, Vec2(5000,6000), playerSize * TREASURE_SIZERATIO);
     _screenSize = screenSize;
 }
 

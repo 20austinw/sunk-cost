@@ -18,11 +18,12 @@ HunterController::HunterController(const std::shared_ptr<cugl::AssetManager>& as
 
 
     _model = std::make_shared<HunterModel>(assets, scene,scale);
-    _model->setPosition(Vec2(10000,10000));
 
     _scene = scene;
-
-    _view = std::make_unique<HunterView>(assets, Vec2(10000,10000), playerSize, color);
+    
+    _pscale = scale;
+    
+    _view = std::make_unique<HunterView>(assets, _model->getPosition(), playerSize, color);
 
     _screenSize = screenSize;
     // A default camera ID = 1 if not specified
@@ -83,11 +84,12 @@ std::vector<std::shared_ptr<TrapView>> HunterController::getTrapViews(){
  */
 void HunterController::update() {
     _input.readInput();
-    //move(_input.getForward(), _input.getRight());
-    applyForce(Vec2(_input.getForward(), _input.getRight()));
-    
-    CULog("x:%f", _model->getPosition().x);
-    CULog("y:%f", _model->getPosition().y);
+//    _model->setPosition(Vec2(400000,400000)/100);
+//    //move(_input.getForward(), _input.getRight());
+//    applyForce(100000000000000*Vec2(_input.getForward(), _input.getRight()));
+//
+//    CULog("x:%f", _model->getPosition().x);
+//    CULog("y:%f", _model->getPosition().y);
 }
 
 
@@ -144,8 +146,9 @@ Vec2 HunterController::getPosition() { return _model->getPosition(); }
 
 std::shared_ptr<HunterModel> HunterController::getModel(){return _model;}
 
-void HunterController::setPosition(Vec2 position) { _model->setPosition(position);
-    _view->setPosition(position);
+void HunterController::setPosition(Vec2 position) {
+    _model->setPosition(position);
+    _view->setPosition(_model->getPosition());
     
 }
 

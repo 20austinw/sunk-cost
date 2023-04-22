@@ -137,6 +137,8 @@ private:
     
     std::shared_ptr<cugl::physics2::PolygonObstacle> _star;
     
+    std::vector<std::shared_ptr<cugl::physics2::PolygonObstacle>> _obstacleswall;
+    
     cugl::Vec2 old_place;
     
     // CONTROLLERS are attached directly to the scene (no pointers)
@@ -220,6 +222,8 @@ private:
     std::vector<std::shared_ptr<DoorController>> _doors;
     std::shared_ptr<cugl::scene2::Button> _unlockbutton;
     
+    Vec2 _exitpos;
+    
     bool _levelLoaded;
     
     bool _ishost;
@@ -262,7 +266,7 @@ public:
      * on creation.
      *
      * @param displaySize   The display size of the game window
-     * @param randoms		Reference to the random number generator
+     * @param randoms        Reference to the random number generator
      */
     HGameController(const Size displaySize,
                     const std::shared_ptr<AssetManager>& assets);
@@ -289,6 +293,8 @@ public:
      * @param batch The SpriteBatch used to render this scene
      */
     void render(std::shared_ptr<SpriteBatch>& batch);
+    
+    void makePolyObstacle(std::vector<Poly2> input);
     
     void initCamera();
     void initJoystick();

@@ -30,6 +30,8 @@ class HunterController {
     /** Velocity of the hunter */
     cugl::Vec2 _vel;
     cugl::Vec2 _scale;
+    
+    float _pscale;
 
     // The following are protected, because they have no accessors
     /** Current angle of the hunter */
@@ -109,7 +111,7 @@ class HunterController {
      */
     void updatePosition(cugl::Vec2 position) {
         _model->setPosition(position);
-        _view->setPosition(position);
+        _view->setPosition(_model->getPosition());
     }
 
     /**

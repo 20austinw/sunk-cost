@@ -48,16 +48,16 @@ HGameController::HGameController(
     /// //    SCENE_WIDTH = 1024;
     //    SCENE_HEIGHT = 576;
     /** Width of the game world in Box2d units */
-    #define DEFAULT_WIDTH   900.0f
+    #define DEFAULT_WIDTH   90000.0f
     /** Height of the game world in Box2d units */
-    #define DEFAULT_HEIGHT  900.0f
+    #define DEFAULT_HEIGHT  90000.0f
     /** The default value of gravity (going down) */
     #define DEFAULT_GRAVITY 0.0f
     #define DEBUG_ON        0
     #define PLAYER_SIZE     Vec2(40,40)
 
     
-    Vec2 gravity(0,-9.8);
+    Vec2 gravity(0,0);
 
     _count = 0;
    
@@ -233,6 +233,7 @@ HGameController::HGameController(
     }
 
     _hunter = _hunterSet[0];
+//    _hunter->setPosition(Vec2(10000,10000)*_scale);
 
         
         
@@ -357,12 +358,13 @@ void HGameController::update(float dt) {
         _treasureLabel->setPosition(_scene->getCamera()->getPosition()+Vec2(350,350));
         _treasureLabel->setForeground(cugl::Color4f::YELLOW);
         
+        ea->setPosition(Vec2(_star->getBody()->GetTransform().p.x,_star->getBody()->GetTransform().p.y));
     //    _collision.init(_hunter.getHunterBody(), _trap.getTrapBody(), _treasure.getTreasureBody());
         _world->update(dt);
         _world->activateCollisionCallbacks(true);
         _world->onBeginContact = [this](b2Contact* contact) {
             
-            
+            _hunter->move(0,0);
             _collision.beginContact(contact);
             
         };
@@ -530,10 +532,10 @@ void HGameController::update(float dt) {
                     }
                 }
             if(!_ismovedonece){
-                _hunter->move(forward,rightward);
+                _hunter->move(1000*forward,1000*rightward);
             }
             }
-        _hunter->move(forward,rightward);
+        //_hunter->move(1000*forward,1000*rightward);
         
         //trap collision
        
@@ -801,7 +803,7 @@ void HGameController::checkLevelLoaded() {
         
         initDoors();
 
-        _hunter->setPosition(Vec2(0,0));
+//        _hunter->setPosition(Vec2(0,0));
         _filterTexture = _assets->get<Texture>("filter");
         _filter = scene2::PolygonNode::allocWithTexture(_filterTexture);
         _filter->setPosition(_scene->getCamera()->getPosition());
@@ -879,25 +881,31 @@ void HGameController::checkLevelLoaded() {
         
         
         _world->addObstacle(_hunter->getModel());
+        for (auto obj:_obstacleswall){
+            _world->addObstacle(obj);
+        }
         
-       
         
-     ea = scene2::PolygonNode::allocWithPoly(_pf.makeCircle(Vec2(0,0), 150));
+        ea = scene2::PolygonNode::allocWithPoly(_pf.makeCircle(Vec2(4100,4100), 40));
+        ea->setPosition(Vec2(4100,4100));
+        ea->setColor(Color4::RED);
         cugl::Poly2 star;
         star=ea->getPolygon();
         
-
-        _star=physics2::PolygonObstacle::alloc(Poly2(star)/50,Vec2::ZERO);
-        _star->setBodyType(b2_dynamicBody);
+        
+        _star=physics2::PolygonObstacle::alloc(Poly2(star)*40,Vec2(4100,4100));
+        _star->init(Poly2(star),Vec2(4100,4100));
+        _star->setBodyType(b2_kinematicBody);
+        _star->setFriction(1);
+        _star->setMass(10000000);
         _star->setDensity(1);
-        _star->setPosition(Vec2(170,700)/60);
+        _star->setPosition(Vec2(4100,4100));
+        
         _star->setDebugScene(_worldnode);
         
-//        _world->addObstacle(_star);
-        
-        
+        _world->addObstacle(_star);
        
-    //    _scene->addChild(ea);
+        _scene->addChild(ea);
         
         _scene->addChild(_worldnode);
         
@@ -919,6 +927,10 @@ void HGameController::initCamera() {
 
     
     Vec3 curr = _scene->getCamera()->getPosition();
+//    if(_star!=nullptr){
+//        Vec3 next = _offset + (Vec3(_star->getPosition().x, _star->getPosition().y, 1));
+//    }
+    
     Vec3 next = _offset + (Vec3(_hunter->getPosition().x, _hunter->getPosition().y, 1));
     _scene->getCamera()->translate(next - curr);
     _scene->getCamera()->setFar(100000);
@@ -943,9 +955,9 @@ void HGameController::updateCamera(float timestep) {
 
         // restrict camera focus within 300<x<1800, 300<y<1900 window
         int cameraXmin = 300;
-        int cameraXmax = 180000;
+        int cameraXmax = _tilemap->getDimensions().width*_tileWidth;
         int cameraYmin = 300;
-        int cameraYmax = 190000;
+        int cameraYmax =_tilemap->getDimensions().height*_tileWidth;
         if(_hunter->getPosition().x < cameraXmin){
             next.x = cameraXmin;
         }
@@ -966,13 +978,13 @@ void HGameController::updateCamera(float timestep) {
     if(_didWin){
         
         Vec3 curr = _scene->getCamera()->getPosition();
-        Vec3 exit = Vec3(350,350,0);
+//        Vec3 exit = Vec3(350,350,0);
         // camera pans back to entry
         // camera pans back to hunter
         if(!_shiftback){
-            _scene->getCamera()->translate((exit - curr) * timestep);
+            _scene->getCamera()->translate((Vec2(3000,3000) - curr) * timestep);
         }
-        if(_scene->getCamera()->getPosition().x < 400){
+        if(_scene->getCamera()->getPosition().x < 3400){
             _shiftback = true;
         }
   
@@ -991,7 +1003,7 @@ void HGameController::initHunter(int hunterId) {
 
       //  Vec2 gravity(0,DEFAULT_GRAVITY);
 
-   
+    //_exitpos=Vec2(2000,2000);
     _hunterSet[hunterId]=std::make_shared<HunterController>(_assets, _scene->getSize(),_scene, PLAYER_SIZE, hunterId,_scale);
 }
 
@@ -1042,6 +1054,16 @@ void HGameController::initJoystick(){
         
         // Reposition the joystick components
 
+}
+
+void HGameController::makePolyObstacle(std::vector<Poly2> input){
+    for(auto ob : input){
+        std::shared_ptr<cugl::physics2::PolygonObstacle> p=physics2::PolygonObstacle::alloc(Poly2(ob));
+        p->setBodyType(b2_staticBody);
+        p->setDebugScene(_worldnode);
+        
+        _obstacleswall.emplace_back(p);
+    }
 }
 
 void HGameController::removeJoystick(){
@@ -1231,3 +1253,4 @@ void HGameController::modifyTexture(std::shared_ptr<Texture>& texture, int index
     int r = index / row;
     texture = texture->getSubTexture(c*y, (c+1)*y, r*x, (r+1)*x);
 }
+

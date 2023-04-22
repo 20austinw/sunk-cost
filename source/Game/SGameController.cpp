@@ -126,7 +126,7 @@ void SGameController::update(float dt) {
             checkLevelLoaded();
             _portraits->setIndex(1);
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(1.2);
+            ->setZoom(0.3);
         }
         
 //        if (_trapTriggered) {
@@ -314,7 +314,7 @@ void SGameController::update(float dt) {
             Vec2 mapPos = _miniMap->getMapPosition();
             int idx = _portraits->getNearest(mapPos);
             if (_portraits->getIndex() != idx && _spirit.isSwitchable()){
-                _portraits->setIndex(_portraits->getNearest(mapPos));
+                _portraits->setIndex(idx);
                 _spirit.resetCameraCool();
             } else if (! _spirit.isSwitchable() && _portraits->getIndex() != idx){
                 _portraits->resetScale();

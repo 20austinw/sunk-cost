@@ -323,7 +323,7 @@ void HGameController::update(float dt) {
             if(int(_timer/60/60)==0 && int(_timer/60) % 60 ==0 && !_didLose && !_didFinalwin){
         //        _scene->addChild(_loseNode);
         //        _scene->addChild(_loseLabel);
-                _endScene = std::make_shared<EndScene>(_assets, true);
+                _endScene = std::make_shared<EndScene>(_scene,_assets, true);
                 _endScene->addChildTo(_scene);
                 _didLose = true;
                 _gameStatus = 1;
@@ -341,7 +341,7 @@ void HGameController::update(float dt) {
         if(!_didFinalwin && _didWin && !_didLose && _hunter->getPosition().x < 400 && _hunter->getPosition().y < 400){
             _scene->removeChild(_winLabel);
             _scene->addChild(_finalWinLabel);
-            _endScene = std::make_shared<EndScene>(_assets, false);
+            _endScene = std::make_shared<EndScene>(_scene,_assets, false);
             _endScene->addChildTo(_scene);
             _didFinalwin = true;
             _gameStatus = 1;
@@ -897,7 +897,7 @@ void HGameController::checkLevelLoaded() {
         
         
        
-        _scene->addChild(ea);
+    //    _scene->addChild(ea);
         
         _scene->addChild(_worldnode);
         

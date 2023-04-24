@@ -62,13 +62,14 @@ bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json) {
     // Get each object in each layer, then decide what to do based off of what
     // type the object is.
     auto objects = json->get("layers")->get(0);
+    loadObject(objects);
     
-    for (int i=0; i<8; i++){
+    for (int i=1; i<9; i++){
         objects = json->get("layers")->get(i);
         loadObject(objects);
     }
     
-    for (int i = 8; i < json->get("layers")->size(); i++) {
+    for (int i = 9; i < json->get("layers")->size(); i++) {
         // Get the objects per layer
         objects = json->get("layers")->get(i)->get("objects");
         for (int j = 0; j < objects->size(); j++) {
@@ -97,6 +98,7 @@ void LevelModel::unload() {
     _player = Vec2::ZERO;
     _mapSize = Size::ZERO;
     _assets = nullptr;
+    _boarder.clear();
 }
 
 #pragma mark -
@@ -124,6 +126,8 @@ bool LevelModel::loadObject(const std::shared_ptr<JsonValue>& json) {
         return loadTiles(json, _furnitures);
     } else if (type == CANDLE_FIELD) {
         return loadTiles(json, _candles);
+    } else if (type == COLLISION_FIELD) {
+        return loadCollision(json);
     }
     return false;
 }
@@ -169,6 +173,36 @@ bool LevelModel::loadTiles(const std::shared_ptr<JsonValue>& json, std::vector<s
                 list[y+r-starty][x+c-startx] = type;
             }
         }
+    }
+    return success;
+}
+
+bool LevelModel::loadCollision(const std::shared_ptr<JsonValue> &json) {
+    int xOffset = json->get("x_offset")->asInt();
+    int yOffset = json->get("y_offset")->asInt();
+    int x = json->get("x")->asInt();
+    int y = json->get("y")->asInt();
+    auto boarder = json->get("boarder");
+    bool success = boarder->get(0) != nullptr;
+    for (int i=0; i<boarder->size(); i+=2){
+        int xw = boarder->get(i)->asInt();
+        xw = (xOffset + x * xw) * 128;
+        int yw = boarder->get(i+1)->asInt();
+        yw = (yOffset + y * yw) * 128;
+        _boarder.emplace_back(Vec2(xw, yw));
+    }
+    auto walls = json->get("walls");
+    for (int i=0; i<walls->size(); i++){
+        auto obs = walls->get(i)->get("data");
+        std::vector<Vec2> v;
+        for (int n=0; n<obs->size(); n+=2){
+            int xw = obs->get(n)->asInt();
+            xw = (xOffset + x * xw) * 128;
+            int yw = obs->get(n+1)->asInt();
+            yw = (yOffset + y * yw) * 128 ;
+            v.emplace_back(Vec2(xw, yw));
+        }
+        _collision.emplace_back(v);
     }
     return success;
 }

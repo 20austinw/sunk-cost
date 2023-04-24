@@ -166,8 +166,8 @@ class HunterModel : public physics2::WheelObstacle {
             float a=_body->GetPosition().x;
             float b=_body->GetPosition().y;
             _position = Vec2(a,b);
-        CULog("position xxxxxxx%f",_position.x);
-        CULog("position yyyyyyyy%f",_position.y);
+//        CULog("position xxxxxxx%f",_position.x);
+//        CULog("position yyyyyyyy%f",_position.y);
         
         
 

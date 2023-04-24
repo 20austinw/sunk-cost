@@ -220,6 +220,8 @@ HGameController::HGameController(
             int type = walls[r][c];
             addCandles(type, c, width-1-r);
         }
+        addPolys();
+        
         Rect rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT);
         _offset = Vec2((_dimen.width-1024)/2.0f,(_dimen.height-576)/2.0f);
         _scale = _dimen.width == 1024
@@ -1339,5 +1341,27 @@ void HGameController::modifyTexture(std::shared_ptr<Texture>& texture, int index
     int c = index % row;
     int r = index / row;
     texture = texture->getSubTexture(c*y, (c+1)*y, r*x, (r+1)*x);
+}
+
+void HGameController::addPolys(){
+    std::vector<Vec2> boarder = _level->getBoarder();
+    cugl::SimpleExtruder extruder = SimpleExtruder();
+    extruder.set(boarder, true);
+    extruder.calculate(2, 2);
+    _obstaclePoly.emplace_back(extruder.getPolygon());
+    
+    std::vector<std::vector<Vec2>> obs = _level->getCollision();
+    cugl::Path2 line = Path2();
+    for (int i=0; i<obs.size(); i++){
+        line.set(obs.at(i));
+        cugl::Poly2 poly(line);
+        _obstaclePoly.emplace_back(poly);
+    }
+    
+//    for (int i=0; i<_obstaclePoly.size();i++){
+//        std::shared_ptr<scene2::PolygonNode> test = scene2::PolygonNode::allocWithPoly(_obstaclePoly.at(i));
+//        test->setColor(Color4::BLUE);
+//        _scene->addChild(test);
+//    }
 }
 

@@ -72,8 +72,8 @@ public:
             // Use width scaling
             _maxScale = _maxWidth/_node->getSize().width;
             _maxHeight = _node->getSize().height * _maxScale;
-            CULog("Max dimensions: %f, %f", _maxWidth, _maxHeight);
-            CULog("%f, %f", _scene->getSize().width, _scene->getSize().height);
+//            CULog("Max dimensions: %f, %f", _maxWidth, _maxHeight);
+//            CULog("%f, %f", _scene->getSize().width, _scene->getSize().height);
         }
         _scale = _minScale;
         _scaleDelta = (_maxScale-_minScale)/15;
@@ -84,8 +84,8 @@ public:
         float minWidth = _minHeight * _node->getSize().width/_node->getSize().height;
         _minPos = Vec2(scene->getSize().width-minWidth-20, _minHeight+20);
         _maxPos = Vec2((scene->getSize().width-_maxWidth)/2, (_scene->getSize().height+_maxHeight)/2);
-        CULog("%f, %f", _minPos.x, _minPos.y);
-        CULog("%f, %f", _maxPos.x, _maxPos.y);
+//        CULog("%f, %f", _minPos.x, _minPos.y);
+//        CULog("%f, %f", _maxPos.x, _maxPos.y);
         _pos = _minPos;
         _posDelta = (_maxPos-_minPos)/15;
         _node->setPosition(_pos);

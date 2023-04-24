@@ -40,16 +40,10 @@ SGameController::SGameController(
     _scene->addChild(background);
     
     _tilemap = std::make_shared<TilemapController>();
-//    _maps.emplace_back(_tilemap);
-    
-    //idk why but this is the only way to init another tilemapcontroller that the game won't crash so don't touch this line of code (although ik this is so shitty
-    
     _tilemap->addChildTo(_scene);
     
     _obstacleNode = scene2::PolygonNode::alloc();
     _scene->addChild(_obstacleNode);
-//    _furnitureNode =  scene2::PolygonNode::alloc();
-//    _scene->addChild(_furnitureNode);
     
     // Initialize PortraitSetController
     _portraits = std::make_shared<PortraitSetController>(_assets, _scene, 0,
@@ -126,7 +120,7 @@ void SGameController::update(float dt) {
             checkLevelLoaded();
             _portraits->setIndex(1);
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.3);
+            ->setZoom(0.1);
         }
         
 //        if (_trapTriggered) {
@@ -382,8 +376,6 @@ void SGameController::checkLevelLoaded() {
         _level = _assets->get<LevelModel>(LEVEL_THREE_KEY);
         _level->setAssets(_assets);
         
-//        CULog("Loading level!");
-        
         _tilemap->updatePosition(_scene->getSize() / 2);
         std::vector<std::vector<int>> tiles = _level->getTileTextures();
         int height = tiles[0].size();
@@ -457,6 +449,8 @@ void SGameController::checkLevelLoaded() {
             int type = walls[r][c];
             addCandles(type, c, width-1-r);
         }
+        
+        addPolys();
 
 //        _tilemap->addDoorTo(_scene);
         for (int i = 0; i < _level->getPortaits().size(); i++) {
@@ -667,4 +661,26 @@ void SGameController::modifyTexture(std::shared_ptr<Texture>& texture, int index
     int c = index % row;
     int r = index / row;
     texture = texture->getSubTexture(c*y, (c+1)*y, r*x, (r+1)*x);
+}
+
+void SGameController::addPolys(){
+    std::vector<Vec2> boarder = _level->getBoarder();
+    cugl::SimpleExtruder extruder = SimpleExtruder();
+    extruder.set(boarder, true);
+    extruder.calculate(2, 2);
+    _obstaclePoly.emplace_back(extruder.getPolygon());
+    
+    std::vector<std::vector<Vec2>> obs = _level->getCollision();
+    cugl::Path2 line = Path2();
+    for (int i=0; i<obs.size(); i++){
+        line.set(obs.at(i));
+        cugl::Poly2 poly(line);
+        _obstaclePoly.emplace_back(poly);
+    }
+    
+//    for (int i=0; i<_obstaclePoly.size();i++){
+//        std::shared_ptr<scene2::PolygonNode> test = scene2::PolygonNode::allocWithPoly(_obstaclePoly.at(i));
+//        test->setColor(Color4::BLUE);
+//        _scene->addChild(test);
+//    }
 }

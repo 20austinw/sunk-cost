@@ -31,6 +31,7 @@
 #define WALL_LOWER_FIELD "wall_lower"
 #define FURNITURE_FIELD "furnitures"
 #define CANDLE_FIELD "candles"
+#define COLLISION_FIELD "collision"
 
 /** The physics fields for each object */
 #define POSITION_FIELD "pos"

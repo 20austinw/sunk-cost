@@ -35,6 +35,10 @@ class LevelModel : public Asset {
     std::vector<std::vector<int>> _furnitures;
     
     std::vector<std::vector<int>> _candles;
+    
+    std::vector<std::vector<Vec2>> _collision;
+    
+    std::vector<Vec2> _boarder;
 
     /** Dimenisons of this tilemap */
     Size _dimensions;
@@ -108,6 +112,10 @@ class LevelModel : public Asset {
     std::vector<std::vector<int>> getFurnitureTextures() { return _furnitures; }
     
     std::vector<std::vector<int>> getCandleTextures() { return _candles; }
+    
+    std::vector<std::vector<Vec2>> getCollision() { return _collision; }
+    
+    std::vector<Vec2> getBoarder() {return _boarder; }
 
     Size getDimensions() { return _dimensions; }
 
@@ -243,6 +251,8 @@ class LevelModel : public Asset {
      * @return true if the object was successfully loaded
      */
     bool loadDoors(const std::shared_ptr<JsonValue>& json);
+    
+    bool loadCollision(const std::shared_ptr<JsonValue>& json);
 };
 
 #endif //_LEVEL_MODEL_H

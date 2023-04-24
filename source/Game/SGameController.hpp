@@ -131,6 +131,7 @@ public:
     std::vector<std::shared_ptr<TileController>> _obstacles;
     std::shared_ptr<scene2::PolygonNode> _obstacleNode;
     std::vector<std::shared_ptr<scene2::SpriteNode>> _candleNodes;
+    std::vector<Poly2> _obstaclePoly;
 
 #pragma mark Main Methods
   public:
@@ -286,6 +287,8 @@ public:
     void addFurnitures(int type, int c, int r);
     
     void addCandles(int type, int c, int r);
+    
+    void addPolys();
     
     void modifyTexture(std::shared_ptr< Texture >& texture, int index, int row, int col);
 

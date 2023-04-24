@@ -277,6 +277,14 @@ void HGameController::update(float dt) {
             checkLevelLoaded();
         }
         
+//        for(auto obs:_obstacles){
+//            if(_hunter->getPosition()==){
+//
+//            }
+//        }
+        
+        
+        
         AudioEngine::get()->play("theme", _theme, true, _theme->getVolume(), false);
         
         _loseLabel->setText("You Lose!");
@@ -427,6 +435,7 @@ void HGameController::update(float dt) {
                     _timerlock=300;
                     _doorslocked.erase(_doorslocked.begin()+_currdoorindex);
                     _lockhunter->setFrame(6);
+                    _lockhunter->setVisible(false);
                 }
             }
             _tick++;
@@ -661,7 +670,7 @@ void HGameController::update(float dt) {
 
             }
  
-        if(abs(_treasure.getPosition().x-_hunter->getPosition().x)<= 100 && abs(_treasure.getPosition().y-_hunter->getPosition().y)<= 100 && !_collision.didHitTreasure ){
+        if(abs(_treasure.getPosition().x-_hunter->getPosition().x)<= 200 && abs(_treasure.getPosition().y-_hunter->getPosition().y)<= 200 && !_collision.didHitTreasure ){
             CULog("IN ");
             _collision.didHitTreasure = true;
             _treasure.getNode() ->setVisible(false);

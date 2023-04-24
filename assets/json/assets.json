@@ -27,6 +27,7 @@
         "hunterleft": {
             "file": "textures/diver_walking_animation_L.png"
         },
+        
         "hunterorange": {
             "file": "textures/diver_orange_walking_animation.png"
         },
@@ -197,7 +198,10 @@
        },
        "zero_button": {
            "file": "textures/zero_button.png"
-       }
+       },
+       "left": {
+                   "file":  "textures/left_arrow.png"
+               }
     },
     "fonts": {
         "pixel32": {

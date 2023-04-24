@@ -116,7 +116,7 @@ class HunterModel : public physics2::WheelObstacle {
             getBody()->SetTransform(b2Vec2(position.x, position.y), 0);
         }
         
-    };
+    }
     /**
      * Sets speed for this hunter
      *

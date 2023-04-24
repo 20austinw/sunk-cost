@@ -3,6 +3,9 @@
         "background": {
             "file": "textures/black.png"
         },
+        "spawn": {
+            "file": "textures/spawn.png"
+        },
         "red": {
             "file": "textures/red.png"
         },
@@ -14,9 +17,6 @@
         },
         "blue": {
             "file": "textures/blue.png"
-        },
-        "spawn": {
-            "file": "textures/Spawn_Animation.png"
         },
         "hunter": {
             "file": "textures/hunter.png"

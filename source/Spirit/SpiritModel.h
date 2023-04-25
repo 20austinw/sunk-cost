@@ -211,12 +211,14 @@ class SpiritModel {
         return result;
     }
     
-    void addHunter(Vec2 position) {
+    void addHunter(Vec2 position, std::vector<std::shared_ptr<scene2::PolygonNode>>& hunterNodes) {
         _hunterModel = std::make_shared<HunterModel>(_assets, _scene, 1024);
         // A place holder for hunterID, 0 is blue, 1 is orange, 2 is green
         int hunterID = 0;
         _hunterView = std::make_shared<HunterView>(_assets, position, Vec2(40, 40), hunterID);
-        _hunterView->addChildTo(_scene);
+        
+//        _hunterView->addChildTo(_scene);
+        _hunterView->addChildToNode(hunterNodes);
     }
     
     void moveHunter(Vec2 position) {

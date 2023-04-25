@@ -123,6 +123,10 @@ public:
     int _doorToUnlock;
     
     Vec2 _trapPos;
+    
+    float _hunterYPos;
+    
+    int _prevInd;
 
 #pragma mark External References
   private:
@@ -131,7 +135,8 @@ public:
     std::vector<std::shared_ptr<TileController>> _obstacles;
     std::shared_ptr<scene2::PolygonNode> _obstacleNode;
     std::vector<std::shared_ptr<scene2::SpriteNode>> _candleNodes;
-    std::vector<Poly2> _obstaclePoly;
+    std::vector<std::shared_ptr<scene2::PolygonNode>> _hunterNodes;
+//    std::vector<Poly2> _obstaclePoly;
 
 #pragma mark Main Methods
   public:
@@ -288,9 +293,13 @@ public:
     
     void addCandles(int type, int c, int r);
     
-    void addPolys();
+//    void addPolys();
     
     void modifyTexture(std::shared_ptr< Texture >& texture, int index, int row, int col);
+    
+    void sortNodes();
+    
+    int getHunterInd();
 
 };
 

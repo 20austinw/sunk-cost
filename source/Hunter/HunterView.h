@@ -82,6 +82,12 @@ class HunterView {
             scene->addChild(_spriteNodes[i]);
         }
     }
+    
+    void addChildToNode(std::vector<std::shared_ptr<scene2::PolygonNode>>& hunterNodes) {
+        for (int i = 0; i < _spriteNodes.size(); i++) {
+            hunterNodes.emplace_back(_spriteNodes[i]);
+        }
+    }
 
     /**
      * Removes the view component children from the given `sceneNode`.

@@ -113,6 +113,9 @@ bool blocked = false;
 
 void SGameController::update(float dt) {
     if(_gameStatus == 0){
+//        _prevInd = getHunterInd();
+//        sortNodes();
+        
         bool canSwitch = true;
         bool didSwitch = false;
         
@@ -120,7 +123,7 @@ void SGameController::update(float dt) {
             checkLevelLoaded();
             _portraits->setIndex(1);
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.1);
+            ->setZoom(0.3);
         }
         
 //        if (_trapTriggered) {
@@ -221,11 +224,11 @@ void SGameController::update(float dt) {
             _spirit.getModel()->setTrapState(false);
         }
         
-        //logic for camera switching & battery
-        if (inputController->isTouchDown()) {
-            auto screenPos = inputController->getTouchPos();
-            
-        }
+//        //logic for camera switching & battery
+//        if (inputController->isTouchDown()) {
+//            auto screenPos = inputController->getTouchPos();
+//
+//        }
         if (!didSwitch) {
             _spirit.decreaseCameraCool();
         }
@@ -240,7 +243,7 @@ void SGameController::update(float dt) {
             // Redraw doors
             CULog("Adding block!");
             _portraits->addBlock(_scene);
-            _portraits->refreshBatteryNodes(_scene);
+            _portraits->refreshBatteryNodes(_scene); //drawing order refresh
             blocked = true;
         } else if (_portraits->getCurState() && !_portraits->getPrevState()) {
             // Redraw doors
@@ -275,8 +278,8 @@ void SGameController::update(float dt) {
         }
         
         // Draw locks
-        _spirit.updateLocksPos(_scene);
-        _spirit.updateTrapBtnsPos(_scene);
+        _spirit.updateLocksPos(_scene); //drawing order refresh
+        _spirit.updateTrapBtnsPos(_scene); //drawing order refresh
         
         if(!blocked){
             _scene->getCamera()->update();
@@ -315,11 +318,11 @@ void SGameController::update(float dt) {
         
         // Draw battery (has to come after the minimap update)
         _portraits->updateBattery();
-        _portraits->updateBatteryNode(_scene, 50);
+        _portraits->updateBatteryNode(_scene, 50); //drawing order refresh
         
         _miniMap->update();
         _miniMap->removeChildFrom(_scene);
-        _miniMap->addChildTo(_scene);
+        _miniMap->addChildTo(_scene); //drawing order refresh
         
         // Draw timer and alert labels
         string minutes = std::to_string(_timeLeft/60/60);
@@ -440,17 +443,20 @@ void SGameController::checkLevelLoaded() {
             addFurnitures(type, c, width-1-r);
         }
         
-        walls = _level->getCandleTextures();
-        height = walls[0].size();
-        width = walls.size();
-        for (int i = 0; i < height*width; ++i) {
-            int c = i % height;
-            int r = i / height;
-            int type = walls[r][c];
-            addCandles(type, c, width-1-r);
-        }
+        std::sort(_obstacles.begin(),_obstacles.end(), [](std::shared_ptr<TileController> &a, std::shared_ptr<TileController> &b){ return a->getYPos()>b->getYPos(); });
+        _prevInd = _obstacles.size();
         
-        addPolys();
+//        walls = _level->getCandleTextures();
+//        height = walls[0].size();
+//        width = walls.size();
+//        for (int i = 0; i < height*width; ++i) {
+//            int c = i % height;
+//            int r = i / height;
+//            int type = walls[r][c];
+//            addCandles(type, c, width-1-r);
+//        }
+        
+//        addPolys();
 
 //        _tilemap->addDoorTo(_scene);
         for (int i = 0; i < _level->getPortaits().size(); i++) {
@@ -509,11 +515,15 @@ void SGameController::processData(const std::string source, const std::vector<st
         _deserializer->receive(data);
         std::vector<float> mes = std::get<std::vector<float>>(_deserializer->read());
         if (mes[0] == 0 && !_hunterAdded) {
-            _spirit.addHunter(Vec2(mes[1], mes[2]));
+            _spirit.addHunter(Vec2(mes[1], mes[2]), _hunterNodes);
+            for(int i=0; i<_hunterNodes.size(); i++){
+                _obstacleNode->addChild(_hunterNodes.at(i));
+            }
             _spirit.moveHunter(Vec2(400, 400));
             _hunterAdded = true;
         } else if (mes[0] == 0) {
             _spirit.moveHunter(Vec2(mes[1], mes[2]));
+            _hunterYPos = mes[2];
         }
         
         // lol i'll work out more coherent codes for each message later oops
@@ -585,10 +595,16 @@ void SGameController::addWallTile(int type, int c, int r){
     if(type == 0) {
         return;
     }
+    int index = type-1;
     std::shared_ptr< Texture > wall = _assets->get<Texture>("wall");
-    modifyTexture(wall, type-1, 8, 8);
+    modifyTexture(wall, index, 8, 8);
     Vec2 pos(128 * c, 128 * r);
-    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall);
+    int yPos = pos.y;
+    if (index == 0 || index == 1 || index == 8|| index == 9 || index == 10 || index == 11 || index == 20 || index == 21 || index == 22 || index == 34 || index == 35) {
+        yPos -= 256;
+    }
+    
+    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall, yPos);
     _obstacles.emplace_back(tile);
     tile->addChildTo(_obstacleNode);
 }
@@ -600,7 +616,7 @@ void SGameController::addWallUpper(int type, int c, int r){
     std::shared_ptr< Texture > wall = _assets->get<Texture>("wall_upper");
     modifyTexture(wall, type-329, 8, 8);
     Vec2 pos(128 * c, 128 * r+16*128);
-    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall);
+    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall, pos.y);
     _obstacles.emplace_back(tile);
     tile->addChildTo(_obstacleNode);
 }
@@ -612,7 +628,7 @@ void SGameController::addWallGrime(int type, int c, int r){
     std::shared_ptr< Texture > wall = _assets->get<Texture>("wall_grime");
     modifyTexture(wall, type-193, 8, 8);
     Vec2 pos(128 * c, 128 * r+16*128);
-    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall);
+    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall, pos.y);
     _obstacles.emplace_back(tile);
     tile->addChildTo(_obstacleNode);
 }
@@ -624,7 +640,7 @@ void SGameController::addWallLower(int type, int c, int r){
     std::shared_ptr< Texture > wall = _assets->get<Texture>("wall_lower");
     modifyTexture(wall, type-393, 8, 8);
     Vec2 pos(128 * c, 128 * r+16*128);
-    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall);
+    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall, pos.y);
     _obstacles.emplace_back(tile);
     tile->addChildTo(_obstacleNode);
 }
@@ -636,7 +652,7 @@ void SGameController::addFurnitures(int type, int c, int r){
     std::shared_ptr< Texture > furnitures = _assets->get<Texture>("furnitures");
     modifyTexture(furnitures, type-129, 8, 8);
     Vec2 pos(128 * c, 128 * r +16*128 );
-    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, furnitures);
+    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, furnitures, pos.y);
     _obstacles.emplace_back(tile);
     tile->addChildTo(_obstacleNode);
 }
@@ -663,24 +679,59 @@ void SGameController::modifyTexture(std::shared_ptr<Texture>& texture, int index
     texture = texture->getSubTexture(c*y, (c+1)*y, r*x, (r+1)*x);
 }
 
-void SGameController::addPolys(){
-    std::vector<Vec2> boarder = _level->getBoarder();
-    cugl::SimpleExtruder extruder = SimpleExtruder();
-    extruder.set(boarder, true);
-    extruder.calculate(2, 2);
-    _obstaclePoly.emplace_back(extruder.getPolygon());
-    
-    std::vector<std::vector<Vec2>> obs = _level->getCollision();
-    cugl::Path2 line = Path2();
-    for (int i=0; i<obs.size(); i++){
-        line.set(obs.at(i));
-        cugl::Poly2 poly(line);
-        _obstaclePoly.emplace_back(poly);
-    }
-    
-//    for (int i=0; i<_obstaclePoly.size();i++){
-//        std::shared_ptr<scene2::PolygonNode> test = scene2::PolygonNode::allocWithPoly(_obstaclePoly.at(i));
-//        test->setColor(Color4::BLUE);
-//        _scene->addChild(test);
+
+void SGameController::sortNodes(){
+//    for (int n=0; n<_hunterNodes.size(); n++){
+//        _obstacleNode->removeChild(_hunterNodes.at(n));
+//        _obstacleNode->addChild(_hunterNodes.at(n));
 //    }
+//    for (int i = _prevInd; i<_obstacles.size(); i++){
+//        _obstacles.at(i)->removeChildFrom(_obstacleNode);
+//        _obstacles.at(i)->addChildTo(_obstacleNode);
+//    }
+//
+    bool hunterAdded = false;
+    for(int i=0; i<_obstacles.size(); i++) {
+        if (_hunterYPos<_obstacles.at(i)->getYPos()){
+            _prevInd = i;
+            hunterAdded = true;
+            for (int n=0; n<_hunterNodes.size(); n++){
+                _obstacleNode->removeChild(_hunterNodes.at(n));
+                _obstacleNode->addChild(_hunterNodes.at(n));
+            }
+        }
+        _obstacles.at(i)->removeChildFrom(_obstacleNode);
+        _obstacles.at(i)->addChildTo(_obstacleNode);
+    }
+    if (!hunterAdded){
+        for (int n=0; n<_hunterNodes.size(); n++){
+            _obstacleNode->removeChild(_hunterNodes.at(n));
+            _obstacleNode->addChild(_hunterNodes.at(n));
+        }
+    }
 }
+
+//int SGameController::getHunterInd(){
+//    for(int i=0; i<_obstacles.size(); i++) {
+//        if (_hunterYPos<_obstacles.at(i)->getYPos()){
+//            return i;
+//        }
+//    }
+//    return _obstacles.size();
+//}
+
+//void SGameController::addPolys(){
+//    std::vector<Vec2> boarder = _level->getBoarder();
+//    cugl::SimpleExtruder extruder = SimpleExtruder();
+//    extruder.set(boarder, true);
+//    extruder.calculate(2, 2);
+//    _obstaclePoly.emplace_back(extruder.getPolygon());
+//    
+//    std::vector<std::vector<Vec2>> obs = _level->getCollision();
+//    cugl::Path2 line = Path2();
+//    for (int i=0; i<obs.size(); i++){
+//        line.set(obs.at(i));
+//        cugl::Poly2 poly(line);
+//        _obstaclePoly.emplace_back(poly);
+//    }
+//}

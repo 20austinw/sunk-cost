@@ -64,11 +64,12 @@ bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json) {
     auto objects = json->get("layers")->get(0);
     loadObject(objects);
     
-    //load the doors
-    objects = json->get("layers")->get(1);
-    loadObject(objects);
+    for (int i=1; i<9; i++){
+        objects = json->get("layers")->get(i);
+        loadObject(objects);
+    }
     
-    for (int i = 2; i < json->get("layers")->size(); i++) {
+    for (int i = 9; i < json->get("layers")->size(); i++) {
         // Get the objects per layer
         objects = json->get("layers")->get(i)->get("objects");
         for (int j = 0; j < objects->size(); j++) {
@@ -89,6 +90,7 @@ bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json) {
 void LevelModel::unload() {
     _bounds = Rect::ZERO;
     _tiles.clear();
+    _walls.clear();
     _dimensions = Size::ZERO;
     _tileSize = Size::ZERO;
     _defaultcam = Vec2::ZERO;
@@ -96,6 +98,7 @@ void LevelModel::unload() {
     _player = Vec2::ZERO;
     _mapSize = Size::ZERO;
     _assets = nullptr;
+    _boarder.clear();
 }
 
 #pragma mark -
@@ -104,13 +107,27 @@ void LevelModel::unload() {
 bool LevelModel::loadObject(const std::shared_ptr<JsonValue>& json) {
     auto type = json->get("class")->asString();
     if (type == TILE_FIELD) {
-        return loadTiles(json);
+        return loadTiles(json, _tiles);
     } else if (type == PORTRAIT_FIELD) {
         return loadPortraitSetAndDefault(json);
     } else if (type == PLAYER_FIELD) {
         return loadPlayer(json);
     } else if (type == DOOR_FIELD) {
         return loadDoors(json);
+    } else if (type == WALL_FIELD) {
+        return loadTiles(json, _walls);
+    } else if (type == WALL_UPPER_FIELD) {
+        return loadTiles(json, _wallUpper);
+    } else if (type == WALL_GRIME_FIELD) {
+        return loadTiles(json, _wallGrime);
+    } else if (type == WALL_LOWER_FIELD) {
+        return loadTiles(json, _wallLower);
+    } else if (type == FURNITURE_FIELD) {
+        return loadTiles(json, _furnitures);
+    } else if (type == CANDLE_FIELD) {
+        return loadTiles(json, _candles);
+    } else if (type == COLLISION_FIELD) {
+        return loadCollision(json);
     }
     return false;
 }
@@ -125,41 +142,70 @@ bool LevelModel::loadObject(const std::shared_ptr<JsonValue>& json) {
  *
  * @return true if the exit door was successfully loaded
  */
-bool LevelModel::loadTiles(const std::shared_ptr<JsonValue>& json) {
-    auto tiles = json->get("data");
+bool LevelModel::loadTiles(const std::shared_ptr<JsonValue>& json, std::vector<std::vector<int>>& list) {
+    auto tiles = json->get("chunks");
+    int startx = json->get("startx")->asInt();
+    int starty = json->get("starty")->asInt();
     int width = json->get("width")->asInt();
     int height = json->get("height")->asInt();
     _dimensions = Size(width, height);
+    
     for (int i = 0; i < height; ++i) {
-        std::vector<std::string> vec;
-        _tiles.push_back(vec);
+        std::vector<int> vec;
+        for (int n = 0; n < width; ++n){
+            vec.emplace_back(0);
+        }
+        list.push_back(vec);
     }
+    
     bool success = tiles->get(0) != nullptr;
     if (success) {
-        for (int i = 0; i < width * height; ++i) {
-            int c = i % width;
-            int r = i / width;
-            int type = tiles->get(c + r * width)->asInt();
-            if (type == 1) {
-                _tiles[r].push_back("black");
-            } else if (type == 3) {
-                _tiles[r].push_back("door");
-            } else {
-                _tiles[r].push_back("green");
+        for(int i=0; i<tiles->size(); i++){
+            auto chunk = tiles->get(i);
+            auto tile = chunk->get("data");
+            int x = chunk->get("x")->asInt();
+            int y = chunk->get("y")->asInt();
+            int w = chunk->get("width")->asInt();
+            for(int n = 0; n<tile->size(); n++){
+                int c = n % w;
+                int r = n / w;
+                int type = tile->get(n)->asInt();
+                list[y+r-starty][x+c-startx] = type;
             }
-
-            //              if (type > 24 && type < 27) {
-            //            _tiles[r].push_back("green");
-            //          } else if (type == 29) {
-            //            _tiles[r].push_back("blue");
-            //          } else if (type == 11) {
-            //            _tiles[r].push_back("red");
-            //          }
         }
     }
     return success;
 }
 
+bool LevelModel::loadCollision(const std::shared_ptr<JsonValue> &json) {
+    int xOffset = json->get("x_offset")->asInt();
+    int yOffset = json->get("y_offset")->asInt();
+    int x = json->get("x")->asInt();
+    int y = json->get("y")->asInt();
+    auto boarder = json->get("boarder");
+    bool success = boarder->get(0) != nullptr;
+    for (int i=0; i<boarder->size(); i+=2){
+        int xw = boarder->get(i)->asInt();
+        xw = (xOffset + x * xw) * 128;
+        int yw = boarder->get(i+1)->asInt();
+        yw = (yOffset + y * yw) * 128;
+        _boarder.emplace_back(Vec2(xw, yw));
+    }
+    auto walls = json->get("walls");
+    for (int i=0; i<walls->size(); i++){
+        auto obs = walls->get(i)->get("data");
+        std::vector<Vec2> v;
+        for (int n=0; n<obs->size(); n+=2){
+            int xw = obs->get(n)->asInt();
+            xw = (xOffset + x * xw) * 128;
+            int yw = obs->get(n+1)->asInt();
+            yw = (yOffset + y * yw) * 128 ;
+            v.emplace_back(Vec2(xw, yw));
+        }
+        _collision.emplace_back(v);
+    }
+    return success;
+}
 /**
  * Loads the singular exit door
  *

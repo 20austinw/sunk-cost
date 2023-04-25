@@ -38,9 +38,9 @@ class TileController {
      * @param color     The tile color
      */
     TileController(Vec2 position, Size size, Color4 color, bool traversable,
-                   const std::shared_ptr<Texture>& texture) {
+                   const std::shared_ptr<Texture>& texture, int yPos = -1) {
         _model =
-            std::make_unique<TileModel>(position, size, color, traversable);
+            std::make_unique<TileModel>(position, size, color, traversable, yPos);
         _view = std::make_unique<TileView>(position, size, color, texture);
     }
 
@@ -50,6 +50,14 @@ class TileController {
      *  Returns whether the tile is traversable
      */
     bool isTraversable() { return _model->traversable; }
+    
+    Vec2 getPosition() {
+        return _model->getPosition();
+    }
+    
+    int getYPos() {
+        return _model->yPos;
+    }
 
 #pragma mark Update Methods
   public:

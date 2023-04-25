@@ -6,16 +6,20 @@
 #include <cugl/cugl.h>
 #include <unordered_set>
 #include <vector>
-using namespace cugl;
 #include "HunterController.h"
 #include "InputController.h"
 #include "LevelModel.h"
 #include "PortraitSetController.h"
 #include "SpiritController.h"
+#include "TileController.h"
 #include "TilemapController.h"
 #include "EndScene.h"
 #include "DoorController.hpp"
 #include "TrapController.hpp"
+#include "Minimap.h"
+
+using namespace cugl;
+
 
 /**
  * The primary controller for the game logic.
@@ -40,7 +44,7 @@ public:
         /** Time to start the game */
         START,
         /** Game was aborted; back to main menu */
-        ABORT
+        ABORT,
     };
 
 #pragma mark Internal References
@@ -68,7 +72,7 @@ public:
     // VIEW items are going to be individual variables
     // In the future, we will replace this with the scene graph
     /** The backgrounnd image */
-    std::shared_ptr<cugl::Texture> _background;
+    std::shared_ptr<cugl::scene2::PolygonNode> _background;
     /** The text with the current health */
     std::shared_ptr<cugl::TextLayout> _text;
 
@@ -78,7 +82,7 @@ public:
     bool _levelLoaded;
 
     std::shared_ptr<scene2::PolygonNode> _map;
-    std::shared_ptr<scene2::PolygonNode> _miniMap;
+    std::shared_ptr<Minimap> _miniMap;
 
     Status _status;
 
@@ -99,8 +103,10 @@ public:
 
     std::vector<std::shared_ptr<DoorController>> _doors;
     std::shared_ptr<Font> _font;
+    float _textHeight = 100;
+    float _timerScale;
     std::shared_ptr<cugl::scene2::Label> _timerLabel;
-    int _timeLeft = 100*60;
+    int _timeLeft = 90*60;
 
     /** If hunter trigger the trap */
     bool _trapTriggered;
@@ -115,11 +121,24 @@ public:
     int _alertTimer;
     
     int _doorToUnlock;
-
+    
+    Vec2 _trapPos;
+    
+    float _hunterYPos;
+    
+    float _hunterXPos;
+    
+    int _prevInd;
+    
 #pragma mark External References
   private:
     /** The tilemap to procedurally generate */
     std::shared_ptr<TilemapController> _tilemap;
+    std::vector<std::shared_ptr<TileController>> _obstacles;
+    std::vector<std::vector<std::shared_ptr<TileController>>> _sortedObstacles;
+    std::shared_ptr<scene2::PolygonNode> _obstacleNode;
+    std::vector<std::shared_ptr<scene2::SpriteNode>> _candleNodes;
+    std::vector<std::shared_ptr<scene2::PolygonNode>> _hunterNodes;
 
 #pragma mark Main Methods
   public:
@@ -137,12 +156,11 @@ public:
                     const std::shared_ptr<AssetManager>& assets);
 
 #pragma mark Gameplay Handling
-    float getZoom();
     /**
      * Resets the status of the game so that we can play again.
      */
     void reset();
-
+    float getZoom();
     /**
      * Responds to the keyboard commands.
      *
@@ -262,7 +280,28 @@ public:
     void updateDoors();
     
     void transmitLockedDoor(int i);
-
+    
+    void addFloorTile(int type, int c, int r);
+    
+    void addWallTile(int type, int c, int r);
+    
+    void addWallUpper(int type, int c, int r);
+    
+    void addWallGrime(int type, int c, int r);
+    
+    void addWallLower(int type, int c, int r);
+    
+    void addFurnitures(int type, int c, int r);
+    
+    void addCandles(int type, int c, int r);
+    
+//    void addPolys();
+    
+    void modifyTexture(std::shared_ptr< Texture >& texture, int index, int row, int col);
+    
+    void sortNodes();
+    
+    int getHunterInd();
 
 };
 

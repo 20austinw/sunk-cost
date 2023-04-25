@@ -57,6 +57,12 @@ protected:
     
     /** The current status */
     Status _status;
+    
+    bool _codeDisplayed;
+    
+    int _numPlayers;
+    
+    std::vector<cugl::scene2::PolygonNode> _numbers;
 
 public:
 #pragma mark -
@@ -148,7 +154,11 @@ public:
      * Since the network controller is a smart pointer, it is only fully disconnected
      * when ALL scenes have been disconnected.
      */
-    void disconnect() { _network = nullptr; }
+    void disconnect() {
+        _network = nullptr;
+        
+        _codeDisplayed = false;
+    }
 
 private:
     /**
@@ -218,6 +228,12 @@ private:
      * players.
      */
     void startGame();
+    
+    void displayCode(std::string code);
+    
+    std::string numToFile(char num);
+    
+    void removeCode();
     
 };
 

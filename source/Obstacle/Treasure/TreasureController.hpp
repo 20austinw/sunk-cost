@@ -24,10 +24,11 @@ private:
     /** View reference */
     std::unique_ptr<TreasureView> _view;
     Size _screenSize;
+    float _scale;
 public:
     TreasureController() {};
     
-    TreasureController(const std::shared_ptr<cugl::AssetManager>& assets, Size screenSize, Vec2 playerSize);
+    TreasureController(const std::shared_ptr<cugl::AssetManager>& assets, Size screenSize, Vec2 playerSize, Vec2 position);
     
     std::shared_ptr<TreasureModel> getModel();
     void setViewFrame();

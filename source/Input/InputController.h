@@ -60,6 +60,8 @@ class InputController {
     Uint32 _touchKey;
     /** The touch position  */
     cugl::Vec2 _touchPos;
+    cugl::Vec2 _center;
+    
     /** Whether the finger touch is down */
     bool _touchDown;
     bool _touchUp;
@@ -137,6 +139,8 @@ class InputController {
      * @return amount to turn the hunter.
      */
     float getRight() const { return _rightward; }
+    bool getTouchDown() const { return _touchDown; }
+    cugl::Vec2 getCenter() const {return _center;}
 
     /**
      * Returns whether the exit button was pressed.

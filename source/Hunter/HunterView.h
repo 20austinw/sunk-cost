@@ -35,12 +35,18 @@ class HunterView {
      */
 
     HunterView(const std::shared_ptr<cugl::AssetManager>& assets, Vec2 position,
-               Size size) {
+               Size size, int color) {
 
         _frameNum = 8;
-
-        _spriteSheets.push_back(assets->get<Texture>("hunterrunning"));
-        _spriteSheets.push_back(assets->get<Texture>("hunterleft"));
+        if(color==0){
+            _spriteSheets.push_back(assets->get<Texture>("hunterrunning"));
+            _spriteSheets.push_back(assets->get<Texture>("hunterleft"));
+        }else if(color==1){
+            _spriteSheets.push_back(assets->get<Texture>("hunterorange"));
+        }else{
+            _spriteSheets.push_back(assets->get<Texture>("huntergreen"));
+        }
+        
 
         float width = size.width * 1.5f;
 
@@ -74,6 +80,12 @@ class HunterView {
     void addChildTo(const std::shared_ptr<cugl::Scene2>& scene) {
         for (int i = 0; i < _spriteNodes.size(); i++) {
             scene->addChild(_spriteNodes[i]);
+        }
+    }
+    
+    void addChildToNode(std::vector<std::shared_ptr<scene2::PolygonNode>>& hunterNodes) {
+        for (int i = 0; i < _spriteNodes.size(); i++) {
+            hunterNodes.emplace_back(_spriteNodes[i]);
         }
     }
 

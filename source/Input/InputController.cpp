@@ -89,8 +89,9 @@ std::shared_ptr<InputController> InputController::getInstance() {
     static std::shared_ptr<InputController> inputController;
     if (inputController == nullptr) {
         inputController = std::make_shared<InputController>();
+        inputController->initListeners();
     }
-    inputController->initListeners();
+    
     return inputController;
 }
 
@@ -249,6 +250,8 @@ void InputController::touchDownCB(const cugl::TouchEvent& event, bool focus) {
         _touchDown = true;
         _touchID = event.touch;
         _touchPos = event.position;
+        _center =event.position;
+
     }
 }
 

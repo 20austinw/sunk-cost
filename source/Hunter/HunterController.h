@@ -29,6 +29,9 @@ class HunterController {
     cugl::Vec2 _pos;
     /** Velocity of the hunter */
     cugl::Vec2 _vel;
+    cugl::Vec2 _scale;
+    
+    float _pscale;
 
     // The following are protected, because they have no accessors
     /** Current angle of the hunter */
@@ -61,7 +64,7 @@ class HunterController {
      * The constructor should set up the model, view, and camera controller
      */
 
-    HunterController(const std::shared_ptr<cugl::AssetManager>& assets, Size screenSize, const std::shared_ptr<cugl::Scene2> scene, Vec2 playerSize);
+    HunterController(const std::shared_ptr<cugl::AssetManager>& assets, Size screenSize, const std::shared_ptr<cugl::Scene2> scene, Vec2 playerSize, int color,float scale);
     
     /**
      * Gets the viewpoint for the hunter's camera
@@ -94,6 +97,10 @@ class HunterController {
     void collisionWithTrap();
   
     std::vector<std::shared_ptr<TrapModel>> getTraps();
+    
+    std::vector<std::shared_ptr<TrapView>> getTrapViews();
+    
+    void applyForce(cugl::Vec2 force);
 
 #pragma mark Setters
   public:
@@ -104,7 +111,7 @@ class HunterController {
      */
     void updatePosition(cugl::Vec2 position) {
         _model->setPosition(position);
-        _view->setPosition(position);
+        _view->setPosition(100*_model->getPosition());
     }
 
     /**
@@ -135,6 +142,10 @@ class HunterController {
     void move(float forward, float rightward);
     Vec2 getPosition();
     
+    std::shared_ptr<HunterModel> getModel();
+    
+    void setPosition(Vec2 position);
+    
     b2Body* getHunterBody();
     
     void setAsObstacle(std::shared_ptr<cugl::physics2::ObstacleWorld> world);
@@ -160,5 +171,11 @@ class HunterController {
     void addTrap(Vec2 position) { _model->addTrap(position); }
     
     void removeTrap(int index) { _model->removeTrap(index); }
+    
+    int getTrapSize(){ return _model->getTrapSize();}
+    
+    void addChildToNode(std::vector<std::shared_ptr<scene2::PolygonNode>>& node);
+    
+    Vec2 getVelocity();
 };
 #endif /* _HUNTER_CONTROLLER_H__ */

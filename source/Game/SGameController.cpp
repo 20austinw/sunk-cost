@@ -6,7 +6,7 @@
 //  a scene. Instead it is a subcontroller that references a scene. This
 //  is a legitimate design choice.
 //
-//  Authors of Referenced File: Walker White and Gonzalo Gonzalez
+//  Authors of Referenced File: Austin and Crystal
 //  Version: 2/22/23
 //
 // This is in the same directory
@@ -32,14 +32,18 @@ SGameController::SGameController(
 : _assets(assets) {
     /// Initialize the tilemap and add it to the scene
     _scene = cugl::Scene2::alloc(displaySize);
-    std::shared_ptr<scene2::PolygonNode> background =
-    scene2::PolygonNode::allocWithPoly(cugl::Rect(0, 0, 20000, 20000));
-    background->setColor(Color4::BLACK);
-    background->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-    background->setPosition(-1 * Size(9000, 9000) / 2);
-    _scene->addChild(background);
+    _background =
+    scene2::PolygonNode::allocWithPoly(cugl::Rect(0, 0, _scene->getSize().width, _scene->getSize().height));
+    _background->setColor(Color4::BLACK);
+    _background->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    _scene->addChild(_background);
+    
     _tilemap = std::make_shared<TilemapController>();
     _tilemap->addChildTo(_scene);
+    
+    _obstacleNode = scene2::PolygonNode::alloc();
+    _scene->addChild(_obstacleNode);
+    
     // Initialize PortraitSetController
     _portraits = std::make_shared<PortraitSetController>(_assets, _scene, 0,
                                                          displaySize);
@@ -50,7 +54,7 @@ SGameController::SGameController(
     
     // Initialize SpiritController
     _spirit = SpiritController(_assets, _scene, _portraits, _scene->getSize());
-    _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
+    _level = _assets->get<LevelModel>(LEVEL_THREE_KEY);
     if (_level == nullptr) {
         _levelLoaded = false;
 //        CULog("Fail!");
@@ -65,18 +69,22 @@ SGameController::SGameController(
     string minutes = std::to_string(_timeLeft/60/60);
     string seconds =  std::to_string(_timeLeft/60%60);
     seconds = seconds.length() <= 1 ? "0"+seconds : seconds;
-    _timerLabel = cugl::scene2::Label::allocWithText(Vec2(800,800), minutes + ":" + seconds, _assets->get<Font>("pixel32"));
-    _timerLabel->setScale(4);
+    _timerLabel = cugl::scene2::Label::allocWithText(Vec2(0, 0), minutes + ":" + seconds, _assets->get<Font>("pixel32"));
+    _timerScale = _textHeight/_timerLabel->getSize().height;
     _scene->addChild(_timerLabel);
-    _endScene = std::make_shared<EndScene>(assets, true);
+    _endScene = std::make_shared<EndScene>(_scene, assets, true);
     
     _trapTriggered = false;
     _doorUnlocked = false;
     _treasureStolen = false;
+    _trapPos = Vec2::ZERO;
     
     _alertLabel= cugl::scene2::Label::allocWithText(Vec2(0,displaySize.height/2), "The treasure has been STOLEN", _assets->get<Font>("pixel32"));
     _alertLabel->setPosition(_scene->getCamera()->getPosition()+Vec2(350,350));
     _alertLabel->setForeground(cugl::Color4f::RED);
+    
+    _miniMap = make_shared<Minimap>( _assets, _scene, _tilemap);
+    _miniMap->addChildTo(_scene);
 }
 
 #pragma mark Gameplay Handling
@@ -104,26 +112,22 @@ bool blocked = false;
 
 void SGameController::update(float dt) {
     if(_gameStatus == 0){
+        sortNodes();
+        
         bool canSwitch = true;
         bool didSwitch = false;
         
-        Vec2 minimapOffset = Vec2(_scene->getSize().width, 0) - (_miniMap == nullptr ? Vec2::ZERO : Vec2(_miniMap->getSize().width, 0)) - Vec2(60, -30);
-        
         if (!_levelLoaded) {
             checkLevelLoaded();
-            _portraits->setIndex(4);
+            _portraits->setIndex(1);
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(1);
+            ->setZoom(0.3);
         }
         
-//        if (_trapTriggered) {
-//            _alertLabel->setText("Trap triggered");
-//        } else
         if (_treasureStolen) {
             _alertLabel->setText("The treasure has been stolen");
         }
         
-//        if (_alertTimer == 0 && (_treasureStolen || _trapTriggered)) {
         if (_alertTimer == 0 && _treasureStolen) {
             _scene->addChild(_alertLabel);
             _alertTimer++;
@@ -145,12 +149,15 @@ void SGameController::update(float dt) {
         inputController->readInput();
         if (inputController->didPressReset()) {
             reset();
-//            CULog("Reset!");
         }
         
         bool start = inputController->didPress();
         bool release = inputController->didRelease();
         Vec2 cameraPos = _scene->getCamera()->screenToWorldCoords(inputController->getTouchPos());
+        
+        // Draw background
+        _background->setScale(1/getZoom());
+        _background->setPosition(_scene->getCamera()->screenToWorldCoords(Vec2(0, _scene->getSize().height)));
         
         //logic for door lock
         if ((inputController->isTouchDown() || _spirit.getModel()->isOnLock) && _spirit.getModel()->doors >= 0 && !blocked && !_spirit.getModel()->isOnTrap){
@@ -164,9 +171,7 @@ void SGameController::update(float dt) {
                 _spirit.updateMovingLock(cameraPos);
                 for (int i=0; i<_doors.size();i++){
                     if(_doors.at(i)->update(start,release, cameraPos)){
-                        //a door is locked
                         isLocked = true;
-//                        CULog("transmitting locked door");
                         transmitLockedDoor(i);
                     }
                 }
@@ -214,45 +219,6 @@ void SGameController::update(float dt) {
             _spirit.getModel()->setTrapState(false);
         }
         
-        //logic for camera switching & battery
-        if (inputController->isTouchDown()) {
-            auto screenPos = inputController->getTouchPos();
-            
-            // Check if click is minimap
-            auto inBound = [&](Vec2 pos) {
-                if (pos.x >= minimapOffset.x && pos.y >= minimapOffset.y &&
-                    pos.x <=
-                    _miniMap->getSize().width * getZoom() + minimapOffset.x &&
-                    pos.y <=
-                    _miniMap->getSize().height * getZoom() + minimapOffset.y) {
-                    return true;
-                }
-                return false;
-            };
-            // Logic for switching cameras
-            if (inBound(screenPos) && canSwitch) {
-                auto miniMapPos =
-                Vec2(screenPos.x - _miniMap->getSize().width / 2 * getZoom() -
-                     minimapOffset.x,
-                     _miniMap->getSize().height / 2 * getZoom() +
-                     minimapOffset.y - screenPos.y);
-                auto mapPos = miniMapPos / _miniMap->getScale() / getZoom();
-                int idx = _portraits->getNearest(mapPos);
-                if (_spirit.isSwitchable() && _portraits->getIndex() != idx) {
-                    _portraits->setIndex(idx);
-                    std::dynamic_pointer_cast<OrthographicCamera>(
-                                                                  _scene->getCamera())
-                    ->setZoom(1);
-                    _spirit.resetCameraCool();
-                    transmitActiveCamIndex(idx);
-                    didSwitch = true;
-                } else if (!_spirit.isSwitchable() &&
-                           _portraits->getIndex() != idx) {
-                    _portraits->resetScale();
-                }
-            }
-            
-        }
         if (!didSwitch) {
             _spirit.decreaseCameraCool();
         }
@@ -261,15 +227,13 @@ void SGameController::update(float dt) {
         _scene->getCamera()->setPosition(
                                          _portraits->getPosition(_portraits->getIndex()) + offset);
         
-        // Draw battery
-        _portraits->updateBattery();
-        _portraits->updateBatteryNode(_scene, _miniMap->getSize().width);
         
         // Black screen
         if (!_portraits->getCurState() && _portraits->getPrevState()) {
             // Redraw doors
+            CULog("Adding block!");
             _portraits->addBlock(_scene);
-            _portraits->refreshBatteryNodes(_scene);
+            _portraits->refreshBatteryNodes(_scene); //drawing order refresh
             blocked = true;
         } else if (_portraits->getCurState() && !_portraits->getPrevState()) {
             // Redraw doors
@@ -280,9 +244,7 @@ void SGameController::update(float dt) {
         _portraits->setPrevState(_portraits->getCurState());
         
         if (_doorUnlocked && _doorToUnlock != -1){
-            CULog("add un Lock: %i", _doorToUnlock);
             if (_doors.at(_doorToUnlock)->isLocked()){
-                CULog("addLock: %i", _doorToUnlock);
                 _doors.at(_doorToUnlock)->resetHunterUnlock();
                 _spirit.addNewLock(_scene);
                 _doorUnlocked = false;
@@ -291,9 +253,10 @@ void SGameController::update(float dt) {
         }
         
         // detect if a trap or door on the map has been removed, add a new trap button to the scene
-        int result = _spirit.update(_trapTriggered);
+        int result = _spirit.update(_trapTriggered, _trapPos);
         if (_trapTriggered){
             _trapTriggered = false;
+            _trapPos = Vec2::ZERO;
         }
         if(result == 1){
             _spirit.addNewTrapBtn(_scene);
@@ -302,15 +265,9 @@ void SGameController::update(float dt) {
             _spirit.addNewTrapBtn(_scene);
         }
         
-        // Draw minimap
-        _miniMap->setPosition(_scene->getCamera()->screenToWorldCoords(
-                                                                       _miniMap->getSize() / 2 * getZoom() + minimapOffset));
-        _scene->removeChild(_miniMap);
-        _scene->addChild(_miniMap);
-        
         // Draw locks
-        _spirit.updateLocksPos(_scene);
-        _spirit.updateTrapBtnsPos(_scene);
+        _spirit.updateLocksPos(_scene); //drawing order refresh
+        _spirit.updateTrapBtnsPos(_scene); //drawing order refresh
         
         if(!blocked){
             _scene->getCamera()->update();
@@ -332,42 +289,58 @@ void SGameController::update(float dt) {
                 _spirit.setTrapAdded(false);
             }
         }
+        
+        // Draw minimap
+        if(inputController->isTouchDown() && _miniMap->isClicked(inputController->getPosition())){
+            Vec2 mapPos = _miniMap->getMapPosition();
+            int idx = _portraits->getNearest(mapPos);
+            if (_portraits->getIndex() != idx && _spirit.isSwitchable()){
+                _portraits->setIndex(idx);
+                CULog("%i", _portraits->getIndex());
+                _spirit.resetCameraCool();
+            } else if (! _spirit.isSwitchable() && _portraits->getIndex() != idx){
+                _portraits->resetScale();
+            }
+        }
+        
+        
+        // Draw battery (has to come after the minimap update)
+        _portraits->updateBattery();
+        _portraits->updateBatteryNode(_scene, 50); //drawing order refresh
+        
+        _miniMap->update();
+        _miniMap->removeChildFrom(_scene);
+        _miniMap->addChildTo(_scene); //drawing order refresh
+        
+        // Draw timer and alert labels
         string minutes = std::to_string(_timeLeft/60/60);
         string seconds =  std::to_string(_timeLeft/60%60);
         seconds = seconds.length() <= 1 ? "0"+seconds : seconds;
         _timerLabel->setText(minutes + ":" + seconds);
-        _timerLabel->setScale(4);
-//        CULog("%f, %f", _timerLabel->getSize().width, _timerLabel->getSize().height);
-        //        CULog("%f, %f", _scene->getCamera()->getPosition().x, _scene->getCamera()->getPosition().y);
-        //        _timerLabel->setPosition(Vec2(_scene->getCamera()->getPosition().x, 0)+Vec2(-_timerLabel->getSize().width/2, _timerLabel->getSize().height/2) + Vec2(0, 20));
-        float vPos = _scene->getSize().height-20-_timerLabel->getSize().height/2;
-        float hPos = _scene->getSize().width/2-_timerLabel->getSize().width/2;
+        _timerLabel->setScale(_timerScale/getZoom());
+        float vPos = _scene->getSize().height-20-_timerLabel->getSize().height*getZoom()/2;
+        float hPos = _scene->getSize().width/2-_timerLabel->getSize().width*getZoom()/2;
         _timerLabel->setPosition(_scene->getCamera()->screenToWorldCoords(Vec2(hPos, vPos)));
-        vPos = _scene->getSize().height/2-_alertLabel->getSize().height/2;
-        hPos = _scene->getSize().width/2-_alertLabel->getSize().width/2;
+        vPos = _scene->getSize().height/2-_alertLabel->getSize().height*getZoom()/2;
+        hPos = _scene->getSize().width/2-_alertLabel->getSize().width*getZoom()/2;
         _alertLabel->setPosition(_scene->getCamera()->screenToWorldCoords(Vec2(hPos, vPos)));
         _timerLabel->setForeground(cugl::Color4::WHITE);
         _scene->removeChild(_timerLabel);
         _scene->addChild(_timerLabel);
-        _timeLeft--;
         if(_timeLeft <= 0) {
             _gameStatus = 1;
-            _endScene = std::make_shared<EndScene>(_assets, true);
+            _endScene = std::make_shared<EndScene>(_scene, _assets, true);
             _endScene->addChildTo(_scene);
         }
-    }else if(_gameStatus == 1){
-        // Spirit won
-        CULog("Spirit wins!");
-        _endScene->update();
-    }else{
-        // Spirit lost
     }
-    //    cnt++;
-    //    if(cnt == 100) {
-    //        _gameStatus = 1;
-    //        _endScene = make_shared<EndScene>(_assets, true);
-    //        _endScene->addChildTo(_scene);
-    //    }
+    else{
+        _endScene->update();
+        if(_timeLeft <= -5*60){
+            CULog("Switch to reset screen!");
+            _status = ABORT;
+        }
+    }
+    _timeLeft--;
 }
 
 /**
@@ -385,7 +358,7 @@ void SGameController::render(std::shared_ptr<cugl::SpriteBatch>& batch) {
 }
 
 void SGameController::checkLevelLoaded() {
-    _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
+    _level = _assets->get<LevelModel>(LEVEL_THREE_KEY);
     if (_level == nullptr) {
         _levelLoaded = false;
     }
@@ -395,44 +368,123 @@ void SGameController::checkLevelLoaded() {
         _level = nullptr;
         
         // Access and initialize level
-        _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
+        _level = _assets->get<LevelModel>(LEVEL_THREE_KEY);
         _level->setAssets(_assets);
         
-        CULog("Loading level!");
-        
         _tilemap->updatePosition(_scene->getSize() / 2);
-        std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
-        _tilemap->updateDimensions(Vec2(tiles[0].size(), tiles.size()));
-        _tilemap->updateColor(Color4::BLACK);
+        std::vector<std::vector<int>> tiles = _level->getTileTextures();
+        int height = tiles[0].size();
+        int width = tiles.size();
+        _tilemap->updateDimensions(Vec2(height, width));
+        _tilemap->updateColor(Color4::WHITE);
         _tilemap->updateTileSize(Size(128, 128));
         for (int i = 0; i < tiles.size() * tiles[0].size(); ++i) {
             int c = i % tiles[0].size();
             int r = i / tiles[0].size();
-            if (tiles[r][c] == "black") {
-                _tilemap->addTile(c, r, Color4::BLACK, false,
-                                  _assets->get<Texture>("black"));
-            } else if (tiles[r][c] == "green") {
-                _tilemap->addTile(c, r, Color4::GREEN, true,
-                                  _assets->get<Texture>("green"));
-            } else if (tiles[r][c] == "door") {
-                _tilemap->addDoor(c, r, _assets->get<Texture>("fulldoor"));
+            int type = tiles[r][c];
+            addFloorTile(type, c, width-1-r);
+        }
+        
+        std::vector<std::vector<int>> walls = _level->getWallTextures();
+        height = walls[0].size();
+        width = walls.size();
+        for (int i = 0; i < walls.size() * walls[0].size(); ++i) {
+            int c = i % walls[0].size();
+            int r = i / walls[0].size();
+            int type = walls[r][c];
+            addWallTile(type, c, width-1-r);
+        }
+        
+        walls= _level->getWallUpperTextures();
+        height = walls[0].size();
+        width = walls.size();
+        for (int i = 0; i < height*width; ++i) {
+            int c = i % height;
+            int r = i / height;
+            int type = walls[r][c];
+            addWallUpper(type, c, width-1-r);
+        }
+        
+        walls = _level->getWallGrimeTextures();
+        height = walls[0].size();
+        width = walls.size();
+        for (int i = 0; i < height*width; ++i) {
+            int c = i % height;
+            int r = i / height;
+            int type = walls[r][c];
+            addWallGrime(type, c, width-1-r);
+        }
+        
+        walls = _level->getWallLowerTextures();
+        height = walls[0].size();
+        width = walls.size();
+        for (int i = 0; i < height*width; ++i) {
+            int c = i % height;
+            int r = i / height;
+            int type = walls[r][c];
+            addWallLower(type, c, width-1-r);
+        }
+        
+        walls = _level->getFurnitureTextures();
+        height = walls[0].size();
+        width = walls.size();
+        for (int i = 0; i < height*width; ++i) {
+            int c = i % height;
+            int r = i / height;
+            int type = walls[r][c];
+            addFurnitures(type, c, width-1-r);
+        }
+        
+        std::sort(_obstacles.begin(),_obstacles.end(), [](std::shared_ptr<TileController> &a, std::shared_ptr<TileController> &b){ return a->getPosition().x<b->getPosition().x; });
+    
+        std::vector<std::shared_ptr<TileController>> tmp;
+        tmp.emplace_back(_obstacles.at(0));
+        for (int i=1; i<_obstacles.size(); i++){
+            if (_obstacles.at(i)->getPosition().x != _obstacles.at(i-1)->getPosition().x){
+                _sortedObstacles.emplace_back(tmp);
+                tmp.clear();
+            }
+            tmp.emplace_back(_obstacles.at(i));
+        }
+        _obstacles.clear();
+        
+        for (int i=0; i<_sortedObstacles.size();i++){
+            std::sort(_sortedObstacles.at(i).begin(),_sortedObstacles.at(i).end(), [](std::shared_ptr<TileController> &a, std::shared_ptr<TileController> &b){ return a->getYPos()>b->getYPos(); });
+        }
+        
+        for (int n=0; n<_sortedObstacles.size(); n++){
+            for (int m=0; m<_sortedObstacles.at(n).size(); m++){
+                _sortedObstacles[n][m] ->removeChildFrom(_obstacleNode);
+                _sortedObstacles[n][m] ->addChildTo(_obstacleNode);
             }
         }
-        _map =
-        scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
         
-        _scene->addChild(_map);
-        _miniMap = scene2::PolygonNode::allocWithTexture(
-                                                         _assets->get<Texture>("minimap"));
-        _miniMap->setScale(0.1);
-        _scene->addChild(_miniMap);
-        _tilemap->addDoorTo(_scene);
+        
+//        for(int i=0; i<_obstacles.size(); i++) {
+//            _obstacles.at(i)->removeChildFrom(_obstacleNode);
+//            _obstacles.at(i)->addChildTo(_obstacleNode);
+//        }
+        
+        
+//        walls = _level->getCandleTextures();
+//        height = walls[0].size();
+//        width = walls.size();
+//        for (int i = 0; i < height*width; ++i) {
+//            int c = i % height;
+//            int r = i / height;
+//            int type = walls[r][c];
+//            addCandles(type, c, width-1-r);
+//        }
+        
+//        addPolys();
+
+//        _tilemap->addDoorTo(_scene);
         for (int i = 0; i < _level->getPortaits().size(); i++) {
             _portraits->addPortrait(i + 1, _level->getPortaits()[i].first,
                                     _level->getPortaits()[i].second,
                                     Vec3(0, 0, -1), Vec2::ZERO,
                                     _level->getBattery());
-            
+            CULog("Portrait %i at position %f, %f", i, _portraits->getPosition(i).x, _portraits->getPosition(i).y);
             _levelLoaded = true;
         }
         _portraits->setMaxbattery(_level->getBattery());
@@ -483,11 +535,16 @@ void SGameController::processData(const std::string source, const std::vector<st
         _deserializer->receive(data);
         std::vector<float> mes = std::get<std::vector<float>>(_deserializer->read());
         if (mes[0] == 0 && !_hunterAdded) {
-            _spirit.addHunter(Vec2(mes[1], mes[2]));
+            _spirit.addHunter(Vec2(mes[1], mes[2]), _hunterNodes);
+            for(int i=0; i<_hunterNodes.size(); i++){
+                _obstacleNode->addChild(_hunterNodes.at(i));
+            }
             _spirit.moveHunter(Vec2(400, 400));
             _hunterAdded = true;
         } else if (mes[0] == 0) {
             _spirit.moveHunter(Vec2(mes[1], mes[2]));
+            _hunterXPos = mes[1];
+            _hunterYPos = mes[2];
         }
         
         // lol i'll work out more coherent codes for each message later oops
@@ -506,7 +563,7 @@ void SGameController::processData(const std::string source, const std::vector<st
         
         if (mes[0] == 7) {
             _trapTriggered = true;
-            Vec2 trapPos = Vec2(mes[1], mes[2]);
+            _trapPos = Vec2(mes[1], mes[2]);
         }
         
         // Win alert for spirit
@@ -542,4 +599,143 @@ void SGameController::transmitLockedDoor(int i) {
     _serializer->writeFloatVector(idx);
     _network->broadcast(_serializer->serialize());
     _serializer->reset();
+}
+
+void SGameController::addFloorTile(int type, int c, int r){
+    if (type == 0) {
+        _tilemap->addTile(c, r, Color4::BLACK, false,
+                                  _assets->get<Texture>("black"));
+        Vec2 pos(128 * c, 128 * r);
+        std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, _assets->get<Texture>("black"), pos.y+12);
+        _obstacles.emplace_back(tile);
+        tile->addChildTo(_obstacleNode);
+    }else{
+        std::shared_ptr< Texture > floor = _assets->get<Texture>("floor");
+        modifyTexture(floor, type-65, 8, 8);
+        _tilemap->addTile(c, r, Color4::WHITE, true, floor);
+    }
+}
+
+void SGameController::addWallTile(int type, int c, int r){
+    if(type == 0) {
+        return;
+    }
+    int index = type-1;
+    std::shared_ptr< Texture > wall = _assets->get<Texture>("wall");
+    modifyTexture(wall, index, 8, 8);
+    Vec2 pos(128 * c, 128 * r);
+    int yPos = pos.y+11;
+    if (index == 0 || index == 1 || index == 8|| index == 9 || index == 10 || index == 11 || index == 20 || index == 21 || index == 22 || index == 34 || index == 35) {
+        yPos -= 256;
+    } else if (index == 32 || index == 33){
+        yPos -= 128;
+    } else if (index == 41 || index == 42 || index == 48 || index == 49){
+        yPos += 128;
+    }
+    
+    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall, yPos);
+    _obstacles.emplace_back(tile);
+    tile->addChildTo(_obstacleNode);
+}
+
+void SGameController::addWallUpper(int type, int c, int r){
+    if(type == 0) {
+        return;
+    }
+    std::shared_ptr< Texture > wall = _assets->get<Texture>("wall_upper");
+    modifyTexture(wall, type-329, 8, 8);
+    Vec2 pos(128 * c, 128 * r+16*128);
+    int ind = type - 329;
+    int yPos = pos.y+10;
+    if (ind >= 16 && ind <= 63){
+        yPos += 128;
+    }
+    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall, yPos);
+    _obstacles.emplace_back(tile);
+    tile->addChildTo(_obstacleNode);
+}
+
+void SGameController::addWallGrime(int type, int c, int r){
+    if(type == 0) {
+        return;
+    }
+    std::shared_ptr< Texture > wall = _assets->get<Texture>("wall_grime");
+    modifyTexture(wall, type-193, 8, 8);
+    Vec2 pos(128 * c, 128 * r+16*128);
+    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall, pos.y+9);
+    _obstacles.emplace_back(tile);
+    tile->addChildTo(_obstacleNode);
+}
+
+void SGameController::addWallLower(int type, int c, int r){
+    if(type == 0) {
+        return;
+    }
+    std::shared_ptr< Texture > wall = _assets->get<Texture>("wall_lower");
+    modifyTexture(wall, type-393, 8, 8);
+    Vec2 pos(128 * c, 128 * r+16*128);
+    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall, pos.y+8);
+    _obstacles.emplace_back(tile);
+    tile->addChildTo(_obstacleNode);
+}
+
+void SGameController::addFurnitures(int type, int c, int r){
+    if(type == 0 || type-129 == 0) {
+        return;
+    }
+    int idx = type - 129;
+    std::shared_ptr< Texture > furnitures = _assets->get<Texture>("furnitures");
+    modifyTexture(furnitures, idx, 8, 8);
+    Vec2 pos(128 * c, 128 * r +16*128 );
+    float yPos = pos.y+7;
+    if (idx == 6 || idx == 7){
+        yPos -= 256;
+    } else if (idx == 14 || idx == 15){
+        yPos -= 128;
+    }
+    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, furnitures, yPos);
+    _obstacles.emplace_back(tile);
+    tile->addChildTo(_obstacleNode);
+}
+
+void SGameController::addCandles(int type, int c, int r){
+    if (type == 0){
+        return;
+    }
+    std::shared_ptr< Texture > candleTexture = _assets->get<Texture>("candle");
+    std::shared_ptr<scene2::SpriteNode> candle = scene2::SpriteNode::allocWithSheet(candleTexture, 1, 8, 8);
+    candle->setFrame(type - 321);
+    candle->setPosition(Vec2(128 * c +16*128+32 , 128 * r +32*128+32 ));
+    _candleNodes.emplace_back(candle);
+    _obstacleNode->addChild(_candleNodes.at(_candleNodes.size()-1));
+}
+
+
+
+void SGameController::modifyTexture(std::shared_ptr<Texture>& texture, int index, int row, int col){
+    float x = 1.0/row;
+    float y = 1.0/col;
+    int c = index % row;
+    int r = index / row;
+    texture = texture->getSubTexture(c*y, (c+1)*y, r*x, (r+1)*x);
+}
+
+
+void SGameController::sortNodes(){
+    for (int n=0; n<_hunterNodes.size(); n++){
+        _obstacleNode->removeChild(_hunterNodes.at(n));
+        _obstacleNode->addChild(_hunterNodes.at(n));
+    }
+    
+    for (int i=0; i<_sortedObstacles.size(); i++){
+        float xDiff = abs(_hunterXPos- _sortedObstacles[i][0]->getPosition().x);
+        if (xDiff<128*2){
+            for (int n=0; n<_sortedObstacles.at(i).size(); n++){
+                if(_hunterYPos>_sortedObstacles[i][n]->getYPos()){
+                    _sortedObstacles[i][n]->removeChildFrom(_obstacleNode);
+                    _sortedObstacles[i][n]->addChildTo(_obstacleNode);
+                }
+            }
+        }
+    }
 }

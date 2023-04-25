@@ -66,7 +66,7 @@ class TileView {
     void addChildTo(const std::shared_ptr<scene2::SceneNode>& sceneNode) {
         sceneNode->addChild(_node);
     }
-
+    
     /**
      * Removes the view component children from the given `sceneNode`.
      *

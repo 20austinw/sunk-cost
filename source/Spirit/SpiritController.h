@@ -99,7 +99,7 @@ class SpiritController {
     bool placeTrap(const std::shared_ptr<TilemapController> _tilemap,
                 Vec2 trapPos);
     
-    int update(bool trap);
+    int update(bool trap, Vec2 pos);
 
 #pragma mark Setters
   public:
@@ -186,8 +186,8 @@ class SpiritController {
   public:
     Rect screenToWorld(Rect rect);
     
-    void addHunter(Vec2 pos) {
-        _model->addHunter(pos);
+    void addHunter(Vec2 pos, std::vector<std::shared_ptr<scene2::PolygonNode>>& hunterNodes) {
+        _model->addHunter(pos, hunterNodes);
     }
     
     void moveHunter(Vec2 pos) {

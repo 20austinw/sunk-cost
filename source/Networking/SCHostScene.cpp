@@ -74,6 +74,9 @@ bool HostScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
         return false;
     }
     
+    _codeDisplayed = false;
+    _numPlayers = 0;
+    
     // Start up the input handler
     _assets = assets;
     
@@ -84,8 +87,9 @@ bool HostScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
 
     _startgame = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("host_center_start"));
     _backout = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("host_back"));
-    _gameid = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("host_center_game_field_text"));
-    _player = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("host_center_players_field_text"));
+//    _gameid = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("host_center_game_field_text"));
+    _player = scene2::Label::allocWithText(Vec2(Application::get()->getDisplaySize().width/2, Application::get()->getDisplaySize().height/2 + 150), "0/4 Players Joined", _assets->get<Font>("pixel32"));
+    scene->addChild(_player);
     _status = Status::WAIT;
     
     // Program the buttons
@@ -93,6 +97,8 @@ bool HostScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
         if (down) {
             disconnect();
             _status = Status::ABORT;
+            removeCode();
+            _codeDisplayed = false;
         }
     });
 
@@ -253,8 +259,14 @@ bool HostScene::checkConnection() {
             if (_status != Status::START) {
                 _status = Status::IDLE;
             }
-            _gameid->setText(hex2dec(_network->getRoom()));
-            _player->setText(std::to_string(_network->getNumPlayers()));
+//            _gameid->setText(hex2dec(_network->getRoom()));
+//            _player->setText(std::to_string(_network->getNumPlayers()));
+            _numPlayers = _network->getNumPlayers();
+            _player->setColor(Color4f::WHITE);
+            _player->setText(std::to_string(_numPlayers) + "/4 Players Joined");
+            if (!_codeDisplayed) {
+                displayCode(hex2dec(_network->getRoom()));
+            }
             break;
         case NetcodeConnection::State::DENIED:
         case NetcodeConnection::State::MISMATCHED:
@@ -277,7 +289,7 @@ bool HostScene::checkConnection() {
  */
 void HostScene::configureStartButton() {
     // THIS IS WRONG. FIX ME.
-    if (_gameid->getText() == "") {
+    if (_codeDisplayed == false) {
         updateText(_startgame, "Waiting");
         _startgame->deactivate();
     } else {
@@ -302,3 +314,51 @@ void HostScene::startGame() {
     _network->broadcast(data);
 
 }
+
+void HostScene::displayCode(std::string code) {
+    removeCode();
+    int position = 0;
+    for(auto it = code.cbegin(); it != code.cend(); ++it) {
+        std::shared_ptr<Texture> numberTexture = _assets->get<Texture>(numToFile(*it));
+        std::shared_ptr<scene2::PolygonNode> number = scene2::PolygonNode::allocWithTexture(numberTexture);
+        number->setPosition(Vec2(300 + position * 230, Application::get()->getDisplaySize().height/2 - 250));
+        number->setScale(1.5);
+        addChildWithName(number, "code " + std::to_string(position));
+        position++;
+    }
+    if (position == 5) {
+        _codeDisplayed = true;
+    }
+}
+
+std::string HostScene::numToFile(char num) {
+    switch (num) {
+        case '1':
+            return "one_button";
+        case '2':
+            return "two_button";
+        case '3':
+            return "three_button";
+        case '4':
+            return "four_button";
+        case '5':
+            return "five_button";
+        case '6':
+            return "six_button";
+        case '7':
+            return "seven_button";
+        case '8':
+            return "eight_button";
+        case '9':
+            return "nine_button";
+        default:
+            return "zero_button";
+    }
+}
+
+void HostScene::removeCode() {
+    for(int i = 0; i < 5; i++) {
+        removeChildByName("code " + std::to_string(i));
+    }
+}
+

@@ -22,7 +22,23 @@ class LevelModel : public Asset {
     Rect _bounds;
 
     /** Vector of textures for tiles */
-    std::vector<std::vector<std::string>> _tiles;
+    std::vector<std::vector<int>> _tiles;
+    
+    std::vector<std::vector<int>> _walls;
+    
+    std::vector<std::vector<int>> _wallUpper;
+    
+    std::vector<std::vector<int>> _wallGrime;
+    
+    std::vector<std::vector<int>> _wallLower;
+    
+    std::vector<std::vector<int>> _furnitures;
+    
+    std::vector<std::vector<int>> _candles;
+    
+    std::vector<std::vector<Vec2>> _collision;
+    
+    std::vector<Vec2> _boarder;
 
     /** Dimenisons of this tilemap */
     Size _dimensions;
@@ -83,7 +99,23 @@ class LevelModel : public Asset {
 
 #pragma mark Getters
 
-    std::vector<std::vector<std::string>> getTileTextures() { return _tiles; }
+    std::vector<std::vector<int>> getTileTextures() { return _tiles; }
+    
+    std::vector<std::vector<int>> getWallTextures() { return _walls; }
+    
+    std::vector<std::vector<int>> getWallUpperTextures() { return _wallUpper; }
+    
+    std::vector<std::vector<int>> getWallGrimeTextures() { return _wallGrime; }
+    
+    std::vector<std::vector<int>> getWallLowerTextures() { return _wallLower; }
+    
+    std::vector<std::vector<int>> getFurnitureTextures() { return _furnitures; }
+    
+    std::vector<std::vector<int>> getCandleTextures() { return _candles; }
+    
+    std::vector<std::vector<Vec2>> getCollision() { return _collision; }
+    
+    std::vector<Vec2> getBoarder() {return _boarder; }
 
     Size getDimensions() { return _dimensions; }
 
@@ -210,8 +242,7 @@ class LevelModel : public Asset {
      *
      * @return true if the object was successfully loaded
      */
-    bool loadTiles(const std::shared_ptr<JsonValue>& json);
-    
+    bool loadTiles(const std::shared_ptr<JsonValue>& json, std::vector<std::vector<int>>& list);
     /**
      * Parses JSON and extracts tile positions and textures from it
      *
@@ -220,6 +251,8 @@ class LevelModel : public Asset {
      * @return true if the object was successfully loaded
      */
     bool loadDoors(const std::shared_ptr<JsonValue>& json);
+    
+    bool loadCollision(const std::shared_ptr<JsonValue>& json);
 };
 
 #endif //_LEVEL_MODEL_H

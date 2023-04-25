@@ -211,6 +211,10 @@ class TilemapController {
                      (int)mapPos.y / _model->tileSize.height);
         return gridPos;
     };
+    
+    Size getDimensions();
+    
+    Size getTileSize();
 };
 
 #endif /* _TILEMAP_CONTROLLER_H__ */

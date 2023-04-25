@@ -16,7 +16,7 @@
  */
 //bool init(b2Body* hunterBody, b2Body* trapBody, b2Body* treasureBody);
 bool CollisionController::init( b2Body* hunterBody, b2Body* treasureBody) {
-    CULog("collision init!!");
+//    CULog("collision init!!");
     _hunterBody = hunterBody;
 //    _trapBody = trapBody;
     _treasureBody = treasureBody;
@@ -32,28 +32,27 @@ bool CollisionController::init( b2Body* hunterBody, b2Body* treasureBody) {
  * Callback for when two obstacles in the world begin colliding
  */
 void CollisionController::beginContact(b2Contact* contact) {
-    b2Body* body1 = contact->GetFixtureA()->GetBody();
-    b2Body* body2 = contact->GetFixtureB()->GetBody();
-    CULog("Collision begin Contact");
-    if (body1 == _hunterBody || body2 == _hunterBody) {
-        CULog("Hunter body here");
-        didHitObstacle = true;
-    }
-    
-    if (body1 == _treasureBody || body2 == _treasureBody) {
-        CULog("Treasure body here");
-        didHitTreasure = true;
-    }
+//    b2Body* body1 = contact->GetFixtureA()->GetBody();
+//    b2Body* body2 = contact->GetFixtureB()->GetBody();
+////    CULog("Collision begin Contact");
+//    if (body1 == _hunterBody || body2 == _hunterBody) {
+//        CULog("Hunter body here");
+//        didHitObstacle = true;
+//    }
+//
+//    if (body1 == _treasureBody || body2 == _treasureBody) {
+//        CULog("Treasure body here");
+//        didHitTreasure = true;
+//    }
 
     // Check all of the traps
-   
+
 //    if ((_trapBody == body1 && _hunterBody == body2) ||
 //        (_trapBody == body2 && _hunterBody == body1)) {
 //        CULog("TRAP body here!");
 //        didHitTrap = true;
 //    }
-    
-    didHitObstacle = didHitObstacle;
+
 //
 //    didHitObstacle = didHitObstacle && !didHitTrap;
 }
@@ -62,12 +61,12 @@ void CollisionController::beginContact(b2Contact* contact) {
  * Callback for when two obstacles in the world end colliding
  */
 void CollisionController::endContact(b2Contact* contact) {
-    b2Body* body1 = contact->GetFixtureA()->GetBody();
-    b2Body* body2 = contact->GetFixtureB()->GetBody();
-    didHitTrap = false;
-    didHitTreasure = false;
+//    b2Body* body1 = contact->GetFixtureA()->GetBody();
+//    b2Body* body2 = contact->GetFixtureB()->GetBody();
+//    didHitTrap = false;
+//    didHitTreasure = false;
 
-    
+
 }
 
 /**

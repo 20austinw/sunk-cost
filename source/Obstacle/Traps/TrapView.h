@@ -88,6 +88,11 @@ class TrapView {
         scene->removeChild(_shadow);
         scene->removeChild(_spriteNode);
     }
+    
+    void setVisible(bool isVisible){
+        _shadow->setVisible(isVisible);
+        _spriteNode->setVisible(isVisible);
+    }
 
 #pragma mark Setters
     void setPosition(Vec2 position) { _spriteNode->setPosition(position); }

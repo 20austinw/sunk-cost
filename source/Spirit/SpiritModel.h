@@ -164,20 +164,20 @@ class SpiritModel {
     }
 
     // 0: nothing; 1: remove 1 trap; 2: remove 2 traps
-    int update(bool trapTriggered) {
+    int update(bool trapTriggered, Vec2 pos) {
         bool result = 0;
         std::vector<std::shared_ptr<TrapModel>> pendingTrapModels;
         std::vector<std::shared_ptr<TrapView>> pendingTrapViews;
         
-        if (trapTriggered){
+        int target = cloestTrapToHunter(pos);
+        if (trapTriggered && target != -1){
             result = 1;
             //remove the trap closest to the hunter position
-            int target = cloestTrapToHunter();
             _trapViews[target]->removeChildFrom(_scene);
         }
         
         for (int i = 0; i < _trapModels.size(); i++) {
-            if (!(trapTriggered && cloestTrapToHunter() == i)){
+            if (!(trapTriggered && target == i)){
                 pendingTrapModels.emplace_back(_trapModels[i]);
                 pendingTrapViews.emplace_back(_trapViews[i]);
                 
@@ -211,10 +211,14 @@ class SpiritModel {
         return result;
     }
     
-    void addHunter(Vec2 position) {
-        _hunterModel = std::make_shared<HunterModel>(_assets, _scene);
-        _hunterView = std::make_shared<HunterView>(_assets, position, Vec2(40, 40));
-        _hunterView->addChildTo(_scene);
+    void addHunter(Vec2 position, std::vector<std::shared_ptr<scene2::PolygonNode>>& hunterNodes) {
+        _hunterModel = std::make_shared<HunterModel>(_assets, _scene, 1024);
+        // A place holder for hunterID, 0 is blue, 1 is orange, 2 is green
+        int hunterID = 0;
+        _hunterView = std::make_shared<HunterView>(_assets, position, Vec2(40, 40), hunterID);
+        
+//        _hunterView->addChildTo(_scene);
+        _hunterView->addChildToNode(hunterNodes);
     }
     
     void moveHunter(Vec2 position) {
@@ -229,19 +233,13 @@ class SpiritModel {
         
     }
     
-    int cloestTrapToHunter(){
-        Vec2 hunterPos = _hunterModel->getPosition();
-        int result = -1;
-        float minDis = 100000;
+    int cloestTrapToHunter(Vec2 pos){
         for (int i = 0; i < _trapModels.size(); i++){
-            Vec2 trapPos = _trapModels[i]->getPosition();
-            float dis = trapPos.distance(hunterPos);
-            if(dis<minDis){
-                minDis = dis;
-                result = i;
+            if(pos == _trapModels[i]->getPosition()){
+                return i;
             }
         }
-        return result;
+        return -1;
     }
 };
 

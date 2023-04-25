@@ -27,6 +27,7 @@ using namespace cugl;
 #include "TreasureController.hpp"
 #include "TilemapController.h"
 #include "DoorController.hpp"
+#include "EndScene.h"
 
 /**
  * The primary controller for the game logic.
@@ -54,7 +55,9 @@ public:
         /** Time to start the game */
         START,
         /** Game was aborted; back to main menu */
-        ABORT
+        ABORT,
+        /** Game was ended; back to reset screen */
+        RESET
     };
 #pragma mark Internal References
 private:
@@ -81,9 +84,13 @@ private:
     
     int _countfortimer;
     
+    int _currplayerid;
+    
     bool _timertriggered;
     
     bool _removedvar;
+    
+    int _countEndAnim=0;
     
     int _currdoor;
     
@@ -105,18 +112,32 @@ private:
     
     int _lockcount;
     
+    float _scale;
+    
+    bool _counterbool;
+    
     bool _triggered;
+    
+    std::shared_ptr<scene2::PolygonNode> _miniMap;
     /** The scale between the physics world and the screen (SCREEN UNITS / BOX2D
      * WORLD UNITS) */
 
     /** camera need to pan back from exit to hunter */
     bool _shiftback = false;
+    /** inidicate camera shift back has finished */
+    bool _finishShiftback =false;
     /** The scale between the physics world and the screen (SCREEN UNITS / BOX2D WORLD UNITS) */
-    float _scale;
+    float _scale2;
     
     int _tileWidth;
     
+    std::shared_ptr<cugl::scene2::PolygonNode> ea;
+    
     int _tileHeight;
+    
+    std::shared_ptr<cugl::physics2::PolygonObstacle> _star;
+    
+    std::vector<std::shared_ptr<cugl::physics2::PolygonObstacle>> _obstacleswall;
     
     cugl::Vec2 old_place;
     
@@ -124,7 +145,12 @@ private:
     /** The controller to manage the ship */
     InputController _input;
     
-    HunterController _hunter;
+    std::shared_ptr<HunterController> _hunter;
+    
+    std::unordered_map<int, std::shared_ptr<HunterController>> _hunterSet;
+    
+    bool _neverPlayed = true;
+
     
     SpiritController _spirit;
     
@@ -134,10 +160,17 @@ private:
     std::shared_ptr<scene2::PolygonNode>_outerJoystick;
     std::shared_ptr<scene2::PolygonNode>_innerJoystick;
     
+    std::shared_ptr<scene2::PolygonNode>_hunternow;
+    
+    std::shared_ptr<scene2::PolygonNode>_hunterone;
+    
+    std::shared_ptr<scene2::PolygonNode>_huntertwo;
+    
     std::shared_ptr<scene2::SpriteNode>_lockhunter;
     
     std::shared_ptr<scene2::PolygonNode> _filter;
     std::shared_ptr<scene2::PolygonNode> _shadow;
+    std::unordered_map<int,std::shared_ptr<scene2::PolygonNode>> _shadowSet;
     std::shared_ptr<scene2::PolygonNode> _map;
     
     std::shared_ptr<cugl::Texture> _spriteSheet;
@@ -184,10 +217,15 @@ private:
     
     std::shared_ptr<cugl::Texture> _filterTexture;
     std::shared_ptr<cugl::Texture> _shadowTexture;
+    std::shared_ptr<cugl::Texture> _exitTexture;
     /** The text with the current health */
     std::shared_ptr<cugl::TextLayout> _text;
     std::vector<std::shared_ptr<DoorController>> _doors;
     std::shared_ptr<cugl::scene2::Button> _unlockbutton;
+    
+    Vec2 _exitpos;
+    
+    std::shared_ptr<scene2::PolygonNode> _exit;
     
     bool _levelLoaded;
     
@@ -197,6 +235,12 @@ private:
 
     
     bool _quit;
+    
+    bool _move;
+    
+    std::vector<Vec2> _treasurepos;
+    
+    std::vector<Vec2> _hunterspun;
     
     Status _status;
     
@@ -208,10 +252,21 @@ private:
     
     std::shared_ptr<cugl::net::NetcodeDeserializer> _deserializer;
     
+    bool _gameStatus = 0;
+    
+    std::shared_ptr<EndScene> _endScene;
+    
 #pragma mark External References
 private:
     /** The tilemap to procedurally generate */
     std::unique_ptr<TilemapController> _tilemap;
+    std::vector<std::shared_ptr<TileController>> _obstacles;
+    std::vector<std::vector<std::shared_ptr<TileController>>> _sortedObstacles;
+    std::shared_ptr<scene2::PolygonNode> _obstacleNode;
+    std::vector<std::shared_ptr<scene2::SpriteNode>> _candleNodes;
+    std::vector<std::shared_ptr<scene2::PolygonNode>> _hunterNodes;
+    
+    std::vector<Poly2> _obstaclePoly;
     
 #pragma mark Main Methods
 public:
@@ -224,7 +279,7 @@ public:
      * on creation.
      *
      * @param displaySize   The display size of the game window
-     * @param randoms		Reference to the random number generator
+     * @param randoms        Reference to the random number generator
      */
     HGameController(const Size displaySize,
                     const std::shared_ptr<AssetManager>& assets);
@@ -234,6 +289,8 @@ public:
      * Resets the status of the game so that we can play again.
      */
     void reset();
+    
+    float getZoom();
     /**
      * Responds to the keyboard commands.
      *
@@ -250,10 +307,13 @@ public:
      */
     void render(std::shared_ptr<SpriteBatch>& batch);
     
+    void makePolyObstacle(std::vector<Poly2> input);
+    
     void initCamera();
     void initJoystick();
+    void removeJoystick();
     void initLock();
-    void updateJoystick(float forward,float rightward);
+    void updateJoystick(float forward,float rightward,cugl::Vec2 center);
     void updateCamera(float timestep);
     
     Status getStatus() {
@@ -362,6 +422,28 @@ private:
     void transmitUnlockDoor(int idx);
     
     void transmitTrapTriggered(Vec2 position);
+    
+    void initHunter(int hunterId);
+    
+    void addFloorTile(int type, int c, int r);
+        
+    void addWallTile(int type, int c, int r);
+    
+    void addWallUpper(int type, int c, int r);
+    
+    void addWallGrime(int type, int c, int r);
+    
+    void addWallLower(int type, int c, int r);
+    
+    void addFurnitures(int type, int c, int r);
+    
+    void addCandles(int type, int c, int r);
+    
+    void addPolys();
+    
+    void sortNodes();
+    
+    void modifyTexture(std::shared_ptr< Texture >& texture, int index, int row, int col);
 };
 
 #endif /* __HGAME_CONTROLLER_H__ */

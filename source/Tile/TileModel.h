@@ -28,12 +28,16 @@ class TileModel {
     Color4 _color;
     /** Whether this tile is traversable or not */
     bool _traversable;
+    
+    int _yPos;
 
   public:
     /** A public accessible, read-only version of the color */
     const Color4& color;
     /** A public accessible, read-only version of _traversable */
     const bool& traversable;
+    
+    const int& yPos;
 
 #pragma mark Main Functions
   public:
@@ -45,12 +49,13 @@ class TileModel {
      * @param color        The tile color
      * @param traversable  The tile traversability
      */
-    TileModel(Vec2 position, Size size, Color4 color, bool traversable)
-        : color(_color), traversable(_traversable) {
+    TileModel(Vec2 position, Size size, Color4 color, bool traversable, int yPos)
+        : color(_color), traversable(_traversable), yPos(_yPos){
         setPosition(position);
         setSize(size);
         setColor(color);
         setTraversable(traversable);
+            setYPos(yPos);
     }
 
 #pragma mark Setters
@@ -61,6 +66,8 @@ class TileModel {
      *  @param position Bottom left corner of tile
      */
     void setPosition(Vec2 position) { _position = position; }
+    
+    Vec2 getPosition() { return _position; }
 
     /**
      *  Sets the size of the tile.
@@ -82,6 +89,8 @@ class TileModel {
      *  @param traversable The traversability of the tile
      */
     void setTraversable(bool traversable) { _traversable = traversable; }
+    
+    void setYPos(int yPos) { _yPos = yPos; }
 };
 
 #endif /* _TILE_MODEL_H__ */

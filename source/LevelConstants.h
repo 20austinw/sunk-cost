@@ -25,6 +25,13 @@
 #define PORTRAIT_FIELD "portrait"
 #define PLAYER_FIELD "player"
 #define DOOR_FIELD "doors"
+#define WALL_FIELD "wall"
+#define WALL_UPPER_FIELD "wall_upper"
+#define WALL_GRIME_FIELD "wall_grime"
+#define WALL_LOWER_FIELD "wall_lower"
+#define FURNITURE_FIELD "furnitures"
+#define CANDLE_FIELD "candles"
+#define COLLISION_FIELD "collision"
 
 /** The physics fields for each object */
 #define POSITION_FIELD "pos"
@@ -54,10 +61,12 @@
 /** The source for our level file */
 #define LEVEL_ONE_FILE "json/gppbasic_level.json"
 #define LEVEL_TWO_FILE "json/technical_level.json"
+#define LEVEL_THREE_FILE "json/large_map.json"
 
 /** The key for our loaded level */
 #define LEVEL_ONE_KEY "basic_level"
 #define LEVEL_TWO_KEY "technical_level"
+#define LEVEL_THREE_KEY "large_map"
 
 #endif /* defined(__TD_LEVEL_CONSTANTS_H__) */
 

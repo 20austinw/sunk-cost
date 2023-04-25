@@ -103,6 +103,10 @@ class TilemapModel {
     Vec2 getDimensions(){
         return _dimensions;
     }
+    
+    Vec2 getTileSize() {
+        return _tileSize;
+    }
 };
 
 #endif /* _TILEMAP_MODEL_H__ */

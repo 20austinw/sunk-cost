@@ -17,13 +17,14 @@
 #include <box2d/b2_contact.h>
 #include <box2d/b2_collision.h>
 #include <cugl/cugl.h>
+#include <random>
 using namespace std;
 using namespace cugl;
 using namespace cugl::net;
 
 #pragma mark Main Methods
 HGameController::HGameController() {
-    _hunter = HunterController();
+    _hunter = std::make_shared<HunterController>();
     // Initialize SpiritController
 //    _spirit = SpiritController();
 //    _trap = TrapController();
@@ -48,16 +49,16 @@ HGameController::HGameController(
     /// //    SCENE_WIDTH = 1024;
     //    SCENE_HEIGHT = 576;
     /** Width of the game world in Box2d units */
-    #define DEFAULT_WIDTH   2000.0f
+    #define DEFAULT_WIDTH   100.0f
     /** Height of the game world in Box2d units */
-    #define DEFAULT_HEIGHT  1000.0f
+    #define DEFAULT_HEIGHT  100.0f
     /** The default value of gravity (going down) */
     #define DEFAULT_GRAVITY 0.0f
     #define DEBUG_ON        0
     #define PLAYER_SIZE     Vec2(40,40)
 
-    Rect rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT);
-    Vec2 gravity(0,DEFAULT_GRAVITY);
+    
+    Vec2 gravity(0,0);
 
     _count = 0;
    
@@ -86,6 +87,10 @@ HGameController::HGameController(
         
     _tilemap = std::make_unique<TilemapController>();
     _tilemap->addChildTo(_scene);
+        
+        _obstacleNode = scene2::PolygonNode::alloc();
+        _scene->addChild(_obstacleNode);
+        
     _unlockbutton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_host"));
     
     _unlockbutton->addListener(
@@ -98,30 +103,23 @@ HGameController::HGameController(
         
     auto inputController = InputController::getInstance();
     inputController->initListeners();
-
-
-//    CULog("%f, %f", displaySize.width, displaySize.height);
-    _hunter = HunterController(assets, displaySize, _scene, PLAYER_SIZE);
-//    _trap = TrapController(assets, displaySize, PLAYER_SIZE);
-    _treasure = TreasureController(assets, displaySize, PLAYER_SIZE);
-
-    
+        
+   
+   
         
     // Initialize SpiritController
     _spirit = SpiritController();
     
     
-    // Initialize the world
-    _world = physics2::ObstacleWorld::alloc(rect,gravity);
-    _hunter.setAsObstacle(_world);
+    
+    
 //    _trap.setAsObstacle(_world);
-    _treasure.setAsObstacle(_world);
+    
     
     // Add callbacks for entering/leaving collisions
-    _collision.init(_hunter.getHunterBody(), _treasure.getTreasureBody());
-//    _collision.init(_hunter.getHunterBody(), _trap.getTrapBody(), _treasure.getTreasureBody());
-    _world->activateCollisionCallbacks(true);
-    _world->onBeginContact = [this](b2Contact* contact) { _collision.beginContact(contact); };
+ //
+       
+    
         
         
     
@@ -141,13 +139,131 @@ HGameController::HGameController(
     _portraits = std::make_shared<PortraitSetController>(_assets, _scene, 0,
                                                          displaySize);
     
-    _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
+    _level = _assets->get<LevelModel>(LEVEL_THREE_KEY);
     if (_level == nullptr) {
         _levelLoaded = false;
         CULog("Fail!");
     }
+    
+//        _tilemap->updatePosition(_scene->getSize() / 2);
+        std::vector<std::vector<int>> tiles = _level->getTileTextures();
+        int height = tiles[0].size();
+        int width = tiles.size();
+        _tilemap->updateDimensions(Vec2(height, width));
+        _tilemap->updateColor(Color4::WHITE);
+        _tilemap->updateTileSize(Size(128, 128));
+        for (int i = 0; i < tiles.size() * tiles[0].size(); ++i) {
+            int c = i % tiles[0].size();
+            int r = i / tiles[0].size();
+            int type = tiles[r][c];
+            addFloorTile(type, c, width-1-r);
+        }
+        
+        std::vector<std::vector<int>> walls = _level->getWallTextures();
+        height = walls[0].size();
+        width = walls.size();
+        for (int i = 0; i < walls.size() * walls[0].size(); ++i) {
+            int c = i % walls[0].size();
+            int r = i / walls[0].size();
+            int type = walls[r][c];
+            addWallTile(type, c, width-1-r);
+        }
+        
+        walls= _level->getWallUpperTextures();
+        height = walls[0].size();
+        width = walls.size();
+        for (int i = 0; i < height*width; ++i) {
+            int c = i % height;
+            int r = i / height;
+            int type = walls[r][c];
+            addWallUpper(type, c, width-1-r);
+        }
+        
+        walls = _level->getWallGrimeTextures();
+        height = walls[0].size();
+        width = walls.size();
+        for (int i = 0; i < height*width; ++i) {
+            int c = i % height;
+            int r = i / height;
+            int type = walls[r][c];
+            addWallGrime(type, c, width-1-r);
+        }
+        
+        walls = _level->getWallLowerTextures();
+        height = walls[0].size();
+        width = walls.size();
+        for (int i = 0; i < height*width; ++i) {
+            int c = i % height;
+            int r = i / height;
+            int type = walls[r][c];
+            addWallLower(type, c, width-1-r);
+        }
+        
+        walls = _level->getFurnitureTextures();
+        height = walls[0].size();
+        width = walls.size();
+        for (int i = 0; i < height*width; ++i) {
+            int c = i % height;
+            int r = i / height;
+            int type = walls[r][c];
+            addFurnitures(type, c, width-1-r);
+        }
+        
+        std::sort(_obstacles.begin(),_obstacles.end(), [](std::shared_ptr<TileController> &a, std::shared_ptr<TileController> &b){ return a->getPosition().x<b->getPosition().x; });
+    
+        std::vector<std::shared_ptr<TileController>> tmp;
+        tmp.emplace_back(_obstacles.at(0));
+        for (int i=1; i<_obstacles.size(); i++){
+            if (_obstacles.at(i)->getPosition().x != _obstacles.at(i-1)->getPosition().x){
+                _sortedObstacles.emplace_back(tmp);
+                tmp.clear();
+            }
+            tmp.emplace_back(_obstacles.at(i));
+        }
+        _obstacles.clear();
+        
+        for (int i=0; i<_sortedObstacles.size();i++){
+            std::sort(_sortedObstacles.at(i).begin(),_sortedObstacles.at(i).end(), [](std::shared_ptr<TileController> &a, std::shared_ptr<TileController> &b){ return a->getYPos()>b->getYPos(); });
+        }
+        
+        for (int n=0; n<_sortedObstacles.size(); n++){
+            for (int m=0; m<_sortedObstacles.at(n).size(); m++){
+                _sortedObstacles[n][m] ->removeChildFrom(_obstacleNode);
+                _sortedObstacles[n][m] ->addChildTo(_obstacleNode);
+            }
+        }
+        
+//        walls = _level->getCandleTextures();
+//        height = walls[0].size();
+//        width = walls.size();
+//        for (int i = 0; i < height*width; ++i) {
+//            int c = i % height;
+//            int r = i / height;
+//            int type = walls[r][c];
+//            addCandles(type, c, width-1-r);
+//        }
+        
+        Rect rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT);
+        _offset = Vec2((_dimen.width-1024)/2.0f,(_dimen.height-576)/2.0f);
+        _scale = _dimen.width == 1024
+            ? _dimen.width/rect.size.width
+            : _dimen.height/rect.size.height;
 
+
+    // TODO: Replace with networking request to find other players ID
+    for (int i = 0; i < 3; i++){
+        initHunter(i);
+    }
+
+    _hunter = _hunterSet[0];
+//    _hunter->setPosition(Vec2(10000,10000)*_scale);
+
+        
+        
     initCamera();
+        
+// Initialize the world
+    _world = physics2::ObstacleWorld::alloc(Rect(0,0,DEFAULT_WIDTH,DEFAULT_HEIGHT),Vec2(0,0));
         
     _serializer = NetcodeSerializer::alloc();
     _deserializer = NetcodeDeserializer::alloc();
@@ -170,286 +286,445 @@ void HGameController::reset() { CULog("reset"); }
  *
  * @param dt  The amount of time (in seconds) since the last frame
  */
+
+float HGameController::getZoom() {
+    return std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+    ->getZoom();
+}
+
+
 void HGameController::update(float dt) {
-    if (!_levelLoaded) {
-        checkLevelLoaded();
-    }
-     
-    AudioEngine::get()->play("theme", _theme, true, _theme->getVolume(), false);
-    
-    _loseLabel->setText("You Lose!");
-    _loseLabel->setPosition(_scene->getCamera()->getPosition()-Vec2(200,0));
-    _loseLabel->setForeground(cugl::Color4f::RED);
-    
-    if(_timer!=0){
-        _timer=_timer-1;
-    }
-    
-    _winLabel->setText("RUN to EXIT!");
-    _winLabel->setPosition(_scene->getCamera()->getPosition()-Vec2(200,0));
-    _winLabel->setForeground(cugl::Color4f::GREEN);
-    
-    _finalWinLabel->setText("You win!");
-    _finalWinLabel->setPosition(_scene->getCamera()->getPosition()-Vec2(200,0));
-    _finalWinLabel->setForeground(cugl::Color4f::YELLOW);
-    
 
-   
-    if(int(_timer/6000)==0){
-       AudioEngine::get()->play("tension", _tension, true, _theme->getVolume(), true);
-   }
-
-    if(int(_timer/6000)==0 && int(_timer/100) % 60 ==0 && !_didLose && !_didFinalwin){
-        _scene->addChild(_loseLabel);
-        _didLose = true;
-    }
-    
-
-    if(_treasureCount>=1 && !_didWin && !_didLose){
-        _scene->addChild(_winLabel);
-        _didWin = true;
-    }
-    
-    if(!_didFinalwin && _didWin && !_didLose && _hunter.getPosition().x < 400){
-        _scene->removeChild(_winLabel);
-        _scene->addChild(_finalWinLabel);
-        _didFinalwin = true;
-    }
-    
-    _timerLabel->setText(std::to_string(int(_timer/6000))+":"+std::to_string(int(_timer/100) % 60 ));
-    _timerLabel->setPosition(_scene->getCamera()->getPosition()-Vec2(0,300));
-    _timerLabel->setForeground(cugl::Color4f::WHITE);
-    
-    
-    
-    _treasureLabel->setText(std::to_string(int(_treasureCount)) + " Treasure Collected");
-    _treasureLabel->setPosition(_scene->getCamera()->getPosition()+Vec2(350,350));
-    _treasureLabel->setForeground(cugl::Color4f::YELLOW);
-    
-//    _collision.init(_hunter.getHunterBody(), _trap.getTrapBody(), _treasure.getTreasureBody());
-    _world->update(dt);
-    _world->activateCollisionCallbacks(true);
-    _world->onBeginContact = [this](b2Contact* contact) { _collision.beginContact(contact); };
-    
-    
-    if(_animates){
-             _portraits->updatespecific(_indexfromspirit);
-         }
-
+    if(_gameStatus==0){
+        if (!_levelLoaded) {
+            checkLevelLoaded();
+        }
         
-
-    auto inputController = InputController::getInstance();
-
-    inputController->update(dt);
-    if (inputController->didPressReset()) {
-        reset();
-    }
-    
-    for (int i=0; i<_doorslocked.size(); i++){
-        if(_hunter.detectedDoor(_doors.at(_doorslocked[i])->getModelPosition())){
-            _lockhunter->setVisible(true);
-            _currdoor=_doorslocked[i];
-            _currdoorindex=i;
+//        for(auto obs:_obstacles){
+//            if(_hunter->getPosition()==){
+//
+//            }
+//        }
+        sortNodes();
+        
+        AudioEngine::get()->play("theme", _theme, true, _theme->getVolume(), false);
+        
+        _loseLabel->setText("You Lose!");
+        _loseLabel->setPosition(_scene->getCamera()->getPosition()-Vec2(200,0));
+        _loseLabel->setForeground(cugl::Color4f::RED);
+        
+        if(_timer!=0){
+            _timer=_timer-1;
+        }
+        
+        _winLabel->setText("RUN to EXIT!");
+        _winLabel->setPosition(_scene->getCamera()->getPosition()-Vec2(200,0));
+        _winLabel->setForeground(cugl::Color4f::GREEN);
+        
+        _finalWinLabel->setText("You win!");
+        _finalWinLabel->setPosition(_scene->getCamera()->getPosition()-Vec2(200,0));
+        _finalWinLabel->setForeground(cugl::Color4f::YELLOW);
+        
+//        Vec2 minimapOffset = Vec2(_scene->getSize().width, 0) - (_miniMap == nullptr ? Vec2::ZERO : Vec2(1000, 0)) - Vec2(60, -30);
+//
+        _miniMap->setPolygon(Rect((_scene->getCamera()->getPosition().x*0.4+340),(_scene->getCamera()->getPosition().y*0.4+450), 1500, 1000));
+        
+        _miniMap->setPosition(_scene->getCamera()->getPosition()+Vec2(1000,370));
+        
+        _hunternow->setPosition(_scene->getCamera()->getPosition()+Vec2(1000,370));
+        
+        
+//        if(abs((_exitpos-_hunter->getPosition()).x)<740 && abs((_exitpos-_hunter->getPosition()).y)<490){
+//            _huntertwo->setPosition(_hunternow->getPosition()-(_hunter->getPosition()-_exitpos)*0.4);
+//        }else{
+//            _huntertwo->setPosition(Vec2(-10000000,-1000000));
+//        }
+        
+        if(int(_timer/60/60)==0){
+            AudioEngine::get()->play("tension", _tension, true, _theme->getVolume(), true);
+        }
+        
+        if(int(_timer/60/60)==0 && int(_timer/60) % 60 ==0 && !_didLose && !_didFinalwin){
+            //        _scene->addChild(_loseNode);
+            //        _scene->addChild(_loseLabel);
+            _endScene = std::make_shared<EndScene>(_scene,_assets, true);
+            _endScene->addChildTo(_scene);
+            _didLose = true;
+            _gameStatus = 1;
+        }
+        
+        
+        
+        //        float a=_star->getBody()->GetPosition().x;
+        //        float b=_star->getBody()->GetPosition().y;
+        if(_treasureCount>=1 && !_didWin && !_didLose){
+            _scene->addChild(_exit);
+            _scene->addChild(_winLabel);
+            _didWin = true;
+        }
+        
+        if(!_didFinalwin && _didWin && !_didLose && abs(_hunter->getPosition().x-_exitpos.x) < 200 && abs(_hunter->getPosition().y-_exitpos.y) < 200){
+            _scene->removeChild(_winLabel);
+            _scene->addChild(_finalWinLabel);
+            _endScene = std::make_shared<EndScene>(_scene,_assets, false);
+            _endScene->addChildTo(_scene);
+            _didFinalwin = true;
+            _gameStatus = 1;
+        }
+        
+        _timerLabel->setText(std::to_string(int(_timer/60/60))+":"+std::to_string(int(_timer/60) % 60 ));
+        _timerLabel->setPosition(_scene->getCamera()->getPosition()-Vec2(0,300));
+        _timerLabel->setForeground(cugl::Color4f::WHITE);
+        
+        
+        
+        _treasureLabel->setText(std::to_string(int(_treasureCount)) + " Treasure Collected");
+        _treasureLabel->setPosition(_scene->getCamera()->getPosition()+Vec2(350,350));
+        _treasureLabel->setForeground(cugl::Color4f::YELLOW);
+        
+        //ea->setPosition(100*Vec2(_star->getBody()->GetTransform().p.x,_star->getBody()->GetTransform().p.y));
+    //    _collision.init(_hunter.getHunterBody(), _trap.getTrapBody(), _treasure.getTreasureBody());
+        _world->update(dt);
+        _world->activateCollisionCallbacks(true);
+        _world->onBeginContact = [this](b2Contact* contact) {
+            CULog("COLLIDE!");
+            //_hunter->move(0,0);
+            _collision.beginContact(contact);
             
-            if(abs(inputController->getPosition().x-_scene->worldToScreenCoords(_hunter.getPosition()).x)<100&&abs(inputController->getPosition().y-_scene->worldToScreenCoords(_hunter.getPosition()).y)<100){
-                _triggered=true;
-            }
-            _lockhunter->setPosition(_hunter.getPosition());
+        };
+        
+        if(_animates){
+            _portraits->updatespecific(_indexfromspirit);
         }
         
-        else{
-            _lockhunter->setVisible(false);
-        }
-    }
         
-    if(_triggered or _inprogress){
-        if (_timerlock!=0) {
-            _inprogress=true;
-            _timerlock=_timerlock-1;
-            _timerLabellock->setVisible(true);
-            _timerLabellock->setPosition(_scene->getCamera()->getPosition()-Vec2(100,0));
-            _timerLabellock->setScale(8);
         
-            _timerLabellock->setText(std::to_string(int(_timerlock/60) % 60 +1));
-           
-            _timerLabellock->setForeground(cugl::Color4f::RED);
-            
+        auto inputController = InputController::getInstance();
+        
+        inputController->update(dt);
+        if (inputController->didPressReset()) {
+            reset();
         }
-        else {
-            _inprogress=true;
-            _timerLabellock->setVisible(false);
-            _tick = 0;
-            _frameNum = (_frameNum + 1) % _lockhunter->getSpan();
-            _lockhunter->setFrame(_frameNum);
-            if(_lockhunter->getSpan()-1==_frameNum){
-                _inprogress=false;
-                _doortrigger=true;
-                _frameNum=0;
-                _triggered=false;
-                _timerlock=300;
-                _doorslocked.erase(_doorslocked.begin()+_currdoorindex);
-                _lockhunter->setFrame(6);
-            }
-        }
-        _tick++;
-    }
-    
-    if(_doortrigger){
-        _doors.at(_currdoor)->setFrame(_frameNumDoor%12);
-        _frameNumDoor=_frameNumDoor-1;
-        if(_frameNumDoor<=0){
-//            _frameNumDoor=12;
-            _doortrigger=false;
-            transmitUnlockDoor(_doorslocked[_currdoorindex]);
-        }
-    }
-
-    std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
-    int posx;
-    int posxup;
-    int posyup;
-    int posy;
-
-    int midx;
-    int midy;
-
-    Vec3 currPos = (_hunter.getPosition());
-    posx = (int)(currPos.x) / _tileWidth;
-    posy = (int)((currPos.y)) / _tileHeight;
-
-    posxup = (int)(currPos.x + 40) / _tileWidth;
-    posyup = (int)((currPos.y + 40)) / _tileHeight;
-
-    midx = (int)(currPos.x + 20) / _tileWidth;
-    midy = (int)((currPos.y + 20)) / _tileHeight;
-
-    float forward = inputController->getForward();
-    float rightward = inputController->getRight();
-
-    _count++;
-    if (_count == 6) {
-        _hunter.setViewFrame(forward, rightward);
-        _count = 0;
-    }
-    _countfortimer++;
-    
-    std::string left = (midy<18 && posx <18 && midy>-1 && posx >-1) ? tiles[midy][posx]: "black";
-    std::string up = (posyup<18 && midx <18 && posyup>-1 && midx >-1) ? tiles[posyup][midx]: "black";
-    std::string bottom = (posy<18 && midx <18 && posy>-1 && midx >-1) ? tiles[posy][midx]: "black";
-    std::string right = (midy<18 && posxup <18 && midy>-1 && posxup >-1) ? tiles[midy][posxup]: "black";
-
-    if (left == "black") {
-        if (rightward < 0) {
-            rightward = 0;
-        }
-    }
-    if (right == "black") {
-        if (rightward > 0) {
-            rightward = 0;
-        }
-    }
-    if (up == "black") {
-        if (forward > 0) {
-            forward = 0;
-        }
-    }
-    if (bottom == "black") {
-        if (forward < 0) {
-            forward = 0;
-        }
-    }
-    
-    if(_doorslocked.size()!=0){
+        
         for (int i=0; i<_doorslocked.size(); i++){
-        Vec2 position = _doors.at(_doorslocked[i])->getModelPosition();
-            if(abs(_hunter.getPosition().x-position.x)<150 && abs(_hunter.getPosition().y-position.y)<150){
-                rightward = -1;
-                forward = -1;
-            }
-        }
-    }
-
-    if (_hunter.getTraps().size()== 0 ){
-        _hunter.move(forward,rightward);
-            }
-    else{
-        _ismovedonece=false;
-            for (int i=0;i<_hunter.getTraps().size();i++){
-                if(_hunter.getTraps()[i]->getTrigger()){
-                    _ismovedonece=true;
-                }
-            }
-        if(!_ismovedonece){
-            _hunter.move(forward,rightward);
-        }
-        }
-    //trap collision
-   
-//    if(_collision.didHitTrap){
-//        _trap.setTrigger(true);
-//    }
-    
-    
-    
-    if(_hunter.getTraps().size()!=0){
-            for (int i=0;i<_hunter.getTraps().size();i++){
-                if(abs(_hunter.getTraps()[i]->getPosition().x-_hunter.getPosition().x)<= 100 && abs(_hunter.getTraps()[i]->getPosition().y-_hunter.getPosition().y)<= 100){
-                    AudioEngine::get()->play("trapSound", _trapSound, false, _theme->getVolume(), true);
-                    _hunter.getTraps()[i]->setTrigger(true);
-                    if(!_timertriggered){
-                        _countfortimer=0;
-                        _timertriggered=true;
-                    }
-                   
-                }
+            if(_hunter->detectedDoor(_doors.at(_doorslocked[i])->getModelPosition())){
+                _lockhunter->setVisible(true);
+                _currdoor=_doorslocked[i];
+                _currdoorindex=i;
                 
+                if(abs(inputController->getPosition().x-_scene->worldToScreenCoords(_hunter->getPosition()).x)<100&&abs(inputController->getPosition().y-_scene->worldToScreenCoords(_hunter->getPosition()).y)<100){
+                    _triggered=true;
                 }
-        for (int i=0;i<_hunter.getTraps().size();i++){
-            if (_hunter.getTraps()[i]->getTrigger()&& _countfortimer >= 300){
-                _hunter.getTraps()[i]->setTrigger(false);
-                if(_removedvar){
-                    _hunter.removeTrap(i);
-                    _removedvar=false;
-                    _timertriggered=false;
-                    transmitTrapTriggered(_hunter.getPosition());
+                _lockhunter->setPosition(_hunter->getPosition());
+            }
+            
+            else{
+                _lockhunter->setVisible(false);
+            }
+        }
+        
+        if(_triggered or _inprogress){
+            if (_timerlock!=0) {
+                _inprogress=true;
+                _timerlock=_timerlock-1;
+                _timerLabellock->setVisible(true);
+                _timerLabellock->setPosition(_scene->getCamera()->getPosition()-Vec2(100,0));
+                _timerLabellock->setScale(8);
+                
+                _timerLabellock->setText(std::to_string(int(_timerlock/60) % 60 +1));
+                
+                _timerLabellock->setForeground(cugl::Color4f::RED);
+                
+            }
+            else {
+                _inprogress=true;
+                _timerLabellock->setVisible(false);
+                _tick = 0;
+                _frameNum = (_frameNum + 1) % _lockhunter->getSpan();
+                _lockhunter->setFrame(_frameNum);
+                if(_lockhunter->getSpan()-1==_frameNum){
+                    _inprogress=false;
+                    _doortrigger=true;
+                    _frameNum=0;
+                    _triggered=false;
+                    _timerlock=300;
+                    _doorslocked.erase(_doorslocked.begin()+_currdoorindex);
+                    _lockhunter->setFrame(6);
+                    _lockhunter->setVisible(false);
+                }
+            }
+            _tick++;
+        }
+        
+        if(_doortrigger){
+            _doors.at(_currdoor)->setFrame(_frameNumDoor%12);
+            _frameNumDoor=_frameNumDoor-1;
+            if(_frameNumDoor<=0){
+                //            _frameNumDoor=12;
+                _doortrigger=false;
+                transmitUnlockDoor(_doorslocked[_currdoorindex]);
+            }
+        }
+        
+        std::vector<std::vector<int>> tiles = _level->getTileTextures();
+        int posx;
+        int posxup;
+        int posyup;
+        int posy;
+        
+        int midx;
+        int midy;
+        
+        Vec3 currPos = (_hunter->getPosition());
+        
+        Vec3 currPosAdj = (_hunter->getPosition());
+        posx = (int)(currPosAdj.x) / _tileWidth;
+        posy = (int)((currPosAdj.y)) / _tileHeight;
+        
+        posxup = (int)(currPosAdj.x + 40) / _tileWidth;
+        posyup = (int)((currPosAdj.y + 40)) / _tileHeight;
+        
+        midx = (int)(currPosAdj.x + 20) / _tileWidth;
+        midy = (int)((currPosAdj.y + 20)) / _tileHeight;
+        
+        float forward = inputController->getForward();
+        
+        float rightward = inputController->getRight();
+        
+        
+        _count++;
+        if (_count == 6) {
+            _hunter->setViewFrame(forward, rightward);
+            _count = 0;
+        }
+        _countfortimer++;
+        
+        //        std::string left = (midy<18 && posx <18 && midy>-1 && posx >-1) ? tiles[midy][posx]: "black";
+        //        std::string up = (posyup<18 && midx <18 && posyup>-1 && midx >-1) ? tiles[posyup][midx]: "black";
+        //        std::string bottom = (posy<18 && midx <18 && posy>-1 && midx >-1) ? tiles[posy][midx]: "black";
+        //        std::string right = (midy<18 && posxup <18 && midy>-1 && posxup >-1) ? tiles[midy][posxup]: "black";
+        
+      
+            
+            //            if(abs((currPosAdj-p).x)<64 && abs((currPosAdj-p).y)<64){
+            //                if ((currPosAdj-p).x<-40) {
+            //                    if (rightward < 0) {
+            //                        rightward = 0;
+            //                    }
+            //                }
+            //                if ((p-currPosAdj).x<0) {
+            //                    if (rightward > 0) {
+            //                        rightward = 0;
+            //                    }
+            //                }
+            //                if ((p-currPosAdj).y<-20) {
+            //                    if (forward > 0) {
+            //                        forward = 0;
+            //                    }
+            //                }
+            //                if ((currPosAdj-p).y<-1) {
+            //                    if (forward < 0) {
+            //                        forward = 0;
+            //                    }
+            //                }
+        
+//            if (abs(p-currPosAdj).x<1) {
+//                if (rightward > 0) {
+//                    rightward = 0;
+//                }
+//            }
+            //            if ((p-currPosAdj).x-40<1) {
+            //                if (forward > 0) {
+            //                    forward = 0;
+            //                }
+            //            }
+            //            if ((currPosAdj-p).y<1) {
+            //                if (forward < 0) {
+            //                    forward = 0;
+            //                }
+            //            }
+        
+        
+//        int left = tiles[midy][posx];
+//        int up = tiles[posyup][midx];
+//        int bottom = tiles[posy][midx];
+//        int right = tiles[midy][posxup];
+//
+//        if (left == 0) {
+//            if (rightward < 0) {
+//                rightward = 0;
+//            }
+//        }
+//        if (right == 0) {
+//            if (rightward > 0) {
+//                rightward = 0;
+//            }
+//        }
+//        if (up == 0) {
+//            if (forward > 0) {
+//                forward = 0;
+//            }
+//        }
+//        if (bottom == 0) {
+//            if (forward < 0) {
+//                forward = 0;
+//            }
+//        }
+        
+        _move=true;
+        for (auto obsta:_obstaclePoly){
+            if(obsta.contains(_shadow->getPosition()+Vec2(rightward*_hunter->getVelocity().x,forward*_hunter->getVelocity().y))){
+                _move=false;
+        }
+            
+               }
+        
+     
+            if (_hunter->getTrapSize()== 0 &&_move){
+                _hunter->move(forward,rightward);
+                    }
+            else{
+                _ismovedonece=false;
+                for (int i=0;i<_hunter->getTraps().size();i++){
+                    if(_hunter->getTraps()[i]->getTrigger()){
+                            _ismovedonece=true;
+                        }
+                    }
+                if(!_ismovedonece &&_move){
+                    _hunter->move(forward,rightward);
+                }
+                }
+        
+        
+        
+        
+        if(_doorslocked.size()!=0){
+            for (int i=0; i<_doorslocked.size(); i++){
+            Vec2 position = _doors.at(_doorslocked[i])->getModelPosition();
+                if(abs(_hunter->getPosition().x-position.x)<150 && abs(_hunter->getPosition().y-position.y)<150){
+                    rightward = -1;
+                    forward = -1;
                 }
             }
         }
-
+        if(_didLose || _didFinalwin){
+            //Freeze movement after lose/win
+            forward=0;
+            rightward=0;
+            _hunter->setViewFrame(forward, rightward);
         }
-    
-    if(abs(_treasure.getPosition().x-_hunter.getPosition().x)<= 100 && abs(_treasure.getPosition().y-_hunter.getPosition().y)<= 100 && !_collision.didHitTreasure ){
-        _collision.didHitTreasure = true;
-        _treasure.getNode() ->setVisible(false);
-        AudioEngine::get()->play("treasureSound", _treasureSound, false, _theme->getVolume(), true);
-        transmitTreasureStolen();
-        _treasureCount++;
-    }
-
-    _shadow->setPosition(_hunter.getPosition()-Vec2(130,270));
-
-    updateCamera(dt);
-    updateJoystick(forward,rightward);
-    
-    // TODO: update direction index for portraits on spirit control
-    //    _portraits->updateDirectionIndex(<#Vec3 direction#>, <#int index#>)
-    
-    if (_network) {
-        _network->receive([this](const std::string source,
-                                 const std::vector<std::byte>& data) {
-            processData(source,data);
-        });
-        checkConnection();
         
-        if (Vec2(currPos) != _lastpos) {
-            std::vector<float> pos = std::vector<float>();
-            pos.push_back(0);
-            pos.push_back(currPos.x);
-            pos.push_back(currPos.y);
-            transmitPos(pos);
-            _lastpos = Vec2(currPos);
+        //_hunter->move(1000*forward,1000*rightward);
+        
+        //trap collision
+       
+    //    if(_collision.didHitTrap){
+    //        _trap.setTrigger(true);
+    //    }
+        
+        
+        
+        if(_hunter->getTrapSize()!=0){
+            for (int i=0;i<_hunter->getTrapSize();i++){
+                if(abs(_hunter->getTraps()[i]->getPosition().x-_hunter->getPosition().x)<= 50 && abs(_hunter->getTraps()[i]->getPosition().y-_hunter->getPosition().y)<= 50){
+                    if(_neverPlayed){
+                        AudioEngine::get()->play("trapSound", _trapSound, false, _theme->getVolume(), true);
+                        _neverPlayed = false;
+                    }
+                        
+                    _hunter->getTraps()[i]->setTrigger(true);
+                    _hunter->getTrapViews()[i]->setVisible(true);
+                   
+                        if(!_timertriggered){
+                            _countfortimer=0;
+                            _timertriggered=true;
+                        }
+                       
+                    }
+                    
+                    }
+            for (int i=0;i<_hunter->getTraps().size();i++){
+                if (_hunter->getTraps()[i]->getTrigger()&& _countfortimer >= 300){
+                    _hunter->getTraps()[i]->setTrigger(false);
+                    _hunter->getTrapViews()[i]->setVisible(false);
+                    _hunter->removeTrap(i);
+                    _neverPlayed = true;
+                    _timertriggered=false;
+                    transmitTrapTriggered(_hunter->getPosition());
+    //                if(_removedvar){
+    //                    _hunter->removeTrap(i);
+    //                    _removedvar=false;
+    //                    _timertriggered=false;
+    //                    transmitTrapTriggered(_hunter->getPosition());
+    //                }
+                }
+            }
+
+            }
+ 
+        if(abs(_treasure.getPosition().x-_hunter->getPosition().x)<= 200 && abs(_treasure.getPosition().y-_hunter->getPosition().y)<= 200 && !_collision.didHitTreasure ){
+            CULog("IN ");
+            _collision.didHitTreasure = true;
+            _treasure.getNode() ->setVisible(false);
+            AudioEngine::get()->play("treasureSound", _treasureSound, false, _theme->getVolume(), true);
+            transmitTreasureStolen();
+            _treasureCount++;
+        }
+
+//        ea->setPosition(Vec2(a,b));
+        _shadow->setPosition(_hunter->getPosition()-Vec2(130,270));
+        updateCamera(dt);
+        cugl::Vec2 center = inputController->getCenter();
+        if(center.x<900){
+            if (inputController->didPress()){
+                
+                initJoystick();
+            }else if (inputController->didRelease()){
+                removeJoystick();
+            }else if (inputController->isTouchDown()){
+                cugl::Vec2 center = inputController->getCenter();
+                cugl::Vec2 centerPos = _scene->getCamera()->screenToWorldCoords(center);
+                if(!(_didLose || _didFinalwin)){
+                    updateJoystick(forward,rightward,centerPos);
+                }
+            }
+        }
+        
+
+        
+        // TODO: update direction index for portraits on spirit control
+        //    _portraits->updateDirectionIndex(<#Vec3 direction#>, <#int index#>)
+        
+        if (_network) {
+            _network->receive([this](const std::string source,
+                                     const std::vector<std::byte>& data) {
+                processData(source,data);
+            });
+            checkConnection();
+            
+            if (Vec2(currPos) != _lastpos) {
+                std::vector<float> pos = std::vector<float>();
+                pos.push_back(0);
+                pos.push_back(currPos.x);
+                pos.push_back(currPos.y);
+                transmitPos(pos);
+                _lastpos = Vec2(currPos);
+            }
         }
     }
+    else if(_gameStatus == 1){
+        // Hunter lose or win
+        _endScene->update();
+        _countEndAnim++;
+        if(_countEndAnim>100){
+            _status = RESET;
+        }
+       
+    }else{
+        // Hunter win!
+//        _endScene->update();
+    }
+    
 }
 
 /**
@@ -498,7 +773,7 @@ void HGameController::addlocks(int index){
 }
 
 void HGameController::checkLevelLoaded() {
-  _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
+  _level = _assets->get<LevelModel>(LEVEL_THREE_KEY);
   if (_level == nullptr) {
     _levelLoaded = false;
   }
@@ -508,7 +783,7 @@ void HGameController::checkLevelLoaded() {
         _level = nullptr;
 
         // Access and initialize level
-        _level = _assets->get<LevelModel>(LEVEL_TWO_KEY);
+        _level = _assets->get<LevelModel>(LEVEL_THREE_KEY);
         _level->setAssets(_assets);
         
         // Initialize SpiritController
@@ -516,22 +791,29 @@ void HGameController::checkLevelLoaded() {
 
         _tileHeight = 128;
         _tileWidth = 128;
+        
 
         // TODO: implement direction and direction limits
-        _tilemap->updatePosition(_scene->getSize() / 2);
-        std::vector<std::vector<std::string>> tiles = _level->getTileTextures();
+        //_tilemap->updatePosition(_scene->getSize() / 2);
+        std::vector<std::vector<int>> tiles = _level->getTileTextures();
         _tilemap->updateDimensions(Vec2(tiles[0].size(), tiles.size()));
         _tilemap->updateColor(Color4::WHITE);
         _tilemap->updateTileSize(Size(_tileWidth, _tileHeight));
 
-        _map =
-            scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
-        _map->setPolygon(Rect(0, 0, 2304, 2304));
-        //    _map = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 9216, 9216));
-        //    _map ->setTexture(_assets->get<Texture>("map"));
-        _scene->addChild(_map);
-        _scene->addChild(_worldnode);
+//        _map =
+//            scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
+//        _map->setPolygon(Rect(0, 0, 2304, 2304));
+//        //    _map = scene2::PolygonNode::allocWithPoly(Rect(0, 0, 9216, 9216));
+//        //    _map ->setTexture(_assets->get<Texture>("map"));
+//        _scene->addChild(_map);
+        
         _scene->addChild(_debugnode);
+        
+        _miniMap = scene2::PolygonNode::allocWithTexture(
+                                                         _assets->get<Texture>("minimaplarge"));
+        _miniMap->setScale(0.4);
+        
+        _miniMap->shiftTexture( -_miniMap->getSize().height-780, -_miniMap->getSize().width-500);
         
         for (int i = 0; i < _level->getPortaits().size(); i++) {
             _portraits->addPortrait(i + 1, _level->getPortaits()[i].first,
@@ -540,47 +822,74 @@ void HGameController::checkLevelLoaded() {
                                     _level->getBattery());
         }
         
-        for (int i = 0; i < tiles.size() * tiles[0].size(); ++i) {
-            int c = i % tiles[0].size();
-            int r = i / tiles[0].size();
-            
-            if (tiles[r][c] == "black") {
-                _tilemap->addTile(c, r, Color4::BLACK, false,
-                                  _assets->get<Texture>("black"));
-            } else if (tiles[r][c] == "green") {
-                _tilemap->addTile(c, r, Color4::GREEN, true,
-                                  _assets->get<Texture>("green"));
-            } else if (tiles[r][c] == "door") {
-                _tilemap->addDoor(c, r, _assets->get<Texture>("fulldoor"));
-            }
-        }
+//        for (int i = 0; i < tiles.size() * tiles[0].size(); ++i) {
+//            int c = i % tiles[0].size();
+//            int r = i / tiles[0].size();
+//
+//            if (tiles[r][c] == "black") {
+//                _tilemap->addTile(c, r, Color4::BLACK, false,
+//                                  _assets->get<Texture>("black"));
+//            } else if (tiles[r][c] == "green") {
+//                _tilemap->addTile(c, r, Color4::GREEN, true,
+//                                  _assets->get<Texture>("green"));
+//            } else if (tiles[r][c] == "door") {
+//                _tilemap->addDoor(c, r, _assets->get<Texture>("fulldoor"));
+//            }
+//        }
 
         // Initialize HunterController
-
-        _hunter = HunterController(_assets, _scene->getSize(),_scene, PLAYER_SIZE);
+        
+        
+//        _hunter = HunterController(_assets, _scene->getSize(),_scene, PLAYER_SIZE);
         
         // Draw hunter shadow
-        _shadowTexture = _assets->get<Texture>("shadow");
-        _shadow = scene2::PolygonNode::allocWithTexture(_shadowTexture);
-
-        _shadow->setPosition(_hunter.getPosition()-Vec2(130,270));
-
-        _shadow->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+        for (int i = 0; i < 3; i++){
+            _shadowTexture = _assets->get<Texture>("shadow");
+            std::shared_ptr<scene2::PolygonNode> shadownow = scene2::PolygonNode::allocWithTexture(_shadowTexture);
+            
+            shadownow->setPosition(_hunterSet[i]->getPosition()-Vec2(130,270));
+            
+            shadownow->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+            
+            _shadowSet[i]=shadownow;
+        }
+        
+        
+        _shadow=_shadowSet[0];
         //        _shadow->setScale(Vec2(_dimen.width/1280,_dimen.height/720));
-        _scene->addChild(_shadow);
+        
+//        for (int i = 0; i < 3; i++){
+//            _scene->addChild(_shadowSet[i]);
+//        }
+        _hunterNodes.emplace_back(_shadowSet[0]);
+        
         
         //Draw hunter after shadow
-        _hunter.addChildTo(_scene);
+//        for (int i = 0; i < 3; i++){
+//            _hunterSet[i]->addChildTo(_scene);
+////            _hunterSet[i]->setPosition(Vec2(0,0));
+//        }
+       // _hunter->setPosition(Vec2(5,5));
+        _hunterSet[0]->addChildToNode(_hunterNodes);
+        
+        for (int n=0; n<_hunterNodes.size(); n++){
+            _obstacleNode->addChild(_hunterNodes.at(n));
+        }
+        
+        
         
 
         // _trap = TrapController(_assets, _scene->getSize(), PLAYER_SIZE);
         // _trap.addChildTo(_scene);
-        _treasure = TreasureController(_assets, _scene->getSize(), PLAYER_SIZE);
+      
 
-        _treasure.addChildTo(_scene);
+       
         
         _tilemap->addDoorTo(_scene);
+        
+        initDoors();
 
+//        _hunter->setPosition(Vec2(0,0));
         _filterTexture = _assets->get<Texture>("filter");
         _filter = scene2::PolygonNode::allocWithTexture(_filterTexture);
         _filter->setPosition(_scene->getCamera()->getPosition());
@@ -589,13 +898,16 @@ void HGameController::checkLevelLoaded() {
         _filter->setScale(Vec2(_dimen.width/1280,_dimen.height/720));
         _scene->addChild(_filter);
         
+        _scene->addChild(_miniMap);
+        
+        
         _timerlock = 300;
         _timerLabellock = cugl::scene2::Label::allocWithText(
             Vec2(200, 200), "5", _assets->get<Font>("pixel32"));
         _scene->addChild(_timerLabellock);
         _timerLabellock->setVisible(false);
 
-        _timer = 12000;
+        _timer = 5400;
         _timerLabel = cugl::scene2::Label::allocWithText(
             Vec2(200, 200), "2:00", _assets->get<Font>("pixel32"));
         _scene->addChild(_timerLabel);
@@ -613,21 +925,83 @@ void HGameController::checkLevelLoaded() {
 
         _timertriggered=false;
         initLock();
-        initDoors();
+        
         _removedvar=true;
+        
+        PolyFactory _pf = PolyFactory();
+        _hunternow = scene2::PolygonNode::allocWithPoly(_pf.makeCircle(Vec2(0,0), 60));
+        _hunternow->setAnchor(cugl::Vec2::ANCHOR_CENTER);
+        _hunternow->setScale(0.3f);
+        _hunternow->setColor(Color4(Vec4(1, 0, 0,1)));
+        _scene->addChild(_hunternow);
+        
+//        _hunterone = scene2::PolygonNode::allocWithPoly(_pf.makeCircle(Vec2(0,0), 60));
+//        _hunterone->setAnchor(cugl::Vec2::ANCHOR_CENTER);
+//        _hunterone->setScale(0.3f);
+//        _hunterone->setColor(Color4(Vec4(0, 1, 0,1)));
+//        _hunterone->setPosition(Vec2(-100000000,-100000000));
+//        _scene->addChild(_hunterone);
+        
+//        _huntertwo = scene2::PolygonNode::allocWithPoly(_pf.makeCircle(Vec2(0,0), 60));
+//        _huntertwo->setAnchor(cugl::Vec2::ANCHOR_CENTER);
+//        _huntertwo->setScale(0.3f);
+//        _huntertwo->setColor(Color4(Vec4(0, 1, 0,1)));
+//        _huntertwo->setPosition(Vec2(-100000000,-100000000));
+//        _scene->addChild(_huntertwo);
+        
+        
         
         //for testing only, delete when network added
 //        _doorslocked.push_back(3);
         
         animatelocks();
+        
+        _counterbool=false;
 
         //sounds
         _theme = _assets->get<Sound>("theme");
         _tension = _assets->get<Sound>("tension");
         _trapSound = _assets->get<Sound>("trapSound");
         _treasureSound = _assets->get<Sound>("treasureSound");
+
+        addPolys();
+        makePolyObstacle(_obstaclePoly);
         
-        initJoystick();
+        
+//        _world->addObstacle(_hunter->getModel());
+//        for (auto obj:_obstacleswall){
+//            _world->addObstacle(obj);
+//        }
+        
+        
+        _scene->addChild(_worldnode);
+        
+        //_treasure.setAsObstacle(_world);
+//        initJoystick();
+        //_collision.init(_hunter->getHunterBody(),  _treasure.getTreasureBody());
+        //_hunter->setAsObstacle(_world);
+       
+        
+       
+       // _hunter->setPosition(Vec2(4300,4500));
+        _hunterspun.emplace_back(Vec2(1000,4500));
+        _hunterspun.emplace_back(Vec2(6000,5000));
+        
+        srand(time(NULL));
+        
+        int index=rand() % 2;
+       
+        _treasure = TreasureController(_assets,  _scene->getSize(), PLAYER_SIZE,_treasurepos.at(index));
+        _hunter->setPosition(_hunterspun.at(index));
+        _treasure.addChildTo(_scene);
+        
+        _exitpos=_hunterspun.at(index);
+        
+        _exitTexture = _assets->get<Texture>("exit");
+        _exit = scene2::PolygonNode::allocWithTexture(_exitTexture);
+        _exit->setPosition(_exitpos);
+        
+        //_scene->addChild(_exit);
         
         _levelLoaded = true;
         
@@ -641,8 +1015,11 @@ void HGameController::initCamera() {
 
     
     Vec3 curr = _scene->getCamera()->getPosition();
-    Vec3 next = _offset
-    + (Vec3(_hunter.getPosition().x, _hunter.getPosition().y, 1));
+//    if(_star!=nullptr){
+//        Vec3 next = _offset + (Vec3(_star->getPosition().x, _star->getPosition().y, 1));
+//    }
+    
+    Vec3 next = _offset + (Vec3(_hunter->getPosition().x, _hunter->getPosition().y, 1));
     _scene->getCamera()->translate(next - curr);
     _scene->getCamera()->setFar(100000);
     _scene->getCamera()->setNear(0);
@@ -660,8 +1037,26 @@ void HGameController::updateCamera(float timestep) {
         _filter->setPosition(_scene->getCamera()->getPosition());
         _filter->setAnchor(Vec2::ANCHOR_CENTER);
         Vec2 next = _offset
-            + ((Vec3(_hunter.getPosition().x, _hunter.getPosition().y, 1)));
+        + ((Vec3(_hunter->getPosition().x, _hunter->getPosition().y, 1)));
+        
         int timeFactor = (_shiftback)? 5 : 2;
+
+        // restrict camera focus within 300<x<1800, 300<y<1900 window
+        int cameraXmin = 300;
+        int cameraXmax = _tilemap->getDimensions().width*_tileWidth;
+        int cameraYmin = 300;
+        int cameraYmax =_tilemap->getDimensions().height*_tileWidth;
+        if(_hunter->getPosition().x < cameraXmin){
+            next.x = cameraXmin;
+        }
+        else if(_hunter->getPosition().x > cameraXmax){
+            next.x = cameraXmax;
+        }
+        if(_hunter->getPosition().y < cameraYmin){
+            next.y = cameraYmin;
+        }else if(_hunter->getPosition().y > cameraYmax){
+            next.y = cameraYmax;
+        }
         _scene->getCamera()->translate((next - curr) * timeFactor *timestep);
         
         _timerLabel->setPosition(_scene->getCamera()->getPosition()-Vec2(0,300));
@@ -671,13 +1066,13 @@ void HGameController::updateCamera(float timestep) {
     if(_didWin){
         
         Vec3 curr = _scene->getCamera()->getPosition();
-        Vec3 exit = Vec3(350,350,0);
+//        Vec3 exit = Vec3(350,350,0);
         // camera pans back to entry
         // camera pans back to hunter
         if(!_shiftback){
-            _scene->getCamera()->translate((exit - curr) * timestep);
+            _scene->getCamera()->translate((_exitpos - curr) * timestep);
         }
-        if(_scene->getCamera()->getPosition().x < 400){
+        if(_scene->getCamera()->getPosition().x < _exitpos.x+200){
             _shiftback = true;
         }
   
@@ -692,6 +1087,16 @@ void HGameController::generateLevel() {
     _tilemap->updateDimensions(_level->getDimensions());
 }
 
+void HGameController::initHunter(int hunterId) {
+
+      //  Vec2 gravity(0,DEFAULT_GRAVITY);
+
+    //_exitpos=Vec2(2000,2000);
+    _hunterSet[hunterId]=std::make_shared<HunterController>(_assets, _scene->getSize(),_scene, PLAYER_SIZE, hunterId,_scale);
+   
+}
+
+
 void HGameController::initLock(){
     CULog("lock initialized");
     
@@ -702,7 +1107,7 @@ void HGameController::initLock(){
     _lockhunter->setScale(0.5);
     _lockhunter->setFrame(_frameNum);
     _lockhunter->setAnchor(Vec2::ANCHOR_CENTER);
-    _lockhunter->setPosition(_hunter.getPosition());
+    _lockhunter->setPosition(_hunter->getPosition());
     _lockhunter->setVisible(false);
     
     
@@ -715,30 +1120,54 @@ void HGameController::initLock(){
 
 
 void HGameController::initJoystick(){
-    CULog("joystick initialized");
-    // Create outer part of joystick
-    _outerJoystick = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("joystick_bottom"));
-    _outerJoystick->setAnchor(cugl::Vec2::ANCHOR_CENTER);
-    _outerJoystick->setScale(0.7f);
-    //_outerJoystick->setPolygon(Rect(Vec2(0,0),Vec2(20,150)));
-    _scene->addChild(_outerJoystick);
-    _outerJoystick->setPosition(Vec2(20,150));
+    PolyFactory _pf = PolyFactory();
+        //mac
+        //_outerJoystick = scene2::PolygonNode::allocWithPoly(_pf.makeCircle(Vec2(0,0), 60));
+        //ios
+        _outerJoystick = scene2::PolygonNode::allocWithPoly(_pf.makeCircle(Vec2(0,0), 120));
+        _outerJoystick->setAnchor(cugl::Vec2::ANCHOR_CENTER);
+        _outerJoystick->setScale(1.0f);
+        _outerJoystick->setColor(Color4(Vec4(1, 1, 1, 0.25)));
+        _scene->addChild(_outerJoystick);
+        
+        // Create inner part of joystick view
+        //mac
+        //_innerJoystick = scene2::PolygonNode::allocWithPoly(_pf.makeCircle(Vec2(0,0), 30));
+        //ios
+        _innerJoystick = scene2::PolygonNode::allocWithPoly(_pf.makeCircle(Vec2(0,0), 60));
+        _innerJoystick->setAnchor(cugl::Vec2::ANCHOR_CENTER);
+        _innerJoystick->setScale(1.0f);
+        _innerJoystick->setColor(Color4(Vec4(1, 1, 1,0.25)));
+        _scene->addChild(_innerJoystick);
+        _innerJoystick->setPosition(Vec2(-10000,-10000));
+        _outerJoystick->setPosition(Vec2(-10000,-10000));
+        
+        // Reposition the joystick components
 
-    // Create inner part of joystick view
-    _innerJoystick = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("joystick_top"));
-    _innerJoystick->setAnchor(cugl::Vec2::ANCHOR_CENTER);
-    _innerJoystick->setScale(0.7f);
-   // _innerJoystick->setPolygon(Rect(Vec2::ZERO,Vec2(20,150)));
-    _innerJoystick->setPosition(Vec2(20,150));
-    _scene->addChild(_innerJoystick);
 }
+
+void HGameController::makePolyObstacle(std::vector<Poly2> input){
+    for(auto ob : input){
+        std::shared_ptr<cugl::physics2::PolygonObstacle> p=physics2::PolygonObstacle::alloc(Poly2(ob)/100,Vec2::ZERO);
+        p->setBodyType(b2_staticBody);
+        p->setDebugScene(_worldnode);
+        
+        _obstacleswall.emplace_back(p);
+    }
+}
+
+void HGameController::removeJoystick(){
+    _scene->removeChild(_outerJoystick);
+    _scene->removeChild(_innerJoystick);
+}
+
 
 void HGameController::processData(const std::string source, const std::vector<std::byte> &data) {
     if (source == _network->getHost()) {
         _deserializer->receive(data);
         std::vector<float> mes = std::get<std::vector<float>>(_deserializer->read());
         if (mes[0] == 1) {
-            _hunter.addTrap(Vec2(mes[1], mes[2]));
+            _hunter->addTrap(Vec2(mes[1], mes[2]));
         } else if (mes[0] == 3) {
             CULog("portrait received");
             int idx = static_cast<int>(mes[1]);
@@ -814,9 +1243,171 @@ void HGameController::transmitTrapTriggered(Vec2 position) {
     _serializer->reset();
 }
 
-void HGameController::updateJoystick(float forward,float rightward){
+void HGameController::updateJoystick(float forward,float rightward,cugl::Vec2 centerPos){
 
-    _outerJoystick->setPosition(_scene->getCamera()->getPosition()-Vec2(680,350));
-    _innerJoystick->setPosition(_scene->getCamera()->getPosition()-Vec2(680,350)+Vec2(rightward,forward)*100);
+    _outerJoystick->setPosition(centerPos);
+    _innerJoystick->setPosition(centerPos+Vec2(rightward,forward)*100);
+    CULog("forward %f",forward);
+    CULog("rightward %f",rightward);
+}
+
+void HGameController::addFloorTile(int type, int c, int r){
+    if (type == 0) {
+        _tilemap->addTile(c, r, Color4::BLACK, false,
+                                  _assets->get<Texture>("black"));
+        Vec2 pos(128 * c, 128 * r);
+        std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, _assets->get<Texture>("black"), pos.y+12);
+        _obstacles.emplace_back(tile);
+        tile->addChildTo(_obstacleNode);
+    }else{
+        std::shared_ptr< Texture > floor = _assets->get<Texture>("floor");
+        modifyTexture(floor, type-65, 8, 8);
+        _tilemap->addTile(c, r, Color4::WHITE, true, floor);
+    }
+}
+
+void HGameController::addWallTile(int type, int c, int r){
+    if(type == 0) {
+        return;
+    }
+    int index = type-1;
+    std::shared_ptr< Texture > wall = _assets->get<Texture>("wall");
+    modifyTexture(wall, index, 8, 8);
+    Vec2 pos(128 * c, 128 * r);
+    int yPos = pos.y+11;
+    if (index == 0 || index == 1 || index == 8|| index == 9 || index == 10 || index == 11 || index == 20 || index == 21 || index == 22 || index == 34 || index == 35) {
+        yPos -= 256;
+    } else if (index == 32 || index == 33){
+        yPos -= 128;
+    } else if (index == 41 || index == 42 || index == 48 || index == 49){
+        yPos += 128;
+    }
+    
+    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall, yPos);
+    _obstacles.emplace_back(tile);
+    tile->addChildTo(_obstacleNode);
+}
+
+void HGameController::addWallUpper(int type, int c, int r){
+    if(type == 0) {
+        return;
+    }
+    std::shared_ptr< Texture > wall = _assets->get<Texture>("wall_upper");
+    modifyTexture(wall, type-329, 8, 8);
+    Vec2 pos(128 * c, 128 * r+16*128);
+    int ind = type - 329;
+    int yPos = pos.y+10;
+    if (ind >= 16 && ind <= 63){
+        yPos += 128;
+    }
+    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall, yPos);
+    _obstacles.emplace_back(tile);
+    tile->addChildTo(_obstacleNode);
+}
+
+void HGameController::addWallGrime(int type, int c, int r){
+    if(type == 0) {
+        return;
+    }
+    std::shared_ptr< Texture > wall = _assets->get<Texture>("wall_grime");
+    modifyTexture(wall, type-193, 8, 8);
+    Vec2 pos(128 * c, 128 * r+16*128);
+    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall, pos.y+9);
+    _obstacles.emplace_back(tile);
+    tile->addChildTo(_obstacleNode);
+}
+
+void HGameController::addWallLower(int type, int c, int r){
+    if(type == 0) {
+        return;
+    }
+    std::shared_ptr< Texture > wall = _assets->get<Texture>("wall_lower");
+    modifyTexture(wall, type-393, 8, 8);
+    Vec2 pos(128 * c, 128 * r+16*128);
+    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall, pos.y+8);
+    _obstacles.emplace_back(tile);
+    tile->addChildTo(_obstacleNode);
+}
+
+void HGameController::addFurnitures(int type, int c, int r){
+    if(type == 0 || type-129 == 0) {
+        if(type-129 == 0){
+            _treasurepos.emplace_back(Vec2(128 * c, 128 * r +16*128));
+        }
+        return;
+    }
+    int idx = type - 129;
+    std::shared_ptr< Texture > furnitures = _assets->get<Texture>("furnitures");
+    modifyTexture(furnitures, idx, 8, 8);
+    Vec2 pos(128 * c, 128 * r +16*128 );
+    float yPos = pos.y+7;
+    if (idx == 6 || idx == 7){
+        yPos -= 256;
+    } else if (idx == 14 || idx == 15){
+        yPos -= 128;
+    }
+    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, furnitures, yPos);
+    _obstacles.emplace_back(tile);
+    tile->addChildTo(_obstacleNode);
+}
+
+void HGameController::addCandles(int type, int c, int r){
+    if (type == 0){
+        return;
+    }
+    std::shared_ptr< Texture > candleTexture = _assets->get<Texture>("candle");
+    std::shared_ptr<scene2::SpriteNode> candle = scene2::SpriteNode::allocWithSheet(candleTexture, 1, 8, 8);
+    candle->setFrame(type - 321);
+    candle->setPosition(Vec2(128 * c +16*128+32 , 128 * r +32*128+32 ));
+    _candleNodes.emplace_back(candle);
+    _obstacleNode->addChild(_candleNodes.at(_candleNodes.size()-1));
+}
+
+
+
+void HGameController::modifyTexture(std::shared_ptr<Texture>& texture, int index, int row, int col){
+    float x = 1.0/row;
+    float y = 1.0/col;
+    int c = index % row;
+    int r = index / row;
+    texture = texture->getSubTexture(c*y, (c+1)*y, r*x, (r+1)*x);
+}
+
+void HGameController::addPolys(){
+    std::vector<Vec2> boarder = _level->getBoarder();
+    cugl::SimpleExtruder extruder = SimpleExtruder();
+    extruder.set(boarder, true);
+    extruder.calculate(10, 10);
+    _obstaclePoly.emplace_back(extruder.getPolygon());
+    
+    std::vector<std::vector<Vec2>> obs = _level->getCollision();
+    cugl::Path2 line = Path2();
+    for (int i=0; i<obs.size(); i++){
+        line.set(obs.at(i));
+        EarclipTriangulator et;
+        et.set(line);
+        et.calculate();
+        cugl::Poly2 poly = et.getPolygon();
+        _obstaclePoly.emplace_back(poly);
+    }
+}
+
+void HGameController::sortNodes(){
+    for (int n=0; n<_hunterNodes.size(); n++){
+        _obstacleNode->removeChild(_hunterNodes.at(n));
+        _obstacleNode->addChild(_hunterNodes.at(n));
+    }
+    
+    for (int i=0; i<_sortedObstacles.size(); i++){
+        float xDiff = abs(_hunter->getPosition().x - _sortedObstacles[i][0]->getPosition().x);
+        if (xDiff<128*2){
+            for (int n=0; n<_sortedObstacles.at(i).size(); n++){
+                if(_hunter->getPosition().y>_sortedObstacles[i][n]->getYPos()){
+                    _sortedObstacles[i][n]->removeChildFrom(_obstacleNode);
+                    _sortedObstacles[i][n]->addChildTo(_obstacleNode);
+                }
+            }
+        }
+    }
 }
 

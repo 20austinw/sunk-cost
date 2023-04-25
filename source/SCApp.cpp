@@ -260,6 +260,7 @@ void SCApp::updateHostScene(float timestep) {
             _scene = State::MENU;
             break;
         case HostScene::Status::START:
+            _spiritGameplay = SGameController(getDisplaySize(), _assets);
             _hostgame.setActive(false);
             _scene = State::HOSTGAME;
             // Transfer connection ownership

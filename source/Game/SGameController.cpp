@@ -57,7 +57,6 @@ SGameController::SGameController(
     _level = _assets->get<LevelModel>(LEVEL_THREE_KEY);
     if (_level == nullptr) {
         _levelLoaded = false;
-//        CULog("Fail!");
     }
     
     _hunterAdded = false;
@@ -85,6 +84,9 @@ SGameController::SGameController(
     
     _miniMap = make_shared<Minimap>( _assets, _scene, _tilemap);
     _miniMap->addChildTo(_scene);
+    while(!_levelLoaded) {
+        checkLevelLoaded();
+    }
 }
 
 #pragma mark Gameplay Handling
@@ -111,18 +113,14 @@ int cnt = 0;
 bool blocked = false;
 
 void SGameController::update(float dt) {
+
     if(_gameStatus == 0){
         sortNodes();
         
         bool canSwitch = true;
         bool didSwitch = false;
-        
-        if (!_levelLoaded) {
-            checkLevelLoaded();
-            _portraits->setIndex(1);
-            std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.3);
-        }
+
+      
         
         if (_treasureStolen) {
             _alertLabel->setText("The treasure has been stolen");
@@ -354,6 +352,9 @@ void SGameController::update(float dt) {
  */
 void SGameController::render(std::shared_ptr<cugl::SpriteBatch>& batch) {
     // CULog("Rendering!");
+    if(!_levelLoaded) {
+        return;
+    }
     _scene->render(batch);
 }
 
@@ -485,7 +486,6 @@ void SGameController::checkLevelLoaded() {
                                     Vec3(0, 0, -1), Vec2::ZERO,
                                     _level->getBattery());
             CULog("Portrait %i at position %f, %f", i, _portraits->getPosition(i).x, _portraits->getPosition(i).y);
-            _levelLoaded = true;
         }
         _portraits->setMaxbattery(_level->getBattery());
         
@@ -497,6 +497,10 @@ void SGameController::checkLevelLoaded() {
         _spirit.getView()->addTrapButtonsTo(_scene);
         
         initDoors();
+        _portraits->setIndex(1);
+        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+        ->setZoom(1.5);
+        _levelLoaded = true;
     }
 }
 

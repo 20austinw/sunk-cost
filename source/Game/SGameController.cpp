@@ -123,7 +123,7 @@ void SGameController::update(float dt) {
             checkLevelLoaded();
             _portraits->setIndex(1);
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.4);
+            ->setZoom(1.3);
         }
         
 //        if (_trapTriggered) {
@@ -339,7 +339,6 @@ void SGameController::update(float dt) {
         _timerLabel->setForeground(cugl::Color4::WHITE);
         _scene->removeChild(_timerLabel);
         _scene->addChild(_timerLabel);
-        _timeLeft--;
         if(_timeLeft <= 0) {
             _gameStatus = 1;
             _endScene = std::make_shared<EndScene>(_scene, _assets, true);
@@ -348,7 +347,12 @@ void SGameController::update(float dt) {
     }
     else{
         _endScene->update();
+        if(_timeLeft <= -5*60){
+            CULog("Switch to reset screen!");
+            _status = ABORT;
+        }
     }
+    _timeLeft--;
 }
 
 /**

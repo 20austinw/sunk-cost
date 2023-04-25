@@ -44,7 +44,7 @@ public:
         /** Time to start the game */
         START,
         /** Game was aborted; back to main menu */
-        ABORT
+        ABORT,
     };
 
 #pragma mark Internal References
@@ -106,7 +106,7 @@ public:
     float _textHeight = 100;
     float _timerScale;
     std::shared_ptr<cugl::scene2::Label> _timerLabel;
-    int _timeLeft = 90*60;
+    int _timeLeft = 3*60;
 
     /** If hunter trigger the trap */
     bool _trapTriggered;
@@ -129,7 +129,7 @@ public:
     float _hunterXPos;
     
     int _prevInd;
-
+    
 #pragma mark External References
   private:
     /** The tilemap to procedurally generate */

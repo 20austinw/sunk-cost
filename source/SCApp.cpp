@@ -268,7 +268,9 @@ void SCApp::updateHostScene(float timestep) {
             _spiritGameplay.setHost(true);
             break;
         case HostScene::Status::WAIT:
+            CULog("1");
         case HostScene::Status::IDLE:
+            CULog("2");
             // DO NOTHING
             break;
     }
@@ -340,7 +342,8 @@ void SCApp::updateSGameController(float timestep) {
     _spiritGameplay.update(timestep);
     switch (_spiritGameplay.getStatus()) {
         case SGameController::Status::ABORT:
-//            _menu.setActive(true);
+            _hostgame.setActive(false);
+            _menu.setActive(true);
             _scene = State::MENU;
             break;
         case SGameController::Status::START:

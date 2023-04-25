@@ -114,7 +114,7 @@ bool blocked = false;
 void SGameController::update(float dt) {
     if(_gameStatus == 0){
 //        _prevInd = getHunterInd();
-//        sortNodes();
+        sortNodes();
         
         bool canSwitch = true;
         bool didSwitch = false;
@@ -444,7 +444,13 @@ void SGameController::checkLevelLoaded() {
         }
         
         std::sort(_obstacles.begin(),_obstacles.end(), [](std::shared_ptr<TileController> &a, std::shared_ptr<TileController> &b){ return a->getYPos()>b->getYPos(); });
-        _prevInd = _obstacles.size();
+//        _prevInd = _obstacles.size();
+        
+        for(int i=0; i<_obstacles.size(); i++) {
+            _obstacles.at(i)->removeChildFrom(_obstacleNode);
+            _obstacles.at(i)->addChildTo(_obstacleNode);
+        }
+        
         
 //        walls = _level->getCandleTextures();
 //        height = walls[0].size();
@@ -523,6 +529,7 @@ void SGameController::processData(const std::string source, const std::vector<st
             _hunterAdded = true;
         } else if (mes[0] == 0) {
             _spirit.moveHunter(Vec2(mes[1], mes[2]));
+            _hunterXPos = mes[1];
             _hunterYPos = mes[2];
         }
         
@@ -690,23 +697,17 @@ void SGameController::sortNodes(){
 //        _obstacles.at(i)->addChildTo(_obstacleNode);
 //    }
 //
-    bool hunterAdded = false;
-    for(int i=0; i<_obstacles.size(); i++) {
-        if (_hunterYPos<_obstacles.at(i)->getYPos()){
-            _prevInd = i;
-            hunterAdded = true;
-            for (int n=0; n<_hunterNodes.size(); n++){
-                _obstacleNode->removeChild(_hunterNodes.at(n));
-                _obstacleNode->addChild(_hunterNodes.at(n));
-            }
-        }
-        _obstacles.at(i)->removeChildFrom(_obstacleNode);
-        _obstacles.at(i)->addChildTo(_obstacleNode);
+//    bool hunterAdded = false;
+    for (int n=0; n<_hunterNodes.size(); n++){
+        _obstacleNode->removeChild(_hunterNodes.at(n));
+        _obstacleNode->addChild(_hunterNodes.at(n));
     }
-    if (!hunterAdded){
-        for (int n=0; n<_hunterNodes.size(); n++){
-            _obstacleNode->removeChild(_hunterNodes.at(n));
-            _obstacleNode->addChild(_hunterNodes.at(n));
+    
+    for(int i=0; i<_obstacles.size(); i++) {
+        float xDiff = abs(_hunterXPos- _obstacles.at(i)->getPosition().x);
+        if (xDiff<128*2 && _hunterYPos>_obstacles.at(i)->getYPos()){
+            _obstacles.at(i)->removeChildFrom(_obstacleNode);
+            _obstacles.at(i)->addChildTo(_obstacleNode);
         }
     }
 }

@@ -126,6 +126,8 @@ public:
     
     float _hunterYPos;
     
+    float _hunterXPos;
+    
     int _prevInd;
 
 #pragma mark External References

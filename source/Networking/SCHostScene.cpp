@@ -316,7 +316,7 @@ void HostScene::startGame() {
 }
 
 void HostScene::displayCode(std::string code) {
-    CULog("Displaying code!");
+    removeCode();
     int position = 0;
     for(auto it = code.cbegin(); it != code.cend(); ++it) {
         std::shared_ptr<Texture> numberTexture = _assets->get<Texture>(numToFile(*it));

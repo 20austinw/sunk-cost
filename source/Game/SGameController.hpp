@@ -106,7 +106,7 @@ public:
     float _textHeight = 100;
     float _timerScale;
     std::shared_ptr<cugl::scene2::Label> _timerLabel;
-    int _timeLeft = 90*60;
+    int _timeLeft = 1*60;
 
     /** If hunter trigger the trap */
     bool _trapTriggered;

@@ -357,9 +357,9 @@ void SGameController::update(float dt) {
  */
 void SGameController::render(std::shared_ptr<cugl::SpriteBatch>& batch) {
     // CULog("Rendering!");
-//    if(!_levelLoaded) {
-//        return;
-//    }
+    if(!_levelLoaded) {
+        return;
+    }
     _scene->render(batch);
 }
 

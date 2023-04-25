@@ -1253,6 +1253,8 @@ void HGameController::updateJoystick(float forward,float rightward,cugl::Vec2 ce
 
 void HGameController::addFloorTile(int type, int c, int r){
     if (type == 0) {
+        _tilemap->addTile(c, r, Color4::BLACK, false,
+                                  _assets->get<Texture>("black"));
         Vec2 pos(128 * c, 128 * r);
         std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, _assets->get<Texture>("black"), pos.y+12);
         _obstacles.emplace_back(tile);

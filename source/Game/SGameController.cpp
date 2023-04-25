@@ -121,7 +121,7 @@ void SGameController::update(float dt) {
             checkLevelLoaded();
             _portraits->setIndex(1);
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.3);
+            ->setZoom(1.5);
         }
         
         if (_treasureStolen) {

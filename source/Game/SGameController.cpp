@@ -6,7 +6,7 @@
 //  a scene. Instead it is a subcontroller that references a scene. This
 //  is a legitimate design choice.
 //
-//  Authors of Referenced File: Walker White and Gonzalo Gonzalez
+//  Authors of Referenced File: Austin and Crystal
 //  Version: 2/22/23
 //
 // This is in the same directory
@@ -113,7 +113,6 @@ bool blocked = false;
 
 void SGameController::update(float dt) {
     if(_gameStatus == 0){
-//        _prevInd = getHunterInd();
         sortNodes();
         
         bool canSwitch = true;
@@ -126,14 +125,10 @@ void SGameController::update(float dt) {
             ->setZoom(1.3);
         }
         
-//        if (_trapTriggered) {
-//            _alertLabel->setText("Trap triggered");
-//        } else
         if (_treasureStolen) {
             _alertLabel->setText("The treasure has been stolen");
         }
         
-//        if (_alertTimer == 0 && (_treasureStolen || _trapTriggered)) {
         if (_alertTimer == 0 && _treasureStolen) {
             _scene->addChild(_alertLabel);
             _alertTimer++;
@@ -155,7 +150,6 @@ void SGameController::update(float dt) {
         inputController->readInput();
         if (inputController->didPressReset()) {
             reset();
-//            CULog("Reset!");
         }
         
         bool start = inputController->didPress();
@@ -174,9 +168,7 @@ void SGameController::update(float dt) {
                 _spirit.updateMovingLock(cameraPos);
                 for (int i=0; i<_doors.size();i++){
                     if(_doors.at(i)->update(start,release, cameraPos)){
-                        //a door is locked
                         isLocked = true;
-//                        CULog("transmitting locked door");
                         transmitLockedDoor(i);
                     }
                 }
@@ -224,11 +216,6 @@ void SGameController::update(float dt) {
             _spirit.getModel()->setTrapState(false);
         }
         
-//        //logic for camera switching & battery
-//        if (inputController->isTouchDown()) {
-//            auto screenPos = inputController->getTouchPos();
-//
-//        }
         if (!didSwitch) {
             _spirit.decreaseCameraCool();
         }
@@ -254,9 +241,7 @@ void SGameController::update(float dt) {
         _portraits->setPrevState(_portraits->getCurState());
         
         if (_doorUnlocked && _doorToUnlock != -1){
-//            CULog("add un Lock: %i", _doorToUnlock);
             if (_doors.at(_doorToUnlock)->isLocked()){
-//                CULog("addLock: %i", _doorToUnlock);
                 _doors.at(_doorToUnlock)->resetHunterUnlock();
                 _spirit.addNewLock(_scene);
                 _doorUnlocked = false;

@@ -268,9 +268,7 @@ void SCApp::updateHostScene(float timestep) {
             _spiritGameplay.setHost(true);
             break;
         case HostScene::Status::WAIT:
-            CULog("1");
         case HostScene::Status::IDLE:
-            CULog("2");
             // DO NOTHING
             break;
     }

@@ -123,7 +123,7 @@ void SGameController::update(float dt) {
             checkLevelLoaded();
             _portraits->setIndex(1);
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.3);
+            ->setZoom(0.4);
         }
         
 //        if (_trapTriggered) {
@@ -443,13 +443,35 @@ void SGameController::checkLevelLoaded() {
             addFurnitures(type, c, width-1-r);
         }
         
-        std::sort(_obstacles.begin(),_obstacles.end(), [](std::shared_ptr<TileController> &a, std::shared_ptr<TileController> &b){ return a->getYPos()>b->getYPos(); });
-//        _prevInd = _obstacles.size();
-        
-        for(int i=0; i<_obstacles.size(); i++) {
-            _obstacles.at(i)->removeChildFrom(_obstacleNode);
-            _obstacles.at(i)->addChildTo(_obstacleNode);
+        std::sort(_obstacles.begin(),_obstacles.end(), [](std::shared_ptr<TileController> &a, std::shared_ptr<TileController> &b){ return a->getPosition().x<b->getPosition().x; });
+    
+        std::vector<std::shared_ptr<TileController>> tmp;
+        tmp.emplace_back(_obstacles.at(0));
+        for (int i=1; i<_obstacles.size(); i++){
+            if (_obstacles.at(i)->getPosition().x != _obstacles.at(i-1)->getPosition().x){
+                _sortedObstacles.emplace_back(tmp);
+                tmp.clear();
+            }
+            tmp.emplace_back(_obstacles.at(i));
         }
+        _obstacles.clear();
+        
+        for (int i=0; i<_sortedObstacles.size();i++){
+            std::sort(_sortedObstacles.at(i).begin(),_sortedObstacles.at(i).end(), [](std::shared_ptr<TileController> &a, std::shared_ptr<TileController> &b){ return a->getYPos()>b->getYPos(); });
+        }
+        
+        for (int n=0; n<_sortedObstacles.size(); n++){
+            for (int m=0; m<_sortedObstacles.at(n).size(); m++){
+                _sortedObstacles[n][m] ->removeChildFrom(_obstacleNode);
+                _sortedObstacles[n][m] ->addChildTo(_obstacleNode);
+            }
+        }
+        
+        
+//        for(int i=0; i<_obstacles.size(); i++) {
+//            _obstacles.at(i)->removeChildFrom(_obstacleNode);
+//            _obstacles.at(i)->addChildTo(_obstacleNode);
+//        }
         
         
 //        walls = _level->getCandleTextures();
@@ -609,6 +631,8 @@ void SGameController::addWallTile(int type, int c, int r){
     int yPos = pos.y;
     if (index == 0 || index == 1 || index == 8|| index == 9 || index == 10 || index == 11 || index == 20 || index == 21 || index == 22 || index == 34 || index == 35) {
         yPos -= 256;
+    } else if (index == 32 || index == 33){
+        yPos -= 128;
     }
     
     std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall, yPos);
@@ -623,7 +647,7 @@ void SGameController::addWallUpper(int type, int c, int r){
     std::shared_ptr< Texture > wall = _assets->get<Texture>("wall_upper");
     modifyTexture(wall, type-329, 8, 8);
     Vec2 pos(128 * c, 128 * r+16*128);
-    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall, pos.y);
+    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall, pos.y-1);
     _obstacles.emplace_back(tile);
     tile->addChildTo(_obstacleNode);
 }
@@ -635,7 +659,7 @@ void SGameController::addWallGrime(int type, int c, int r){
     std::shared_ptr< Texture > wall = _assets->get<Texture>("wall_grime");
     modifyTexture(wall, type-193, 8, 8);
     Vec2 pos(128 * c, 128 * r+16*128);
-    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall, pos.y);
+    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall, pos.y-2);
     _obstacles.emplace_back(tile);
     tile->addChildTo(_obstacleNode);
 }
@@ -647,7 +671,7 @@ void SGameController::addWallLower(int type, int c, int r){
     std::shared_ptr< Texture > wall = _assets->get<Texture>("wall_lower");
     modifyTexture(wall, type-393, 8, 8);
     Vec2 pos(128 * c, 128 * r+16*128);
-    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall, pos.y);
+    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall, pos.y-3);
     _obstacles.emplace_back(tile);
     tile->addChildTo(_obstacleNode);
 }
@@ -656,10 +680,17 @@ void SGameController::addFurnitures(int type, int c, int r){
     if(type == 0) {
         return;
     }
+    int idx = type - 129;
     std::shared_ptr< Texture > furnitures = _assets->get<Texture>("furnitures");
-    modifyTexture(furnitures, type-129, 8, 8);
+    modifyTexture(furnitures, idx, 8, 8);
     Vec2 pos(128 * c, 128 * r +16*128 );
-    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, furnitures, pos.y);
+    float yPos = pos.y - 4;
+    if (idx == 6 || idx == 7){
+        yPos -= 256;
+    } else if (idx == 14 || idx == 15){
+        yPos -= 128;
+    }
+    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, furnitures, yPos);
     _obstacles.emplace_back(tile);
     tile->addChildTo(_obstacleNode);
 }
@@ -688,51 +719,20 @@ void SGameController::modifyTexture(std::shared_ptr<Texture>& texture, int index
 
 
 void SGameController::sortNodes(){
-//    for (int n=0; n<_hunterNodes.size(); n++){
-//        _obstacleNode->removeChild(_hunterNodes.at(n));
-//        _obstacleNode->addChild(_hunterNodes.at(n));
-//    }
-//    for (int i = _prevInd; i<_obstacles.size(); i++){
-//        _obstacles.at(i)->removeChildFrom(_obstacleNode);
-//        _obstacles.at(i)->addChildTo(_obstacleNode);
-//    }
-//
-//    bool hunterAdded = false;
     for (int n=0; n<_hunterNodes.size(); n++){
         _obstacleNode->removeChild(_hunterNodes.at(n));
         _obstacleNode->addChild(_hunterNodes.at(n));
     }
     
-    for(int i=0; i<_obstacles.size(); i++) {
-        float xDiff = abs(_hunterXPos- _obstacles.at(i)->getPosition().x);
-        if (xDiff<128*2 && _hunterYPos>_obstacles.at(i)->getYPos()){
-            _obstacles.at(i)->removeChildFrom(_obstacleNode);
-            _obstacles.at(i)->addChildTo(_obstacleNode);
+    for (int i=0; i<_sortedObstacles.size(); i++){
+        float xDiff = abs(_hunterXPos- _sortedObstacles[i][0]->getPosition().x);
+        if (xDiff<128*2){
+            for (int n=0; n<_sortedObstacles.at(i).size(); n++){
+                if(_hunterYPos>_sortedObstacles[i][n]->getYPos()){
+                    _sortedObstacles[i][n]->removeChildFrom(_obstacleNode);
+                    _sortedObstacles[i][n]->addChildTo(_obstacleNode);
+                }
+            }
         }
     }
 }
-
-//int SGameController::getHunterInd(){
-//    for(int i=0; i<_obstacles.size(); i++) {
-//        if (_hunterYPos<_obstacles.at(i)->getYPos()){
-//            return i;
-//        }
-//    }
-//    return _obstacles.size();
-//}
-
-//void SGameController::addPolys(){
-//    std::vector<Vec2> boarder = _level->getBoarder();
-//    cugl::SimpleExtruder extruder = SimpleExtruder();
-//    extruder.set(boarder, true);
-//    extruder.calculate(2, 2);
-//    _obstaclePoly.emplace_back(extruder.getPolygon());
-//    
-//    std::vector<std::vector<Vec2>> obs = _level->getCollision();
-//    cugl::Path2 line = Path2();
-//    for (int i=0; i<obs.size(); i++){
-//        line.set(obs.at(i));
-//        cugl::Poly2 poly(line);
-//        _obstaclePoly.emplace_back(poly);
-//    }
-//}

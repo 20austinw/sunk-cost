@@ -329,7 +329,6 @@ private:
     void setMaxbattery(float maxBattery) { _maxBattery = maxBattery; }
 
     void addBlock(const std::shared_ptr<cugl::Scene2>& scene) {
-        CULog("%f, %f", _block->getSize().width, _block->getSize().height);
         _block->setScale(1/getZoom());
         _block->setPosition(scene->getCamera()->screenToWorldCoords(Vec2(0, _scene->getSize().height)));
         scene->addChild(_block);

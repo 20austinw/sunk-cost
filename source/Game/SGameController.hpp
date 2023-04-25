@@ -72,7 +72,7 @@ public:
     // VIEW items are going to be individual variables
     // In the future, we will replace this with the scene graph
     /** The backgrounnd image */
-    std::shared_ptr<cugl::Texture> _background;
+    std::shared_ptr<cugl::scene2::PolygonNode> _background;
     /** The text with the current health */
     std::shared_ptr<cugl::TextLayout> _text;
 
@@ -106,7 +106,7 @@ public:
     float _textHeight = 100;
     float _timerScale;
     std::shared_ptr<cugl::scene2::Label> _timerLabel;
-    int _timeLeft = 3*60;
+    int _timeLeft = 90*60;
 
     /** If hunter trigger the trap */
     bool _trapTriggered;

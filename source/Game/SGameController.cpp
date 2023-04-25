@@ -32,12 +32,11 @@ SGameController::SGameController(
 : _assets(assets) {
     /// Initialize the tilemap and add it to the scene
     _scene = cugl::Scene2::alloc(displaySize);
-    std::shared_ptr<scene2::PolygonNode> background =
-    scene2::PolygonNode::allocWithPoly(cugl::Rect(0, 0, 20000, 20000));
-    background->setColor(Color4::BLACK);
-    background->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-    background->setPosition(-1 * background->getSize()/2);
-    _scene->addChild(background);
+    _background =
+    scene2::PolygonNode::allocWithPoly(cugl::Rect(0, 0, _scene->getSize().width, _scene->getSize().height));
+    _background->setColor(Color4::BLACK);
+    _background->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    _scene->addChild(_background);
     
     _tilemap = std::make_shared<TilemapController>();
     _tilemap->addChildTo(_scene);
@@ -122,7 +121,7 @@ void SGameController::update(float dt) {
             checkLevelLoaded();
             _portraits->setIndex(1);
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(1.3);
+            ->setZoom(0.3);
         }
         
         if (_treasureStolen) {
@@ -155,6 +154,10 @@ void SGameController::update(float dt) {
         bool start = inputController->didPress();
         bool release = inputController->didRelease();
         Vec2 cameraPos = _scene->getCamera()->screenToWorldCoords(inputController->getTouchPos());
+        
+        // Draw background
+        _background->setScale(1/getZoom());
+        _background->setPosition(_scene->getCamera()->screenToWorldCoords(Vec2(0, _scene->getSize().height)));
         
         //logic for door lock
         if ((inputController->isTouchDown() || _spirit.getModel()->isOnLock) && _spirit.getModel()->doors >= 0 && !blocked && !_spirit.getModel()->isOnTrap){

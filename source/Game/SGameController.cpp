@@ -57,7 +57,6 @@ SGameController::SGameController(
     _level = _assets->get<LevelModel>(LEVEL_THREE_KEY);
     if (_level == nullptr) {
         _levelLoaded = false;
-//        CULog("Fail!");
     }
     
     _hunterAdded = false;
@@ -88,10 +87,6 @@ SGameController::SGameController(
     while(!_levelLoaded) {
         checkLevelLoaded();
     }
-    _portraits->setIndex(1);
-    std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-    ->setZoom(1.5);
-    CULog("%i", _levelLoaded);
 }
 
 #pragma mark Gameplay Handling
@@ -502,6 +497,9 @@ void SGameController::checkLevelLoaded() {
         _spirit.getView()->addTrapButtonsTo(_scene);
         
         initDoors();
+        _portraits->setIndex(1);
+        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+        ->setZoom(1.5);
         _levelLoaded = true;
     }
 }

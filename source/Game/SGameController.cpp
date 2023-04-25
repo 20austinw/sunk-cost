@@ -611,8 +611,10 @@ void SGameController::transmitLockedDoor(int i) {
 
 void SGameController::addFloorTile(int type, int c, int r){
     if (type == 0) {
-        _tilemap->addTile(c, r, Color4::BLACK, false,
-                          _assets->get<Texture>("black"));
+        Vec2 pos(128 * c, 128 * r);
+        std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, _assets->get<Texture>("black"), pos.y+12);
+        _obstacles.emplace_back(tile);
+        tile->addChildTo(_obstacleNode);
     }else{
         std::shared_ptr< Texture > floor = _assets->get<Texture>("floor");
         modifyTexture(floor, type-65, 8, 8);
@@ -628,11 +630,13 @@ void SGameController::addWallTile(int type, int c, int r){
     std::shared_ptr< Texture > wall = _assets->get<Texture>("wall");
     modifyTexture(wall, index, 8, 8);
     Vec2 pos(128 * c, 128 * r);
-    int yPos = pos.y;
+    int yPos = pos.y+11;
     if (index == 0 || index == 1 || index == 8|| index == 9 || index == 10 || index == 11 || index == 20 || index == 21 || index == 22 || index == 34 || index == 35) {
         yPos -= 256;
     } else if (index == 32 || index == 33){
         yPos -= 128;
+    } else if (index == 41 || index == 42 || index == 48 || index == 49){
+        yPos += 128;
     }
     
     std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall, yPos);
@@ -647,7 +651,12 @@ void SGameController::addWallUpper(int type, int c, int r){
     std::shared_ptr< Texture > wall = _assets->get<Texture>("wall_upper");
     modifyTexture(wall, type-329, 8, 8);
     Vec2 pos(128 * c, 128 * r+16*128);
-    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall, pos.y-1);
+    int ind = type - 329;
+    int yPos = pos.y+10;
+    if (ind >= 16 && ind <= 63){
+        yPos += 128;
+    }
+    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall, yPos);
     _obstacles.emplace_back(tile);
     tile->addChildTo(_obstacleNode);
 }
@@ -659,7 +668,7 @@ void SGameController::addWallGrime(int type, int c, int r){
     std::shared_ptr< Texture > wall = _assets->get<Texture>("wall_grime");
     modifyTexture(wall, type-193, 8, 8);
     Vec2 pos(128 * c, 128 * r+16*128);
-    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall, pos.y-2);
+    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall, pos.y+9);
     _obstacles.emplace_back(tile);
     tile->addChildTo(_obstacleNode);
 }
@@ -671,20 +680,20 @@ void SGameController::addWallLower(int type, int c, int r){
     std::shared_ptr< Texture > wall = _assets->get<Texture>("wall_lower");
     modifyTexture(wall, type-393, 8, 8);
     Vec2 pos(128 * c, 128 * r+16*128);
-    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall, pos.y-3);
+    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, Size(128,128), Color4::WHITE, false, wall, pos.y+8);
     _obstacles.emplace_back(tile);
     tile->addChildTo(_obstacleNode);
 }
 
 void SGameController::addFurnitures(int type, int c, int r){
-    if(type == 0) {
+    if(type == 0 || type-129 == 0) {
         return;
     }
     int idx = type - 129;
     std::shared_ptr< Texture > furnitures = _assets->get<Texture>("furnitures");
     modifyTexture(furnitures, idx, 8, 8);
     Vec2 pos(128 * c, 128 * r +16*128 );
-    float yPos = pos.y - 4;
+    float yPos = pos.y+7;
     if (idx == 6 || idx == 7){
         yPos -= 256;
     } else if (idx == 14 || idx == 15){

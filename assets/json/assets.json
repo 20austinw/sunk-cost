@@ -201,7 +201,10 @@
        },
        "left": {
                    "file":  "textures/left_arrow.png"
-               }
+               },
+       "exit":{
+                  "file":  "textures/exit.png"
+              }
     },
     "fonts": {
         "pixel32": {

@@ -65,7 +65,7 @@ class HunterModel : public physics2::WheelObstacle {
     hideCool(_hideCool) {
 
         // Call the parent's initializer
-        physics2::WheelObstacle::init(Vec2(3000,3000), 40);
+        physics2::WheelObstacle::init(Vec2(42,24), 1);
         // Set physics properties for the body
         setBodyType(b2_dynamicBody);
         setDensity(DEFAULT_DENSITY);
@@ -112,9 +112,10 @@ class HunterModel : public physics2::WheelObstacle {
      */
     //void setDirection(cugl::Vec2 direction) { _direction = direction; }
     void setPosition(Vec2 position){
-        if(getBody()!=nullptr){
-            getBody()->SetTransform(b2Vec2(position.x, position.y), 0);
-        }
+//        if(getBody()!=nullptr){
+//            getBody()->SetTransform(b2Vec2(position.x, position.y), 0);
+//        }
+         _position = position;
         
     }
     /**
@@ -148,26 +149,24 @@ class HunterModel : public physics2::WheelObstacle {
     
     void applyForce(cugl::Vec2 force) {
             // Push the player in the direction they want to go
-            b2Vec2 b2force(force.y*500, force.x*500);
-//        CULog(" forceeee x%f",force.x);
-//        CULog(" forceeee y%f",force.y);
+            b2Vec2 b2force(0.05 * force.x, 0.05 * force.y);
             
             // If the player has reached max speed
             if (getLinearVelocity() >= Vec2(20,20)) {
 
-                _body->SetLinearVelocity(1000*b2force);
+                _body->SetLinearVelocity(b2force);
                // _body->ApplyForceToCenter(b2force, true);
             }
             else{
                 CULog("ELSE ");
-                _body->SetLinearVelocity(1000*b2force);
+                _body->SetLinearVelocity(b2force);
               //  _body->ApplyForceToCenter(b2force, true);
             }
             float a=_body->GetPosition().x;
             float b=_body->GetPosition().y;
-            _position = Vec2(a,b);
-//        CULog("position xxxxxxx%f",_position.x);
-//        CULog("position yyyyyyyy%f",_position.y);
+            _position = 100 * Vec2(a,b);
+        // CULog("position xxxxxxx%f",_position.x);
+        // CULog("position yyyyyyyy%f",_position.y);
         
         
 

@@ -217,12 +217,15 @@ private:
     
     std::shared_ptr<cugl::Texture> _filterTexture;
     std::shared_ptr<cugl::Texture> _shadowTexture;
+    std::shared_ptr<cugl::Texture> _exitTexture;
     /** The text with the current health */
     std::shared_ptr<cugl::TextLayout> _text;
     std::vector<std::shared_ptr<DoorController>> _doors;
     std::shared_ptr<cugl::scene2::Button> _unlockbutton;
     
     Vec2 _exitpos;
+    
+    std::shared_ptr<scene2::PolygonNode> _exit;
     
     bool _levelLoaded;
     
@@ -232,6 +235,12 @@ private:
 
     
     bool _quit;
+    
+    bool _move;
+    
+    std::vector<Vec2> _treasurepos;
+    
+    std::vector<Vec2> _hunterspun;
     
     Status _status;
     
@@ -252,8 +261,10 @@ private:
     /** The tilemap to procedurally generate */
     std::unique_ptr<TilemapController> _tilemap;
     std::vector<std::shared_ptr<TileController>> _obstacles;
+    std::vector<std::vector<std::shared_ptr<TileController>>> _sortedObstacles;
     std::shared_ptr<scene2::PolygonNode> _obstacleNode;
     std::vector<std::shared_ptr<scene2::SpriteNode>> _candleNodes;
+    std::vector<std::shared_ptr<scene2::PolygonNode>> _hunterNodes;
     
     std::vector<Poly2> _obstaclePoly;
     
@@ -429,6 +440,8 @@ private:
     void addCandles(int type, int c, int r);
     
     void addPolys();
+    
+    void sortNodes();
     
     void modifyTexture(std::shared_ptr< Texture >& texture, int index, int row, int col);
 };

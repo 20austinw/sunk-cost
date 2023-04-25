@@ -137,17 +137,30 @@ void HunterController::applyForce(cugl::Vec2 force) {
 //
 // }
 void HunterController::move(float forward, float rightward) {
-    
-    applyForce(Vec2(forward, rightward));
+    Vec2 pos = _model->getPosition();
+        
+        pos.x += rightward * _vel.x;
+        pos.y += forward * _vel.y;
+    _model->setPosition(pos);
+    //applyForce(Vec2(forward, rightward));
     _view->setPosition(_model->getPosition());
 }
+
+Vec2 HunterController::getVelocity() {
+    return _vel;
+}
+
 
 Vec2 HunterController::getPosition() { return _model->getPosition(); }
 
 std::shared_ptr<HunterModel> HunterController::getModel(){return _model;}
 
 void HunterController::setPosition(Vec2 position) {
+//    CULog("body pos x %f", position.x);
+//    CULog("body pos y %f", position.y);
     _model->setPosition(position);
+//    CULog("model pos x %f", _model->getPosition().x);
+//    CULog("model pos y %f", _model->getPosition().y);
     _view->setPosition(_model->getPosition());
     
 }
@@ -175,6 +188,15 @@ void HunterController::addChildTo(const std::shared_ptr<cugl::Scene2>& scene) {
 
     for (int i = 0; i < vec.size(); i++) {
         scene->addChild(vec[i]);
+    }
+}
+
+void HunterController::addChildToNode(std::vector<std::shared_ptr<scene2::PolygonNode>> &node){
+    std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> vec =
+        _view->getSpriteNode();
+
+    for (int i = 0; i < vec.size(); i++) {
+        node.emplace_back(vec[i]);
     }
 }
 

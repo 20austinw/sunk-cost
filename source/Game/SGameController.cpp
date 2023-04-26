@@ -47,11 +47,7 @@ SGameController::SGameController(
     // Initialize PortraitSetController
     _portraits = std::make_shared<PortraitSetController>(_assets, _scene, 0,
                                                          displaySize);
-    
-    // Initialize HunterController
-    
-    //        _hunter.updatePosition(_level->getPlayerPosition());
-    
+        
     // Initialize SpiritController
     _spirit = SpiritController(_assets, _scene, _portraits, _scene->getSize());
     _level = _assets->get<LevelModel>(LEVEL_THREE_KEY);
@@ -113,7 +109,9 @@ int cnt = 0;
 bool blocked = false;
 
 void SGameController::update(float dt) {
-
+    if(!_levelLoaded) {
+        return;
+    }
     if(_gameStatus == 0){
         sortNodes();
         
@@ -461,25 +459,6 @@ void SGameController::checkLevelLoaded() {
         }
         
         
-//        for(int i=0; i<_obstacles.size(); i++) {
-//            _obstacles.at(i)->removeChildFrom(_obstacleNode);
-//            _obstacles.at(i)->addChildTo(_obstacleNode);
-//        }
-        
-        
-//        walls = _level->getCandleTextures();
-//        height = walls[0].size();
-//        width = walls.size();
-//        for (int i = 0; i < height*width; ++i) {
-//            int c = i % height;
-//            int r = i / height;
-//            int type = walls[r][c];
-//            addCandles(type, c, width-1-r);
-//        }
-        
-//        addPolys();
-
-//        _tilemap->addDoorTo(_scene);
         for (int i = 0; i < _level->getPortaits().size(); i++) {
             _portraits->addPortrait(i + 1, _level->getPortaits()[i].first,
                                     _level->getPortaits()[i].second,

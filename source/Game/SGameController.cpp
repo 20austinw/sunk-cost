@@ -499,7 +499,7 @@ void SGameController::checkLevelLoaded() {
         initDoors();
         _portraits->setIndex(1);
         std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-        ->setZoom(1.5);
+        ->setZoom(1);
         _levelLoaded = true;
     }
 }

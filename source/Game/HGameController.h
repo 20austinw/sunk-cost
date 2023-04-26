@@ -191,12 +191,12 @@ private:
     int _treasureCount;
     std::shared_ptr<cugl::scene2::Label> _treasureLabel;
     std::shared_ptr<cugl::scene2::Label> _loseLabel;
-    bool _didLose;
+    bool _didLose = false;
 
     std::shared_ptr<cugl::scene2::Label> _winLabel;
     bool _didWin;
     std::shared_ptr<cugl::scene2::Label> _finalWinLabel;
-    bool _didFinalwin;
+    bool _didFinalwin=false;
 
     /** The theme sound */
     std::shared_ptr<cugl::Sound> _theme;

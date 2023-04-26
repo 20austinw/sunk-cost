@@ -343,8 +343,9 @@ void HGameController::update(float dt) {
         if(int(_timer/60/60)==0){
             AudioEngine::get()->play("tension", _tension, true, _theme->getVolume(), true);
         }
+       
         
-        if(int(_timer/60/60)==0 && int(_timer/60) % 60 ==0 && !_didLose && !_didFinalwin){
+        if(int(_timer/60/60)==0 && (int(_timer/60) % 60 < 0) && !_didLose && !_didFinalwin){
             //        _scene->addChild(_loseNode);
             //        _scene->addChild(_loseLabel);
             _endScene = std::make_shared<EndScene>(_scene,_assets, true);
@@ -1094,7 +1095,7 @@ void HGameController::updateCamera(float timestep) {
         if(!_shiftback){
             _scene->getCamera()->translate((_exitpos - curr) * timestep);
         }
-        if(_scene->getCamera()->getPosition().x < _exitpos.x+200){
+        if(abs(_scene->getCamera()->getPosition().x - _exitpos.x)<200 && abs(_scene->getCamera()->getPosition().y - _exitpos.y)<200){
             _shiftback = true;
         }
   

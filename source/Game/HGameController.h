@@ -238,6 +238,8 @@ private:
     
     bool _move;
     
+    bool _joystickon;
+    
     std::vector<Vec2> _treasurepos;
     
     std::vector<Vec2> _hunterspun;

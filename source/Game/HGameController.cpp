@@ -713,22 +713,17 @@ void HGameController::update(float dt) {
         // TODO: update direction index for portraits on spirit control
         //    _portraits->updateDirectionIndex(<#Vec3 direction#>, <#int index#>)
         
-        if (_network) {
-            _network->receive([this](const std::string source,
-                                     const std::vector<std::byte>& data) {
-                processData(source,data);
-            });
-            checkConnection();
+        
             
-            if (Vec2(currPos) != _lastpos) {
-                std::vector<float> pos = std::vector<float>();
-                pos.push_back(0);
-                pos.push_back(currPos.x);
-                pos.push_back(currPos.y);
-                transmitPos(pos);
-                _lastpos = Vec2(currPos);
-            }
-        }
+    if (Vec2(currPos) != _lastpos) {
+        std::vector<float> pos = std::vector<float>();
+        pos.push_back(0);
+        pos.push_back(currPos.x);
+        pos.push_back(currPos.y);
+        transmitPos(pos);
+        _lastpos = Vec2(currPos);
+    }
+
     }
     else if(_gameStatus == 1){
         // Hunter lose or win

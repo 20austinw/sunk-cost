@@ -679,7 +679,10 @@ void HGameController::update(float dt) {
             }
 
             }
- 
+        CULog("true POS %f", _treasure.getPosition().x);
+        CULog("x difff %f", abs(_treasure.getPosition().x-_hunter->getPosition().x));
+        CULog("y difff %f", abs(_treasure.getPosition().y-_hunter->getPosition().y));
+        CULog("33333 %d",!_collision.didHitTreasure );
         if(abs(_treasure.getPosition().x-_hunter->getPosition().x)<= 200 && abs(_treasure.getPosition().y-_hunter->getPosition().y)<= 200 && !_collision.didHitTreasure ){
             CULog("IN ");
             _collision.didHitTreasure = true;
@@ -1027,6 +1030,8 @@ void HGameController::checkLevelLoaded() {
         int index=rand() % 2;
        
         _treasure = TreasureController(_assets,  _scene->getSize(), PLAYER_SIZE,_treasurepos.at(index));
+        CULog("init POS %f", _treasurepos.at(index).x);
+        _treasure.setPosition(_treasurepos.at(index));
         _hunter->setPosition(_hunterspun.at(index));
         _treasure.addChildTo(_scene);
         

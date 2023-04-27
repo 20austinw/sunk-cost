@@ -282,8 +282,8 @@ void InputController::touchMotionCB(const cugl::TouchEvent& event, bool focus) {
 
     //        CULog("display x %f",_touchPos.x);
     //        CULog("display y %f",_dimen.height);
-    if (_touchPos.x<900){
-        Vec2 direction = Vec2(_touchPos - Vec2(520,920));
+    if (_touchPos.x<600){
+        Vec2 direction = Vec2(_touchPos -_center);
         //590 920
         float sum = sqrt(direction.x *direction.x+direction.y*direction.y);
         Vec2 norm_dir = direction/sum;

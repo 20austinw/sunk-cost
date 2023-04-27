@@ -100,6 +100,8 @@ class TilemapController {
      * @param scene The scene to add the view to
      */
     void addChildTo(const std::shared_ptr<cugl::Scene2>& scene);
+    
+    void addChildToNode(std::shared_ptr<cugl::scene2::PolygonNode>& node);
 
     void addDoorTo(const std::shared_ptr<cugl::Scene2>& scene);
 

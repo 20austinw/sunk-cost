@@ -41,6 +41,10 @@ public:
     void addChildTo(const std::shared_ptr<cugl::Scene2>& scene) {
         _view->addChildTo(scene);
     }
+    
+    void addChildToVector(std::vector<std::shared_ptr<scene2::PolygonNode>>& vector){
+        vector.emplace_back(_view->getNode());
+    }
 
     /**
      * Removes the view component children from the given `sceneNode`.

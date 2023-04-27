@@ -51,6 +51,11 @@ private:
     Size getSize(){
         return _size;
     }
+    
+    std::shared_ptr<scene2::SpriteNode> getNode() {
+        return _door;
+    }
+    
 #pragma mark Setters
     void setFrame(int frame){
         _door->setFrame(frame);

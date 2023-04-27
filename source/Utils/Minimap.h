@@ -106,6 +106,10 @@ public:
         scene->addChild(_node);
     }
     
+    void addChildToNode(std::shared_ptr<cugl::scene2::PolygonNode>& node){
+        node->addChild(_node);
+    }
+    
     /**
      * Removes the view component children from the given `sceneNode`.
      *

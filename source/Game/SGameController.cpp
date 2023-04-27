@@ -32,17 +32,30 @@ SGameController::SGameController(
 : _assets(assets) {
     /// Initialize the tilemap and add it to the scene
     _scene = cugl::Scene2::alloc(displaySize);
+    
+    _firstLayer = scene2::PolygonNode::alloc();
+    _scene->addChild(_firstLayer);
+    _secondLayer = scene2::PolygonNode::alloc();
+    _scene->addChild(_secondLayer);
+    _thirdLayer = scene2::PolygonNode::alloc();
+    _scene->addChild(_thirdLayer);
+    _fourthLayer = scene2::PolygonNode::alloc();
+    _scene->addChild(_fourthLayer);
+    
     _background =
     scene2::PolygonNode::allocWithPoly(cugl::Rect(0, 0, _scene->getSize().width, _scene->getSize().height));
     _background->setColor(Color4::BLACK);
     _background->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-    _scene->addChild(_background);
+    _firstLayer->addChild(_background);
+//    _scene->addChild(_background); //TODO: first
     
     _tilemap = std::make_shared<TilemapController>();
-    _tilemap->addChildTo(_scene);
+    _tilemap->addChildToNode(_firstLayer);
+//    _tilemap->addChildTo(_scene); //TODO: first
     
     _obstacleNode = scene2::PolygonNode::alloc();
-    _scene->addChild(_obstacleNode);
+    _secondLayer->addChild(_obstacleNode);
+//    _scene->addChild(_obstacleNode); //TODO: second
     
     // Initialize PortraitSetController
     _portraits = std::make_shared<PortraitSetController>(_assets, _scene, 0,
@@ -70,7 +83,8 @@ SGameController::SGameController(
     seconds = seconds.length() <= 1 ? "0"+seconds : seconds;
     _timerLabel = cugl::scene2::Label::allocWithText(Vec2(0, 0), minutes + ":" + seconds, _assets->get<Font>("pixel32"));
     _timerScale = _textHeight/_timerLabel->getSize().height;
-    _scene->addChild(_timerLabel);
+    _fourthLayer->addChild(_timerLabel);
+//    _scene->addChild(_timerLabel); //TODO: fourth
     _endScene = std::make_shared<EndScene>(_scene, assets, true);
     
     _trapTriggered = false;
@@ -83,7 +97,8 @@ SGameController::SGameController(
     _alertLabel->setForeground(cugl::Color4f::RED);
     
     _miniMap = make_shared<Minimap>( _assets, _scene, _tilemap);
-    _miniMap->addChildTo(_scene);
+    _miniMap->addChildToNode(_fourthLayer);
+//    _miniMap->addChildTo(_scene); //TODO: fourth
     while(!_levelLoaded) {
         checkLevelLoaded();
     }
@@ -127,7 +142,8 @@ void SGameController::update(float dt) {
         }
         
         if (_alertTimer == 0 && _treasureStolen) {
-            _scene->addChild(_alertLabel);
+            _fourthLayer->addChild(_alertLabel);
+//            _scene->addChild(_alertLabel); //TODO: fourth
             _alertTimer++;
         }
         else if (_alertTimer > 0 && _alertTimer != 300) {
@@ -138,7 +154,8 @@ void SGameController::update(float dt) {
         if (_alertTimer == 300) {
             _alertTimer = 0;
             _treasureStolen = false;
-            _scene->removeChild(_alertLabel);
+            _fourthLayer->removeChild(_alertLabel);
+//            _scene->removeChild(_alertLabel);
         }
         
         
@@ -162,7 +179,7 @@ void SGameController::update(float dt) {
             if(_spirit.getModel()->isOnLock || _spirit.touchInLockBound(cameraPos)){
                 canSwitch = false;
                 if (!_spirit.getModel()->isOnLock){
-                    _spirit.getView()->removeLastLockExtraTo(_scene);
+                    _spirit.getView()->removeLastLockExtraTo(_fourthLayer); //TODO: node
                     _spirit.getModel()->setLockState(true);
                 }
                 bool isLocked = false;
@@ -176,10 +193,10 @@ void SGameController::update(float dt) {
                 if (release){
                     _spirit.getModel()->setLockState(false);
                     if (isLocked){
-                        _spirit.removeLastLock(_scene);
+                        _spirit.removeLastLock(_fourthLayer); //TODO: remove from node
                         
                     } else {
-                        _spirit.getView()->addLastLockExtraTo(_scene);
+                        _spirit.getView()->addLastLockExtraTo(_fourthLayer); //TODO: add to node
                     }
                 }
             }
@@ -195,7 +212,7 @@ void SGameController::update(float dt) {
             if(_spirit.getModel()->isOnTrap || _spirit.touchInTrapBound(cameraPos)){
                 canSwitch = false;
                 if (! _spirit.getModel()->isOnTrap){
-                    _spirit.getView()->removeLastTrapExtraTo(_scene);
+                    _spirit.getView()->removeLastTrapExtraTo(_fourthLayer);
                     
                     _spirit.getModel()->setTrapState(true);
                 }
@@ -208,9 +225,9 @@ void SGameController::update(float dt) {
                 
                 // A trap has been placed
                 if (_spirit.placeTrap(_tilemap, _spirit.getModel()->lastTrapPos)){
-                    _spirit.removeLastTrapBtn(_scene);
+                    _spirit.removeLastTrapBtn(_fourthLayer); //TODO: node
                 } else {
-                    _spirit.getView()->addLastTrapExtraTo(_scene);
+                    _spirit.getView()->addLastTrapExtraTo(_fourthLayer); //TODO: node
                 }
             }
         } else if (blocked&&_spirit.getModel()->isOnTrap){
@@ -219,6 +236,10 @@ void SGameController::update(float dt) {
         
         if (!didSwitch) {
             _spirit.decreaseCameraCool();
+        } else {
+            // refresh locks
+            _spirit.updateLocksPos(); //TODO: drawing order refresh
+            _spirit.updateTrapBtnsPos(); //TODO: drawing order refresh
         }
         
         Vec3 offset = Vec3(_assets->get<Texture>("map")->getSize()/2);
@@ -230,12 +251,12 @@ void SGameController::update(float dt) {
         if (!_portraits->getCurState() && _portraits->getPrevState()) {
             // Redraw doors
             CULog("Adding block!");
-            _portraits->addBlock(_scene);
-            _portraits->refreshBatteryNodes(_scene); //drawing order refresh
+            _portraits->addBlock(_thirdLayer); //TODO: add node
+            _portraits->refreshBatteryNodes(_fourthLayer); //drawing order refresh //TODO: delete
             blocked = true;
         } else if (_portraits->getCurState() && !_portraits->getPrevState()) {
             // Redraw doors
-            _portraits->removeBlock(_scene);
+            _portraits->removeBlock(_thirdLayer); //TODO: remove from node
             blocked = false;
         }
         
@@ -244,7 +265,7 @@ void SGameController::update(float dt) {
         if (_doorUnlocked && _doorToUnlock != -1){
             if (_doors.at(_doorToUnlock)->isLocked()){
                 _doors.at(_doorToUnlock)->resetHunterUnlock();
-                _spirit.addNewLock(_scene);
+                _spirit.addNewLock(_fourthLayer); //TODO: node
                 _doorUnlocked = false;
                 _doorToUnlock = -1;
             }
@@ -257,15 +278,12 @@ void SGameController::update(float dt) {
             _trapPos = Vec2::ZERO;
         }
         if(result == 1){
-            _spirit.addNewTrapBtn(_scene);
+            _spirit.addNewTrapBtn(_fourthLayer); //TODO: node
         } else if (result == 2){
-            _spirit.addNewTrapBtn(_scene);
-            _spirit.addNewTrapBtn(_scene);
+            _spirit.addNewTrapBtn(_fourthLayer); //TODO: node
+            _spirit.addNewTrapBtn(_fourthLayer); //TODO: node
         }
         
-        // Draw locks
-        _spirit.updateLocksPos(_scene); //drawing order refresh
-        _spirit.updateTrapBtnsPos(_scene); //drawing order refresh
         
         if(!blocked){
             _scene->getCamera()->update();
@@ -294,7 +312,7 @@ void SGameController::update(float dt) {
             int idx = _portraits->getNearest(mapPos);
             if (_portraits->getIndex() != idx && _spirit.isSwitchable()){
                 _portraits->setIndex(idx);
-                CULog("%i", _portraits->getIndex());
+//                CULog("%i", _portraits->getIndex());
                 _spirit.resetCameraCool();
             } else if (! _spirit.isSwitchable() && _portraits->getIndex() != idx){
                 _portraits->resetScale();
@@ -304,11 +322,11 @@ void SGameController::update(float dt) {
         
         // Draw battery (has to come after the minimap update)
         _portraits->updateBattery();
-        _portraits->updateBatteryNode(_scene, 50); //drawing order refresh
+        _portraits->updateBatteryNode(_fourthLayer, 50); //TODO: drawing order refresh
         
         _miniMap->update();
-        _miniMap->removeChildFrom(_scene);
-        _miniMap->addChildTo(_scene); //drawing order refresh
+//        _miniMap->removeChildFrom(_scene); //TODO: delete
+//        _miniMap->addChildTo(_scene); //TODO: drawing order refresh
         
         // Draw timer and alert labels
         string minutes = std::to_string(_timeLeft/60/60);
@@ -323,8 +341,8 @@ void SGameController::update(float dt) {
         hPos = _scene->getSize().width/2-_alertLabel->getSize().width*getZoom()/2;
         _alertLabel->setPosition(_scene->getCamera()->screenToWorldCoords(Vec2(hPos, vPos)));
         _timerLabel->setForeground(cugl::Color4::WHITE);
-        _scene->removeChild(_timerLabel);
-        _scene->addChild(_timerLabel);
+//        _scene->removeChild(_timerLabel); //TODO: remove
+//        _scene->addChild(_timerLabel); //TODO: node
         if(_timeLeft <= 0) {
             _gameStatus = 1;
             _endScene = std::make_shared<EndScene>(_scene, _assets, true);
@@ -481,25 +499,52 @@ void SGameController::checkLevelLoaded() {
 
 //        _tilemap->addDoorTo(_scene);
         for (int i = 0; i < _level->getPortaits().size(); i++) {
-            _portraits->addPortrait(i + 1, _level->getPortaits()[i].first,
+            //TODO: add tile for doors
+            _portraits->addPortrait(_textureNodes,i, _level->getPortaits()[i].first,
                                     _level->getPortaits()[i].second,
                                     Vec3(0, 0, -1), Vec2::ZERO,
                                     _level->getBattery());
-            CULog("Portrait %i at position %f, %f", i, _portraits->getPosition(i).x, _portraits->getPosition(i).y);
+            
+//            CULog("Portrait %i at position %f, %f", i, _portraits->getPosition(i).x, _portraits->getPosition(i).y);
         }
         _portraits->setMaxbattery(_level->getBattery());
         
         _portraits->initializeSheets(_assets->get<Texture>("greenBattery"),
                                      _assets->get<Texture>("redBattery"),
                                      _assets->get<Texture>("noBattery"));
-        _portraits->initializeBatteryNodes(_scene);
-        _spirit.getView()->addLocksTo(_scene);
-        _spirit.getView()->addTrapButtonsTo(_scene);
+        _portraits->initializeBatteryNodes(_fourthLayer);
+        _spirit.getView()->addLocksTo(_fourthLayer);
+        _spirit.getView()->addTrapButtonsTo(_fourthLayer);
         
         initDoors();
+        //TODO: sort
+        std::sort(_textureNodes.begin(),_textureNodes.end(), [](std::shared_ptr<scene2::PolygonNode> &a, std::shared_ptr<scene2::PolygonNode> &b){ return a->getPositionX()<b->getPositionX(); });
+        
+        for(int i=0; i<_textureNodes.size(); i++){
+            _obstacleNode->addChild(_textureNodes.at(i));
+        }
+        
+        std::vector<std::shared_ptr<scene2::PolygonNode>> cur;
+        cur.emplace_back(_textureNodes.at(0));
+        for (int i=1; i<_textureNodes.size(); i++){
+            if (_textureNodes.at(i)->getPositionX() != _textureNodes.at(i-1)->getPositionX()){
+                _sortedTextures.emplace_back(cur);
+                cur.clear();
+            }
+            cur.emplace_back(_textureNodes.at(i));
+        }
+        _textureNodes.clear();
+        
+        for (int i=0; i<_sortedTextures.size();i++){
+            std::sort(_sortedTextures.at(i).begin(),_sortedTextures.at(i).end(), [](std::shared_ptr<scene2::PolygonNode> &a, std::shared_ptr<scene2::PolygonNode> &b){ return a->getPositionY()>b->getPositionY(); });
+        }
+        
+        
+        
+        
         _portraits->setIndex(1);
         std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-        ->setZoom(1);
+        ->setZoom(0.1);
         _levelLoaded = true;
     }
 }
@@ -512,7 +557,8 @@ void SGameController::initDoors(){
     std::vector<std::pair<Vec2, int>> doors = _level->getDoors();
     for (int i=0; i<doors.size(); i++){
         _doors.emplace_back(std::make_shared<DoorController>(_assets, doors[i].first, doors[i].second, 1));
-        _doors.at(i)->addChildTo(_scene);
+//        _doors.at(i)->addChildTo(_scene); //TODO: obstcales
+        _doors.at(i)->addChildToVector(_textureNodes);
     }
 }
 
@@ -738,6 +784,18 @@ void SGameController::sortNodes(){
                 if(_hunterYPos>_sortedObstacles[i][n]->getYPos()){
                     _sortedObstacles[i][n]->removeChildFrom(_obstacleNode);
                     _sortedObstacles[i][n]->addChildTo(_obstacleNode);
+                }
+            }
+        }
+    }
+    
+    for(int i=0; i<_sortedTextures.size(); i++){
+        float xDiff = abs(_hunterXPos- _sortedTextures[i][0]->getPositionX());
+        if (xDiff<128*2){
+            for(int n=0; n<_sortedTextures.at(i).size(); n++){
+                if(_hunterYPos>_sortedTextures[i][n]->getPositionY()){
+                    _obstacleNode->removeChild(_sortedTextures[i][n]);
+                    _obstacleNode->addChild(_sortedTextures[i][n]);
                 }
             }
         }

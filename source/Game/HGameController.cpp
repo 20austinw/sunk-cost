@@ -269,6 +269,23 @@ HGameController::HGameController(
     _deserializer = NetcodeDeserializer::alloc();
     
 //    initJoystick();
+    Vec3 currPos = (_hunter->getPosition());
+    if (_network) {
+        _network->receive([this](const std::string source,
+                                 const std::vector<std::byte>& data) {
+            processData(source,data);
+        });
+        checkConnection();
+        
+        if (Vec2(currPos) != _lastpos) {
+            std::vector<float> pos = std::vector<float>();
+            pos.push_back(0);
+            pos.push_back(currPos.x);
+            pos.push_back(currPos.y);
+            transmitPos(pos);
+            _lastpos = Vec2(currPos);
+        }
+    }
 }
 
 #pragma mark Gameplay Handling

@@ -227,7 +227,7 @@ private:
     
     std::shared_ptr<scene2::PolygonNode> _exit;
     
-    bool _levelLoaded;
+    bool _levelLoaded=false;
     
     bool _ishost;
     

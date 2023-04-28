@@ -226,7 +226,7 @@ void SGameController::update(float dt) {
                 _spirit.getModel()->setTrapState(false);
                 
                 // A trap has been placed
-                if (_spirit.placeTrap(_tilemap, _spirit.getModel()->lastTrapPos)){
+                if (_spirit.placeTrap(_tilemap, _spirit.getModel()->lastTrapPos, _secondLayer)){
                     _spirit.removeLastTrapBtn(_fourthLayer); //TODO: node
                 } else {
                     _spirit.getView()->addLastTrapExtraTo(_fourthLayer); //TODO: node
@@ -266,7 +266,7 @@ void SGameController::update(float dt) {
         }
         
         // detect if a trap or door on the map has been removed, add a new trap button to the scene
-        int result = _spirit.update(_trapTriggered, _trapPos);
+        int result = _spirit.update(_trapTriggered, _trapPos, _secondLayer);
         if (_trapTriggered){
             _trapTriggered = false;
             _trapPos = Vec2::ZERO;

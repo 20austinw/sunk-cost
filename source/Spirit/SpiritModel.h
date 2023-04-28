@@ -236,12 +236,17 @@ class SpiritModel {
     }
     
     int cloestTrapToHunter(Vec2 pos){
+        int result = -1;
+        float minDis = 100000;
+        Vec2 hunterPos = _hunterModel->getPosition();
         for (int i = 0; i < _trapModels.size(); i++){
-            if(pos == _trapModels[i]->getPosition()){
-                return i;
+            float dis = hunterPos.distance(_trapModels.at(i)->getPosition());
+            if(dis < minDis){
+                minDis = dis;
+                result = i;
             }
         }
-        return -1;
+        return result;
     }
 };
 

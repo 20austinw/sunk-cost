@@ -125,7 +125,6 @@ class SpiritView {
     
     void addLocksTo(std::shared_ptr<cugl::scene2::PolygonNode>& node) {
         for (int i=0; i<_locks.size(); i++){
-            CULog("test");
             node->addChild(_locks.at(i));
         }
         for (int i=0; i<_lockExtra.size(); i++){
@@ -142,7 +141,11 @@ class SpiritView {
         }
     }
     
-    void updateUnusedLocksPos(Vec2 pos){
+    void updateUnusedLocksPos(){
+        float zoom = std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera()) ->getZoom();
+        Vec2 pos = _scene->getCamera()->screenToWorldCoords(
+                _scene->getSize() - getLockSize()/2*zoom);
+        
         for (int i=0 ; i<_locks.size(); i++){
             _locks.at(i)->setPosition(pos);
             _locks[i]->setScale(_lockScaleFactor/getZoom());
@@ -153,7 +156,10 @@ class SpiritView {
         }
     }
     
-    void updateUnusedTrapsPos(Vec2 pos){
+    void updateUnusedTrapsPos(){
+        float zoom = std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera()) ->getZoom();
+        Vec2 pos = _scene->getCamera()->screenToWorldCoords(_scene->getSize() - getLockSize()/2*zoom) + Vec2(0, +getLockSize().height);
+        
         for (int i=0 ; i<_trapButtons.size(); i++){
             _trapButtons.at(i)->setPosition(pos);
             _trapButtons[i]->setScale(_trapScaleFactor/getZoom());

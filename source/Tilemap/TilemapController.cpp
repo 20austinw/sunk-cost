@@ -135,6 +135,15 @@ void TilemapController::addTile(int col, int row, Color4 color,
     _tilemap[row][col]->addChildTo(_view->getNode());
 }
 
+void TilemapController::removeTile(int col, int row){
+    _tilemap[row][col]->removeChildFrom(_view->getNode());
+    _tilemap[row][col].reset();
+}
+
+void TilemapController::setTileTraversable(int col, int row, bool b) {
+    _tilemap[row][col]->updateTraversable(b);
+}
+
 void TilemapController::addDoor(int col, int row,
                                 const std::shared_ptr<Texture>& texture) {
     Vec2 pos(_model->tileSize.width * (col), _model->tileSize.height * row);

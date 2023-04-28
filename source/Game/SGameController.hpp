@@ -63,8 +63,11 @@ public:
     // block screen
     std::shared_ptr<cugl::scene2::PolygonNode> _thirdLayer;
     
-    // minimap, lock and trap button, battery, timer
+    // lock and trap button
     std::shared_ptr<cugl::scene2::PolygonNode> _fourthLayer;
+    
+    // minimap, battery, timer
+    std::shared_ptr<cugl::scene2::PolygonNode> _fifthLayer;
     
 
     // CONTROLLERS are attached directly to the scene (no pointers)

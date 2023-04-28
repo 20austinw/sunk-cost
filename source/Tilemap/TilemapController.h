@@ -131,6 +131,10 @@ class TilemapController {
      */
     void addTile(int col, int row, Color4 color, bool traversable,
                  const std::shared_ptr<Texture>& texture);
+    
+    void removeTile(int col, int row);
+    
+    void setTileTraversable(int col, int row, bool b);
 
     /**
      * Returns whether the tile at the given position is traversable.

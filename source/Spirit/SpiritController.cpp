@@ -19,7 +19,7 @@ SpiritController::SpiritController() {}
  */
 SpiritController::SpiritController(
     const std::shared_ptr<cugl::AssetManager>& assets,
-    std::shared_ptr<cugl::Scene2> scene,
+    std::shared_ptr<cugl::Scene2>& scene,
     std::shared_ptr<PortraitSetController> portraits, Size screenSize) {
     _scene = scene;
     _model = std::make_shared<SpiritModel>(assets, scene, 3, 2, 30);
@@ -88,19 +88,13 @@ int SpiritController::update(bool trap, Vec2 pos){
 
 void SpiritController::updateLocksPos(){
     if (!_model->isOnLock){
-        float zoom = std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera()) ->getZoom();
-        Vec2 pos = _scene->getCamera()->screenToWorldCoords(
-                _scene->getSize() - _view->getLockSize() / 2 * zoom);
-        _view->updateUnusedLocksPos(pos);
+        _view->updateUnusedLocksPos();
     }
 }
 
 void SpiritController::updateTrapBtnsPos(){
     if (!_model->isOnTrap){
-        float zoom = std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera()) ->getZoom();
-        Vec2 pos = _scene->getCamera()->screenToWorldCoords(
-                _scene->getSize() - _view->getTrapSize() / 2 * zoom) + Vec2(0, +_view->getLockSize().height);
-        _view->updateUnusedTrapsPos(pos);
+        _view->updateUnusedTrapsPos();
     }
 }
 

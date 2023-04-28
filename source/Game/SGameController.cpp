@@ -41,6 +41,8 @@ SGameController::SGameController(
     _scene->addChild(_thirdLayer);
     _fourthLayer = scene2::PolygonNode::alloc();
     _scene->addChild(_fourthLayer);
+    _fifthLayer = scene2::PolygonNode::alloc();
+    _scene->addChild(_fifthLayer);
     
     _background =
     scene2::PolygonNode::allocWithPoly(cugl::Rect(0, 0, _scene->getSize().width, _scene->getSize().height));
@@ -83,7 +85,7 @@ SGameController::SGameController(
     seconds = seconds.length() <= 1 ? "0"+seconds : seconds;
     _timerLabel = cugl::scene2::Label::allocWithText(Vec2(0, 0), minutes + ":" + seconds, _assets->get<Font>("pixel32"));
     _timerScale = _textHeight/_timerLabel->getSize().height;
-    _fourthLayer->addChild(_timerLabel);
+    _fifthLayer->addChild(_timerLabel);
 //    _scene->addChild(_timerLabel); //TODO: fourth
     _endScene = std::make_shared<EndScene>(_scene, assets, true);
     
@@ -97,7 +99,7 @@ SGameController::SGameController(
     _alertLabel->setForeground(cugl::Color4f::RED);
     
     _miniMap = make_shared<Minimap>( _assets, _scene, _tilemap);
-    _miniMap->addChildToNode(_fourthLayer);
+    _miniMap->addChildToNode(_fifthLayer);
 //    _miniMap->addChildTo(_scene); //TODO: fourth
     while(!_levelLoaded) {
         checkLevelLoaded();
@@ -142,7 +144,7 @@ void SGameController::update(float dt) {
         }
         
         if (_alertTimer == 0 && _treasureStolen) {
-            _fourthLayer->addChild(_alertLabel);
+            _fifthLayer->addChild(_alertLabel);
 //            _scene->addChild(_alertLabel); //TODO: fourth
             _alertTimer++;
         }
@@ -154,7 +156,7 @@ void SGameController::update(float dt) {
         if (_alertTimer == 300) {
             _alertTimer = 0;
             _treasureStolen = false;
-            _fourthLayer->removeChild(_alertLabel);
+            _fifthLayer->removeChild(_alertLabel);
 //            _scene->removeChild(_alertLabel);
         }
         
@@ -196,7 +198,7 @@ void SGameController::update(float dt) {
                         _spirit.removeLastLock(_fourthLayer); //TODO: remove from node
                         
                     } else {
-                        _spirit.getView()->addLastLockExtraTo(_fourthLayer); //TODO: add to node
+                        _spirit.getView()->addLastLockExtraTo(_fourthLayer);
                     }
                 }
             }
@@ -234,14 +236,6 @@ void SGameController::update(float dt) {
             _spirit.getModel()->setTrapState(false);
         }
         
-        if (!didSwitch) {
-            _spirit.decreaseCameraCool();
-        } else {
-            // refresh locks
-            _spirit.updateLocksPos(); //TODO: drawing order refresh
-            _spirit.updateTrapBtnsPos(); //TODO: drawing order refresh
-        }
-        
         Vec3 offset = Vec3(_assets->get<Texture>("map")->getSize()/2);
         _scene->getCamera()->setPosition(
                                          _portraits->getPosition(_portraits->getIndex()) + offset);
@@ -252,7 +246,7 @@ void SGameController::update(float dt) {
             // Redraw doors
             CULog("Adding block!");
             _portraits->addBlock(_thirdLayer); //TODO: add node
-            _portraits->refreshBatteryNodes(_fourthLayer); //drawing order refresh //TODO: delete
+            _portraits->refreshBatteryNodes(_fifthLayer); //drawing order refresh //TODO: delete
             blocked = true;
         } else if (_portraits->getCurState() && !_portraits->getPrevState()) {
             // Redraw doors
@@ -307,10 +301,11 @@ void SGameController::update(float dt) {
         }
         
         // Draw minimap
-        if(inputController->isTouchDown() && _miniMap->isClicked(inputController->getPosition())){
+        if(inputController->isTouchDown() && _miniMap->isClicked(inputController->getPosition()) && canSwitch){
             Vec2 mapPos = _miniMap->getMapPosition();
             int idx = _portraits->getNearest(mapPos);
             if (_portraits->getIndex() != idx && _spirit.isSwitchable()){
+                didSwitch = true;
                 _portraits->setIndex(idx);
 //                CULog("%i", _portraits->getIndex());
                 _spirit.resetCameraCool();
@@ -318,11 +313,17 @@ void SGameController::update(float dt) {
                 _portraits->resetScale();
             }
         }
+        _spirit.updateLocksPos(); //TODO: drawing order refresh
+        _spirit.updateTrapBtnsPos(); //TODO: drawing order refresh
+        
+        if (!didSwitch) {
+            _spirit.decreaseCameraCool();
+        }
         
         
         // Draw battery (has to come after the minimap update)
         _portraits->updateBattery();
-        _portraits->updateBatteryNode(_fourthLayer, 50); //TODO: drawing order refresh
+        _portraits->updateBatteryNode(_fifthLayer, 50); //TODO: drawing order refresh
         
         _miniMap->update();
 //        _miniMap->removeChildFrom(_scene); //TODO: delete
@@ -512,7 +513,7 @@ void SGameController::checkLevelLoaded() {
         _portraits->initializeSheets(_assets->get<Texture>("greenBattery"),
                                      _assets->get<Texture>("redBattery"),
                                      _assets->get<Texture>("noBattery"));
-        _portraits->initializeBatteryNodes(_fourthLayer);
+        _portraits->initializeBatteryNodes(_fifthLayer);
         _spirit.getView()->addLocksTo(_fourthLayer);
         _spirit.getView()->addTrapButtonsTo(_fourthLayer);
         
@@ -544,7 +545,9 @@ void SGameController::checkLevelLoaded() {
         
         _portraits->setIndex(1);
         std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-        ->setZoom(0.1);
+        ->setZoom(0.3);
+        _spirit.updateLocksPos();
+        _spirit.updateTrapBtnsPos();
         _levelLoaded = true;
     }
 }
@@ -669,6 +672,9 @@ void SGameController::addFloorTile(int type, int c, int r){
 void SGameController::addWallTile(int type, int c, int r){
     if(type == 0) {
         return;
+    }
+    if(_tilemap->getDimensions().width>c && _tilemap->getDimensions().height>r){
+        _tilemap->setTileTraversable(c, r, false);
     }
     int index = type-1;
     std::shared_ptr< Texture > wall = _assets->get<Texture>("wall");

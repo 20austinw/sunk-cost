@@ -61,7 +61,7 @@ class SpiritController {
      * Constructor to initialize SpiritController with PortraitSetController
      */
     SpiritController(const std::shared_ptr<cugl::AssetManager>& assets,
-                     std::shared_ptr<cugl::Scene2> scene,
+                     std::shared_ptr<cugl::Scene2>& scene,
                      std::shared_ptr<PortraitSetController> portraits,
                      Size screenSize);
 

@@ -833,27 +833,27 @@ void HGameController::checkLevelLoaded() {
         
         initDoors();
         
-        std::sort(_textureNodes.begin(),_textureNodes.end(), [](std::shared_ptr<scene2::PolygonNode> &a, std::shared_ptr<scene2::PolygonNode> &b){ return a->getPositionX()<b->getPositionX(); });
+        std::sort(_textureNodes.begin(),_textureNodes.end(), [](std::shared_ptr<scene2::PolygonNode> &a, std::shared_ptr<scene2::PolygonNode> &b){ return a->getPositionY()<b->getPositionY(); });
         
         for(int i=0; i<_textureNodes.size(); i++){
             _obstacleNode->addChild(_textureNodes.at(i));
         }
         
-        std::vector<std::shared_ptr<scene2::PolygonNode>> cur;
-        cur.emplace_back(_textureNodes.at(0));
-        for (int i=1; i<_textureNodes.size(); i++){
-            if (_textureNodes.at(i)->getPositionX() != _textureNodes.at(i-1)->getPositionX()){
-                _sortedTextures.emplace_back(cur);
-                cur.clear();
-            }
-            cur.emplace_back(_textureNodes.at(i));
-        }
-        _textureNodes.clear();
-        
-        for (int i=0; i<_sortedTextures.size();i++){
-            std::sort(_sortedTextures.at(i).begin(),_sortedTextures.at(i).end(), [](std::shared_ptr<scene2::PolygonNode> &a, std::shared_ptr<scene2::PolygonNode> &b){ return a->getPositionY()>b->getPositionY(); });
-        }
-        
+//        std::vector<std::shared_ptr<scene2::PolygonNode>> cur;
+//        cur.emplace_back(_textureNodes.at(0));
+//        for (int i=1; i<_textureNodes.size(); i++){
+//            if (_textureNodes.at(i)->getPositionX() != _textureNodes.at(i-1)->getPositionX()){
+//                _sortedTextures.emplace_back(cur);
+//                cur.clear();
+//            }
+//            cur.emplace_back(_textureNodes.at(i));
+//        }
+//        _textureNodes.clear();
+//
+//        for (int i=0; i<_sortedTextures.size();i++){
+//            std::sort(_sortedTextures.at(i).begin(),_sortedTextures.at(i).end(), [](std::shared_ptr<scene2::PolygonNode> &a, std::shared_ptr<scene2::PolygonNode> &b){ return a->getPositionY()>b->getPositionY(); });
+//        }
+//
 
 //        _hunter->setPosition(Vec2(0,0));
         _filterTexture = _assets->get<Texture>("filter");
@@ -1375,15 +1375,12 @@ void HGameController::sortNodes(){
         }
     }
     
-    for(int i=0; i<_sortedTextures.size(); i++){
-        float xDiff = abs(_hunter->getPosition().x - _sortedTextures[i][0]->getPositionX());
-        if (xDiff<128*3){
-            for(int n=0; n<_sortedTextures.at(i).size(); n++){
-                if(_hunter->getPosition().y>_sortedTextures[i][n]->getPositionY()-128){
-                    _obstacleNode->removeChild(_sortedTextures[i][n]);
-                    _obstacleNode->addChild(_sortedTextures[i][n]);
-                }
-            }
+    for(int i=0; i<_textureNodes.size(); i++){
+        if(_hunter->getPosition().y>_textureNodes.at(i)->getPositionY()-128){
+            _obstacleNode->removeChild(_textureNodes.at(i));
+            _obstacleNode->addChild(_textureNodes.at(i));
+        } else {
+            return;
         }
     }
 }

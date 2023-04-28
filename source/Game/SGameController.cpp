@@ -44,6 +44,9 @@ SGameController::SGameController(
     _fifthLayer = scene2::PolygonNode::alloc();
     _scene->addChild(_fifthLayer);
     
+    _spawn = true;
+    _ticks = 120;
+    
     _background =
     scene2::PolygonNode::allocWithPoly(cugl::Rect(0, 0, _scene->getSize().width, _scene->getSize().height));
     _background->setColor(Color4::BLACK);
@@ -132,6 +135,19 @@ bool blocked = false;
 void SGameController::update(float dt) {
 
     if(_gameStatus == 0){
+        if(_spawn){
+            if (_ticks > 0){
+                _ticks--;
+            } else{
+                float zoom = std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+                ->getZoom();
+                std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+                ->setZoom(zoom + 0.005);
+                if(zoom+0.01 >= 0.85){
+                    _spawn = false;
+                }
+            }
+        }
         sortNodes();
         
         bool canSwitch = true;
@@ -177,7 +193,7 @@ void SGameController::update(float dt) {
         _background->setPosition(_scene->getCamera()->screenToWorldCoords(Vec2(0, _scene->getSize().height)));
         
         //logic for door lock
-        if ((inputController->isTouchDown() || _spirit.getModel()->isOnLock) && _spirit.getModel()->doors >= 0 && !blocked && !_spirit.getModel()->isOnTrap){
+        if ((inputController->isTouchDown() || _spirit.getModel()->isOnLock) && _spirit.getModel()->doors >= 0 && !blocked && !_spirit.getModel()->isOnTrap && !_spawn){
             if(_spirit.getModel()->isOnLock || _spirit.touchInLockBound(cameraPos)){
                 canSwitch = false;
                 if (!_spirit.getModel()->isOnLock){
@@ -202,7 +218,7 @@ void SGameController::update(float dt) {
                     }
                 }
             }
-        } else if (blocked&&_spirit.getModel()->isOnLock){
+        } else if (blocked&&_spirit.getModel()->isOnLock && !_spawn){
             _spirit.getModel()->setLockState(false);
             for (int i=0; i<_doors.size();i++){
                 _doors.at(i)->resetToUnlock();
@@ -210,7 +226,7 @@ void SGameController::update(float dt) {
         }
         
         //logic for trap placement
-        if ((inputController->isTouchDown() || _spirit.getModel()->isOnTrap) && _spirit.getModel()->traps >= 0 && !_spirit.getModel()->isOnLock && !blocked){
+        if ((inputController->isTouchDown() || _spirit.getModel()->isOnTrap) && _spirit.getModel()->traps >= 0 && !_spirit.getModel()->isOnLock && !blocked && !_spawn){
             if(_spirit.getModel()->isOnTrap || _spirit.touchInTrapBound(cameraPos)){
                 canSwitch = false;
                 if (! _spirit.getModel()->isOnTrap){
@@ -232,7 +248,7 @@ void SGameController::update(float dt) {
                     _spirit.getView()->addLastTrapExtraTo(_fourthLayer); //TODO: node
                 }
             }
-        } else if (blocked&&_spirit.getModel()->isOnTrap){
+        } else if (blocked&&_spirit.getModel()->isOnTrap && !_spawn){
             _spirit.getModel()->setTrapState(false);
         }
         
@@ -300,7 +316,7 @@ void SGameController::update(float dt) {
         }
         
         // Draw minimap
-        if(inputController->isTouchDown() && _miniMap->isClicked(inputController->getPosition()) && canSwitch){
+        if(inputController->isTouchDown() && _miniMap->isClicked(inputController->getPosition()) && canSwitch &&!_spawn){
             Vec2 mapPos = _miniMap->getMapPosition();
             int idx = _portraits->getNearest(mapPos);
             if (_portraits->getIndex() != idx && _spirit.isSwitchable()){
@@ -321,7 +337,10 @@ void SGameController::update(float dt) {
         
         
         // Draw battery (has to come after the minimap update)
-        _portraits->updateBattery();
+        if(!_spawn){
+            _portraits->updateBattery();
+        }
+        
         _portraits->updateBatteryNode(_fifthLayer, 50); //TODO: drawing order refresh
         
         _miniMap->update();
@@ -542,9 +561,9 @@ void SGameController::checkLevelLoaded() {
         
         
         
-        _portraits->setIndex(1);
+        _portraits->setIndex(4);
         std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-        ->setZoom(0.9);
+        ->setZoom(0.25);
         _spirit.updateLocksPos();
         _spirit.updateTrapBtnsPos();
         _levelLoaded = true;

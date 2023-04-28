@@ -146,6 +146,10 @@ public:
     
     int _prevInd;
     
+    bool _spawn;
+    
+    int _ticks;
+    
 #pragma mark External References
   private:
     /** The tilemap to procedurally generate */

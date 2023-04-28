@@ -974,7 +974,7 @@ void HGameController::initCamera() {
 //    if(_star!=nullptr){
 //        Vec3 next = _offset + (Vec3(_star->getPosition().x, _star->getPosition().y, 1));
 //    }
-    
+    _scene->getCamera()->translate(Vec3(0,0,-0.8));
     Vec3 next = _offset + (Vec3(_hunter->getPosition().x, _hunter->getPosition().y, 1));
     _scene->getCamera()->translate(next - curr);
     _scene->getCamera()->setFar(100000);

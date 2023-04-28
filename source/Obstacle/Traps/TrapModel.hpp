@@ -63,7 +63,10 @@ class TrapModel {
      *
      * @param position trap triggered
      */
-    void setTrigger(bool isTriggered) { _triggered = isTriggered; }
+    void setTrigger(bool isTriggered) {
+        _triggered = isTriggered;
+        
+    }
 
     bool getTrigger() { return _triggered; }
 

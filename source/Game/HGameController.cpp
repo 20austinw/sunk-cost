@@ -519,7 +519,7 @@ void HGameController::update(float dt) {
       
         _move=true;
         for (auto obsta:_obstaclePoly){
-            if(obsta.contains(_shadow->getPosition()+Vec2(rightward*_hunter->getVelocity().x,forward*_hunter->getVelocity().y))){
+            if(obsta.contains(_shadow->getPosition()+Vec2(40,0)+Vec2(rightward*_hunter->getVelocity().x,forward*_hunter->getVelocity().y)) or obsta.contains(_shadow->getPosition()-Vec2(40,0)+Vec2(rightward*_hunter->getVelocity().x,forward*_hunter->getVelocity().y)) or obsta.contains(_shadow->getPosition()+Vec2(rightward*_hunter->getVelocity().x,forward*_hunter->getVelocity().y))){
                 _move=false;
         }
             

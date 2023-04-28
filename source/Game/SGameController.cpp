@@ -143,7 +143,7 @@ void SGameController::update(float dt) {
                 ->getZoom();
                 std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
                 ->setZoom(zoom + 0.005);
-                if(zoom+0.01 >= 0.85){
+                if(zoom+0.005 >= 0.85){
                     _spawn = false;
                 }
             }

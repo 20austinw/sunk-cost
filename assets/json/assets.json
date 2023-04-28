@@ -52,6 +52,9 @@
         "trap_animation": {
             "file": "textures/clam_trap.png"
         },
+        "trap_animation2": {
+            "file": "textures/clam_trap_ani.png"
+        },
         "door": {
             "file": "textures/door.png"
         },

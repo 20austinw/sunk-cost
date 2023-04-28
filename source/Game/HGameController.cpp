@@ -560,13 +560,7 @@ void HGameController::update(float dt) {
             _hunter->setViewFrame(forward, rightward);
         }
         
-        //_hunter->move(1000*forward,1000*rightward);
-        
-        //trap collision
-       
-    //    if(_collision.didHitTrap){
-    //        _trap.setTrigger(true);
-    //    }
+
         
         
         
@@ -820,13 +814,6 @@ void HGameController::checkLevelLoaded() {
             _obstacleNode->addChild(_hunterNodes.at(n));
         }
         
-        
-        
-
-        // _trap = TrapController(_assets, _scene->getSize(), PLAYER_SIZE);
-        // _trap.addChildTo(_scene);
-      
-
        
         
         _tilemap->addDoorTo(_scene);

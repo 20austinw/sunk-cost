@@ -38,9 +38,9 @@ class TrapView {
              float radius) {
         _frameNum = 0;
         _radius = radius;
-        _spriteSheet = assets->get<Texture>("trap_animation");
+        _spriteSheet = assets->get<Texture>("trap_animation2");
         _spriteNode =
-            scene2::SpriteNode::allocWithSheet(_spriteSheet, 2, 8, 16);
+            scene2::SpriteNode::allocWithSheet(_spriteSheet, 1, 3, 3);
         _spriteNode->setScale(0.5);
         _spriteNode->setFrame(_frameNum);
         _spriteNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
@@ -102,6 +102,13 @@ class TrapView {
     void setVisible(bool isVisible){
         _shadow->setVisible(isVisible);
         _spriteNode->setVisible(isVisible);
+       
+        while(isVisible){
+            _frameNum++;
+            _spriteNode->setFrame(_frameNum%3);
+        }
+        
+        
     }
 
 #pragma mark Setters

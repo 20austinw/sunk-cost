@@ -160,7 +160,7 @@ class SpiritModel {
         _trapModels.emplace_back(std::make_shared<TrapModel>(position, 900));
         auto trap = std::make_shared<TrapView>(_assets, position, 20);
         _trapViews.emplace_back(trap);
-        trap->addChildTo(_scene);
+        trap->addChildTo(_scene); //TODO: add trap
     }
 
     // 0: nothing; 1: remove 1 trap; 2: remove 2 traps

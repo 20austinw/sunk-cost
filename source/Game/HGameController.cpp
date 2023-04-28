@@ -1076,16 +1076,19 @@ void HGameController::updateCamera(float timestep) {
         Vec2 curr = _scene->getCamera()->getPosition();
         _filter->setPosition(_scene->getCamera()->getPosition());
         _filter->setAnchor(Vec2::ANCHOR_CENTER);
-        Vec2 next = _offset
+        Vec2 fixHunterOffset = Vec2(600,0);
+        Vec2 next = _offset - fixHunterOffset
         + ((Vec3(_hunter->getPosition().x, _hunter->getPosition().y, 1)));
         
         int timeFactor = (_shiftback)? 5 : 2;
 
         // restrict camera focus within 300<x<1800, 300<y<1900 window
         int cameraXmin = 300;
-        int cameraXmax = _tilemap->getDimensions().width*_tileWidth;
+        // _tilemap->getDimensions().width*_tileWidth = 8192
+        int cameraXmax = 8000;
         int cameraYmin = 300;
-        int cameraYmax =_tilemap->getDimensions().height*_tileWidth;
+        // _tilemap->getDimensions().height*_tileWidth = 6144
+        int cameraYmax = 6000;
         if(_hunter->getPosition().x < cameraXmin){
             next.x = cameraXmin;
         }

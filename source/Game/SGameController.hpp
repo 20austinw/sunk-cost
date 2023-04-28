@@ -146,6 +146,10 @@ public:
     
     int _prevInd;
     
+    bool _spawn;
+    
+    int _ticks;
+    
 #pragma mark External References
   private:
     /** The tilemap to procedurally generate */
@@ -156,7 +160,7 @@ public:
     std::vector<std::shared_ptr<scene2::SpriteNode>> _candleNodes;
     std::vector<std::shared_ptr<scene2::PolygonNode>> _hunterNodes;
     std::vector<std::shared_ptr<scene2::PolygonNode>> _textureNodes;
-    std::vector<std::vector<std::shared_ptr<scene2::PolygonNode>>> _sortedTextures;
+//    std::vector<std::vector<std::shared_ptr<scene2::PolygonNode>>> _sortedTextures;
 
 #pragma mark Main Methods
   public:

@@ -44,6 +44,9 @@ SGameController::SGameController(
     _fifthLayer = scene2::PolygonNode::alloc();
     _scene->addChild(_fifthLayer);
     
+    _spawn = true;
+    _ticks = 120;
+    
     _background =
     scene2::PolygonNode::allocWithPoly(cugl::Rect(0, 0, _scene->getSize().width, _scene->getSize().height));
     _background->setColor(Color4::BLACK);
@@ -132,6 +135,19 @@ bool blocked = false;
 void SGameController::update(float dt) {
 
     if(_gameStatus == 0){
+        if(_spawn){
+            if (_ticks > 0){
+                _ticks--;
+            } else{
+                float zoom = std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+                ->getZoom();
+                std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+                ->setZoom(zoom + 0.005);
+                if(zoom+0.005 >= 0.85){
+                    _spawn = false;
+                }
+            }
+        }
         sortNodes();
         
         bool canSwitch = true;
@@ -177,7 +193,7 @@ void SGameController::update(float dt) {
         _background->setPosition(_scene->getCamera()->screenToWorldCoords(Vec2(0, _scene->getSize().height)));
         
         //logic for door lock
-        if ((inputController->isTouchDown() || _spirit.getModel()->isOnLock) && _spirit.getModel()->doors >= 0 && !blocked && !_spirit.getModel()->isOnTrap){
+        if ((inputController->isTouchDown() || _spirit.getModel()->isOnLock) && _spirit.getModel()->doors >= 0 && !blocked && !_spirit.getModel()->isOnTrap && !_spawn){
             if(_spirit.getModel()->isOnLock || _spirit.touchInLockBound(cameraPos)){
                 canSwitch = false;
                 if (!_spirit.getModel()->isOnLock){
@@ -202,7 +218,7 @@ void SGameController::update(float dt) {
                     }
                 }
             }
-        } else if (blocked&&_spirit.getModel()->isOnLock){
+        } else if (blocked&&_spirit.getModel()->isOnLock && !_spawn){
             _spirit.getModel()->setLockState(false);
             for (int i=0; i<_doors.size();i++){
                 _doors.at(i)->resetToUnlock();
@@ -210,7 +226,7 @@ void SGameController::update(float dt) {
         }
         
         //logic for trap placement
-        if ((inputController->isTouchDown() || _spirit.getModel()->isOnTrap) && _spirit.getModel()->traps >= 0 && !_spirit.getModel()->isOnLock && !blocked){
+        if ((inputController->isTouchDown() || _spirit.getModel()->isOnTrap) && _spirit.getModel()->traps >= 0 && !_spirit.getModel()->isOnLock && !blocked && !_spawn){
             if(_spirit.getModel()->isOnTrap || _spirit.touchInTrapBound(cameraPos)){
                 canSwitch = false;
                 if (! _spirit.getModel()->isOnTrap){
@@ -232,7 +248,7 @@ void SGameController::update(float dt) {
                     _spirit.getView()->addLastTrapExtraTo(_fourthLayer); //TODO: node
                 }
             }
-        } else if (blocked&&_spirit.getModel()->isOnTrap){
+        } else if (blocked&&_spirit.getModel()->isOnTrap && !_spawn){
             _spirit.getModel()->setTrapState(false);
         }
         
@@ -300,7 +316,7 @@ void SGameController::update(float dt) {
         }
         
         // Draw minimap
-        if(inputController->isTouchDown() && _miniMap->isClicked(inputController->getPosition()) && canSwitch){
+        if(inputController->isTouchDown() && _miniMap->isClicked(inputController->getPosition()) && canSwitch &&!_spawn){
             Vec2 mapPos = _miniMap->getMapPosition();
             int idx = _portraits->getNearest(mapPos);
             if (_portraits->getIndex() != idx && _spirit.isSwitchable()){
@@ -321,7 +337,10 @@ void SGameController::update(float dt) {
         
         
         // Draw battery (has to come after the minimap update)
-        _portraits->updateBattery();
+        if(!_spawn){
+            _portraits->updateBattery();
+        }
+        
         _portraits->updateBatteryNode(_fifthLayer, 50); //TODO: drawing order refresh
         
         _miniMap->update();
@@ -518,33 +537,33 @@ void SGameController::checkLevelLoaded() {
         
         initDoors();
         //TODO: sort
-        std::sort(_textureNodes.begin(),_textureNodes.end(), [](std::shared_ptr<scene2::PolygonNode> &a, std::shared_ptr<scene2::PolygonNode> &b){ return a->getPositionX()<b->getPositionX(); });
+        std::sort(_textureNodes.begin(),_textureNodes.end(), [](std::shared_ptr<scene2::PolygonNode> &a, std::shared_ptr<scene2::PolygonNode> &b){ return a->getPositionY()<b->getPositionY(); });
         
         for(int i=0; i<_textureNodes.size(); i++){
             _obstacleNode->addChild(_textureNodes.at(i));
         }
         
-        std::vector<std::shared_ptr<scene2::PolygonNode>> cur;
-        cur.emplace_back(_textureNodes.at(0));
-        for (int i=1; i<_textureNodes.size(); i++){
-            if (_textureNodes.at(i)->getPositionX() != _textureNodes.at(i-1)->getPositionX()){
-                _sortedTextures.emplace_back(cur);
-                cur.clear();
-            }
-            cur.emplace_back(_textureNodes.at(i));
-        }
-        _textureNodes.clear();
-        
-        for (int i=0; i<_sortedTextures.size();i++){
-            std::sort(_sortedTextures.at(i).begin(),_sortedTextures.at(i).end(), [](std::shared_ptr<scene2::PolygonNode> &a, std::shared_ptr<scene2::PolygonNode> &b){ return a->getPositionY()>b->getPositionY(); });
-        }
-        
-        
+//        std::vector<std::shared_ptr<scene2::PolygonNode>> cur;
+//        cur.emplace_back(_textureNodes.at(0));
+//        for (int i=1; i<_textureNodes.size(); i++){
+//            if (_textureNodes.at(i)->getPositionX() != _textureNodes.at(i-1)->getPositionX()){
+//                _sortedTextures.emplace_back(cur);
+//                cur.clear();
+//            }
+//            cur.emplace_back(_textureNodes.at(i));
+//        }
+//        _textureNodes.clear();
+//
+//        for (int i=0; i<_sortedTextures.size();i++){
+//            std::sort(_sortedTextures.at(i).begin(),_sortedTextures.at(i).end(), [](std::shared_ptr<scene2::PolygonNode> &a, std::shared_ptr<scene2::PolygonNode> &b){ return a->getPositionY()>b->getPositionY(); });
+//        }
         
         
-        _portraits->setIndex(1);
+        
+        
+        _portraits->setIndex(4);
         std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-        ->setZoom(0.9);
+        ->setZoom(0.25);
         _spirit.updateLocksPos();
         _spirit.updateTrapBtnsPos();
         _levelLoaded = true;
@@ -794,15 +813,12 @@ void SGameController::sortNodes(){
         }
     }
     
-    for(int i=0; i<_sortedTextures.size(); i++){
-        float xDiff = abs(_hunterXPos- _sortedTextures[i][0]->getPositionX());
-        if (xDiff<128*3){
-            for(int n=0; n<_sortedTextures.at(i).size(); n++){
-                if(_hunterYPos>_sortedTextures[i][n]->getPositionY()-128){
-                    _obstacleNode->removeChild(_sortedTextures[i][n]);
-                    _obstacleNode->addChild(_sortedTextures[i][n]);
-                }
-            }
+    for(int i=0; i<_textureNodes.size(); i++){
+        if(_hunterYPos>_textureNodes.at(i)->getPositionY()-128){
+            _obstacleNode->removeChild(_textureNodes.at(i));
+            _obstacleNode->addChild(_textureNodes.at(i));
+        } else {
+            return;
         }
     }
 }

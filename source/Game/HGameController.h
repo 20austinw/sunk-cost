@@ -154,6 +154,8 @@ private:
     
     SpiritController _spirit;
     
+    int _frameNumClam;
+    
 //    TrapController _trap;
     
     TreasureController _treasure;

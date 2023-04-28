@@ -89,14 +89,12 @@ class TrapView {
         scene->removeChild(_spriteNode);
     }
     
-    void setVisible(bool isVisible){
+    void setVisible(bool isVisible,int framenum){
         _shadow->setVisible(isVisible);
         _spriteNode->setVisible(isVisible);
        
-        while(isVisible){
-            _frameNum++;
-            _spriteNode->setFrame(_frameNum%3);
-        }
+        _spriteNode->setFrame(int(framenum/4)%3);
+        
         
         
     }

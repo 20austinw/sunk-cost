@@ -139,7 +139,7 @@ class HunterModel : public physics2::WheelObstacle {
         auto trap = std::make_shared<TrapView>(_assets, position, 20);
         _trapViews.emplace_back(trap);
         trap->addChildTo(_scene);
-        trap->setVisible(false);
+        trap->setVisible(false,0);
     }
     
     void removeTrap(int index){

@@ -87,6 +87,7 @@ HGameController::HGameController(
         
     _tilemap = std::make_unique<TilemapController>();
     _tilemap->addChildTo(_scene);
+        _frameNumClam=0;
         
         _obstacleNode = scene2::PolygonNode::alloc();
         _scene->addChild(_obstacleNode);
@@ -571,9 +572,9 @@ void HGameController::update(float dt) {
                         AudioEngine::get()->play("trapSound", _trapSound, false, _theme->getVolume(), true);
                         _neverPlayed = false;
                     }
-                        
+                    _frameNumClam++;
                     _hunter->getTraps()[i]->setTrigger(true);
-                    _hunter->getTrapViews()[i]->setVisible(true);
+                    _hunter->getTrapViews()[i]->setVisible(true,_frameNumClam);
                    
                         if(!_timertriggered){
                             _countfortimer=0;
@@ -586,7 +587,7 @@ void HGameController::update(float dt) {
             for (int i=0;i<_hunter->getTraps().size();i++){
                 if (_hunter->getTraps()[i]->getTrigger()&& _countfortimer >= 300){
                     _hunter->getTraps()[i]->setTrigger(false);
-                    _hunter->getTrapViews()[i]->setVisible(false);
+                    _hunter->getTrapViews()[i]->setVisible(false,_frameNumClam);
                     _hunter->removeTrap(i);
                     _neverPlayed = true;
                     _timertriggered=false;
@@ -640,15 +641,22 @@ void HGameController::update(float dt) {
         
         
             
-    if (Vec2(currPos) != _lastpos) {
-        std::vector<float> pos = std::vector<float>();
-        pos.push_back(0);
-        pos.push_back(currPos.x);
-        pos.push_back(currPos.y);
-        transmitPos(pos);
-        _lastpos = Vec2(currPos);
+    if (_network) {
+        _network->receive([this](const std::string source,
+                                 const std::vector<std::byte>& data) {
+            processData(source,data);
+        });
+        checkConnection();
+        
+        if (Vec2(currPos) != _lastpos) {
+            std::vector<float> pos = std::vector<float>();
+            pos.push_back(0);
+            pos.push_back(currPos.x);
+            pos.push_back(currPos.y);
+            transmitPos(pos);
+            _lastpos = Vec2(currPos);
+        }
     }
-
     }
     else if(_gameStatus == 1){
         // Hunter lose or win

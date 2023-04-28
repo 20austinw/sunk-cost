@@ -89,6 +89,7 @@ class SpiritView {
             addExtra(_trapExtra, i+1);
         }
         _trapSize = _trapButtons.at(0)->getSize();
+        _lockSize = _locks.at(0)->getSize();
     }
 
 //    /** Deletes this HunterView */
@@ -218,11 +219,11 @@ class SpiritView {
     }
     
     Size getLockSize(){
-        return _locks[0]->getSize();
+        return _lockSize;
     }
     
     Size getTrapSize(){
-        return _trapButtons[0]->getSize();
+        return _trapSize;
     }
     
     Vec2 getLastLockPos(){

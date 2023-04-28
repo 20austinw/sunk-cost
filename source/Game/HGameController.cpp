@@ -527,9 +527,17 @@ void HGameController::update(float dt) {
         
         if(_doorslocked.size()!=0){
             for (int i=0; i<_doorslocked.size(); i++){
-            Vec2 position = _doors.at(_doorslocked[i])->getModelPosition();
-                if(abs(_hunter->getPosition().x+Vec2(rightward*_hunter->getVelocity().x,forward*_hunter->getVelocity().y).x-position.x)<150 && abs(_hunter->getPosition().y+Vec2(rightward*_hunter->getVelocity().x,forward*_hunter->getVelocity().y).y-position.y)<150){
-                    _move=false;
+            Vec2 position = _doors.at(_doorslocked[i])->getViewPosition();
+                
+                if(_shadow->getPosition().y<position.y){
+                    if(abs(_shadow->getPosition().x+Vec2(rightward*_hunter->getVelocity().x,forward*_hunter->getVelocity().y).x-position.x)<300 and abs(_shadow->getPosition().y+Vec2(rightward*_hunter->getVelocity().x,forward*_hunter->getVelocity().y).y-(position.y-128))<400){
+                        _move=false;
+                    }
+                }
+                else{
+                    if(abs(_hunter->getPosition().x+Vec2(rightward*_hunter->getVelocity().x,forward*_hunter->getVelocity().y).x-position.x)<10 and abs(_hunter->getPosition().y+Vec2(rightward*_hunter->getVelocity().x,forward*_hunter->getVelocity().y).y-(position.y))<10){
+                        _move=false;
+                    }
                 }
             }
         }
@@ -592,20 +600,12 @@ void HGameController::update(float dt) {
                     _neverPlayed = true;
                     _timertriggered=false;
                     transmitTrapTriggered(_hunter->getPosition());
-    //                if(_removedvar){
-    //                    _hunter->removeTrap(i);
-    //                    _removedvar=false;
-    //                    _timertriggered=false;
-    //                    transmitTrapTriggered(_hunter->getPosition());
-    //                }
+
                 }
             }
 
             }
-        CULog("true POS %f", _treasure.getPosition().x);
-        CULog("x difff %f", abs(_treasure.getPosition().x-_hunter->getPosition().x));
-        CULog("y difff %f", abs(_treasure.getPosition().y-_hunter->getPosition().y));
-        CULog("33333 %d",!_collision.didHitTreasure );
+      
         if(abs(_treasure.getPosition().x-_hunter->getPosition().x)<= 200 && abs(_treasure.getPosition().y-_hunter->getPosition().y)<= 200 && !_collision.didHitTreasure ){
             CULog("IN ");
             _collision.didHitTreasure = true;

@@ -110,7 +110,7 @@ private:
         }
         SimpleExtruder extruder = SimpleExtruder();
         extruder.set(lineData, false);
-        extruder.calculate(10);
+        extruder.calculate(500,100);
         _poly = extruder.getPolygon();
     }
     

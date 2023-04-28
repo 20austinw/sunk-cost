@@ -19,10 +19,12 @@ class DoorView {
 private:
     std::shared_ptr<scene2::SpriteNode> _door;
     Size _size;
+    Vec2 _position;
     
 #pragma mark Main Functions
     public:
     DoorView(const std::shared_ptr<cugl::AssetManager>& assets, Vec2 position, int type, int playerType=0){
+        _position=position;
         if (playerType == 1){
             if (type == 0){
                 _door = scene2::SpriteNode::allocWithSheet(assets->get<Texture>("front_lock"),3,7,21);
@@ -50,6 +52,10 @@ private:
 #pragma mark Getters
     Size getSize(){
         return _size;
+    }
+    
+    Vec2 getPosition(){
+        return _position;
     }
     
     std::shared_ptr<scene2::SpriteNode> getNode() {

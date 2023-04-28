@@ -78,6 +78,11 @@ class TrapView {
         scene->addChild(_shadow);
         scene->addChild(_spriteNode);
     }
+    
+    void addChildToNode(std::shared_ptr<cugl::scene2::PolygonNode>& node){
+        node->addChild(_shadow);
+        node->addChild(_spriteNode);
+    }
 
     /**
      * Removes the view component children from the given `sceneNode`.
@@ -89,7 +94,13 @@ class TrapView {
         scene->removeChild(_spriteNode);
     }
     
-    void setVisible(bool isVisible,int framenum){
+ 
+    void removeChildFromNode(std::shared_ptr<cugl::scene2::PolygonNode>& node){
+        node->removeChild(_shadow);
+        node->removeChild(_spriteNode);
+    }
+    
+       void setVisible(bool isVisible,int framenum){
         _shadow->setVisible(isVisible);
         _spriteNode->setVisible(isVisible);
        

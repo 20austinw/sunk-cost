@@ -153,18 +153,19 @@ class SpiritModel {
      */
     void setEnergy(float energy) { _energy = energy; };
 
-    void addTrap(Vec2 position) {
+    void addTrap(Vec2 position, std::shared_ptr<cugl::scene2::PolygonNode>& node) {
         if (_trapModels.size() >= 3)
             return;
         //a trap will last for 15s for now
         _trapModels.emplace_back(std::make_shared<TrapModel>(position, 900));
         auto trap = std::make_shared<TrapView>(_assets, position, 20);
         _trapViews.emplace_back(trap);
-        trap->addChildTo(_scene); //TODO: add trap
+        trap->addChildToNode(node);
+//        trap->addChildTo(_scene); //TODO: add trap
     }
 
     // 0: nothing; 1: remove 1 trap; 2: remove 2 traps
-    int update(bool trapTriggered, Vec2 pos) {
+    int update(bool trapTriggered, Vec2 pos, std::shared_ptr<cugl::scene2::PolygonNode>& node) {
         bool result = 0;
         std::vector<std::shared_ptr<TrapModel>> pendingTrapModels;
         std::vector<std::shared_ptr<TrapView>> pendingTrapViews;
@@ -173,7 +174,8 @@ class SpiritModel {
         if (trapTriggered && target != -1){
             result = 1;
             //remove the trap closest to the hunter position
-            _trapViews[target]->removeChildFrom(_scene);
+//            _trapViews[target]->removeChildFrom(_scene);
+            _trapViews[target]->removeChildFromNode(node);
         }
         
         for (int i = 0; i < _trapModels.size(); i++) {

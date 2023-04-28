@@ -57,7 +57,7 @@ public:
     //background and map floor(tilemap)
     std::shared_ptr<cugl::scene2::PolygonNode> _firstLayer;
     
-    //furnitures, walls, doors and traps
+    //furnitures, walls, doors, traps
     std::shared_ptr<cugl::scene2::PolygonNode> _secondLayer;
     
     // block screen

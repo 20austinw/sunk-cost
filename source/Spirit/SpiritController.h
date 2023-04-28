@@ -97,9 +97,9 @@ class SpiritController {
      * (2) modify portraitsetcontroller to reflect the change
      */
     bool placeTrap(const std::shared_ptr<TilemapController> _tilemap,
-                Vec2 trapPos);
+                Vec2 trapPos, std::shared_ptr<cugl::scene2::PolygonNode>& node);
     
-    int update(bool trap, Vec2 pos);
+    int update(bool trap, Vec2 pos, std::shared_ptr<cugl::scene2::PolygonNode>& node);
 
 #pragma mark Setters
   public:

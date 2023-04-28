@@ -1372,7 +1372,7 @@ void HGameController::sortNodes(){
     
     for(int i=0; i<_sortedTextures.size(); i++){
         float xDiff = abs(_hunter->getPosition().x - _sortedTextures[i][0]->getPositionX());
-        if (xDiff<128*2){
+        if (xDiff<128*3){
             for(int n=0; n<_sortedTextures.at(i).size(); n++){
                 if(_hunter->getPosition().y>_sortedTextures[i][n]->getPositionY()-128){
                     _obstacleNode->removeChild(_sortedTextures[i][n]);

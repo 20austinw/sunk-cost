@@ -244,7 +244,6 @@ void SGameController::update(float dt) {
         // Black screen
         if (!_portraits->getCurState() && _portraits->getPrevState()) {
             // Redraw doors
-            CULog("Adding block!");
             _portraits->addBlock(_thirdLayer); //TODO: add node
             _portraits->refreshBatteryNodes(_fifthLayer); //drawing order refresh //TODO: delete
             blocked = true;
@@ -545,7 +544,7 @@ void SGameController::checkLevelLoaded() {
         
         _portraits->setIndex(1);
         std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-        ->setZoom(1);
+        ->setZoom(0.9);
         _spirit.updateLocksPos();
         _spirit.updateTrapBtnsPos();
         _levelLoaded = true;
@@ -797,7 +796,7 @@ void SGameController::sortNodes(){
     
     for(int i=0; i<_sortedTextures.size(); i++){
         float xDiff = abs(_hunterXPos- _sortedTextures[i][0]->getPositionX());
-        if (xDiff<128*2){
+        if (xDiff<128*3){
             for(int n=0; n<_sortedTextures.at(i).size(); n++){
                 if(_hunterYPos>_sortedTextures[i][n]->getPositionY()-128){
                     _obstacleNode->removeChild(_sortedTextures[i][n]);

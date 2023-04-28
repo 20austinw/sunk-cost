@@ -72,7 +72,7 @@ HGameController::HGameController(
     _currdoor=0;
     _tick = 0;
     _frameNumClose=0;
-    _didLose = false;
+//    _didLose = false;
     _animates = true;
     _dimen = Application::get()->getDisplaySize();
     //    _offset = Vec3((_dimen.width)/2.0f,(_dimen.height)/2.0f,50);
@@ -361,11 +361,15 @@ void HGameController::update(float dt) {
         if(int(_timer/60/60)==0){
             AudioEngine::get()->play("tension", _tension, true, _theme->getVolume(), true);
         }
-       
+        CULog("min %d", int(_timer/60/60)==0);
+        CULog("sec %d", (int(_timer/60) % 60 == 0));
+        CULog("!didlose %d", !_didLose );
+        CULog("!didFinalwin %d", !_didFinalwin);
         
-        if(int(_timer/60/60)==0 && (int(_timer/60) % 60 < 0) && !_didLose && !_didFinalwin){
+        if(int(_timer/60/60)==0 && (int(_timer/60) % 60 == 0) && !_didLose && !_didFinalwin){
             //        _scene->addChild(_loseNode);
             //        _scene->addChild(_loseLabel);
+            CULog("inside lose");
             _endScene = std::make_shared<EndScene>(_scene,_assets, true);
             _endScene->addChildTo(_scene);
             _didLose = true;
@@ -606,6 +610,7 @@ void HGameController::update(float dt) {
 
             }
       
+       
         if(abs(_treasure.getPosition().x-_hunter->getPosition().x)<= 200 && abs(_treasure.getPosition().y-_hunter->getPosition().y)<= 200 && !_collision.didHitTreasure ){
             CULog("IN ");
             _collision.didHitTreasure = true;
@@ -974,7 +979,7 @@ void HGameController::initCamera() {
 //    if(_star!=nullptr){
 //        Vec3 next = _offset + (Vec3(_star->getPosition().x, _star->getPosition().y, 1));
 //    }
-    
+    _scene->getCamera()->translate(Vec3(0,0,-0.8));
     Vec3 next = _offset + (Vec3(_hunter->getPosition().x, _hunter->getPosition().y, 1));
     _scene->getCamera()->translate(next - curr);
     _scene->getCamera()->setFar(100000);
@@ -1372,7 +1377,7 @@ void HGameController::sortNodes(){
     
     for(int i=0; i<_sortedTextures.size(); i++){
         float xDiff = abs(_hunter->getPosition().x - _sortedTextures[i][0]->getPositionX());
-        if (xDiff<128*2){
+        if (xDiff<128*3){
             for(int n=0; n<_sortedTextures.at(i).size(); n++){
                 if(_hunter->getPosition().y>_sortedTextures[i][n]->getPositionY()-128){
                     _obstacleNode->removeChild(_sortedTextures[i][n]);

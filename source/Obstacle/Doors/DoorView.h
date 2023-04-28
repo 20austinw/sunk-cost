@@ -33,16 +33,18 @@ private:
             }
             _size = _door->getSize();
             _door->setPosition(position);
+            _door->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
             setFrame(0);
             return;
         } else{
             if (type == 0){
-                _door = scene2::SpriteNode::allocWithSheet(assets->get<Texture>("door_animation_hunter"),3,5,12);
+                 _door = scene2::SpriteNode::allocWithSheet(assets->get<Texture>("door_animation_hunter"),3,5,12);
             }else if(type == 1){
                 _door = scene2::SpriteNode::allocWithSheet(assets->get<Texture>("side_lock"),4,5,18);
             }
             _size = _door->getSize();
             _door->setPosition(position);
+            _door->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
             setFrame(0);
             return;
         }

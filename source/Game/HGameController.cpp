@@ -533,15 +533,15 @@ void HGameController::update(float dt) {
             for (int i=0; i<_doorslocked.size(); i++){
             Vec2 position = _doors.at(_doorslocked[i])->getViewPosition();
                 
-                if(_shadow->getPosition().y<position.y){
+                if(_hunter->getPosition().y+Vec2(rightward*_hunter->getVelocity().x,forward*_hunter->getVelocity().y).y<position.y-127){
                     if(abs(_shadow->getPosition().x+Vec2(rightward*_hunter->getVelocity().x,forward*_hunter->getVelocity().y).x-position.x)<300 and abs(_shadow->getPosition().y+Vec2(rightward*_hunter->getVelocity().x,forward*_hunter->getVelocity().y).y-(position.y-128))<400){
                         _move=false;
                     }
                 }
                 else{
-                    if(abs(_hunter->getPosition().x+Vec2(rightward*_hunter->getVelocity().x,forward*_hunter->getVelocity().y).x-position.x)<10 and abs(_hunter->getPosition().y+Vec2(rightward*_hunter->getVelocity().x,forward*_hunter->getVelocity().y).y-(position.y))<10){
-                        _move=false;
-                    }
+//                    if(abs(_hunter->getPosition().x+Vec2(rightward*_hunter->getVelocity().x,forward*_hunter->getVelocity().y).x-position.x)<128 and abs(_hunter->getPosition().y+Vec2(rightward*_hunter->getVelocity().x,forward*_hunter->getVelocity().y).y-(position.y))<1){
+//                        _move=false;
+//                    }
                 }
             }
         }

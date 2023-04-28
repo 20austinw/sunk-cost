@@ -269,7 +269,7 @@ private:
             if (((_index != _portraits[i]->getID()) ||
                  (!_portraits[i]->getState())) &&
                 (_portraits[i]->getBattery() < _maxBattery)) {
-                float newBattery = _portraits[i]->getBattery() + 0.5;
+                float newBattery = _portraits[i]->getBattery() + 1;
                 if (newBattery < _maxBattery) {
                     _portraits[i]->updateBattery(newBattery);
                 } else {
@@ -277,7 +277,7 @@ private:
                 }
             } else if (_index == _portraits[i]->getID() &&
                        _portraits[i]->getBattery() > 0) {
-                float newBattery = _portraits[i]->getBattery() - 1;
+                float newBattery = _portraits[i]->getBattery() - 0.5;
                 if (newBattery > 0) {
                     _portraits[i]->updateBattery(newBattery);
                 } else {

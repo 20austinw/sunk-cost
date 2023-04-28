@@ -552,7 +552,7 @@ void HGameController::update(float dt) {
                     }
             else{
                 _ismovedonece=false;
-                for (int i=0;i<_hunter->getTraps().size();i++){
+                for (int i=0;i<1;i++){
                     if(_hunter->getTraps()[i]->getTrigger()){
                             _ismovedonece=true;
                         }

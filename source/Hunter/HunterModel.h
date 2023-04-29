@@ -144,6 +144,7 @@ class HunterModel : public physics2::WheelObstacle {
     
     void removeTrap(int index){
         _trapViews[index]->setVisible(false, 0);
+        _trapViews.erase(_trapViews.begin()+index);
         _trapModels.erase(_trapModels.begin()+index);
     }
     

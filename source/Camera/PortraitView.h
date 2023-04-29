@@ -51,7 +51,10 @@ class PortraitView {
 
 #pragma mark Getters
   public:
-    std::shared_ptr<scene2::PolygonNode> getNode() { return _spriteNode; }
+//    std::shared_ptr<scene2::PolygonNode> getNode() { return _spriteNode; }
+    std::shared_ptr<cugl::scene2::SpriteNode> getNode() {
+        return _spriteNode;
+    }
 
 #pragma mark Scene Methods
   public:
@@ -60,8 +63,8 @@ class PortraitView {
      *
      * @param sceneNode The scenenode to add the view to
      */
-    void addChildTo(const std::shared_ptr<cugl::Scene2>& scene) {
-        scene->addChild(_spriteNode);
+    void addChildTo(std::shared_ptr<cugl::scene2::PolygonNode>& node) {
+        node->addChild(_spriteNode);
     }
 
     /**
@@ -72,6 +75,8 @@ class PortraitView {
     void removeChildFrom(const std::shared_ptr<cugl::Scene2>& scene) {
         scene->removeChild(_spriteNode);
     }
+    
+    
 
 #pragma mark Setters
     void setPosition(Vec2 position) { _spriteNode->setPosition(position); }

@@ -19,7 +19,7 @@ class DoorController {
 #pragma mark Internal References
 private:
     /** Model reference */
-    std::unique_ptr<DoorModel> _model;
+    std::shared_ptr<DoorModel> _model;
     /** View reference */
     std::unique_ptr<DoorView> _view;
     
@@ -40,6 +40,10 @@ public:
      */
     void addChildTo(const std::shared_ptr<cugl::Scene2>& scene) {
         _view->addChildTo(scene);
+    }
+    
+    void addChildToVector(std::vector<std::shared_ptr<scene2::PolygonNode>>& vector){
+        vector.emplace_back(_view->getNode());
     }
 
     /**
@@ -64,9 +68,17 @@ public:
         return _model->getFrame();
     }
     
+    std::shared_ptr<DoorModel> getModel(){
+        return _model;
+    }
+    
     Vec2 getModelPosition();
     
+    Vec2 getViewPosition();
+    
     bool isLocked();
+    
+    bool isInBound(Vec2 pos);
 
 #pragma mark Setters
     void setFrame(int frame){
@@ -78,7 +90,7 @@ public:
 private:
     void updateFrame(Vec2 touchPos);
     
-    bool isInBound(Vec2 pos);
+   
     
     void setLockFrame();
 };

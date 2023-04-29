@@ -100,6 +100,8 @@ class TilemapController {
      * @param scene The scene to add the view to
      */
     void addChildTo(const std::shared_ptr<cugl::Scene2>& scene);
+    
+    void addChildToNode(std::shared_ptr<cugl::scene2::PolygonNode>& node);
 
     void addDoorTo(const std::shared_ptr<cugl::Scene2>& scene);
 
@@ -129,6 +131,10 @@ class TilemapController {
      */
     void addTile(int col, int row, Color4 color, bool traversable,
                  const std::shared_ptr<Texture>& texture);
+    
+    void removeTile(int col, int row);
+    
+    void setTileTraversable(int col, int row, bool b);
 
     /**
      * Returns whether the tile at the given position is traversable.

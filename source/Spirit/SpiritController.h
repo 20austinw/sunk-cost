@@ -61,7 +61,7 @@ class SpiritController {
      * Constructor to initialize SpiritController with PortraitSetController
      */
     SpiritController(const std::shared_ptr<cugl::AssetManager>& assets,
-                     std::shared_ptr<cugl::Scene2> scene,
+                     std::shared_ptr<cugl::Scene2>& scene,
                      std::shared_ptr<PortraitSetController> portraits,
                      Size screenSize);
 
@@ -97,9 +97,9 @@ class SpiritController {
      * (2) modify portraitsetcontroller to reflect the change
      */
     bool placeTrap(const std::shared_ptr<TilemapController> _tilemap,
-                Vec2 trapPos);
+                Vec2 trapPos, std::shared_ptr<cugl::scene2::PolygonNode>& node);
     
-    int update(bool trap, Vec2 pos);
+    int update(bool trap, Vec2 pos, std::shared_ptr<cugl::scene2::PolygonNode>& node);
 
 #pragma mark Setters
   public:
@@ -205,11 +205,11 @@ class SpiritController {
     
     void updateLocks(bool start, bool released, Vec2 touchPos);
     
-    void updateLocksPos(const std::shared_ptr<cugl::Scene2>& scene);
+    void updateLocksPos();
     
-    void removeLastLock(const std::shared_ptr<cugl::Scene2>& scene);
+    void removeLastLock(std::shared_ptr<cugl::scene2::PolygonNode>& node);
     
-    void addNewLock(const std::shared_ptr<Scene2>& scene);
+    void addNewLock(std::shared_ptr<cugl::scene2::PolygonNode>& node);
     
     bool touchInLockBound(Vec2 touchPos);
     
@@ -219,11 +219,11 @@ class SpiritController {
     
     //Trap button functions
     
-    void updateTrapBtnsPos(const std::shared_ptr<cugl::Scene2>& scene);
+    void updateTrapBtnsPos();
     
-    void removeLastTrapBtn(const std::shared_ptr<cugl::Scene2>& scene);
+    void removeLastTrapBtn(std::shared_ptr<cugl::scene2::PolygonNode>& node);
     
-    void addNewTrapBtn(const std::shared_ptr<Scene2>& scene);
+    void addNewTrapBtn(std::shared_ptr<cugl::scene2::PolygonNode>& node);
     
     bool touchInTrapBound(Vec2 touchPos);
     

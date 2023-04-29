@@ -24,9 +24,9 @@ protected:
     b2Body* _trapBody;
     b2Body* _treasureBody;
 public:
-    bool didHitObstacle;
-    bool didHitTrap;
-    bool didHitTreasure;
+    bool didHitObstacle=false;
+    bool didHitTrap=false;
+    bool didHitTreasure=false;
     
 //  MARK: - Constructors
     

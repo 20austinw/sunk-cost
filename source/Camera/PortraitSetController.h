@@ -22,7 +22,7 @@ class PortraitSetController {
     std::vector<std::unique_ptr<CameraController>> _portraits;
     /** The Camera object */
     std::vector<std::unique_ptr<PortraitModel>> _portraitModels;
-    std::vector<std::unique_ptr<PortraitView>> _portraitViews;
+    std::vector<std::shared_ptr<PortraitView>> _portraitViews;
     std::shared_ptr<cugl::AssetManager> _assets;
     std::shared_ptr<cugl::Scene2> _scene;
     Size _screenSize;
@@ -66,7 +66,9 @@ private:
         _assets = assets;
         _screenSize = screenSize;
         _maxBattery = maxBattery;
-        initializePortraitSet();
+        _index = 0;
+        _prevState = true;
+//        initializePortraitSet();
     }
 
     void update() {
@@ -103,56 +105,56 @@ private:
      * @param type camera type - (0 = default) (1 = player) (2 = portrait)
      * default camera is camera that is viewing a black screen
      */
-    void addPortrait(int id, Vec3 cameraPosition, Vec3 portraitPosition,
-                     Vec3 direction, Vec2 directionLimits, float battery = 600,                     int type = 2) {
+    void addPortrait(std::vector<std::shared_ptr<scene2::PolygonNode>>& vector, int id, Vec3 cameraPosition, Vec3 portraitPosition,
+                     Vec3 direction, Vec2 directionLimits, float battery = 600, int type = 2) {
         _portraits.push_back(makePortrait(id, cameraPosition, portraitPosition,
                                           direction, directionLimits, battery,
-                                          type));
+                                          type, vector));
     }
     
     
 
-    /**
-     * Adds a new portrait to the portraitset
-     *
-     * @param id
-     * @param position
-     * @param direction
-     * @param directionLimits
-     * @param type camera type - (0 = default) (1 = player) (2 = portrait)
-     * default camera is camera that is viewing a black screen
-     */
-    void insertPortraitTo(int index, int id, Vec3 cameraPosition,
-                          Vec3 portraitPosition, Vec3 direction,
-                          Vec2 directionLimits, float battery = 600,
-                          int type = 2) {
-        _portraits.insert(getIteratorForIndex(index),
-                          makePortrait(id, cameraPosition, portraitPosition,
-                                       direction, directionLimits, battery,
-                                       type));
-    }
+//    /**
+//     * Adds a new portrait to the portraitset
+//     *
+//     * @param id
+//     * @param position
+//     * @param direction
+//     * @param directionLimits
+//     * @param type camera type - (0 = default) (1 = player) (2 = portrait)
+//     * default camera is camera that is viewing a black screen
+//     */
+//    void insertPortraitTo(std::shared_ptr<cugl::scene2::PolygonNode>& node, int index, int id, Vec3 cameraPosition,
+//                          Vec3 portraitPosition, Vec3 direction,
+//                          Vec2 directionLimits, float battery = 600,
+//                          int type = 2) {
+//        _portraits.insert(getIteratorForIndex(index),
+//                          makePortrait(id, cameraPosition, portraitPosition,
+//                                       direction, directionLimits, battery,
+//                                       type, node));
+//    }
 
-    /**
-     * Initializes the portrait set
-     *
-     * @param id
-     * @param position
-     * @param direction
-     * @param directionLimits
-     * @param type camera type - (0 = default) (1 = player) (2 = portrait)
-     * default camera is camera that is viewing a black screen
-     */
-    void initializePortraitSet(int id = 0, Vec3 cameraPosition = Vec3::ZERO,
-                               Vec3 portraitPosition = Vec3::ZERO,
-                               Vec3 direction = Vec3::ZERO,
-                               Vec2 directionLimits = Vec2::ZERO,
-                               float battery = 600, int type = 2) {
-        _portraits.push_back(makePortrait(id, cameraPosition, portraitPosition,
-                                          direction, directionLimits, battery,
-                                          type));
-        _index = 0;
-        _prevState = true;
-    }
+//    /**
+//     * Initializes the portrait set
+//     *
+//     * @param id
+//     * @param position
+//     * @param direction
+//     * @param directionLimits
+//     * @param type camera type - (0 = default) (1 = player) (2 = portrait)
+//     * default camera is camera that is viewing a black screen
+//     */
+//    void initializePortraitSet(int id = 0, Vec3 cameraPosition = Vec3::ZERO,
+//                               Vec3 portraitPosition = Vec3::ZERO,
+//                               Vec3 direction = Vec3::ZERO,
+//                               Vec2 directionLimits = Vec2::ZERO,
+//                               float battery = 600, int type = 2) {
+//        _portraits.push_back(makePortrait(id, cameraPosition, portraitPosition,
+//                                          direction, directionLimits, battery,
+//                                          type));
+//        _index = 0;
+//        _prevState = true;
+//    }
 
     void initializeSheets(std::shared_ptr<cugl::Texture> green,
                           std::shared_ptr<cugl::Texture> red,
@@ -267,7 +269,7 @@ private:
             if (((_index != _portraits[i]->getID()) ||
                  (!_portraits[i]->getState())) &&
                 (_portraits[i]->getBattery() < _maxBattery)) {
-                float newBattery = _portraits[i]->getBattery() + 0.5;
+                float newBattery = _portraits[i]->getBattery() + 1;
                 if (newBattery < _maxBattery) {
                     _portraits[i]->updateBattery(newBattery);
                 } else {
@@ -275,7 +277,7 @@ private:
                 }
             } else if (_index == _portraits[i]->getID() &&
                        _portraits[i]->getBattery() > 0) {
-                float newBattery = _portraits[i]->getBattery() - 1;
+                float newBattery = _portraits[i]->getBattery() - 0.5;
                 if (newBattery > 0) {
                     _portraits[i]->updateBattery(newBattery);
                 } else {
@@ -291,12 +293,12 @@ private:
         }
     }
 
-    void updateBatteryNode(const std::shared_ptr<cugl::Scene2>& scene, float offset) {
+    void updateBatteryNode(std::shared_ptr<cugl::scene2::PolygonNode>& node, float offset) {
         _greenBattery->setScale(_greenBatteryScale/getZoom());
         _redBattery->setScale(_redBatteryScale/getZoom());
         _noBattery->setScale(_noBatteryScale/getZoom());
-        Vec2 pos = scene->getCamera()->screenToWorldCoords(
-            Vec2(_greenBattery->getSize().width*getZoom()/2, scene->getSize().height-_greenBattery->getSize().height*getZoom()/2)) ;
+        Vec2 pos = _scene->getCamera()->screenToWorldCoords(
+            Vec2(_greenBattery->getSize().width*getZoom()/2, _scene->getSize().height-_greenBattery->getSize().height*getZoom()/2)) ;
         bool curState = getCurState();
         int frame = getCurFrame();
         _greenBattery->setFrame(frame);
@@ -309,14 +311,14 @@ private:
         }
         if (curState != _prevState) {
             if (curState) {
-                scene->removeChild(_redBattery);
-                scene->addChild(_greenBattery);
+                node->removeChild(_redBattery); //TODO: add to node instead
+                node->addChild(_greenBattery);
             } else {
-                scene->removeChild(_greenBattery);
-                scene->addChild(_redBattery);
+                node->removeChild(_greenBattery);
+                node->addChild(_redBattery);
             }
-            scene->removeChild(_noBattery);
-            scene->addChild(_noBattery);
+            node->removeChild(_noBattery);
+            node->addChild(_noBattery);
         }
     }
 
@@ -328,35 +330,35 @@ private:
 
     void setMaxbattery(float maxBattery) { _maxBattery = maxBattery; }
 
-    void addBlock(const std::shared_ptr<cugl::Scene2>& scene) {
+    void addBlock(std::shared_ptr<cugl::scene2::PolygonNode>& node) {
         _block->setScale(1/getZoom());
-        _block->setPosition(scene->getCamera()->screenToWorldCoords(Vec2(0, _scene->getSize().height)));
-        scene->addChild(_block);
+        _block->setPosition(_scene->getCamera()->screenToWorldCoords(Vec2(0, _scene->getSize().height)));
+        node->addChild(_block); //TODO: third
     }
 
-    void removeBlock(const std::shared_ptr<cugl::Scene2>& scene) {
-        scene->removeChild(_block);
+    void removeBlock(std::shared_ptr<cugl::scene2::PolygonNode>& node) {
+        node->removeChild(_block);
     }
 
-    void refreshBatteryNodes(const std::shared_ptr<cugl::Scene2>& scene) {
+    void refreshBatteryNodes(std::shared_ptr<cugl::scene2::PolygonNode>& node) {
         if (getCurState()) {
-            scene->removeChild(_greenBattery);
-            scene->addChild(_greenBattery);
+            node->removeChild(_greenBattery); //TODO: delete
+            node->addChild(_greenBattery);
         } else {
-            scene->removeChild(_redBattery);
-            scene->addChild(_redBattery);
+            node->removeChild(_redBattery);
+            node->addChild(_redBattery);
         }
-        scene->removeChild(_noBattery);
-        scene->addChild(_noBattery);
+        node->removeChild(_noBattery);
+        node->addChild(_noBattery);
     }
 
-    void initializeBatteryNodes(const std::shared_ptr<cugl::Scene2>& scene) {
+    void initializeBatteryNodes(std::shared_ptr<cugl::scene2::PolygonNode>& node) {
         _block = scene2::PolygonNode::allocWithPoly(Rect(0, 0, _scene->getSize().width, _scene->getSize().height));
         _block->setColor(Color4::BLACK);
         _block->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
         _greenBattery->setFrame(0);
-        scene->addChild(_greenBattery);
-        scene->addChild(_noBattery);
+        node->addChild(_greenBattery);
+        node->addChild(_noBattery);
     }
 
     void resetScale() {
@@ -371,7 +373,7 @@ private:
                                                    Vec3 portraitPosition,
                                                    Vec3 direction,
                                                    Vec2 directionLimits,
-                                                   float battery, int type) {
+                                                   float battery, int type, std::vector<std::shared_ptr<scene2::PolygonNode>>& vector) {
         std::unique_ptr<CameraController> camera =
             std::make_unique<CameraController>(id, _screenSize);
         camera->updatePosition(cameraPosition);
@@ -383,10 +385,11 @@ private:
             std::make_unique<PortraitModel>(cameraPosition));
         
         
-        _portraitViews.push_back(std::make_unique<PortraitView>(
+        _portraitViews.push_back(std::make_shared<PortraitView>(
             _assets, portraitPosition +
                          Vec2(_assets->get<Texture>("map")->getSize() / 2)));
-        _portraitViews[id]->addChildTo(_scene);
+        vector.emplace_back(_portraitViews[id]->getNode());
+//        _portraitViews[id]->addChildTo(node); //TODO: add to node
         return camera;
     }
 

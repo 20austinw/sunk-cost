@@ -215,9 +215,16 @@ void SCApp::updateResetScene(float timestep) {
     switch (_reset.getChoice()) {
         case ResetScene::Choice::LEAVE:
             CULog("leaveeee");
+            _menu.dispose();
+            _joingame.setActive(false);
+            _hostgame.setActive(false);
+            _joingame.dispose();
+            _hostgame.dispose();
             _reset.setActive(false);
-            _menu.setActive(true);
-            _scene = State::MENU;
+            _reset.dispose();
+            _loading.setActive(true);
+            _loaded = true;
+            _scene = State::LOAD;
             break;
         case ResetScene::Choice::REPLAY:
             CULog("replayyy");
@@ -276,7 +283,7 @@ void SCApp::updateHostScene(float timestep) {
 }
 
 void SCApp::updateClientScene(float timestep) {
- 
+    CULog("inside updateClient scene!!!!!");
     switch (_joingame.getStatus()) {
         case ClientScene::Status::ABORT:
             _joingame.setActive(false);

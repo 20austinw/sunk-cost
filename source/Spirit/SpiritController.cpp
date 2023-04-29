@@ -19,7 +19,7 @@ SpiritController::SpiritController() {}
  */
 SpiritController::SpiritController(
     const std::shared_ptr<cugl::AssetManager>& assets,
-    std::shared_ptr<cugl::Scene2> scene,
+    std::shared_ptr<cugl::Scene2>& scene,
     std::shared_ptr<PortraitSetController> portraits, Size screenSize) {
     _scene = scene;
     _model = std::make_shared<SpiritModel>(assets, scene, 3, 2, 30);
@@ -60,13 +60,13 @@ void SpiritController::render(std::shared_ptr<cugl::SpriteBatch>& batch,
 
 
 bool SpiritController::placeTrap(const std::shared_ptr<TilemapController> _tilemap,
-                              Vec2 pos) {
+                              Vec2 pos, std::shared_ptr<cugl::scene2::PolygonNode>& node) {
     if (_portraits->getCurState()) {
         if (!_tilemap->isTileTraversable(pos) ||
             _tilemap->mapPosToGridPos(pos).x < 0 ||
             _tilemap->mapPosToGridPos(pos).y < 0)
             return false;
-        _model->addTrap(pos);
+        _model->addTrap(pos, node);
         _trapAdded = true;
         setLastTrapPos(pos);
     }
@@ -79,49 +79,39 @@ bool SpiritController::placeTrap(const std::shared_ptr<TilemapController> _tilem
  * (1) detect camera change
  * (2) modify portraitsetcontroller to reflect the change
  */
-int SpiritController::update(bool trap, Vec2 pos){
-    int result = _model->update(trap, pos);
+int SpiritController::update(bool trap, Vec2 pos, std::shared_ptr<cugl::scene2::PolygonNode>& node){
+    int result = _model->update(trap, pos, node);
     _portraits->update();
     return result;
 }
 
 
-void SpiritController::updateLocksPos(const std::shared_ptr<cugl::Scene2>& scene){
+void SpiritController::updateLocksPos(){
     if (!_model->isOnLock){
-        float zoom = std::dynamic_pointer_cast<OrthographicCamera>(scene->getCamera()) ->getZoom();
-        Vec2 pos = scene->getCamera()->screenToWorldCoords(
-                _scene->getSize() - _view->getLockSize() / 2 * zoom);
-        _view->updateUnusedLocksPos(pos);
-        _view->removeLocksFrom(scene);
-        _view->addLocksTo(scene);
+        _view->updateUnusedLocksPos();
     }
 }
 
-void SpiritController::updateTrapBtnsPos(const std::shared_ptr<cugl::Scene2>& scene){
+void SpiritController::updateTrapBtnsPos(){
     if (!_model->isOnTrap){
-        float zoom = std::dynamic_pointer_cast<OrthographicCamera>(scene->getCamera()) ->getZoom();
-        Vec2 pos = scene->getCamera()->screenToWorldCoords(
-                _scene->getSize() - _view->getTrapSize() / 2 * zoom) + Vec2(0, +_view->getLockSize().height);
-        _view->updateUnusedTrapsPos(pos);
-        _view->removeTrapsFrom(scene);
-        _view->addTrapButtonsTo(scene); 
+        _view->updateUnusedTrapsPos();
     }
 }
 
-void SpiritController::removeLastLock(const std::shared_ptr<cugl::Scene2>& scene){
+void SpiritController::removeLastLock(std::shared_ptr<cugl::scene2::PolygonNode>& node){
     if (_model->doors <= 0){
         return;
     }
     _model->setDoors(_model->doors-1);
-    _view->removeLastLock(scene);
+    _view->removeLastLock(node);
 }
 
-void SpiritController::removeLastTrapBtn(const std::shared_ptr<cugl::Scene2> &scene){
+void SpiritController::removeLastTrapBtn(std::shared_ptr<cugl::scene2::PolygonNode>& node){
     if (_model->traps <= 0){
         return;
     }
     _model->setTraps(_model->traps-1);
-    _view->removeLastTrapButton(scene);
+    _view->removeLastTrapButton(node);
 }
 
 bool SpiritController::touchInLockBound(Vec2 touchPos){
@@ -148,15 +138,15 @@ void SpiritController::updateMovingTrap(Vec2 pos){
     _view->updateTrapInProgress(pos);
 }
 
-void SpiritController::addNewTrapBtn(const std::shared_ptr<Scene2>& scene){
+void SpiritController::addNewTrapBtn(std::shared_ptr<cugl::scene2::PolygonNode>& node){
     _model->setTraps(_model->traps+1);
-    _view->addNewTrap(scene);
-    updateTrapBtnsPos(scene);
+    _view->addNewTrap(node);
+    updateTrapBtnsPos();
 }
 
-void SpiritController::addNewLock(const std::shared_ptr<Scene2>& scene){
+void SpiritController::addNewLock(std::shared_ptr<cugl::scene2::PolygonNode>& node){
     _model->setDoors(_model->doors+1);
-    _view->addNewLock(scene);
-    updateLocksPos(scene);
+    _view->addNewLock(node);
+    updateLocksPos();
 }
 

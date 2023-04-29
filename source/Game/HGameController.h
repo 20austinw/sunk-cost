@@ -154,6 +154,8 @@ private:
     
     SpiritController _spirit;
     
+    int _frameNumClam;
+    
 //    TrapController _trap;
     
     TreasureController _treasure;
@@ -191,12 +193,12 @@ private:
     int _treasureCount;
     std::shared_ptr<cugl::scene2::Label> _treasureLabel;
     std::shared_ptr<cugl::scene2::Label> _loseLabel;
-    bool _didLose;
+    bool _didLose = false;
 
     std::shared_ptr<cugl::scene2::Label> _winLabel;
     bool _didWin;
     std::shared_ptr<cugl::scene2::Label> _finalWinLabel;
-    bool _didFinalwin;
+    bool _didFinalwin=false;
 
     /** The theme sound */
     std::shared_ptr<cugl::Sound> _theme;
@@ -227,16 +229,22 @@ private:
     
     std::shared_ptr<scene2::PolygonNode> _exit;
     
-    bool _levelLoaded;
+    bool _levelLoaded=false;
     
     bool _ishost;
     
     bool _active;
+    
+    int _trapped;
+    
+    bool _trappedbool;
 
     
     bool _quit;
     
     bool _move;
+    
+    bool _joystickon;
     
     std::vector<Vec2> _treasurepos;
     
@@ -265,6 +273,8 @@ private:
     std::shared_ptr<scene2::PolygonNode> _obstacleNode;
     std::vector<std::shared_ptr<scene2::SpriteNode>> _candleNodes;
     std::vector<std::shared_ptr<scene2::PolygonNode>> _hunterNodes;
+    std::vector<std::shared_ptr<scene2::PolygonNode>> _textureNodes;
+//    std::vector<std::vector<std::shared_ptr<scene2::PolygonNode>>> _sortedTextures;
     
     std::vector<Poly2> _obstaclePoly;
     

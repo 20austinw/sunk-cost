@@ -38,10 +38,10 @@ class TrapView {
              float radius) {
         _frameNum = 0;
         _radius = radius;
-        _spriteSheet = assets->get<Texture>("trap_animation");
+        _spriteSheet = assets->get<Texture>("trap_animation2");
         _spriteNode =
-            scene2::SpriteNode::allocWithSheet(_spriteSheet, 2, 8, 16);
-        _spriteNode->setScale(0.5);
+            scene2::SpriteNode::allocWithSheet(_spriteSheet, 1, 3, 3);
+        _spriteNode->setScale(2);
         _spriteNode->setFrame(_frameNum);
         _spriteNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
         _spriteNode->setPosition(position - _spriteNode->getSize() / 2);
@@ -78,6 +78,11 @@ class TrapView {
         scene->addChild(_shadow);
         scene->addChild(_spriteNode);
     }
+    
+    void addChildToNode(std::shared_ptr<cugl::scene2::PolygonNode>& node){
+        node->addChild(_shadow);
+        node->addChild(_spriteNode);
+    }
 
     /**
      * Removes the view component children from the given `sceneNode`.
@@ -89,9 +94,20 @@ class TrapView {
         scene->removeChild(_spriteNode);
     }
     
-    void setVisible(bool isVisible){
+ 
+    void removeChildFromNode(std::shared_ptr<cugl::scene2::PolygonNode>& node){
+        node->removeChild(_shadow);
+        node->removeChild(_spriteNode);
+    }
+    
+       void setVisible(bool isVisible,int framenum){
         _shadow->setVisible(isVisible);
         _spriteNode->setVisible(isVisible);
+       
+        _spriteNode->setFrame(int(framenum/4)%3);
+        
+        
+        
     }
 
 #pragma mark Setters

@@ -53,6 +53,22 @@ public:
     std::shared_ptr<cugl::Scene2> _scene;
     /** The asset manager for this game mode. */
     std::shared_ptr<cugl::AssetManager> _assets;
+    
+    //background and map floor(tilemap)
+    std::shared_ptr<cugl::scene2::PolygonNode> _firstLayer;
+    
+    //furnitures, walls, doors, traps
+    std::shared_ptr<cugl::scene2::PolygonNode> _secondLayer;
+    
+    // block screen
+    std::shared_ptr<cugl::scene2::PolygonNode> _thirdLayer;
+    
+    // lock and trap button
+    std::shared_ptr<cugl::scene2::PolygonNode> _fourthLayer;
+    
+    // minimap, battery, timer
+    std::shared_ptr<cugl::scene2::PolygonNode> _fifthLayer;
+    
 
     // CONTROLLERS are attached directly to the scene (no pointers)
     /** The controller to manage the ship */
@@ -79,7 +95,7 @@ public:
     /** The network connection (as made by this scene) */
     std::shared_ptr<cugl::net::NetcodeConnection> _network;
 
-    bool _levelLoaded;
+    bool _levelLoaded=false;
 
     std::shared_ptr<scene2::PolygonNode> _map;
     std::shared_ptr<Minimap> _miniMap;
@@ -130,6 +146,10 @@ public:
     
     int _prevInd;
     
+    bool _spawn;
+    
+    int _ticks;
+    
 #pragma mark External References
   private:
     /** The tilemap to procedurally generate */
@@ -139,6 +159,8 @@ public:
     std::shared_ptr<scene2::PolygonNode> _obstacleNode;
     std::vector<std::shared_ptr<scene2::SpriteNode>> _candleNodes;
     std::vector<std::shared_ptr<scene2::PolygonNode>> _hunterNodes;
+    std::vector<std::shared_ptr<scene2::PolygonNode>> _textureNodes;
+//    std::vector<std::vector<std::shared_ptr<scene2::PolygonNode>>> _sortedTextures;
 
 #pragma mark Main Methods
   public:

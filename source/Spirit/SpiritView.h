@@ -89,6 +89,7 @@ class SpiritView {
             addExtra(_trapExtra, i+1);
         }
         _trapSize = _trapButtons.at(0)->getSize();
+        _lockSize = _locks.at(0)->getSize();
     }
 
 //    /** Deletes this HunterView */
@@ -105,43 +106,47 @@ class SpiritView {
         scene->addChild(_node);
     }
     
-    void addLastLockExtraTo(const std::shared_ptr<Scene2>& scene){
+    void addLastLockExtraTo(std::shared_ptr<cugl::scene2::PolygonNode>& node){
         addExtra(_lockExtra, _locks.size());
-        scene->addChild(_lockExtra.at(_lockExtra.size()-1));
+        node->addChild(_lockExtra.at(_lockExtra.size()-1));
     }
     
-    void addLastTrapExtraTo(const std::shared_ptr<Scene2>& scene){
+    void addLastTrapExtraTo(std::shared_ptr<cugl::scene2::PolygonNode>& node){
         addExtra(_trapExtra, _trapButtons.size());
-        scene->addChild(_trapExtra.at(_trapExtra.size()-1));
+        node->addChild(_trapExtra.at(_trapExtra.size()-1));
     }
     
-    void removeLastLockExtraTo(const std::shared_ptr<Scene2>& scene){
-        removeExtra(scene, _lockExtra);
+    void removeLastLockExtraTo(std::shared_ptr<cugl::scene2::PolygonNode>& node){
+        removeExtra(node, _lockExtra);
     }
     
-    void removeLastTrapExtraTo(const std::shared_ptr<Scene2>& scene){
-        removeExtra(scene, _trapExtra);
+    void removeLastTrapExtraTo(std::shared_ptr<cugl::scene2::PolygonNode>& node){
+        removeExtra(node, _trapExtra);
     }
     
-    void addLocksTo(const std::shared_ptr<Scene2>& scene) {
+    void addLocksTo(std::shared_ptr<cugl::scene2::PolygonNode>& node) {
         for (int i=0; i<_locks.size(); i++){
-            scene->addChild(_locks.at(i));
+            node->addChild(_locks.at(i));
         }
         for (int i=0; i<_lockExtra.size(); i++){
-            scene->addChild(_lockExtra.at(i));
+            node->addChild(_lockExtra.at(i));
         }
     }
     
-    void addTrapButtonsTo(const std::shared_ptr<Scene2>& scene) {
+    void addTrapButtonsTo(std::shared_ptr<cugl::scene2::PolygonNode>& node) {
         for (int i=0; i<_trapButtons.size(); i++){
-            scene->addChild(_trapButtons.at(i));
+            node->addChild(_trapButtons.at(i));
         }
         for (int i=0; i<_trapExtra.size(); i++){
-            scene->addChild(_trapExtra.at(i));
+            node->addChild(_trapExtra.at(i));
         }
     }
     
-    void updateUnusedLocksPos(Vec2 pos){
+    void updateUnusedLocksPos(){
+        float zoom = std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera()) ->getZoom();
+        Vec2 pos = _scene->getCamera()->screenToWorldCoords(
+                _scene->getSize() - getLockSize()/2*zoom);
+        
         for (int i=0 ; i<_locks.size(); i++){
             _locks.at(i)->setPosition(pos);
             _locks[i]->setScale(_lockScaleFactor/getZoom());
@@ -152,7 +157,10 @@ class SpiritView {
         }
     }
     
-    void updateUnusedTrapsPos(Vec2 pos){
+    void updateUnusedTrapsPos(){
+        float zoom = std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera()) ->getZoom();
+        Vec2 pos = _scene->getCamera()->screenToWorldCoords(_scene->getSize() - getLockSize()/2*zoom) + Vec2(0, +getLockSize().height);
+        
         for (int i=0 ; i<_trapButtons.size(); i++){
             _trapButtons.at(i)->setPosition(pos);
             _trapButtons[i]->setScale(_trapScaleFactor/getZoom());
@@ -182,40 +190,40 @@ class SpiritView {
         scene->removeChild(_node);
     }
     
-    void removeLocksFrom(const std::shared_ptr<Scene2>& scene) {
+    void removeLocksFrom(std::shared_ptr<cugl::scene2::PolygonNode>& node) {
         for (int i=0; i<_locks.size(); i++){
-            scene->removeChild(_locks.at(i));
+            node->removeChild(_locks.at(i));
         }
         for (int i=0; i<_lockExtra.size(); i++){
-            scene->removeChild(_lockExtra.at(i));
+            node->removeChild(_lockExtra.at(i));
         }
     }
     
-    void removeTrapsFrom(const std::shared_ptr<Scene2>& scene) {
+    void removeTrapsFrom(std::shared_ptr<cugl::scene2::PolygonNode>& node) {
         for (int i=0; i<_trapButtons.size(); i++){
-            scene->removeChild(_trapButtons.at(i));
+            node->removeChild(_trapButtons.at(i));
         }
         for (int i=0; i<_trapExtra.size(); i++){
-            scene->removeChild(_trapExtra.at(i));
+            node->removeChild(_trapExtra.at(i));
         }
     }
     
-    void removeLastLock(const std::shared_ptr<Scene2>& scene){
-        scene->removeChild(_locks.at(_locks.size()-1));
+    void removeLastLock(std::shared_ptr<cugl::scene2::PolygonNode>& node){
+        node->removeChild(_locks.at(_locks.size()-1));
         _locks.pop_back();
     }
     
-    void removeLastTrapButton(const std::shared_ptr<Scene2>& scene){
-        scene->removeChild(_trapButtons.at(_trapButtons.size()-1));
+    void removeLastTrapButton(std::shared_ptr<cugl::scene2::PolygonNode>& node){
+        node->removeChild(_trapButtons.at(_trapButtons.size()-1));
         _trapButtons.pop_back();
     }
     
     Size getLockSize(){
-        return _locks[0]->getSize();
+        return _lockSize;
     }
     
     Size getTrapSize(){
-        return _trapButtons[0]->getSize();
+        return _trapSize;
     }
     
     Vec2 getLastLockPos(){
@@ -226,21 +234,21 @@ class SpiritView {
         return _trapButtons.at(_trapButtons.size()-1)->getPosition();
     }
     
-    void addNewTrap(const std::shared_ptr<Scene2>& scene){
+    void addNewTrap(std::shared_ptr<cugl::scene2::PolygonNode>& node){
         _trapButtons.emplace_back(scene2::PolygonNode::allocWithTexture(_trapAsset));
         _trapButtons[_trapButtons.size()-1]->setScale(_trapScaleFactor);
         addExtra(_trapExtra, _trapButtons.size());
-        scene->addChild(_trapButtons.at(_trapButtons.size()-1));
-        scene->addChild(_trapExtra.at(_trapExtra.size()-1));
+        node->addChild(_trapButtons.at(_trapButtons.size()-1));
+        node->addChild(_trapExtra.at(_trapExtra.size()-1));
     }
     
-    void addNewLock(const std::shared_ptr<Scene2>& scene){
+    void addNewLock(std::shared_ptr<cugl::scene2::PolygonNode>& node){
         _locks.emplace_back(scene2::SpriteNode::allocWithSheet(_lockAsset, 2, 8, 12));
         _locks.at(_locks.size()-1)->setFrame(0);
         _locks.at(_locks.size()-1)->setScale(_lockScaleFactor);
         addExtra(_lockExtra, _locks.size());
-        scene->addChild(_locks.at(_locks.size()-1));
-        scene->addChild(_lockExtra.at(_lockExtra.size()-1));
+        node->addChild(_locks.at(_locks.size()-1));
+        node->addChild(_lockExtra.at(_lockExtra.size()-1));
     }
     
     void addExtra(std::vector<std::shared_ptr<scene2::PolygonNode>>& extra, int size){
@@ -257,8 +265,8 @@ class SpiritView {
         extra.at(extra.size()-1)->setScale(_lockScaleFactor);
     }
     
-    void removeExtra(const std::shared_ptr<Scene2>& scene, std::vector<std::shared_ptr<scene2::PolygonNode>>& extra){
-        scene->removeChild(extra.at(extra.size()-1));
+    void removeExtra(std::shared_ptr<cugl::scene2::PolygonNode>& node, std::vector<std::shared_ptr<scene2::PolygonNode>>& extra){
+        node->removeChild(extra.at(extra.size()-1));
         extra.pop_back();
     }
 

@@ -28,6 +28,8 @@ private:
     float _step;
     
     int _frame;
+    
+    Poly2 _poly;
 
 #pragma mark Main Functions
 public:
@@ -37,6 +39,7 @@ public:
         setStep(0);
         setState(0);
         setFrame(0);
+        setPoly();
     }
     
 
@@ -65,6 +68,10 @@ public:
     float getStep(){
         return _step;
     }
+    
+    Poly2 getPoly() {
+        return _poly;
+    }
 
 #pragma mark Setters
     void setStep(float distance){
@@ -90,6 +97,23 @@ public:
     void setFrame(int frame){
         _frame = frame;
     }
+    
+private:
+    void setPoly() {
+        std::vector<Vec2> lineData;
+        if (_type == 0){
+            lineData.emplace_back(Vec2(_position.x-128, _position.y-128));
+            lineData.emplace_back(Vec2(_position.x+128, _position.y-128));
+        } else{
+            lineData.emplace_back(Vec2(_position.x, _position.y+128));
+            lineData.emplace_back(Vec2(_position.x, _position.y-128));
+        }
+        SimpleExtruder extruder = SimpleExtruder();
+        extruder.set(lineData, false);
+        extruder.calculate(500,100);
+        _poly = extruder.getPolygon();
+    }
+    
     
 };
 

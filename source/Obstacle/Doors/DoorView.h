@@ -19,10 +19,12 @@ class DoorView {
 private:
     std::shared_ptr<scene2::SpriteNode> _door;
     Size _size;
+    Vec2 _position;
     
 #pragma mark Main Functions
     public:
     DoorView(const std::shared_ptr<cugl::AssetManager>& assets, Vec2 position, int type, int playerType=0){
+        _position=position;
         if (playerType == 1){
             if (type == 0){
                 _door = scene2::SpriteNode::allocWithSheet(assets->get<Texture>("front_lock"),3,7,21);
@@ -31,16 +33,18 @@ private:
             }
             _size = _door->getSize();
             _door->setPosition(position);
+            _door->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
             setFrame(0);
             return;
         } else{
             if (type == 0){
-                _door = scene2::SpriteNode::allocWithSheet(assets->get<Texture>("door_animation_hunter"),3,5,12);
+                 _door = scene2::SpriteNode::allocWithSheet(assets->get<Texture>("door_animation_hunter"),3,5,12);
             }else if(type == 1){
                 _door = scene2::SpriteNode::allocWithSheet(assets->get<Texture>("side_lock"),4,5,18);
             }
             _size = _door->getSize();
             _door->setPosition(position);
+            _door->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
             setFrame(0);
             return;
         }
@@ -51,6 +55,15 @@ private:
     Size getSize(){
         return _size;
     }
+    
+    Vec2 getPosition(){
+        return _position;
+    }
+    
+    std::shared_ptr<scene2::SpriteNode> getNode() {
+        return _door;
+    }
+    
 #pragma mark Setters
     void setFrame(int frame){
         _door->setFrame(frame);

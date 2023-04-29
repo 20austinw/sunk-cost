@@ -234,6 +234,10 @@ private:
     bool _ishost;
     
     bool _active;
+    
+    int _trapped;
+    
+    bool _trappedbool;
 
     
     bool _quit;

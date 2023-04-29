@@ -552,7 +552,7 @@ void HGameController::update(float dt) {
                     }
             else{
                 _ismovedonece=false;
-                for (int i=0;i<1;i++){
+                for (int i=0;i<_hunter->getTraps().size();i++){
                     if(_hunter->getTraps()[i]->getTrigger()){
                             _ismovedonece=true;
                         }
@@ -561,9 +561,6 @@ void HGameController::update(float dt) {
                     _hunter->move(forward,rightward);
                 }
                 }
-        
-        
-        
         
        
         if(_didLose || _didFinalwin){
@@ -577,38 +574,50 @@ void HGameController::update(float dt) {
         
         
         
-        if(_hunter->getTrapSize()!=0){
-            for (int i=0;i<_hunter->getTrapSize();i++){
-                if(abs(_hunter->getTraps()[i]->getPosition().x-_hunter->getPosition().x)<= 300 && abs(_hunter->getTraps()[i]->getPosition().y-_hunter->getPosition().y)<= 300){
-                    if(_neverPlayed){
-                        AudioEngine::get()->play("trapSound", _trapSound, false, _theme->getVolume(), true);
-                        _neverPlayed = false;
-                    }
-                    _frameNumClam++;
-                    _hunter->getTraps()[i]->setTrigger(true);
-                    _hunter->getTrapViews()[i]->setVisible(true,_frameNumClam);
-                   
+        if(_trappedbool==false){
+            if(_hunter->getTrapSize()!=0){
+                
+                for (int i=0;i<_hunter->getTrapSize();i++){
+                    if(abs(_hunter->getTraps()[i]->getPosition().x-_hunter->getPosition().x)<= 300 && abs(_hunter->getTraps()[i]->getPosition().y-_hunter->getPosition().y)<= 300){
+                        if(_neverPlayed){
+                            AudioEngine::get()->play("trapSound", _trapSound, false, _theme->getVolume(), true);
+                            _neverPlayed = false;
+                        }
+                        _trappedbool=true;
+                        _frameNumClam++;
+                        _hunter->getTraps()[i]->setTrigger(true);
+                        _hunter->getTrapViews()[i]->setVisible(true,_frameNumClam);
+                        _trapped=i;
                         if(!_timertriggered){
                             _countfortimer=0;
                             _timertriggered=true;
                         }
-                       
+                        
                     }
                     
-                    }
-            for (int i=0;i<_hunter->getTraps().size();i++){
-                if (_hunter->getTraps()[i]->getTrigger()&& _countfortimer >= 300){
-                    _hunter->getTraps()[i]->setTrigger(false);
-                    _hunter->getTrapViews()[i]->setVisible(false,_frameNumClam);
-                    _hunter->removeTrap(i);
-                    _neverPlayed = true;
-                    _timertriggered=false;
-                    transmitTrapTriggered(_hunter->getPosition());
-
                 }
+                
             }
+        }
+        else{
+            _frameNumClam++;
+            _hunter->getTraps()[_trapped]->setTrigger(true);
+            _hunter->getTrapViews()[_trapped]->setVisible(true,_frameNumClam);
+            
+            if (_hunter->getTraps()[_trapped]->getTrigger()&& _countfortimer >= 300){
+                _hunter->getTraps()[_trapped]->setTrigger(false);
+                _hunter->getTrapViews()[_trapped]->setVisible(false,_frameNumClam);
+                _hunter->removeTrap(_trapped);
+                _neverPlayed = true;
+                _trappedbool=false;
+                _timertriggered=false;
+                transmitTrapTriggered(_hunter->getPosition());
+                
+            }
+        
+        }
 
-            }
+            
       
        
         if(abs(_treasure.getPosition().x-_hunter->getPosition().x)<= 200 && abs(_treasure.getPosition().y-_hunter->getPosition().y)<= 200 && !_collision.didHitTreasure ){

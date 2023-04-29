@@ -41,7 +41,7 @@ class TrapView {
         _spriteSheet = assets->get<Texture>("trap_animation2");
         _spriteNode =
             scene2::SpriteNode::allocWithSheet(_spriteSheet, 1, 3, 3);
-        _spriteNode->setScale(0.5);
+        _spriteNode->setScale(2);
         _spriteNode->setFrame(_frameNum);
         _spriteNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
         _spriteNode->setPosition(position - _spriteNode->getSize() / 2);

@@ -208,11 +208,11 @@ void HunterController::addChildToNode(std::vector<std::shared_ptr<scene2::Polygo
  * @param scene The scene to remove the view from
  */
 void HunterController::removeChildFrom(
-    const std::shared_ptr<cugl::Scene2>& scene) {
+                                       const std::shared_ptr<cugl::Scene2>& scene) {
     // TODO: Implement me
     std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> vec =
-        _view->getSpriteNode();
-
+    _view->getSpriteNode();
+    
     for (int i = 0; i < vec.size(); i++) {
         scene->removeChild(vec[i]);
     }

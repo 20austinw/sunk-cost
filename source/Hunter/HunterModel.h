@@ -38,6 +38,8 @@ class HunterModel : public physics2::WheelObstacle {
     
     std::vector<std::shared_ptr<TrapModel>> _trapModels;
     std::vector<std::shared_ptr<TrapView>> _trapViews;
+    
+    int _size1;
 
   public:
     cugl::Vec2& position;
@@ -77,6 +79,8 @@ class HunterModel : public physics2::WheelObstacle {
         //setSpeed(_speed);
         _assets = assets;
         _scene = scene;
+        _size1=0;
+
     }
 
 
@@ -101,7 +105,7 @@ class HunterModel : public physics2::WheelObstacle {
     }
     
     int getTrapSize(){
-        return _trapModels.size();
+        return _size1;
     }
     
 
@@ -140,12 +144,13 @@ class HunterModel : public physics2::WheelObstacle {
         _trapViews.emplace_back(trap);
         trap->addChildTo(_scene);
         trap->setVisible(false,0);
+        _size1++;
     }
     
     void removeTrap(int index){
-        _trapViews[index]->setVisible(false, 0);
-        _trapViews.erase(_trapViews.begin()+index);
         _trapModels.erase(_trapModels.begin()+index);
+        _trapViews.erase(_trapViews.begin()+index);
+        _size1--;
     }
     
     void applyForce(cugl::Vec2 force) {

@@ -8,6 +8,7 @@
 #ifndef Minimap_h
 #define Minimap_h
 
+#include "TilemapController.h"
 #include <cugl/cugl.h>
 
 using namespace cugl;

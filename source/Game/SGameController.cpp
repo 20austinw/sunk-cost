@@ -143,15 +143,7 @@ void SGameController::update(float dt) {
             if (_ticks > 0) {
                 _ticks--;
             } else {
-                float zoom = std::dynamic_pointer_cast<OrthographicCamera>(
-                                 _scene->getCamera())
-                                 ->getZoom();
-                std::dynamic_pointer_cast<OrthographicCamera>(
-                    _scene->getCamera())
-                    ->setZoom(zoom + 0.005);
-                if (zoom + 0.005 >= 0.85) {
-                    _spawn = false;
-                }
+                _spawn = false;
             }
         }
         sortNodes();
@@ -598,7 +590,7 @@ void SGameController::checkLevelLoaded() {
 
         _portraits->setIndex(4);
         std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.25);
+            ->setZoom(0.85);
         _spirit.updateLocksPos();
         _spirit.updateTrapBtnsPos();
         _levelLoaded = true;

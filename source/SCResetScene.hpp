@@ -8,12 +8,11 @@
 #ifndef SCResetScene_hpp
 #define SCResetScene_hpp
 
-
 /**
  * This class presents the menu to the player.
  */
 class ResetScene : public cugl::Scene2 {
-public:
+  public:
     /**
      * The reset choice.
      *
@@ -29,7 +28,7 @@ public:
         REPLAY
     };
 
-protected:
+  protected:
     /** The asset manager for this scene. */
     std::shared_ptr<cugl::AssetManager> _assets;
     /** The menu button for leaving a game */
@@ -38,8 +37,8 @@ protected:
     std::shared_ptr<cugl::scene2::Button> _replaybutton;
     /** The player menu choice */
     Choice _choice;
-    
-public:
+
+  public:
 #pragma mark -
 #pragma mark Constructors
     /**
@@ -49,7 +48,7 @@ public:
      * This allows us to use the object without a heap pointer.
      */
     ResetScene() : cugl::Scene2() {}
-    
+
     /**
      * Disposes of all (non-static) resources allocated to this mode.
      *
@@ -57,12 +56,12 @@ public:
      * static resources, like the input controller.
      */
     ~ResetScene() { dispose(); }
-    
+
     /**
      * Disposes of all (non-static) resources allocated to this mode.
      */
     void dispose() override;
-    
+
     /**
      * Initializes the controller contents.
      *
@@ -89,7 +88,7 @@ public:
      * @param value whether the scene is currently active
      */
     virtual void setActive(bool value) override;
-    
+
     /**
      * Returns the user's menu choice.
      *
@@ -98,7 +97,6 @@ public:
      * @return the user's menu choice.
      */
     Choice getChoice() const { return _choice; }
-
 };
 
 #endif /* SCResetScene_hpp */

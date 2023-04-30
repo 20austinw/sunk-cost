@@ -97,9 +97,11 @@ class SpiritController {
      * (2) modify portraitsetcontroller to reflect the change
      */
     bool placeTrap(const std::shared_ptr<TilemapController> _tilemap,
-                Vec2 trapPos, std::shared_ptr<cugl::scene2::PolygonNode>& node);
-    
-    int update(bool trap, Vec2 pos, std::shared_ptr<cugl::scene2::PolygonNode>& node);
+                   Vec2 trapPos,
+                   std::shared_ptr<cugl::scene2::PolygonNode>& node);
+
+    int update(bool trap, Vec2 pos,
+               std::shared_ptr<cugl::scene2::PolygonNode>& node);
 
 #pragma mark Setters
   public:
@@ -161,76 +163,64 @@ class SpiritController {
         _model->setCameraCooldown(_cameraCool);
     }
 
-    bool isSwitchable() {
-        return _cameraCool <= 0;
-        
-    }
-    
+    bool isSwitchable() { return _cameraCool <= 0; }
+
     bool getTrapAdded() { return _trapAdded; }
-    
+
     void setTrapAdded(bool trapAdded) { _trapAdded = trapAdded; }
-    
+
     Vec2 getLastTrapPos() { return _lastTrapPos; }
-    
+
     void setLastTrapPos(Vec2 pos) { _lastTrapPos = pos; }
-    
-    Vec2 getLastLockPos() {
-        return _view->getLastLockPos();
-    }
-    
-    Vec2 getLastTrapBtnPos() {
-        return _view->getLastTrapBtnPos();
-    }
+
+    Vec2 getLastLockPos() { return _view->getLastLockPos(); }
+
+    Vec2 getLastTrapBtnPos() { return _view->getLastTrapBtnPos(); }
 
 #pragma mark Helpers
   public:
     Rect screenToWorld(Rect rect);
-    
-    void addHunter(Vec2 pos, std::vector<std::shared_ptr<scene2::PolygonNode>>& hunterNodes) {
+
+    void
+    addHunter(Vec2 pos,
+              std::vector<std::shared_ptr<scene2::PolygonNode>>& hunterNodes) {
         _model->addHunter(pos, hunterNodes);
     }
-    
-    void moveHunter(Vec2 pos) {
-        _model->moveHunter(pos);
-    }
-    
-    void alertTreasure(Vec2 pos) {
-        _model->alertTreasure(pos);
-    }
-    
-    std::shared_ptr<SpiritView> getView() {return _view;}
-    std::shared_ptr<SpiritModel> getModel() {return _model;}
-    
-    //Lock button functions
-    
+
+    void moveHunter(Vec2 pos) { _model->moveHunter(pos); }
+
+    void alertTreasure(Vec2 pos) { _model->alertTreasure(pos); }
+
+    std::shared_ptr<SpiritView> getView() { return _view; }
+    std::shared_ptr<SpiritModel> getModel() { return _model; }
+
+    // Lock button functions
+
     void updateLocks(bool start, bool released, Vec2 touchPos);
-    
+
     void updateLocksPos();
-    
+
     void removeLastLock(std::shared_ptr<cugl::scene2::PolygonNode>& node);
-    
+
     void addNewLock(std::shared_ptr<cugl::scene2::PolygonNode>& node);
-    
+
     bool touchInLockBound(Vec2 touchPos);
-    
+
     void updateMovingLock(Vec2 pos);
-    
+
     void updateTrapBtns(bool start, bool released, Vec2 touchPos);
-    
-    //Trap button functions
-    
+
+    // Trap button functions
+
     void updateTrapBtnsPos();
-    
+
     void removeLastTrapBtn(std::shared_ptr<cugl::scene2::PolygonNode>& node);
-    
+
     void addNewTrapBtn(std::shared_ptr<cugl::scene2::PolygonNode>& node);
-    
+
     bool touchInTrapBound(Vec2 touchPos);
-    
+
     void updateMovingTrap(Vec2 pos);
-    
-    
-    
 };
 
 #endif /* _SPIRIT_CONTROLLER_H */

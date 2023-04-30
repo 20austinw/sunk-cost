@@ -49,7 +49,7 @@ class InputController {
     Keyboard* _keyboard;
     /** Mouse reference */
     Mouse* _mouse;
-    
+
     /** Touchscreen reference */
     Touchscreen* _ts;
 
@@ -61,7 +61,7 @@ class InputController {
     /** The touch position  */
     cugl::Vec2 _touchPos;
     cugl::Vec2 _center;
-    
+
     /** Whether the finger touch is down */
     bool _touchDown;
     bool _touchUp;
@@ -140,7 +140,7 @@ class InputController {
      */
     float getRight() const { return _rightward; }
     bool getTouchDown() const { return _touchDown; }
-    cugl::Vec2 getCenter() const {return _center;}
+    cugl::Vec2 getCenter() const { return _center; }
 
     /**
      * Returns whether the exit button was pressed.
@@ -307,11 +307,11 @@ class InputController {
 
     /** Returns the mouse's last recorded position. */
     Vec2 getLastMousePos() { return _model->lastMousePos; }
-    
+
     /** Returns the touchscreen's last recorded position. */
-    Vec2 getTouchPos() {return _touchPos; }
-    
-    bool isTouchDown() {return _touchDown;}
+    Vec2 getTouchPos() { return _touchPos; }
+
+    bool isTouchDown() { return _touchDown; }
 };
 
 #endif /* __INPUT_CONTROLLER_H__ */

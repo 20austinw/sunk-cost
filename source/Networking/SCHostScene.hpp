@@ -11,7 +11,6 @@
 #include <cugl/cugl.h>
 #include <vector>
 
-
 /**
  * This class provides the interface to make a new game.
  *
@@ -20,7 +19,7 @@
  * code a little more clear.
  */
 class HostScene : public cugl::Scene2 {
-public:
+  public:
     /**
      * The configuration status
      *
@@ -36,8 +35,8 @@ public:
         /** Game was aborted; back to main menu */
         ABORT
     };
-    
-protected:
+
+  protected:
     /** The asset manager for this scene. */
     std::shared_ptr<cugl::AssetManager> _assets;
     /** The network connection (as made by this scene) */
@@ -51,20 +50,20 @@ protected:
     std::shared_ptr<cugl::scene2::Label> _gameid;
     /** The players label (for updating) */
     std::shared_ptr<cugl::scene2::Label> _player;
-    
+
     /** The network configuration */
     cugl::net::NetcodeConfig _config;
-    
+
     /** The current status */
     Status _status;
-    
+
     bool _codeDisplayed;
-    
+
     int _numPlayers;
-    
+
     std::vector<cugl::scene2::PolygonNode> _numbers;
 
-public:
+  public:
 #pragma mark -
 #pragma mark Constructors
     /**
@@ -74,7 +73,7 @@ public:
      * This allows us to use the object without a heap pointer.
      */
     HostScene() : cugl::Scene2() {}
-    
+
     /**
      * Disposes of all (non-static) resources allocated to this mode.
      *
@@ -82,12 +81,12 @@ public:
      * static resources, like the input controller.
      */
     ~HostScene() { dispose(); }
-    
+
     /**
      * Disposes of all (non-static) resources allocated to this mode.
      */
     void dispose() override;
-    
+
     /**
      * Initializes the controller contents, and starts the game
      *
@@ -103,7 +102,7 @@ public:
      * @return true if the controller is initialized properly, false otherwise.
      */
     bool init(const std::shared_ptr<cugl::AssetManager>& assets);
-    
+
     /**
      * Sets whether the scene is currently active
      *
@@ -114,7 +113,7 @@ public:
      * @param value whether the scene is currently active
      */
     virtual void setActive(bool value) override;
-    
+
     /**
      * Returns the network connection (as made by this scene)
      *
@@ -146,34 +145,35 @@ public:
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     void update(float timestep) override;
-    
+
     /**
      * Disconnects this scene from the network controller.
      *
-     * Technically, this method does not actually disconnect the network controller.
-     * Since the network controller is a smart pointer, it is only fully disconnected
-     * when ALL scenes have been disconnected.
+     * Technically, this method does not actually disconnect the network
+     * controller. Since the network controller is a smart pointer, it is only
+     * fully disconnected when ALL scenes have been disconnected.
      */
     void disconnect() {
         _network = nullptr;
-        
+
         _codeDisplayed = false;
     }
 
-private:
+  private:
     /**
      * Updates the text in the given button.
      *
-     * Techincally a button does not contain text. A button is simply a scene graph
-     * node with one child for the up state and another for the down state. So to
-     * change the text in one of our buttons, we have to descend the scene graph.
-     * This method simplifies this process for you.
+     * Techincally a button does not contain text. A button is simply a scene
+     * graph node with one child for the up state and another for the down
+     * state. So to change the text in one of our buttons, we have to descend
+     * the scene graph. This method simplifies this process for you.
      *
      * @param button    The button to modify
      * @param text      The new text value
      */
-    void updateText(const std::shared_ptr<cugl::scene2::Button>& button, const std::string text);
-    
+    void updateText(const std::shared_ptr<cugl::scene2::Button>& button,
+                    const std::string text);
+
     /**
      * Reconfigures the start button for this scene
      *
@@ -181,12 +181,13 @@ private:
      * networking.
      */
     void configureStartButton();
-    
+
     /**
      * Connects to the game server as specified in the assets file
      *
-     * The {@link #init} method set the configuration data. This method simply uses
-     * this to create a new {@Link NetworkConnection}. It also immediately calls
+     * The {@link #init} method set the configuration data. This method simply
+     * uses this to create a new {@Link NetworkConnection}. It also immediately
+     * calls
      * {@link #checkConnection} to determine the scene state.
      *
      * @return true if the connection was successful
@@ -196,46 +197,45 @@ private:
     /**
      * Processes data sent over the network.
      *
-     * Once connection is established, all data sent over the network consistes of
-     * byte vectors. This function is a call back function to process that data.
-     * Note that this function may be called *multiple times* per animation frame,
-     * as the messages can come from several sources.
+     * Once connection is established, all data sent over the network consistes
+     * of byte vectors. This function is a call back function to process that
+     * data. Note that this function may be called *multiple times* per
+     * animation frame, as the messages can come from several sources.
      *
-     * In this lab, this method does not do all that much. Typically this is where
-     * players would communicate their names after being connected.
+     * In this lab, this method does not do all that much. Typically this is
+     * where players would communicate their names after being connected.
      *
      * @param source    The UUID of the sender
      * @param data      The data received
      */
-    void processData(const std::string source, const std::vector<std::byte>& data);
+    void processData(const std::string source,
+                     const std::vector<std::byte>& data);
 
     /**
      * Checks that the network connection is still active.
      *
-     * Even if you are not sending messages all that often, you need to be calling
-     * this method regularly. This method is used to determine the current state
-     * of the scene.
+     * Even if you are not sending messages all that often, you need to be
+     * calling this method regularly. This method is used to determine the
+     * current state of the scene.
      *
      * @return true if the network connection is still active.
      */
     bool checkConnection();
-    
+
     /**
      * Starts the game.
      *
-     * This method is called once the requisite number of players have connected.
-     * It locks down the room and sends a "start game" message to all other
-     * players.
+     * This method is called once the requisite number of players have
+     * connected. It locks down the room and sends a "start game" message to all
+     * other players.
      */
     void startGame();
-    
-    void displayCode(std::string code);
-    
-    std::string numToFile(char num);
-    
-    void removeCode();
-    
-};
 
+    void displayCode(std::string code);
+
+    std::string numToFile(char num);
+
+    void removeCode();
+};
 
 #endif /* SCHostScene_hpp */

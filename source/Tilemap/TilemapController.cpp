@@ -135,7 +135,7 @@ void TilemapController::addTile(int col, int row, Color4 color,
     _tilemap[row][col]->addChildTo(_view->getNode());
 }
 
-void TilemapController::removeTile(int col, int row){
+void TilemapController::removeTile(int col, int row) {
     _tilemap[row][col]->removeChildFrom(_view->getNode());
     _tilemap[row][col].reset();
 }
@@ -163,7 +163,8 @@ void TilemapController::addChildTo(const std::shared_ptr<cugl::Scene2>& scene) {
     scene->addChild(_view->getNode());
 }
 
-void TilemapController::addChildToNode(std::shared_ptr<cugl::scene2::PolygonNode>& node) {
+void TilemapController::addChildToNode(
+    std::shared_ptr<cugl::scene2::PolygonNode>& node) {
     node->addChild(_view->getNode());
 }
 
@@ -173,7 +174,8 @@ void TilemapController::addDoorTo(const std::shared_ptr<cugl::Scene2>& scene) {
     }
 }
 
-void TilemapController::removeDoorFrom(const std::shared_ptr<cugl::Scene2>& scene) {
+void TilemapController::removeDoorFrom(
+    const std::shared_ptr<cugl::Scene2>& scene) {
     for (int i = 0; i < _doors.size(); i++) {
         scene->removeChild(_doors[i]);
     }
@@ -235,10 +237,6 @@ void TilemapController::clearMap() {
     initializeTilemap();
 }
 
-Size TilemapController::getDimensions(){
-    return _model->getDimensions();
-}
+Size TilemapController::getDimensions() { return _model->getDimensions(); }
 
-Size TilemapController::getTileSize(){
-    return _model->getTileSize();
-}
+Size TilemapController::getTileSize() { return _model->getTileSize(); }

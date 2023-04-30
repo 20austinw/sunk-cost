@@ -38,15 +38,14 @@ class HunterView {
                Size size, int color) {
 
         _frameNum = 8;
-        if(color==0){
+        if (color == 0) {
             _spriteSheets.push_back(assets->get<Texture>("hunterrunning"));
             _spriteSheets.push_back(assets->get<Texture>("hunterleft"));
-        }else if(color==1){
+        } else if (color == 1) {
             _spriteSheets.push_back(assets->get<Texture>("hunterorange"));
-        }else{
+        } else {
             _spriteSheets.push_back(assets->get<Texture>("huntergreen"));
         }
-        
 
         float width = size.width * 1.5f;
 
@@ -82,8 +81,9 @@ class HunterView {
             scene->addChild(_spriteNodes[i]);
         }
     }
-    
-    void addChildToNode(std::vector<std::shared_ptr<scene2::PolygonNode>>& hunterNodes) {
+
+    void addChildToNode(
+        std::vector<std::shared_ptr<scene2::PolygonNode>>& hunterNodes) {
         for (int i = 0; i < _spriteNodes.size(); i++) {
             hunterNodes.emplace_back(_spriteNodes[i]);
         }

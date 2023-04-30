@@ -11,10 +11,10 @@
 #ifndef _SPIRITMODEL_H
 #define _SPIRITMODEL_H
 
-#include "TrapModel.hpp"
-#include "TrapView.h"
 #include "HunterModel.h"
 #include "HunterView.h"
+#include "TrapModel.hpp"
+#include "TrapView.h"
 #include <cugl/cugl.h>
 
 class SpiritModel {
@@ -38,16 +38,16 @@ class SpiritModel {
 
     std::shared_ptr<cugl::Scene2> _scene;
     std::shared_ptr<cugl::AssetManager> _assets;
-    
+
     std::shared_ptr<HunterModel> _hunterModel;
     std::shared_ptr<HunterView> _hunterView;
     int forward = 0, right = 0;
     int _ticks = 0;
-    
+
     bool _isOnLock;
-    
+
     bool _isOnTrap;
-    
+
     Vec2 _lastTrapPos;
 
   public:
@@ -83,7 +83,8 @@ class SpiritModel {
                 std::shared_ptr<cugl::Scene2> scene, int clams, int doors,
                 float energy)
         : traps(_traps), doors(_doors), energy(_energy),
-          cameraCool(_cameraCool), clamCool(_clamCool), doorCool(_doorCool), isOnLock(_isOnLock), isOnTrap(_isOnTrap), lastTrapPos(_lastTrapPos) {
+          cameraCool(_cameraCool), clamCool(_clamCool), doorCool(_doorCool),
+          isOnLock(_isOnLock), isOnTrap(_isOnTrap), lastTrapPos(_lastTrapPos) {
         setTraps(clams);
         setDoors(doors);
         setEnergy(energy);
@@ -92,9 +93,9 @@ class SpiritModel {
         setDoorCooldown(0);
         _scene = scene;
         _assets = assets;
-              setLockState(false);
-              setTrapState(false);
-              setLastTrapPos(Vec2::ZERO);
+        setLockState(false);
+        setTrapState(false);
+        setLastTrapPos(Vec2::ZERO);
     }
 
 #pragma mark Setters
@@ -133,19 +134,13 @@ class SpiritModel {
      * @param doors the number of doors
      */
     void setDoors(int doors) { _doors = doors; };
-    
-    void setLockState(bool lock){
-        _isOnLock = lock;
-    }
-    
-    void setTrapState(bool trap){
-        _isOnTrap = trap;
-    }
-    
-    void setLastTrapPos(Vec2 pos){
-        _lastTrapPos = pos;
-    }
- 
+
+    void setLockState(bool lock) { _isOnLock = lock; }
+
+    void setTrapState(bool trap) { _isOnTrap = trap; }
+
+    void setLastTrapPos(Vec2 pos) { _lastTrapPos = pos; }
+
     /**
      * Sets the available energy for the spirit
      *
@@ -153,95 +148,101 @@ class SpiritModel {
      */
     void setEnergy(float energy) { _energy = energy; };
 
-    void addTrap(Vec2 position, std::shared_ptr<cugl::scene2::PolygonNode>& node) {
+    void addTrap(Vec2 position,
+                 std::shared_ptr<cugl::scene2::PolygonNode>& node) {
         if (_trapModels.size() >= 3)
             return;
-        //a trap will last for 15s for now
+        // a trap will last for 15s for now
         _trapModels.emplace_back(std::make_shared<TrapModel>(position, 900));
         auto trap = std::make_shared<TrapView>(_assets, position, 20);
         _trapViews.emplace_back(trap);
         trap->addChildToNode(node);
-//        trap->addChildTo(_scene); //TODO: add trap
+        //        trap->addChildTo(_scene); //TODO: add trap
     }
 
     // 0: nothing; 1: remove 1 trap; 2: remove 2 traps
-    int update(bool trapTriggered, Vec2 pos, std::shared_ptr<cugl::scene2::PolygonNode>& node) {
+    int update(bool trapTriggered, Vec2 pos,
+               std::shared_ptr<cugl::scene2::PolygonNode>& node) {
         bool result = 0;
         std::vector<std::shared_ptr<TrapModel>> pendingTrapModels;
         std::vector<std::shared_ptr<TrapView>> pendingTrapViews;
-        
+
         int target = cloestTrapToHunter(pos);
-        if (trapTriggered && target != -1){
+        if (trapTriggered && target != -1) {
             result = 1;
-            //remove the trap closest to the hunter position
-//            _trapViews[target]->removeChildFrom(_scene);
+            // remove the trap closest to the hunter position
+            //            _trapViews[target]->removeChildFrom(_scene);
             _trapViews[target]->removeChildFromNode(node);
         }
-        
+
         for (int i = 0; i < _trapModels.size(); i++) {
-            if (!(trapTriggered && target == i)){
+            if (!(trapTriggered && target == i)) {
                 pendingTrapModels.emplace_back(_trapModels[i]);
                 pendingTrapViews.emplace_back(_trapViews[i]);
-                
-//                if (!_trapModels[i]->update()) {
-//                    pendingTrapModels.emplace_back(_trapModels[i]);
-//                    pendingTrapViews.emplace_back(_trapViews[i]);
-//                    _trapViews[i]->update();
-//                }
-                
-//                else {
-//                    _trapViews[i]->removeChildFrom(_scene);
-//                    if(result == 1){
-//                        result = 2;
-//                    } else {
-//                        result = 1;
-//                    }
-//                }
+
+                //                if (!_trapModels[i]->update()) {
+                //                    pendingTrapModels.emplace_back(_trapModels[i]);
+                //                    pendingTrapViews.emplace_back(_trapViews[i]);
+                //                    _trapViews[i]->update();
+                //                }
+
+                //                else {
+                //                    _trapViews[i]->removeChildFrom(_scene);
+                //                    if(result == 1){
+                //                        result = 2;
+                //                    } else {
+                //                        result = 1;
+                //                    }
+                //                }
             }
         }
-        
+
         _trapModels = pendingTrapModels;
         _trapViews = pendingTrapViews;
-        if(_hunterView && _ticks == 0) {
-//            CULog("%d, %d", right, forward);
+        if (_hunterView && _ticks == 0) {
+            //            CULog("%d, %d", right, forward);
             _hunterView->advanceFrame(forward, right);
             forward = 0;
             right = 0;
         }
-        _ticks = (_ticks+1)%6;
-        
+        _ticks = (_ticks + 1) % 6;
+
         return result;
     }
-    
-    void addHunter(Vec2 position, std::vector<std::shared_ptr<scene2::PolygonNode>>& hunterNodes) {
+
+    void
+    addHunter(Vec2 position,
+              std::vector<std::shared_ptr<scene2::PolygonNode>>& hunterNodes) {
         _hunterModel = std::make_shared<HunterModel>(_assets, _scene, 1024);
         // A place holder for hunterID, 0 is blue, 1 is orange, 2 is green
         int hunterID = 0;
-        _hunterView = std::make_shared<HunterView>(_assets, position, Vec2(40, 40), hunterID);
-        
-//        _hunterView->addChildTo(_scene);
+        _hunterView = std::make_shared<HunterView>(_assets, position,
+                                                   Vec2(40, 40), hunterID);
+
+        //        _hunterView->addChildTo(_scene);
         _hunterView->addChildToNode(hunterNodes);
     }
-    
+
     void moveHunter(Vec2 position) {
-        Vec2 diff = position-_hunterModel->position;
+        Vec2 diff = position - _hunterModel->position;
         forward = diff.y;
         right = diff.x;
         _hunterModel->setPosition(position);
         _hunterView->setPosition(position);
     }
-    
-    void alertTreasure(Vec2 position) {
-        
-    }
-    
-    int cloestTrapToHunter(Vec2 pos){
+
+    void alertTreasure(Vec2 position) {}
+
+    int cloestTrapToHunter(Vec2 pos) {
         int result = -1;
         float minDis = 100000;
+        if (!_hunterModel) {
+            return -1;
+        }
         Vec2 hunterPos = _hunterModel->getPosition();
-        for (int i = 0; i < _trapModels.size(); i++){
+        for (int i = 0; i < _trapModels.size(); i++) {
             float dis = hunterPos.distance(_trapModels.at(i)->getPosition());
-            if(dis < minDis){
+            if (dis < minDis) {
                 minDis = dis;
                 result = i;
             }

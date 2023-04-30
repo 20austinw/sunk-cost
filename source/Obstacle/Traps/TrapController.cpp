@@ -24,7 +24,9 @@ TrapController::TrapController(
 
 void TrapController::setViewFrame() { _view->update(); }
 
-void TrapController::removeView(const std::shared_ptr<cugl::Scene2>& scene) { _view->removeChildFrom(scene); }
+void TrapController::removeView(const std::shared_ptr<cugl::Scene2>& scene) {
+    _view->removeChildFrom(scene);
+}
 
 #pragma mark Getters
 /**

@@ -36,28 +36,33 @@ class EndScene {
      * @param color The tile color tint
      */
     float getZoom() {
-        return std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-        ->getZoom();
+        return std::dynamic_pointer_cast<OrthographicCamera>(
+                   _scene->getCamera())
+            ->getZoom();
     }
 
-    EndScene(const std::shared_ptr<cugl::Scene2>& scene, const std::shared_ptr<cugl::AssetManager>& assets, bool win) {
+    EndScene(const std::shared_ptr<cugl::Scene2>& scene,
+             const std::shared_ptr<cugl::AssetManager>& assets, bool win) {
         _scene = scene;
         _win = win;
         _frameNum = 0;
-        _spriteSheet = win ? assets->get<Texture>("hunters_lose") : assets->get<Texture>("hunters_win");
-        _spriteNode = win ? scene2::SpriteNode::allocWithSheet(_spriteSheet, 2, 8, 14) : scene2::SpriteNode::allocWithSheet(_spriteSheet, 5, 4, 20);
+        _spriteSheet = win ? assets->get<Texture>("hunters_lose")
+                           : assets->get<Texture>("hunters_win");
+        _spriteNode =
+            win ? scene2::SpriteNode::allocWithSheet(_spriteSheet, 2, 8, 14)
+                : scene2::SpriteNode::allocWithSheet(_spriteSheet, 5, 4, 20);
         std::string endText = win ? "You win!" : "You lose!";
-        _endLabel = cugl::scene2::Label::allocWithText(Vec2(0, 0), endText, assets->get<Font>("pixel32"));
-        _spriteNode->setScale(_scene->getSize().height*0.7/_spriteNode->getSize().height/getZoom());
+        _endLabel = cugl::scene2::Label::allocWithText(
+            Vec2(0, 0), endText, assets->get<Font>("pixel32"));
+        _spriteNode->setScale(_scene->getSize().height * 0.7 /
+                              _spriteNode->getSize().height / getZoom());
         _spriteNode->setFrame(_frameNum);
         _spriteNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
         _spriteNode->setVisible(true);
     };
 
     /** Deletes this HunterView */
-    ~EndScene() {
-        _spriteNode->removeFromParent();
-    }
+    ~EndScene() { _spriteNode->removeFromParent(); }
 
 #pragma mark Getters
   public:
@@ -71,7 +76,8 @@ class EndScene {
      * @param sceneNode The scenenode to add the view to
      */
     void addChildTo(const std::shared_ptr<cugl::Scene2>& scene) {
-        _spriteNode->setPosition(Vec2(scene->getCamera()->getPosition()) - _spriteNode->getSize()/2);
+        _spriteNode->setPosition(Vec2(scene->getCamera()->getPosition()) -
+                                 _spriteNode->getSize() / 2);
         scene->addChild(_spriteNode);
     }
 
@@ -86,15 +92,15 @@ class EndScene {
 
 #pragma mark Setters
     void setPosition(Vec2 position) { _spriteNode->setPosition(position); }
-    
+
     int v = 1;
     void update() {
-        if(_win) {
+        if (_win) {
             // First round full animation
-            if(_tick % 10 == 0) {
-                if(_frameNum == _spriteNode->getSpan() - 1){
+            if (_tick % 10 == 0) {
+                if (_frameNum == _spriteNode->getSpan() - 1) {
                     v = -1;
-                }else if(_frameNum == 8) {
+                } else if (_frameNum == 8) {
                     v = 1;
                 }
                 _tick = 0;
@@ -103,7 +109,7 @@ class EndScene {
             }
             _tick++;
             // Second round
-        }else{
+        } else {
             _spriteNode->setFrame(_frameNum % 17);
             _frameNum++;
         }

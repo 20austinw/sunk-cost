@@ -3,6 +3,7 @@
 #include <climits>
 #include <random>
 
+#include "Button.h"
 #include "DoorController.hpp"
 #include "EndScene.h"
 #include "HunterController.h"
@@ -147,6 +148,12 @@ class SGameController {
     bool _spawn;
 
     int _ticks;
+
+    std::shared_ptr<Button> _viewButton;
+
+    float _buttonHeight;
+
+    bool _selectionPhase;
 
 #pragma mark External References
   private:

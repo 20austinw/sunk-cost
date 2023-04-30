@@ -179,21 +179,6 @@ class SpiritModel {
             if (!(trapTriggered && target == i)) {
                 pendingTrapModels.emplace_back(_trapModels[i]);
                 pendingTrapViews.emplace_back(_trapViews[i]);
-
-                //                if (!_trapModels[i]->update()) {
-                //                    pendingTrapModels.emplace_back(_trapModels[i]);
-                //                    pendingTrapViews.emplace_back(_trapViews[i]);
-                //                    _trapViews[i]->update();
-                //                }
-
-                //                else {
-                //                    _trapViews[i]->removeChildFrom(_scene);
-                //                    if(result == 1){
-                //                        result = 2;
-                //                    } else {
-                //                        result = 1;
-                //                    }
-                //                }
             }
         }
 

@@ -207,6 +207,9 @@
         },
         "exit": {
             "file": "textures/exit.png"
+        },
+        "view_button": {
+            "file": "textures/eye_bubble.png"
         }
     },
     "fonts": {

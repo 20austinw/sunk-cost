@@ -107,6 +107,15 @@ SGameController::SGameController(
 
     _miniMap = make_shared<Minimap>(_assets, _scene, _tilemap);
     _miniMap->addChildToNode(_fifthLayer);
+    _selectionPhase = false;
+    _buttonHeight = 400;
+    _viewButton = std::make_shared<Button>(_assets->get<Texture>("view_button"),
+                                           _scene, _selectionPhase, _portraits);
+    _viewButton->setDefaultPosition(Vec2(0, _buttonHeight));
+    _viewButton->setVisible(true);
+    _viewButton->setInteractive(true);
+    _viewButton->addChildTo(_scene);
+
     //    _miniMap->addChildTo(_scene); //TODO: fourth
     while (!_levelLoaded) {
         checkLevelLoaded();
@@ -255,10 +264,24 @@ void SGameController::update(float dt) {
         } else if (blocked && _spirit.getModel()->isOnTrap && !_spawn) {
             _spirit.getModel()->setTrapState(false);
         }
-
-        Vec3 offset = Vec3(_assets->get<Texture>("map")->getSize() / 2);
-        _scene->getCamera()->setPosition(
-            _portraits->getPosition(_portraits->getIndex()) + offset);
+        // Not in selection phase
+        if (!_viewButton->update()) {
+            Vec3 offset = Vec3(_assets->get<Texture>("map")->getSize() / 2);
+            _scene->getCamera()->setPosition(
+                _portraits->getPosition(_portraits->getIndex()) + offset);
+        }
+        // In selection phase
+        else {
+            float mapWidth =
+                _tilemap->getDimensions().width * _tilemap->getTileSize().width;
+            float mapHeight = _tilemap->getDimensions().height *
+                              _tilemap->getTileSize().height;
+            // Why is this not centering?
+            _scene->getCamera()->setPosition(
+                Vec3(Vec2(mapWidth, mapHeight) / 2));
+            std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+                ->setZoom(0.3);
+        }
 
         // Black screen
         if (!_portraits->getCurState() && _portraits->getPrevState()) {

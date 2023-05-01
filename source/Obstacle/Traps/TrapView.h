@@ -40,7 +40,7 @@ class TrapView {
         _radius = radius;
         _spriteSheet = assets->get<Texture>("trap_animation2");
         _spriteNode = scene2::SpriteNode::allocWithSheet(_spriteSheet, 1, 3, 3);
-        _spriteNode->setScale(2);
+        _spriteNode->setScale(0.5);
         _spriteNode->setFrame(_frameNum);
         _spriteNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
         _spriteNode->setPosition(position - _spriteNode->getSize() / 2);
@@ -105,11 +105,13 @@ class TrapView {
         _spriteNode->setFrame(int(framenum / 4) % 3);
     }
 
+    void setScale(float zoom) { _spriteNode->setScale(zoom); }
+
 #pragma mark Setters
     void setPosition(Vec2 position) { _spriteNode->setPosition(position); }
 
     void update() {
-        if (_tick % 4 == 0 && _frameNum < 3) {
+        if (_tick % 4 == 0) {
             _frameNum = (_frameNum + 1) % _spriteNode->getSpan();
             _spriteNode->setFrame(_frameNum);
         }

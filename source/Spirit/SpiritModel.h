@@ -160,6 +160,12 @@ class SpiritModel {
         //        trap->addChildTo(_scene); //TODO: add trap
     }
 
+    float getZoom() {
+        return std::dynamic_pointer_cast<OrthographicCamera>(
+                   _scene->getCamera())
+            ->getZoom();
+    }
+
     // 0: nothing; 1: remove 1 trap; 2: remove 2 traps
     int update(bool trapTriggered, Vec2 pos,
                std::shared_ptr<cugl::scene2::PolygonNode>& node) {
@@ -178,6 +184,7 @@ class SpiritModel {
         for (int i = 0; i < _trapModels.size(); i++) {
             if (!(trapTriggered && target == i)) {
                 pendingTrapModels.emplace_back(_trapModels[i]);
+                _trapViews[i]->update();
                 pendingTrapViews.emplace_back(_trapViews[i]);
             }
         }

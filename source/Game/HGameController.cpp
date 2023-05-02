@@ -1025,6 +1025,7 @@ void HGameController::initCamera() {
     _scene->getCamera()->setFar(100000);
     _scene->getCamera()->setNear(0);
     _scene->getCamera()->update();
+    std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())->setZoom(2.5);
 }
 
 /**

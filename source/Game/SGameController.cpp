@@ -109,7 +109,7 @@ SGameController::SGameController(
     _buttonHeight = 400;
     _viewButton = std::make_shared<Button>(_assets->get<Texture>("view_button"),
                                            _scene, _selectionPhase, _portraits);
-    _viewButton->setDefaultPosition(Vec2(0, _buttonHeight));
+    _viewButton->setDefaultPosition(Vec2(_buttonHeight, _buttonHeight) / 2);
     _viewButton->setVisible(true);
     _viewButton->setInteractive(true);
     _viewButton->addChildTo(_scene);

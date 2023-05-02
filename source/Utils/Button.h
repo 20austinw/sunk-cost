@@ -88,18 +88,12 @@ class Button {
                 cameraIdx = _portraits->getNearest(worldPos);
             }
         } else {
-            if (!_selectionPhase && cameraIdx != -1) {
-                _portraits->setIndex(cameraIdx);
-                _scene->getCamera()->setPosition(
-                    _portraits->getPosition(_portraits->getIndex()));
-                std::dynamic_pointer_cast<OrthographicCamera>(
-                    _scene->getCamera())
-                    ->setZoom(0.85);
-            }
             reset();
         }
         return _selectionPhase;
     }
+
+    int getCameraIndex() { return cameraIdx; }
 
     bool isClicked(Vec2 position) {
         if (!_active) {
@@ -126,8 +120,7 @@ class Button {
         // Currently being dragged
         if (_isDragged) {
             if (_inputController->isTouchDown()) {
-                _position = position - Vec2(_texture->getSize().width / 2,
-                                            -_texture->getSize().height / 2);
+                _position = position - Vec2(_buttonHeight, _buttonHeight) / 2;
             }
         }
         // Currently not dragged

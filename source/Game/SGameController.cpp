@@ -105,8 +105,6 @@ SGameController::SGameController(
                              Vec2(350, 350));
     _alertLabel->setForeground(cugl::Color4f::RED);
 
-    _miniMap = make_shared<Minimap>(_assets, _scene, _tilemap);
-    _miniMap->addChildToNode(_fifthLayer);
     _selectionPhase = false;
     _buttonHeight = 400;
     _viewButton = std::make_shared<Button>(_assets->get<Texture>("view_button"),
@@ -116,7 +114,6 @@ SGameController::SGameController(
     _viewButton->setInteractive(true);
     _viewButton->addChildTo(_scene);
 
-    //    _miniMap->addChildTo(_scene); //TODO: fourth
     while (!_levelLoaded) {
         checkLevelLoaded();
     }
@@ -154,7 +151,39 @@ void SGameController::update(float dt) {
             } else {
                 _spawn = false;
             }
+            return;
         }
+        // Not in selection phase
+        if (!_viewButton->update()) {
+            _spirit.getView()->setVisible(true);
+            Vec3 offset = Vec3(_assets->get<Texture>("map")->getSize() / 2);
+            if (_viewButton->getCameraIndex() != -1) {
+                _portraits->setIndex(_viewButton->getCameraIndex());
+                _scene->getCamera()->setPosition(
+                    _portraits->getPosition(_portraits->getIndex()) + offset);
+                std::dynamic_pointer_cast<OrthographicCamera>(
+                    _scene->getCamera())
+                    ->setZoom(0.85);
+            }
+        }
+        // In selection phase
+        else {
+            _spirit.getView()->setVisible(false);
+            float mapWidth =
+                _tilemap->getDimensions().width * _tilemap->getTileSize().width;
+            float mapHeight = _tilemap->getDimensions().height *
+                              _tilemap->getTileSize().height;
+            // Why is this not centering?
+            _scene->getCamera()->setPosition(
+                Vec3(Vec2(mapWidth, mapHeight) / 2));
+            std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+                ->setZoom(0.3);
+        }
+        _scene->getCamera()->update();
+        // Draw background
+        _background->setScale(1 / getZoom());
+        _background->setPosition(_scene->getCamera()->screenToWorldCoords(
+            Vec2(0, _scene->getSize().height)));
         sortNodes();
 
         bool canSwitch = true;
@@ -190,11 +219,6 @@ void SGameController::update(float dt) {
         bool release = inputController->didRelease();
         Vec2 cameraPos = _scene->getCamera()->screenToWorldCoords(
             inputController->getTouchPos());
-
-        // Draw background
-        _background->setScale(1 / getZoom());
-        _background->setPosition(_scene->getCamera()->screenToWorldCoords(
-            Vec2(0, _scene->getSize().height)));
 
         // logic for door lock
         if ((inputController->isTouchDown() || _spirit.getModel()->isOnLock) &&
@@ -264,24 +288,6 @@ void SGameController::update(float dt) {
         } else if (blocked && _spirit.getModel()->isOnTrap && !_spawn) {
             _spirit.getModel()->setTrapState(false);
         }
-        // Not in selection phase
-        if (!_viewButton->update()) {
-            Vec3 offset = Vec3(_assets->get<Texture>("map")->getSize() / 2);
-            _scene->getCamera()->setPosition(
-                _portraits->getPosition(_portraits->getIndex()) + offset);
-        }
-        // In selection phase
-        else {
-            float mapWidth =
-                _tilemap->getDimensions().width * _tilemap->getTileSize().width;
-            float mapHeight = _tilemap->getDimensions().height *
-                              _tilemap->getTileSize().height;
-            // Why is this not centering?
-            _scene->getCamera()->setPosition(
-                Vec3(Vec2(mapWidth, mapHeight) / 2));
-            std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-                ->setZoom(0.3);
-        }
 
         // Black screen
         if (!_portraits->getCurState() && _portraits->getPrevState()) {
@@ -321,10 +327,6 @@ void SGameController::update(float dt) {
             _spirit.addNewTrapBtn(_fourthLayer); // TODO: node
         }
 
-        if (!blocked) {
-            _scene->getCamera()->update();
-        }
-
         if (_network) {
             _network->receive([this](const std::string source,
                                      const std::vector<std::byte>& data) {
@@ -342,22 +344,6 @@ void SGameController::update(float dt) {
             }
         }
 
-        // Draw minimap
-        if (inputController->isTouchDown() &&
-            _miniMap->isClicked(inputController->getPosition()) && canSwitch &&
-            !_spawn) {
-            Vec2 mapPos = _miniMap->getMapPosition();
-            int idx = _portraits->getNearest(mapPos);
-            if (_portraits->getIndex() != idx && _spirit.isSwitchable()) {
-                didSwitch = true;
-                _portraits->setIndex(idx);
-                //                CULog("%i", _portraits->getIndex());
-                _spirit.resetCameraCool();
-            } else if (!_spirit.isSwitchable() &&
-                       _portraits->getIndex() != idx) {
-                _portraits->resetScale();
-            }
-        }
         _spirit.updateLocksPos();    // TODO: drawing order refresh
         _spirit.updateTrapBtnsPos(); // TODO: drawing order refresh
 
@@ -372,10 +358,6 @@ void SGameController::update(float dt) {
 
         _portraits->updateBatteryNode(_fifthLayer,
                                       50); // TODO: drawing order refresh
-
-        _miniMap->update();
-        //        _miniMap->removeChildFrom(_scene); //TODO: delete
-        //        _miniMap->addChildTo(_scene); //TODO: drawing order refresh
 
         // Draw timer and alert labels
         string minutes = std::to_string(_timeLeft / 60 / 60);
@@ -403,6 +385,7 @@ void SGameController::update(float dt) {
             _endScene = std::make_shared<EndScene>(_scene, _assets, true);
             _endScene->addChildTo(_scene);
         }
+        _scene->getCamera()->update();
     } else {
         _endScene->update();
         if (_timeLeft <= -5 * 60) {

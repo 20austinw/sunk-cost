@@ -27,6 +27,9 @@
         "hunterleft": {
             "file": "textures/diver_walking_animation_L.png"
         },
+        "hunterhurt": {
+            "file": "textures/hunter_hurt_spritesheet.png"
+        },
 
         "hunterorange": {
             "file": "textures/diver_orange_walking_animation.png"

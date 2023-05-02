@@ -430,6 +430,11 @@ void HGameController::update(float dt) {
         if (inputController->didPressReset()) {
             reset();
         }
+                if (inputController->didPress() && inputController->getPosition().x>1700 ){
+                    _killed = true;
+                }
+        
+        
 
         for (int i = 0; i < _doorslocked.size(); i++) {
             if (_hunter->detectedDoor(
@@ -527,12 +532,18 @@ void HGameController::update(float dt) {
 
         _count++;
         if (_count == 6) {
-            _hunter->setViewFrame(forward, rightward);
+            _hunter->setViewFrame(forward, rightward,_beingKilled);
             _count = 0;
         }
         _countfortimer++;
+        
+        
 
-        _move = true;
+
+            _move = true;
+    
+  
+        
         for (auto obsta : _obstaclePoly) {
             if (obsta.contains(_shadow->getPosition() + Vec2(40, 0) +
                                Vec2(rightward * _hunter->getVelocity().x,
@@ -579,24 +590,32 @@ void HGameController::update(float dt) {
         }
 
         if (_hunter->getTrapSize() == 0 && _move) {
-            _hunter->move(forward, rightward);
-        } else {
-            _ismovedonece = false;
-            for (int i = 0; i < 1; i++) {
-                if (_hunter->getTraps()[i]->getTrigger()) {
-                    _ismovedonece = true;
+                    _hunter->move(forward, rightward);
+                } else {
+                    _ismovedonece = false;
+                    if(_hunter->getTrapSize()>0){
+                        for (int i = 0; i < 1; i++) {
+                            if (_hunter->getTraps()[i]->getTrigger()) {
+                                _ismovedonece = true;
+                            }
+                        }
+                        if (!_ismovedonece && _move) {
+                            _hunter->move(forward, rightward);
+                        }
+                    }
                 }
-            }
-            if (!_ismovedonece && _move) {
-                _hunter->move(forward, rightward);
-            }
+        _beingKilled = false;
+        if(_kill_ani_count<43){
+            _kill_ani_count +=1;
+            _beingKilled = true;
         }
+        
 
         if (_didLose || _didFinalwin) {
             // Freeze movement after lose/win
             forward = 0;
             rightward = 0;
-            _hunter->setViewFrame(forward, rightward);
+            _hunter->setViewFrame(forward, rightward,_beingKilled);
         }
 
         if (_trappedbool == false) {
@@ -695,6 +714,16 @@ void HGameController::update(float dt) {
                 transmitPos(pos);
                 _lastpos = Vec2(currPos);
             }
+            
+            if (_killed){
+                        _killCount+=1;
+                        _killed = false;
+                _kill_ani_count =0;
+            //            _move = false;
+                    }
+                    if (_killCount>= 3){
+                        _gameStatus =1;
+                    }
         }
     } else if (_gameStatus == 1) {
         // Hunter lose or win

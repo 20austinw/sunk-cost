@@ -65,6 +65,24 @@ class SpiritView {
             ->getZoom();
     }
 
+    void setVisible(bool b) {
+        for (auto& lock : _locks) {
+            lock->setVisible(b);
+        }
+
+        for (auto& trapButton : _trapButtons) {
+            trapButton->setVisible(b);
+        }
+
+        for (auto& lockExtra : _lockExtra) {
+            lockExtra->setVisible(b);
+        }
+
+        for (auto& trapExtra : _trapExtra) {
+            trapExtra->setVisible(b);
+        }
+    }
+
     SpiritView(int locks, int traps,
                const std::shared_ptr<cugl::AssetManager>& assets,
                std::shared_ptr<cugl::Scene2>& scene) {

@@ -78,28 +78,24 @@ class Button {
     }
 
     bool update() {
-        CULog("Update called!");
+        _scene->getCamera()->update();
         _node->setScale(_scale / getZoom());
-        _node->setPosition(_scene->getCamera()->screenToWorldCoords(_position));
+        _node->setPosition(_scene->getCamera()->screenToWorldCoords(
+            _position - Vec2(_buttonHeight, -_buttonHeight) / 2));
         if (_inputController->isTouchDown()) {
             if (isClicked(_inputController->getTouchPos())) {
                 Vec2 worldPos =
                     _scene->getCamera()->screenToWorldCoords(_position);
                 cameraIdx = _portraits->getNearest(worldPos);
+                CULog("%i", cameraIdx);
             }
         } else {
-            if (!_selectionPhase && cameraIdx != -1) {
-                _portraits->setIndex(cameraIdx);
-                _scene->getCamera()->setPosition(
-                    _portraits->getPosition(_portraits->getIndex()));
-                std::dynamic_pointer_cast<OrthographicCamera>(
-                    _scene->getCamera())
-                    ->setZoom(0.85);
-            }
             reset();
         }
         return _selectionPhase;
     }
+
+    int getCameraIndex() { return cameraIdx; }
 
     bool isClicked(Vec2 position) {
         if (!_active) {
@@ -109,12 +105,12 @@ class Button {
             return _selectionPhase;
         }
         // Check if position on button
-        if (position.x < _position.x ||
-            position.x > _position.x + _buttonHeight) {
+        if (position.x < _position.x - _buttonHeight / 2 ||
+            position.x > _position.x + _buttonHeight / 2) {
             return _selectionPhase;
         }
-        if (position.y > _position.y ||
-            position.y < _position.y - _buttonHeight) {
+        if (position.y > _position.y + _buttonHeight / 2 ||
+            position.y < _position.y - _buttonHeight / 2) {
             return _selectionPhase;
         }
 
@@ -122,12 +118,10 @@ class Button {
             _selectionPhase = true;
             return _selectionPhase;
         }
-
         // Currently being dragged
         if (_isDragged) {
             if (_inputController->isTouchDown()) {
-                _position = position - Vec2(_texture->getSize().width / 2,
-                                            -_texture->getSize().height / 2);
+                _position = position;
             }
         }
         // Currently not dragged

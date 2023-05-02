@@ -97,7 +97,6 @@ class SGameController {
     bool _levelLoaded = false;
 
     std::shared_ptr<scene2::PolygonNode> _map;
-    std::shared_ptr<Minimap> _miniMap;
 
     Status _status;
 

@@ -579,7 +579,7 @@ void HGameController::update(float dt) {
             
         }
 
-        if (_finalCount<1){
+        if (_finalCount<1 && !_beingKilled){
             _move = true;
         }else{
             _move = false;

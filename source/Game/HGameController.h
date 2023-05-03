@@ -204,6 +204,22 @@ class HGameController {
     int _finalCount = 0;
     std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> _spriteNodes;
     std::vector<std::shared_ptr<cugl::Texture>> _spriteSheets;
+    
+    std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> _livehearts;
+
+    
+    std::vector<std::shared_ptr<cugl::scene2::PolygonNode>> _deadhearts;
+    int _heart_frame = 0;
+
+//    
+//    std::shared_ptr<cugl::scene2::SpriteNode> _liveheart_1;
+//    std::shared_ptr<cugl::scene2::SpriteNode> _liveheart_2;
+//    std::shared_ptr<cugl::scene2::SpriteNode> _liveheart_3;
+//    
+//    std::shared_ptr<cugl::scene2::PolygonNode> _deadheart_1;
+//    std::shared_ptr<cugl::scene2::PolygonNode> _deadheart_2;
+//    std::shared_ptr<cugl::scene2::PolygonNode> _deadheart_3;
+    
 
     std::shared_ptr<cugl::scene2::Label> _winLabel;
     bool _didWin;

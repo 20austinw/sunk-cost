@@ -48,6 +48,12 @@
         "kill_six": {
             "file": "textures/insta_kill_part_six.png"
         },
+        "heart_live": {
+            "file": "textures/live_heart_animated.png"
+        },
+        "heart_dead": {
+            "file": "textures/dead_heart.png"
+        },
 
         "hunterorange": {
             "file": "textures/diver_orange_walking_animation.png"

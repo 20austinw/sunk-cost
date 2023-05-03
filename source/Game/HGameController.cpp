@@ -253,6 +253,27 @@ HGameController::HGameController(
     //    _hunter->setPosition(Vec2(10000,10000)*_scale);
 
     initCamera();
+        for (int i = 0;i <3;i++){
+            _livehearts.push_back(scene2::SpriteNode::allocWithSheet(assets->get<Texture>("heart_live"), 2, 8, 11));
+            _deadhearts.push_back(scene2::PolygonNode::allocWithTexture(assets->get<Texture>("heart_dead")));
+            _livehearts[i]->setScale(0.7);
+            _livehearts[i]->setFrame(0);
+            _livehearts[i]->setAnchor(Vec2::ANCHOR_CENTER);
+            _livehearts[i]->setPosition(_scene->getCamera()->getPosition()+Vec2(-200*i-600,500));
+            _livehearts[i]->setVisible(true);
+            _deadhearts[i]->setScale(0.7);
+            _deadhearts[i]->setAnchor(Vec2::ANCHOR_CENTER);
+            _deadhearts[i]->setPosition(_scene->getCamera()->getPosition()+Vec2(-200*i-600,500));
+            _deadhearts[i]->setVisible(false);
+            _scene->addChild(_deadhearts[i]);
+            _scene->addChild(_livehearts[i]);
+            
+            
+        }
+      
+    
+        
+        
         _spriteSheets.push_back(assets->get<Texture>("kill_one"));
         _spriteSheets.push_back(assets->get<Texture>("kill_two"));
         _spriteSheets.push_back(assets->get<Texture>("kill_three"));
@@ -550,10 +571,23 @@ void HGameController::update(float dt) {
         float forward = inputController->getForward();
 
         float rightward = inputController->getRight();
+        
+        for (int i = 0;i<3;i++){
+            _deadhearts[i]->setPosition(_scene->getCamera()->getPosition()+Vec2(-200*i-600,500));
+            _livehearts[i]->setPosition(_scene->getCamera()->getPosition()+Vec2(-200*i-600,500));
+        }
+        
 
         _count++;
         if (_count == 6) {
             _hunter->setViewFrame(forward, rightward,_beingKilled);
+            if (_heart_frame >= 11){
+                _heart_frame = 0;
+            }
+            for (int i = 0;i<3;i++){
+                _livehearts[i] ->setFrame(_heart_frame);
+            }
+            _heart_frame+=1;
             _count = 0;
         }
         _countfortimer++;
@@ -759,6 +793,8 @@ void HGameController::update(float dt) {
 //
 //            }
             if (_killed){
+                _livehearts[_killCount]->setVisible(false);
+                _deadhearts[_killCount]->setVisible(true);
                         _killCount+=1;
                         _killed = false;
                 _kill_ani_count =0;

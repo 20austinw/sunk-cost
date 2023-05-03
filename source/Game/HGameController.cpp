@@ -472,9 +472,10 @@ void HGameController::update(float dt) {
         if (inputController->didPressReset()) {
             reset();
         }
-                if (inputController->didPress() && inputController->getPosition().x>1700 ){
-                    _killed = true;
-                }
+//                if (inputController->didPress() && inputController->getPosition().x>1700 ){
+//                    _killed = true;
+//                }
+        //for hunter side kill testing
         
         
 

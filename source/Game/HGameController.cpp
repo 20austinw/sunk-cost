@@ -256,17 +256,17 @@ HGameController::HGameController(
         for (int i = 0;i <3;i++){
             _livehearts.push_back(scene2::SpriteNode::allocWithSheet(assets->get<Texture>("heart_live"), 2, 8, 11));
             _deadhearts.push_back(scene2::PolygonNode::allocWithTexture(assets->get<Texture>("heart_dead")));
-            _livehearts[i]->setScale(0.7);
+            _livehearts[i]->setScale(0.45);
             _livehearts[i]->setFrame(0);
             _livehearts[i]->setAnchor(Vec2::ANCHOR_CENTER);
-            _livehearts[i]->setPosition(_scene->getCamera()->getPosition()+Vec2(-200*i-600,500));
+            _livehearts[i]->setPosition(_scene->getCamera()->getPosition()+Vec2(-130*i-1000,500));
             _livehearts[i]->setVisible(true);
-            _deadhearts[i]->setScale(0.7);
+            _deadhearts[i]->setScale(0.45);
             _deadhearts[i]->setAnchor(Vec2::ANCHOR_CENTER);
-            _deadhearts[i]->setPosition(_scene->getCamera()->getPosition()+Vec2(-200*i-600,500));
+            _deadhearts[i]->setPosition(_scene->getCamera()->getPosition()+Vec2(-130*i-1000,500));
             _deadhearts[i]->setVisible(false);
-            _scene->addChild(_deadhearts[i]);
-            _scene->addChild(_livehearts[i]);
+//            _scene->addChild(_deadhearts[i]);
+//            _scene->addChild(_livehearts[i]);
             
             
         }
@@ -573,8 +573,8 @@ void HGameController::update(float dt) {
         float rightward = inputController->getRight();
         
         for (int i = 0;i<3;i++){
-            _deadhearts[i]->setPosition(_scene->getCamera()->getPosition()+Vec2(-200*i-600,500));
-            _livehearts[i]->setPosition(_scene->getCamera()->getPosition()+Vec2(-200*i-600,500));
+            _deadhearts[i]->setPosition(_scene->getCamera()->getPosition()+Vec2(-180*i-850,500));
+            _livehearts[i]->setPosition(_scene->getCamera()->getPosition()+Vec2(-180*i-850,500));
         }
         
 
@@ -1018,6 +1018,10 @@ void HGameController::checkLevelLoaded() {
         _filter->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
         _filter->setScale(Vec2(_dimen.width / 1280, _dimen.height / 720));
         _scene->addChild(_filter);
+        for (int i = 0;i<3;i++){
+            _scene->addChild(_deadhearts[i]);
+            _scene->addChild(_livehearts[i]);
+        }
 
         _scene->addChild(_miniMap);
 

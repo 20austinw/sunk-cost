@@ -156,7 +156,7 @@ void SCApp::update(float timestep) {
         updateClientScene(timestep);
         break;
     case HOSTGAME:
-        updateHGameController(timestep);
+        updateSGameController(timestep);
         break;
     case CLIENTGAME:
         updateHGameController(timestep);
@@ -177,8 +177,8 @@ void SCApp::updateMenuScene(float timestep) {
         break;
     case MenuScene::Choice::CLIENT:
         _menu.setActive(false);
-        _hostgame.setActive(true);
-        _scene = State::HOST;
+        _joingame.setActive(true);
+        _scene = State::CLIENT;
 
         break;
     case MenuScene::Choice::NONE:
@@ -262,13 +262,13 @@ void SCApp::updateHostScene(float timestep) {
         _scene = State::MENU;
         break;
     case HostScene::Status::START:
-        _hunterGameplay = HGameController(getDisplaySize(), _assets);
+        _spiritGameplay = SGameController(getDisplaySize(), _assets);
         _hostgame.setActive(false);
         _scene = State::HOSTGAME;
         // Transfer connection ownership
-        _hunterGameplay.setConnection(_hostgame.getConnection());
+        _spiritGameplay.setConnection(_hostgame.getConnection());
         _hostgame.disconnect();
-        _hunterGameplay.setHost(true);
+        _spiritGameplay.setHost(true);
         break;
     case HostScene::Status::WAIT:
     case HostScene::Status::IDLE:
@@ -322,7 +322,7 @@ void SCApp::updateHGameController(float timestep) {
         _scene = State::MENU;
         break;
     case HGameController::Status::START:
-        _scene = State::HOSTGAME;
+        _scene = State::CLIENTGAME;
         // Transfer connection ownership
         _hunterGameplay.setHost(true);
         break;
@@ -345,7 +345,7 @@ void SCApp::updateSGameController(float timestep) {
         _scene = State::MENU;
         break;
     case SGameController::Status::START:
-        _scene = State::CLIENTGAME;
+        _scene = State::HOSTGAME;
         _spiritGameplay.setHost(false);
         break;
     case SGameController::Status::WAIT:
@@ -381,7 +381,7 @@ void SCApp::draw() {
         _joingame.render(_batch);
         break;
     case HOSTGAME:
-        _hunterGameplay.render(_batch);
+        _spiritGameplay.render(_batch);
         break;
     case CLIENTGAME:
         _hunterGameplay.render(_batch);

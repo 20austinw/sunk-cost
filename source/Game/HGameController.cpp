@@ -403,7 +403,7 @@ void HGameController::update(float dt) {
  
         if (int(_timer / 60 / 60) == 0) {
             AudioEngine::get()->play("tension", _tension, true,
-                                     0.5, true);
+                                     0.5, false);
         }
     
 
@@ -418,7 +418,7 @@ void HGameController::update(float dt) {
             
         }
 
-        if (_treasureCount >= 1 && !_didWin && !_didLose) {
+        if (_treasureCount >= 3 && !_didWin && !_didLose) {
             _scene->addChild(_exit);
             _scene->addChild(_winLabel);
             _didWin = true;
@@ -740,6 +740,26 @@ void HGameController::update(float dt) {
             CULog("IN ");
             _collision.didHitTreasure = true;
             _treasure.getNode()->setVisible(false);
+            AudioEngine::get()->play("treasureSound", _treasureSound, false, 0.8, true);
+            transmitTreasureStolen();
+            _treasureCount++;
+        }
+        if (abs(_treasure2.getPosition().x - _hunter->getPosition().x) <= 200 &&
+            abs(_treasure2.getPosition().y - _hunter->getPosition().y) <= 200 &&
+            !_collision.didHitTreasure2) {
+            CULog("IN 2");
+            _collision.didHitTreasure2 = true;
+            _treasure2.getNode()->setVisible(false);
+            AudioEngine::get()->play("treasureSound", _treasureSound, false, 0.8, true);
+            transmitTreasureStolen();
+            _treasureCount++;
+        }
+        if (abs(_treasure3.getPosition().x - _hunter->getPosition().x) <= 200 &&
+            abs(_treasure3.getPosition().y - _hunter->getPosition().y) <= 200 &&
+            !_collision.didHitTreasure3) {
+            CULog("IN 3");
+            _collision.didHitTreasure3 = true;
+            _treasure3.getNode()->setVisible(false);
             AudioEngine::get()->play("treasureSound", _treasureSound, false, 0.8, true);
             transmitTreasureStolen();
             _treasureCount++;
@@ -1101,18 +1121,30 @@ void HGameController::checkLevelLoaded() {
 
         _hunterspun.emplace_back(Vec2(1000, 4500));
         _hunterspun.emplace_back(Vec2(6000, 5000));
+        _hunterspun.emplace_back(Vec2(3300, 4800));
 
         srand(time(NULL));
 
-        int index = rand() % 2;
+        int index = rand() % 3;
+        
+        //Manually add more treasurepos
+        _treasurepos.emplace_back(Vec2(3900,5700));
 
         _treasure = TreasureController(_assets, _scene->getSize(), PLAYER_SIZE,
                                        _treasurepos.at(index));
+        _treasure2 = TreasureController(_assets, _scene->getSize(), PLAYER_SIZE,
+                                       _treasurepos.at((index+1)%3));
+        _treasure3 = TreasureController(_assets, _scene->getSize(), PLAYER_SIZE,
+                                       _treasurepos.at((index+2)%3));
         CULog("init POS %f", _treasurepos.at(index).x);
         _treasure.setPosition(_treasurepos.at(index));
-        _hunter->setPosition(_hunterspun.at(index));
         _treasure.addChildTo(_scene);
-
+        _treasure2.setPosition(_treasurepos.at((index+1)%3));
+        _treasure2.addChildTo(_scene);
+        _treasure3.setPosition(_treasurepos.at((index+2)%3));
+        _treasure3.addChildTo(_scene);
+        
+        _hunter->setPosition(_hunterspun.at(2));
         _exitpos = _hunterspun.at(index);
 
         _exitTexture = _assets->get<Texture>("exit");

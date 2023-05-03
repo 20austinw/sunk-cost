@@ -27,6 +27,8 @@ class CollisionController {
     bool didHitObstacle = false;
     bool didHitTrap = false;
     bool didHitTreasure = false;
+    bool didHitTreasure2 = false;
+    bool didHitTreasure3 = false;
 
     //  MARK: - Constructors
 

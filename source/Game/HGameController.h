@@ -160,6 +160,8 @@ class HGameController {
     //    TrapController _trap;
 
     TreasureController _treasure;
+    TreasureController _treasure2;
+    TreasureController _treasure3;
     std::shared_ptr<scene2::PolygonNode> _outerJoystick;
     std::shared_ptr<scene2::PolygonNode> _innerJoystick;
 

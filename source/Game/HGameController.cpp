@@ -398,6 +398,7 @@ void HGameController::update(float dt) {
             _endScene->addChildTo(_scene);
             _didLose = true;
             _gameStatus = 1;
+            
         }
 
         if (_treasureCount >= 1 && !_didWin && !_didLose) {
@@ -557,10 +558,32 @@ void HGameController::update(float dt) {
         }
         _countfortimer++;
         
-        
+        _beingKilled = false;
+        if(_kill_ani_count<84){
+            _kill_ani_count +=1;
+            _beingKilled = true;
+        }
+        if (_finalKilled){
+            for (int i = 0; i < _spriteNodes.size(); i++) {
+                _spriteNodes[i]->setPosition( _scene->getCamera()->getPosition());
+            
+            }
+            _spriteNodes[_finalCount/40]->setVisible(true);
+            _spriteNodes[_finalCount/40]->setFrame((_finalCount%40)/4);
+       
 
+//            _spriteNodes[0]->setVisible(true);
+//            _spriteNodes[0]->setFrame(0);
+            _finalCount +=1;
+            //move frame
+            
+        }
 
+        if (_finalCount<1){
             _move = true;
+        }else{
+            _move = false;
+        }
     
   
         
@@ -624,20 +647,7 @@ void HGameController::update(float dt) {
                         }
                     }
                 }
-        _beingKilled = false;
-        if(_kill_ani_count<84){
-            _kill_ani_count +=1;
-            _beingKilled = true;
-        }
-        if (_finalKilled){
-            _spriteNodes[_finalCount/40]->setVisible(true);
-            _spriteNodes[_finalCount/40]->setFrame((_finalCount%40)/4);
-//            _spriteNodes[0]->setVisible(true);
-//            _spriteNodes[0]->setFrame(0);
-            _finalCount +=1;
-            //move frame
-            
-        }
+ 
 
         
 
@@ -744,7 +754,10 @@ void HGameController::update(float dt) {
                 transmitPos(pos);
                 _lastpos = Vec2(currPos);
             }
-            
+//            for (int i = 0; i < _spriteNodes.size(); i++) {
+//                _spriteNodes[i]->setPosition( _scene->getCamera()->getPosition());
+//
+//            }
             if (_killed){
                         _killCount+=1;
                         _killed = false;
@@ -754,7 +767,7 @@ void HGameController::update(float dt) {
                     if (_killCount== 3){
                         _finalKilled = true;
                         for (int i = 0; i < _spriteNodes.size(); i++) {
-                            _spriteNodes[i]->setPosition( _scene->getCamera()->getPosition());
+                           
                
                                 _scene->addChild(_spriteNodes[i]);
                         

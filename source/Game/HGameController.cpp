@@ -358,7 +358,7 @@ void HGameController::update(float dt) {
         //        }
         sortNodes();
 
-        AudioEngine::get()->play("theme", _theme, true, _theme->getVolume(),
+        AudioEngine::get()->play("theme", _theme, true, 0.5,
                                  false);
 
         _loseLabel->setText("You Lose!");
@@ -400,21 +400,17 @@ void HGameController::update(float dt) {
         //        }else{
         //            _huntertwo->setPosition(Vec2(-10000000,-1000000));
         //        }
-
+ 
         if (int(_timer / 60 / 60) == 0) {
             AudioEngine::get()->play("tension", _tension, true,
-                                     _theme->getVolume(), true);
+                                     0.5, true);
         }
-        CULog("min %d", int(_timer / 60 / 60) == 0);
-        CULog("sec %d", (int(_timer / 60) % 60 == 0));
-        CULog("!didlose %d", !_didLose);
-        CULog("!didFinalwin %d", !_didFinalwin);
+    
 
         if ((int(_timer / 60 / 60) == 0 && (int(_timer / 60) % 60 == 0) &&
             !_didLose && !_didFinalwin)||  (_finalCount>=216) ) {
             //        _scene->addChild(_loseNode);
             //        _scene->addChild(_loseLabel);
-            CULog("inside lose");
             _endScene = std::make_shared<EndScene>(_scene, _assets, true);
             _endScene->addChildTo(_scene);
             _didLose = true;
@@ -703,7 +699,7 @@ void HGameController::update(float dt) {
                             _hunter->getPosition().y) <= 300) {
                         if (_neverPlayed) {
                             AudioEngine::get()->play("trapSound", _trapSound,
-                                                     false, _theme->getVolume(),
+                                                     false, 0.8,
                                                      true);
                             _neverPlayed = false;
                         }
@@ -744,8 +740,7 @@ void HGameController::update(float dt) {
             CULog("IN ");
             _collision.didHitTreasure = true;
             _treasure.getNode()->setVisible(false);
-            AudioEngine::get()->play("treasureSound", _treasureSound, false,
-                                     _theme->getVolume(), true);
+            AudioEngine::get()->play("treasureSound", _treasureSound, false, 0.8, true);
             transmitTreasureStolen();
             _treasureCount++;
         }

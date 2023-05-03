@@ -153,6 +153,14 @@ class SGameController {
     float _buttonHeight;
 
     bool _selectionPhase;
+    
+    /** The theme sound */
+    std::shared_ptr<cugl::Sound> _theme;
+    /** The sound of tension when time left is less than 1 min */
+    std::shared_ptr<cugl::Sound> _tension;
+    std::shared_ptr<cugl::Sound> _trapSound;
+    std::shared_ptr<cugl::Sound> _treasureSound;
+    bool _neverPlayed = true;
 
 #pragma mark External References
   private:

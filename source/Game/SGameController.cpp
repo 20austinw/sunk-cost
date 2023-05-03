@@ -185,14 +185,19 @@ void SGameController::update(float dt) {
         _background->setPosition(_scene->getCamera()->screenToWorldCoords(
             Vec2(0, _scene->getSize().height)));
         sortNodes();
-
+        
+        AudioEngine::get()->play("theme", _theme, true, 0.5,
+                                 false);
         bool canSwitch = true;
         bool didSwitch = false;
 
         if (_treasureStolen) {
             _alertLabel->setText("The treasure has been stolen");
         }
-
+        if(_treasureStolen && _alertTimer < 6){
+            AudioEngine::get()->play("treasureSound", _treasureSound, false,
+                                     0.8, true);
+        }
         if (_alertTimer == 0 && _treasureStolen) {
             _fifthLayer->addChild(_alertLabel);
             //            _scene->addChild(_alertLabel); //TODO: fourth
@@ -362,6 +367,12 @@ void SGameController::update(float dt) {
         // Draw timer and alert labels
         string minutes = std::to_string(_timeLeft / 60 / 60);
         string seconds = std::to_string(_timeLeft / 60 % 60);
+        
+        if (_timeLeft / 60 / 60 == 0) {
+            AudioEngine::get()->play("tension", _tension, true,
+                                    0.5, true);
+        }
+    
         seconds = seconds.length() <= 1 ? "0" + seconds : seconds;
         _timerLabel->setText(minutes + ":" + seconds);
         _timerLabel->setScale(_timerScale / getZoom());
@@ -426,6 +437,12 @@ void SGameController::checkLevelLoaded() {
         // Access and initialize level
         _level = _assets->get<LevelModel>(LEVEL_THREE_KEY);
         _level->setAssets(_assets);
+
+        // sounds
+        _theme = _assets->get<Sound>("theme");
+        _tension = _assets->get<Sound>("tension");
+        _trapSound = _assets->get<Sound>("trapSound");
+        _treasureSound = _assets->get<Sound>("treasureSound");
 
         _tilemap->updatePosition(_scene->getSize() / 2);
         std::vector<std::vector<int>> tiles = _level->getTileTextures();
@@ -669,6 +686,12 @@ void SGameController::processData(const std::string source,
         }
 
         if (mes[0] == 7) {
+            if (_neverPlayed) {
+                AudioEngine::get()->play("trapSound", _trapSound,
+                                         false, 0.8,
+                                         true);
+                _neverPlayed = false;
+            }
             _trapTriggered = true;
             _trapPos = Vec2(mes[1], mes[2]);
         }

@@ -390,7 +390,7 @@ void HGameController::update(float dt) {
         CULog("!didFinalwin %d", !_didFinalwin);
 
         if ((int(_timer / 60 / 60) == 0 && (int(_timer / 60) % 60 == 0) &&
-            !_didLose && !_didFinalwin)||  (_finalCount>=318) ) {
+            !_didLose && !_didFinalwin)||  (_finalCount>=216) ) {
             //        _scene->addChild(_loseNode);
             //        _scene->addChild(_loseLabel);
             CULog("inside lose");
@@ -630,8 +630,8 @@ void HGameController::update(float dt) {
             _beingKilled = true;
         }
         if (_finalKilled){
-            _spriteNodes[_finalCount/60]->setVisible(true);
-            _spriteNodes[_finalCount/60]->setFrame((_finalCount%60)/6);
+            _spriteNodes[_finalCount/40]->setVisible(true);
+            _spriteNodes[_finalCount/40]->setFrame((_finalCount%40)/4);
 //            _spriteNodes[0]->setVisible(true);
 //            _spriteNodes[0]->setFrame(0);
             _finalCount +=1;

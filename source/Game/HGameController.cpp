@@ -253,6 +253,26 @@ HGameController::HGameController(
     //    _hunter->setPosition(Vec2(10000,10000)*_scale);
 
     initCamera();
+        _spriteSheets.push_back(assets->get<Texture>("kill_one"));
+        _spriteSheets.push_back(assets->get<Texture>("kill_two"));
+        _spriteSheets.push_back(assets->get<Texture>("kill_three"));
+        _spriteSheets.push_back(assets->get<Texture>("kill_four"));
+        _spriteSheets.push_back(assets->get<Texture>("kill_five"));
+        _spriteSheets.push_back(assets->get<Texture>("kill_six"));
+
+        for (int i = 0; i < _spriteSheets.size(); i++) {
+            _spriteNodes.push_back( scene2::SpriteNode::allocWithSheet(_spriteSheets[i], 5, 2, 10));
+            _spriteNodes[i]->setScale(1.7);
+            _spriteNodes[i]->setFrame(0);
+            _spriteNodes[i]->setAnchor(Vec2::ANCHOR_CENTER);
+//            _spriteNodes[i]->setPosition(Vec2(0, 0));
+            _spriteNodes[i]->setVisible(false);
+//            _scene->addChild(_spriteNodes[i]);
+        }
+       
+
+        
+        
     _trappedbool = false;
 
     // Initialize the world
@@ -369,8 +389,8 @@ void HGameController::update(float dt) {
         CULog("!didlose %d", !_didLose);
         CULog("!didFinalwin %d", !_didFinalwin);
 
-        if (int(_timer / 60 / 60) == 0 && (int(_timer / 60) % 60 == 0) &&
-            !_didLose && !_didFinalwin) {
+        if ((int(_timer / 60 / 60) == 0 && (int(_timer / 60) % 60 == 0) &&
+            !_didLose && !_didFinalwin)||  (_finalCount>=318) ) {
             //        _scene->addChild(_loseNode);
             //        _scene->addChild(_loseLabel);
             CULog("inside lose");
@@ -605,10 +625,20 @@ void HGameController::update(float dt) {
                     }
                 }
         _beingKilled = false;
-        if(_kill_ani_count<43){
+        if(_kill_ani_count<84){
             _kill_ani_count +=1;
             _beingKilled = true;
         }
+        if (_finalKilled){
+            _spriteNodes[_finalCount/60]->setVisible(true);
+            _spriteNodes[_finalCount/60]->setFrame((_finalCount%60)/6);
+//            _spriteNodes[0]->setVisible(true);
+//            _spriteNodes[0]->setFrame(0);
+            _finalCount +=1;
+            //move frame
+            
+        }
+
         
 
         if (_didLose || _didFinalwin) {
@@ -721,8 +751,17 @@ void HGameController::update(float dt) {
                 _kill_ani_count =0;
             //            _move = false;
                     }
-                    if (_killCount>= 3){
-                        _gameStatus =1;
+                    if (_killCount== 3){
+                        _finalKilled = true;
+                        for (int i = 0; i < _spriteNodes.size(); i++) {
+                            _spriteNodes[i]->setPosition( _scene->getCamera()->getPosition());
+               
+                                _scene->addChild(_spriteNodes[i]);
+                        
+                        }
+                        _killCount +=1;
+                      
+         
                     }
         }
     } else if (_gameStatus == 1) {

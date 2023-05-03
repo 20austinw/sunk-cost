@@ -199,7 +199,11 @@ class HGameController {
     int _killCount =0;
     bool _killed=false;
     bool _beingKilled = false;
-    int _kill_ani_count =43;
+    bool _finalKilled = false;
+    int _kill_ani_count =84;
+    int _finalCount = 0;
+    std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> _spriteNodes;
+    std::vector<std::shared_ptr<cugl::Texture>> _spriteSheets;
 
     std::shared_ptr<cugl::scene2::Label> _winLabel;
     bool _didWin;

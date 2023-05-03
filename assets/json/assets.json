@@ -30,6 +30,24 @@
         "hunterhurt": {
             "file": "textures/hunter_hurt_spritesheet.png"
         },
+        "kill_one": {
+            "file": "textures/insta_kill_part_one.png"
+        },
+        "kill_two": {
+            "file": "textures/insta_kill_part_two.png"
+        },
+        "kill_three": {
+            "file": "textures/insta_kill_part_three.png"
+        },
+        "kill_four": {
+            "file": "textures/insta_kill_part_four.png"
+        },
+        "kill_five": {
+            "file": "textures/insta_kill_part_five.png"
+        },
+        "kill_six": {
+            "file": "textures/insta_kill_part_six.png"
+        },
 
         "hunterorange": {
             "file": "textures/diver_orange_walking_animation.png"

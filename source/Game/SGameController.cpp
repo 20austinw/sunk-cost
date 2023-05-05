@@ -319,6 +319,9 @@ void SGameController::update(float dt) {
             if (!_spirit.getModel()->isKilling() &&
                 _spirit.getModel()->health == 0) {
                 // TODO: hunter has been killed, end
+                _gameStatus = 1;
+                _endScene = std::make_shared<EndScene>(_scene, _assets, true, true);
+                _endScene->addChildTo(_scene);
             }
         }
 

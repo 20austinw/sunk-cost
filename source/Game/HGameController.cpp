@@ -657,26 +657,22 @@ void HGameController::update(float dt) {
                         _move = false;
                     }
                 } else {
-                    //                    if(abs(_hunter->getPosition().x+Vec2(rightward*_hunter->getVelocity().x,forward*_hunter->getVelocity().y).x-position.x)<128
-                    //                    and
-                    //                    abs(_hunter->getPosition().y+Vec2(rightward*_hunter->getVelocity().x,forward*_hunter->getVelocity().y).y-(position.y))<1){
-                    //                        _move=false;
-                    //                    }
+                   
                 }
             }
         }
 
-        if (_hunter->getTrapSize() == 0 && _move) {
-            _hunter->move(forward, rightward);
-        } else {
-            _ismovedonece = false;
-            
+        if (_move) {
+            if(_hunter->getTrapSize() > 0){
+                _ismovedonece = false;
+                
                 for (int i = 0; i < 1; i++) {
                     if (_hunter->getTraps()[i]->getTrigger()) {
                         _ismovedonece = true;
                     }
-                if (!_ismovedonece && _move) {
-                    _hunter->move(forward, rightward);
+                    if (!_ismovedonece && _move) {
+                        _hunter->move(forward, rightward);
+                    }
                 }
             }
         }
@@ -690,7 +686,6 @@ void HGameController::update(float dt) {
 
         if (_trappedbool == false) {
             if (_hunter->getTrapSize() != 0) {
-
                 for (int i = 0; i < _hunter->getTrapSize(); i++) {
                     if (abs(_hunter->getTraps()[i]->getPosition().x -
                             _hunter->getPosition().x) <= 300 &&

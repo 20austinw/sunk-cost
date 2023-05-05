@@ -197,31 +197,29 @@ class HGameController {
     std::shared_ptr<cugl::scene2::Label> _treasureLabel;
     std::shared_ptr<cugl::scene2::Label> _loseLabel;
     bool _didLose = false;
-    
-    int _killCount =0;
-    bool _killed=false;
+
+    int _killCount = 0;
+    bool _killed = false;
     bool _beingKilled = false;
     bool _finalKilled = false;
-    int _kill_ani_count =84;
+    int _kill_ani_count = 84;
     int _finalCount = 0;
     std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> _spriteNodes;
     std::vector<std::shared_ptr<cugl::Texture>> _spriteSheets;
-    
+
     std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> _livehearts;
 
-    
     std::vector<std::shared_ptr<cugl::scene2::PolygonNode>> _deadhearts;
     int _heart_frame = 0;
 
-//    
-//    std::shared_ptr<cugl::scene2::SpriteNode> _liveheart_1;
-//    std::shared_ptr<cugl::scene2::SpriteNode> _liveheart_2;
-//    std::shared_ptr<cugl::scene2::SpriteNode> _liveheart_3;
-//    
-//    std::shared_ptr<cugl::scene2::PolygonNode> _deadheart_1;
-//    std::shared_ptr<cugl::scene2::PolygonNode> _deadheart_2;
-//    std::shared_ptr<cugl::scene2::PolygonNode> _deadheart_3;
-    
+    //
+    //    std::shared_ptr<cugl::scene2::SpriteNode> _liveheart_1;
+    //    std::shared_ptr<cugl::scene2::SpriteNode> _liveheart_2;
+    //    std::shared_ptr<cugl::scene2::SpriteNode> _liveheart_3;
+    //
+    //    std::shared_ptr<cugl::scene2::PolygonNode> _deadheart_1;
+    //    std::shared_ptr<cugl::scene2::PolygonNode> _deadheart_2;
+    //    std::shared_ptr<cugl::scene2::PolygonNode> _deadheart_3;
 
     std::shared_ptr<cugl::scene2::Label> _winLabel;
     bool _didWin;

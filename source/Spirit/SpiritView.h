@@ -24,13 +24,13 @@ class SpiritView {
     std::vector<std::shared_ptr<scene2::PolygonNode>> _lockExtra;
 
     std::vector<std::shared_ptr<scene2::PolygonNode>> _trapExtra;
-    
+
     std::shared_ptr<scene2::SpriteNode> _killButton;
 
     std::shared_ptr<cugl::Texture> _lockAsset;
 
     std::shared_ptr<cugl::Texture> _trapAsset;
-    
+
     std::shared_ptr<cugl::Texture> _killAsset;
 
     std::shared_ptr<cugl::Texture> _oneBtnAsset;
@@ -42,7 +42,7 @@ class SpiritView {
     Size _lockSize;
 
     Size _trapSize;
-    
+
     Size _killSize;
 
     std::shared_ptr<cugl::Scene2> _scene;
@@ -105,7 +105,9 @@ class SpiritView {
                                              _lockAsset, 2, 8, 12)
                                              ->getWidth();
         _trapScaleFactor = _buttonSize / _trapAsset->getSize().width;
-        _killScaleFactor = _buttonSize/scene2::SpriteNode::allocWithSheet(_killAsset, 4, 4, 13)->getWidth();
+        _killScaleFactor = _buttonSize / scene2::SpriteNode::allocWithSheet(
+                                             _killAsset, 4, 4, 13)
+                                             ->getWidth();
         //        CULog("%f", _scaleFactor);
         for (int i = 0; i < locks; i++) {
             _locks.emplace_back(
@@ -121,11 +123,11 @@ class SpiritView {
             _trapButtons.at(i)->setScale(_trapScaleFactor / getZoom());
             addExtra(_trapExtra, i + 1);
         }
-        
+
         _killButton = scene2::SpriteNode::allocWithSheet(_killAsset, 4, 4, 13);
         _killButton->setFrame(0);
-        _killButton->setScale(_killScaleFactor/getZoom());
-        
+        _killButton->setScale(_killScaleFactor / getZoom());
+
         _trapSize = _trapButtons.at(0)->getSize();
         _lockSize = _locks.at(0)->getSize();
         _killSize = _killButton->getSize();
@@ -154,10 +156,10 @@ class SpiritView {
         addExtra(_trapExtra, _trapButtons.size());
         node->addChild(_trapExtra.at(_trapExtra.size() - 1));
     }
-    
-    void addKillButtonTo(std::shared_ptr<cugl::scene2::PolygonNode>& node){
-           node->addChild(_killButton);
-       }
+
+    void addKillButtonTo(std::shared_ptr<cugl::scene2::PolygonNode>& node) {
+        node->addChild(_killButton);
+    }
 
     void
     removeLastLockExtraTo(std::shared_ptr<cugl::scene2::PolygonNode>& node) {
@@ -190,9 +192,9 @@ class SpiritView {
     void updateUnusedLocksPos(bool selection) {
         Vec2 pos = _scene->getCamera()->screenToWorldCoords(
             _scene->getSize() - getLockSize() / 2 * getZoom());
-        
-        if(selection) {
-            pos += Vec2(10000,10000);
+
+        if (selection) {
+            pos += Vec2(10000, 10000);
         }
 
         for (int i = 0; i < _locks.size(); i++) {
@@ -206,10 +208,12 @@ class SpiritView {
     }
 
     void updateUnusedTrapsPos(bool selection) {
-        Vec2 pos = _scene->getCamera()->screenToWorldCoords(_scene->getSize() - getLockSize()/2*getZoom()) + Vec2(0, +getLockSize().height);
-        
-        if(selection) {
-            pos += Vec2(10000,10000);
+        Vec2 pos = _scene->getCamera()->screenToWorldCoords(
+                       _scene->getSize() - getLockSize() / 2 * getZoom()) +
+                   Vec2(0, +getLockSize().height);
+
+        if (selection) {
+            pos += Vec2(10000, 10000);
         }
 
         for (int i = 0; i < _trapButtons.size(); i++) {
@@ -221,30 +225,28 @@ class SpiritView {
             _trapExtra[i]->setScale(_trapScaleFactor / getZoom());
         }
     }
-    
-    void updateUnusedKillPos(bool selection){
-        Vec2 pos = _scene->getCamera()->screenToWorldCoords(_scene->getSize() - getLockSize()/2*getZoom()) + Vec2(0, (getLockSize().height +getTrapSize().height));
-        
-        if(selection) {
-            pos += Vec2(10000,10000);
+
+    void updateUnusedKillPos(bool selection) {
+        Vec2 pos = _scene->getCamera()->screenToWorldCoords(
+                       _scene->getSize() - getLockSize() / 2 * getZoom()) +
+                   Vec2(0, (getLockSize().height + getTrapSize().height));
+
+        if (selection) {
+            pos += Vec2(10000, 10000);
         }
 
-            _killButton->setPosition(pos);
-            _killButton->setScale(_killScaleFactor/getZoom());
-        }
-    
-    Size getKillSize(){
-            return _killSize;
-        }
-    
-    int getKillFrame() {
-            return _killButton->getFrame();
-        }
-    
-    void updateKillInProgress(Vec2 touchPos){
-            _killButton->setPosition(touchPos);
-            _killButton->setScale(_killScaleFactor/getZoom());
-        }
+        _killButton->setPosition(pos);
+        _killButton->setScale(_killScaleFactor / getZoom());
+    }
+
+    Size getKillSize() { return _killSize; }
+
+    int getKillFrame() { return _killButton->getFrame(); }
+
+    void updateKillInProgress(Vec2 touchPos) {
+        _killButton->setPosition(touchPos);
+        _killButton->setScale(_killScaleFactor / getZoom());
+    }
 
     void updateLockInProgress(Vec2 touchPos) {
         _locks.at(_locks.size() - 1)->setPosition(touchPos);
@@ -256,18 +258,14 @@ class SpiritView {
         _trapButtons[_trapButtons.size() - 1]->setScale(_lockScaleFactor /
                                                         getZoom());
     }
-    
+
     void removeKillFrom(std::shared_ptr<cugl::scene2::PolygonNode>& node) {
-            node->removeChild(_killButton);
-        }
-    
-    Vec2 getKillBtnPos() {
-            return _killButton->getPosition();
-        }
-    
-    void setKillFrame(int frame){
-            _killButton->setFrame(frame);
-        }
+        node->removeChild(_killButton);
+    }
+
+    Vec2 getKillBtnPos() { return _killButton->getPosition(); }
+
+    void setKillFrame(int frame) { _killButton->setFrame(frame); }
 
     /**
      * Removes the view component children from the given `sceneNode`.

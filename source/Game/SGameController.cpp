@@ -87,13 +87,13 @@ SGameController::SGameController(
         Vec2(0, 0), minutes + ":" + seconds, _assets->get<Font>("pixel32"));
     _timerScale = _textHeight / _timerLabel->getSize().height;
     _fifthLayer->addChild(_timerLabel);
-    _endScene = std::make_shared<EndScene>(_scene, assets, true);
+    _endScene = std::make_shared<EndScene>(_scene, assets, true, true);
 
     _trapTriggered = false;
     _doorUnlocked = false;
     _treasureStolen = false;
     _trapPos = Vec2::ZERO;
-        _selection = false;
+    _selection = false;
 
     _alertLabel = cugl::scene2::Label::allocWithText(
         Vec2(0, displaySize.height / 2), "The treasure has been STOLEN",
@@ -153,8 +153,9 @@ void SGameController::update(float dt) {
         if (!_viewButton->update()) {
             _selection = false;
             _spirit.getView()->setVisible(true);
-//            Vec3 offset = Vec3(_assets->get<Texture>("map")->getSize() / 2);
-//            CULog("%f, %f", offset.x, offset.y);
+            //            Vec3 offset =
+            //            Vec3(_assets->get<Texture>("map")->getSize() / 2);
+            //            CULog("%f, %f", offset.x, offset.y);
             if (_viewButton->getCameraIndex() != -1) {
                 _portraits->setIndex(_viewButton->getCameraIndex());
                 _scene->getCamera()->setPosition(
@@ -168,32 +169,32 @@ void SGameController::update(float dt) {
         else {
             _selection = true;
             _spirit.getView()->setVisible(false);
-//            float mapWidth =
-//                _tilemap->getDimensions().width * _tilemap->getTileSize().width;
-//            float mapHeight = _tilemap->getDimensions().height *
-//                              _tilemap->getTileSize().height;
+            //            float mapWidth =
+            //                _tilemap->getDimensions().width *
+            //                _tilemap->getTileSize().width;
+            //            float mapHeight = _tilemap->getDimensions().height *
+            //                              _tilemap->getTileSize().height;
             // Why is this not centering?
             _scene->getCamera()->setPosition(_portraits->getPosition(0));
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
                 ->setZoom(0.3);
         }
-        
+
         _scene->getCamera()->update();
         // Draw background
         _background->setScale(1 / getZoom());
         _background->setPosition(_scene->getCamera()->screenToWorldCoords(
             Vec2(0, _scene->getSize().height)));
         sortNodes();
-        
-        AudioEngine::get()->play("theme", _theme, true, 0.5,
-                                 false);
+
+        AudioEngine::get()->play("theme", _theme, true, 0.5, false);
         bool canSwitch = true;
         bool didSwitch = false;
 
         if (_treasureStolen) {
             _alertLabel->setText("The treasure has been stolen");
         }
-        if(_treasureStolen && _alertTimer < 6){
+        if (_treasureStolen && _alertTimer < 6) {
             AudioEngine::get()->play("treasureSound", _treasureSound, false,
                                      0.8, true);
         }
@@ -231,8 +232,7 @@ void SGameController::update(float dt) {
                 _spirit.touchInLockBound(cameraPos)) {
                 canSwitch = false;
                 if (!_spirit.getModel()->isOnLock) {
-                    _spirit.getView()->removeLastLockExtraTo(
-                        _fourthLayer);
+                    _spirit.getView()->removeLastLockExtraTo(_fourthLayer);
                     _spirit.getModel()->setLockState(true);
                 }
                 bool isLocked = false;
@@ -246,8 +246,7 @@ void SGameController::update(float dt) {
                 if (release) {
                     _spirit.getModel()->setLockState(false);
                     if (isLocked) {
-                        _spirit.removeLastLock(
-                            _fourthLayer);
+                        _spirit.removeLastLock(_fourthLayer);
 
                     } else {
                         _spirit.getView()->addLastLockExtraTo(_fourthLayer);
@@ -284,58 +283,64 @@ void SGameController::update(float dt) {
                                       _secondLayer)) {
                     _spirit.removeLastTrapBtn(_fourthLayer);
                 } else {
-                    _spirit.getView()->addLastTrapExtraTo(
-                        _fourthLayer);
+                    _spirit.getView()->addLastTrapExtraTo(_fourthLayer);
                 }
             }
         } else if (blocked && _spirit.getModel()->isOnTrap && !_spawn) {
             _spirit.getModel()->setTrapState(false);
         }
-        
-        //logic for killing hunter
-        if(_spirit.getModel()->isKilling()){
-            for(int i=0; i<_hunterNodes.size(); i++){
+
+        // logic for killing hunter
+        if (_spirit.getModel()->isKilling()) {
+            for (int i = 0; i < _hunterNodes.size(); i++) {
                 _obstacleNode->removeChild(_hunterNodes.at(i));
             }
             _spirit.getModel()->updateOnKill(_hunterNodes);
-            for(int i=0; i<_hunterNodes.size(); i++){
+            for (int i = 0; i < _hunterNodes.size(); i++) {
                 _obstacleNode->addChild(_hunterNodes.at(i));
             }
-            if (!_spirit.getModel()->isKilling() && _spirit.getModel()->health == 0){
-                //TODO: hunter has been killed, end
+            if (!_spirit.getModel()->isKilling() &&
+                _spirit.getModel()->health == 0) {
+                // TODO: hunter has been killed, end
             }
         }
-        
-        if (!_spirit.getModel()->isKilling() && (inputController->isTouchDown() || _spirit.getModel()->isOnKill) && _spirit.getModel()->isKillable() && !_spirit.getModel()->isOnLock && !_spirit.getModel()->isOnTrap && !blocked){
+
+        if (!_spirit.getModel()->isKilling() &&
+            (inputController->isTouchDown() || _spirit.getModel()->isOnKill) &&
+            _spirit.getModel()->isKillable() && !_spirit.getModel()->isOnLock &&
+            !_spirit.getModel()->isOnTrap && !blocked) {
             canSwitch = false;
-            if(_spirit.getModel()->isOnKill || _spirit.touchInKillBound(cameraPos)){
-                if (! _spirit.getModel()->isOnKill){
+            if (_spirit.getModel()->isOnKill ||
+                _spirit.touchInKillBound(cameraPos)) {
+                if (!_spirit.getModel()->isOnKill) {
                     _spirit.getModel()->setKillState(true);
                 }
                 _spirit.getView()->updateKillInProgress(cameraPos);
             }
-            if( _spirit.getModel()->isOnKill && release){
+            if (_spirit.getModel()->isOnKill && release) {
                 _spirit.getModel()->setKillState(false);
-                
-                if(_spirit.getModel()->hunterAdded && _spirit.hunterInBound(cameraPos)) {
-                    //TODO: networking; transmit to hunter for losing 1 health
-                    _spirit.getModel()->setHealth(_spirit.getModel()->health-1);
-                    
-                    for(int i=0; i<_hunterNodes.size(); i++){
+
+                if (_spirit.getModel()->hunterAdded &&
+                    _spirit.hunterInBound(cameraPos)) {
+                    // TODO: networking; transmit to hunter for losing 1 health
+                    _spirit.getModel()->setHealth(_spirit.getModel()->health -
+                                                  1);
+
+                    for (int i = 0; i < _hunterNodes.size(); i++) {
                         _obstacleNode->removeChild(_hunterNodes.at(i));
                     }
-                    
+
                     _spirit.getModel()->updateHeart(_hunterNodes);
-                    
-                    for(int i=0; i<_hunterNodes.size(); i++){
+
+                    for (int i = 0; i < _hunterNodes.size(); i++) {
                         _obstacleNode->addChild(_hunterNodes.at(i));
                     }
-                    
+
                     _spirit.getModel()->setKillCooldown(300);
                     _spirit.getView()->setKillFrame(0);
                 }
             }
-        } else if (blocked&&_spirit.getModel()->isOnKill){
+        } else if (blocked && _spirit.getModel()->isOnKill) {
             _spirit.getModel()->setKillState(false);
         }
 
@@ -398,7 +403,7 @@ void SGameController::update(float dt) {
         _spirit.updateTrapBtnsPos(_selection);
         _spirit.updateKillBtnsPos(_selection);
         _spirit.updateKillFrame();
-        
+
         if (!didSwitch) {
             _spirit.decreaseCameraCool();
         }
@@ -408,18 +413,16 @@ void SGameController::update(float dt) {
             _portraits->updateBattery();
         }
 
-        _portraits->updateBatteryNode(_fifthLayer,
-                                      50);
+        _portraits->updateBatteryNode(_fifthLayer, 50);
 
         // Draw timer and alert labels
         string minutes = std::to_string(_timeLeft / 60 / 60);
         string seconds = std::to_string(_timeLeft / 60 % 60);
-        
+
         if (_timeLeft / 60 / 60 == 0) {
-            AudioEngine::get()->play("tension", _tension, true,
-                                    0.5, true);
+            AudioEngine::get()->play("tension", _tension, true, 0.5, true);
         }
-    
+
         seconds = seconds.length() <= 1 ? "0" + seconds : seconds;
         _timerLabel->setText(minutes + ":" + seconds);
         _timerLabel->setScale(_timerScale / getZoom());
@@ -438,7 +441,7 @@ void SGameController::update(float dt) {
         _timerLabel->setForeground(cugl::Color4::WHITE);
         if (_timeLeft <= 0) {
             _gameStatus = 1;
-            _endScene = std::make_shared<EndScene>(_scene, _assets, true);
+            _endScene = std::make_shared<EndScene>(_scene, _assets, true, true);
             _endScene->addChildTo(_scene);
         }
         _scene->getCamera()->update();
@@ -586,7 +589,7 @@ void SGameController::checkLevelLoaded() {
                 _sortedObstacles[n][m]->addChildTo(_obstacleNode);
             }
         }
-        
+
         for (int i = 0; i < _level->getPortaits().size(); i++) {
             _portraits->addPortrait(
                 _textureNodes, i, _level->getPortaits()[i].first,
@@ -608,7 +611,7 @@ void SGameController::checkLevelLoaded() {
         _spirit.getView()->addKillButtonTo(_fourthLayer);
 
         initDoors();
-        
+
         std::sort(_textureNodes.begin(), _textureNodes.end(),
                   [](std::shared_ptr<scene2::PolygonNode>& a,
                      std::shared_ptr<scene2::PolygonNode>& b) {
@@ -618,7 +621,7 @@ void SGameController::checkLevelLoaded() {
         for (int i = 0; i < _textureNodes.size(); i++) {
             _obstacleNode->addChild(_textureNodes.at(i));
         }
-        
+
         _portraits->setIndex(4);
         std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
             ->setZoom(0.85);
@@ -688,15 +691,14 @@ void SGameController::processData(const std::string source,
         }
 
         if (mes[0] == 6) {
-            //handle index of door for unlocking
+            // handle index of door for unlocking
             _doorUnlocked = true;
             _doorToUnlock = static_cast<int>(mes[1]);
         }
 
         if (mes[0] == 7) {
             if (_neverPlayed) {
-                AudioEngine::get()->play("trapSound", _trapSound,
-                                         false, 0.8,
+                AudioEngine::get()->play("trapSound", _trapSound, false, 0.8,
                                          true);
                 _neverPlayed = false;
             }

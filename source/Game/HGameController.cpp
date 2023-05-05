@@ -1329,7 +1329,7 @@ void HGameController::processData(const std::string source,
             _killed = true;
         } else if (mes[0] == 10) {
             _didLose = true;
-            _didFinalwin = false;
+//            _didFinalwin = false;
             _didWin = false;
         } else if (mes[0] == 8) {
             _didWin = true;

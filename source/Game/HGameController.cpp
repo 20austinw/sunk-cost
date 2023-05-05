@@ -290,13 +290,7 @@ HGameController::HGameController(
         _spriteNodes[i]->setVisible(false);
         //            _scene->addChild(_spriteNodes[i]);
     }
-
-<<<<<<< HEAD
-=======
         
-        
-       
-
     _filterTexture = _assets->get<Texture>("filter");
     _filter = scene2::PolygonNode::allocWithTexture(_filterTexture);
     _filter->setPosition(_scene->getCamera()->getPosition());
@@ -304,7 +298,6 @@ HGameController::HGameController(
     _filter->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _filter->setScale(Vec2(_dimen.width / 1280, _dimen.height / 720));
         
->>>>>>> 76f6a9e (Advanced reset)
     _trappedbool = false;
 
     // Initialize the world
@@ -416,14 +409,10 @@ void HGameController::update(float dt) {
             AudioEngine::get()->play("tension", _tension, false, 0.5, false);
         }
 
-<<<<<<< HEAD
         if ((int(_timer / 60 / 60) == 0 && (int(_timer / 60) % 60 == 0) &&
              !_didLose && !_didFinalwin) ||
             (_finalCount >= 216)) {
-=======
-        if ((int(_timer / 60 / 60) == 1 && (int(_timer / 60) % 60 == 20) &&
-            !_didLose && !_didFinalwin)||  (_finalCount>=216) ) {
->>>>>>> 76f6a9e (Advanced reset)
+
             //        _scene->addChild(_loseNode);
             //        _scene->addChild(_loseLabel);
             _endScene =
@@ -484,43 +473,12 @@ void HGameController::update(float dt) {
         if (inputController->didPressReset()) {
             reset();
         }
-<<<<<<< HEAD
         //                if (inputController->didPress() &&
         //                inputController->getPosition().x>1700 ){
         //                    _killed = true;
         //                }
         // for hunter side kill testing
-=======
-                if (inputController->didPress() && inputController->getPosition().x>1700 ){
-                    _killed = true;
-                }
-        //for hunter side kill testing
-        if (_speedCon>100){
-            _speed = false;
-            _speedCon=0;
-        }else{
-            _speedCon+=1;
-        }
-            if (inputController->didPress() && inputController->getPosition().x>1700 && inputController->getPosition().y>1000 && _speedCool>=1000){
-                _speed = true;
-                _deadSpeed->setVisible(true);
-                _adjustSpeed->setVisible(false);
-                _speedCool=0;
-                _speedCon=0;
-                
-            }
-        if (_speedCool>1001){
-            _speedCool=1001;
-            _deadSpeed->setVisible(false);
-            _adjustSpeed->setVisible(true);
-        }else{
-            _speedCool+=1;
-        }
-        
-        
-        CULog("%d spppeeeeeeddddd",_speed);
-        
->>>>>>> 76f6a9e (Advanced reset)
+
 
         for (int i = 0; i < _doorslocked.size(); i++) {
             if (_hunter->detectedDoor(

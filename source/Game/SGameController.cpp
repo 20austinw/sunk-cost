@@ -204,7 +204,7 @@ void SGameController::update(float dt) {
             Vec2(0, _scene->getSize().height)));
         sortNodes();
 
-        AudioEngine::get()->play("theme", _theme, true, 0.5, false);
+        AudioEngine::get()->play("theme", _theme, false, 0.5, false);
         bool canSwitch = true;
         bool didSwitch = false;
 
@@ -436,7 +436,7 @@ void SGameController::update(float dt) {
         string seconds = std::to_string(_timeLeft / 60 % 60);
 
         if (_timeLeft / 60 / 60 == 0) {
-            AudioEngine::get()->play("tension", _tension, true, 0.5, true);
+            AudioEngine::get()->play("tension", _tension, false, 0.5, false);
         }
 
         seconds = seconds.length() <= 1 ? "0" + seconds : seconds;

@@ -440,6 +440,7 @@ void SGameController::update(float dt) {
         _timerLabel->setForeground(cugl::Color4::WHITE);
         if (_timeLeft <= 0) {
             _gameStatus = 1;
+            transmitSpiritWin();
             _endScene = std::make_shared<EndScene>(_scene, _assets, true, true);
             _endScene->addChildTo(_scene);
         }
@@ -709,7 +710,9 @@ void SGameController::processData(const std::string source,
         // _gameStatus = 1;
 
         // Lose alert for spirit
-        // _gameStatus = -1;
+        if (mes[0] == 8) {
+             _gameStatus = -1;
+        }
 
         //        CULog("%f", mes[0]);
         _deserializer->reset();
@@ -743,6 +746,14 @@ void SGameController::transmitLockedDoor(int i) {
 void SGameController::transmitKill() {
     std::vector<float> idx = std::vector<float>();
     idx.push_back(9);
+    _serializer->writeFloatVector(idx);
+    _network->broadcast(_serializer->serialize());
+    _serializer->reset();
+}
+
+void SGameController::transmitSpiritWin() {
+    std::vector<float> idx = std::vector<float>();
+    idx.push_back(10);
     _serializer->writeFloatVector(idx);
     _network->broadcast(_serializer->serialize());
     _serializer->reset();

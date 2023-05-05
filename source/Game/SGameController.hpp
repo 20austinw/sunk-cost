@@ -313,6 +313,8 @@ class SGameController {
     void transmitActiveCamIndex(int i);
     
     void transmitKill();
+    
+    void transmitSpiritWin();
 
     void initDoors();
 

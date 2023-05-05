@@ -417,6 +417,7 @@ void HGameController::update(float dt) {
             _scene->addChild(_exit);
             _scene->addChild(_winLabel);
             _didWin = true;
+            transmitHunterWin();
         }
 
         if (!_didFinalwin && _didWin && !_didLose &&
@@ -1321,6 +1322,9 @@ void HGameController::processData(const std::string source,
         } else if (mes[0] == 9) {
             CULog("got killed");
             _killed = true;
+        } else if (mes[0] == 10) {
+            _didLose = true;
+            _didWin = false;
         }
 
         _deserializer->reset();
@@ -1383,6 +1387,14 @@ void HGameController::transmitTrapTriggered(Vec2 position) {
     message.push_back(7);
     message.push_back(position.x);
     message.push_back(position.y);
+    _serializer->writeFloatVector(message);
+    _network->sendToHost(_serializer->serialize());
+    _serializer->reset();
+}
+
+void HGameController::transmitHunterWin() {
+    std::vector<float> message = std::vector<float>();
+    message.push_back(8);
     _serializer->writeFloatVector(message);
     _network->sendToHost(_serializer->serialize());
     _serializer->reset();

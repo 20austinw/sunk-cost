@@ -362,18 +362,16 @@ void SGameController::update(float dt) {
         } else if (blocked && _spirit.getModel()->isOnKill) {
             _spirit.getModel()->setKillState(false);
         }
-
-        // Black screen
-        if (!_portraits->getCurState() && _portraits->getPrevState()) {
-            // Redraw doors
-            _portraits->addBlock(_thirdLayer);
-//            _portraits->refreshBatteryNodes(
-//                _fifthLayer); // drawing order refresh
-            blocked = true;
-        } else if (_portraits->getCurState() && !_portraits->getPrevState()) {
-            // Redraw doors
+        
+        
+        //update block screen
+        if (blocked){
             _portraits->removeBlock(_thirdLayer);
             blocked = false;
+        }
+        if(!_portraits->getCurState() && !_selection){
+            _portraits->addBlock(_thirdLayer);
+            blocked = true;
         }
 
         _portraits->setPrevState(_portraits->getCurState());
@@ -430,7 +428,7 @@ void SGameController::update(float dt) {
         // Draw battery (has to come after the minimap update)
         _portraits->updateBattery(_selection);
 
-        _portraits->updateBatteryNode(_fifthLayer, 50);
+        _portraits->updateBatteryNode(_fifthLayer, 50, _selection);
 
         // Draw timer and alert labels
         string minutes = std::to_string(_timeLeft / 60 / 60);
@@ -615,10 +613,6 @@ void SGameController::checkLevelLoaded() {
                 _textureNodes, i, _level->getPortaits()[i].first,
                 _level->getPortaits()[i].second, Vec3(0, 0, -1), Vec2::ZERO,
                 _level->getBattery());
-
-            //            CULog("Portrait %i at position %f, %f", i,
-            //            _portraits->getPosition(i).x,
-            //            _portraits->getPosition(i).y);
         }
         _portraits->setMaxbattery(_level->getBattery());
 
@@ -923,7 +917,7 @@ void SGameController::modifyTexture(std::shared_ptr<Texture>& texture,
 }
 
 void SGameController::sortNodes() {
-    if(!_selection){
+    if(!_selection && _spirit.getModel()->hunterAdded){
         for (int n = 0; n < _hunterNodes.size(); n++) {
             _obstacleNode->removeChild(_hunterNodes.at(n));
             _obstacleNode->addChild(_hunterNodes.at(n));

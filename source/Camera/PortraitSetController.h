@@ -34,11 +34,8 @@ class PortraitSetController {
 
     int _index;
 
-    /** The scale for noBattery*/
-//    float _noBatteryScale;
     float _greenBatteryScale;
     float _redBatteryScale;
-//    float _resetScale;
 
     float _buttonSize = 400;
 
@@ -47,7 +44,6 @@ class PortraitSetController {
     std::shared_ptr<scene2::SpriteNode> _greenBattery;
     
     std::shared_ptr<scene2::SpriteNode> _curBattery;
-//    std::shared_ptr<scene2::PolygonNode> _noBattery;
 
   private:
     float getZoom() {
@@ -115,63 +111,13 @@ class PortraitSetController {
                                           type, vector));
     }
 
-    //    /**
-    //     * Adds a new portrait to the portraitset
-    //     *
-    //     * @param id
-    //     * @param position
-    //     * @param direction
-    //     * @param directionLimits
-    //     * @param type camera type - (0 = default) (1 = player) (2 = portrait)
-    //     * default camera is camera that is viewing a black screen
-    //     */
-    //    void insertPortraitTo(std::shared_ptr<cugl::scene2::PolygonNode>&
-    //    node, int index, int id, Vec3 cameraPosition,
-    //                          Vec3 portraitPosition, Vec3 direction,
-    //                          Vec2 directionLimits, float battery = 600,
-    //                          int type = 2) {
-    //        _portraits.insert(getIteratorForIndex(index),
-    //                          makePortrait(id, cameraPosition,
-    //                          portraitPosition,
-    //                                       direction, directionLimits,
-    //                                       battery, type, node));
-    //    }
-
-    //    /**
-    //     * Initializes the portrait set
-    //     *
-    //     * @param id
-    //     * @param position
-    //     * @param direction
-    //     * @param directionLimits
-    //     * @param type camera type - (0 = default) (1 = player) (2 = portrait)
-    //     * default camera is camera that is viewing a black screen
-    //     */
-    //    void initializePortraitSet(int id = 0, Vec3 cameraPosition =
-    //    Vec3::ZERO,
-    //                               Vec3 portraitPosition = Vec3::ZERO,
-    //                               Vec3 direction = Vec3::ZERO,
-    //                               Vec2 directionLimits = Vec2::ZERO,
-    //                               float battery = 600, int type = 2) {
-    //        _portraits.push_back(makePortrait(id, cameraPosition,
-    //        portraitPosition,
-    //                                          direction, directionLimits,
-    //                                          battery, type));
-    //        _index = 0;
-    //        _prevState = true;
-    //    }
-
     void initializeSheets(std::shared_ptr<cugl::Texture> green,
                           std::shared_ptr<cugl::Texture> red,
                           std::shared_ptr<cugl::Texture> no) {
         _greenBattery = scene2::SpriteNode::allocWithSheet(green, 5, 8, 40);
         _redBattery = scene2::SpriteNode::allocWithSheet(red, 5, 8, 40);
-//        _noBattery = scene2::PolygonNode::allocWithTexture(no);
         _greenBatteryScale = _buttonSize / _greenBattery->getSize().width;
         _redBatteryScale = _buttonSize / _redBattery->getSize().width;
-//        _noBatteryScale = 0;
-//        _resetScale =
-//            _greenBattery->getSize().width / _noBattery->getSize().width;
     }
 
     /**
@@ -302,7 +248,7 @@ class PortraitSetController {
     }
 
     void updateBatteryNode(std::shared_ptr<cugl::scene2::PolygonNode>& node,
-                           float offset) {
+                           float offset, bool selection) {
         _greenBattery->setScale(_greenBatteryScale / getZoom());
         _redBattery->setScale(_redBatteryScale / getZoom());
 //        _noBattery->setScale(_noBatteryScale / getZoom());
@@ -310,15 +256,14 @@ class PortraitSetController {
             Vec2(_greenBattery->getSize().width * getZoom() / 2,
                  _scene->getSize().height -
                      _greenBattery->getSize().height * getZoom() / 2));
+        if (selection) {
+            pos += Vec2(-10000, -10000);
+        }
         int frame = getCurFrame();
         _greenBattery->setFrame(frame);
         _redBattery->setFrame(frame);
         _greenBattery->setPosition(pos);
         _redBattery->setPosition(pos);
-//        _noBattery->setPosition(pos);
-//        if (_noBatteryScale > 0) {
-//            _noBatteryScale -= 0.01;
-//        }
         node->removeChild(_curBattery);
         if (getCurState()){
             _curBattery = _greenBattery;
@@ -326,17 +271,6 @@ class PortraitSetController {
             _curBattery = _redBattery;
         }
         node->addChild(_curBattery);
-//        if (curState != _prevState) {
-//            if (curState) {
-//                node->removeChild(_redBattery); // TODO: add to node instead
-//                node->addChild(_greenBattery);
-//            } else {
-//                node->removeChild(_greenBattery);
-//                node->addChild(_redBattery);
-//            }
-////            node->removeChild(_noBattery);
-////            node->addChild(_noBattery);
-//        }
     }
 
     float getCurBattery() {
@@ -351,7 +285,7 @@ class PortraitSetController {
         _block->setScale(1 / getZoom());
         _block->setPosition(_scene->getCamera()->screenToWorldCoords(
             Vec2(0, _scene->getSize().height)));
-        node->addChild(_block); // TODO: third
+        node->addChild(_block);
     }
 
     void removeBlock(std::shared_ptr<cugl::scene2::PolygonNode>& node) {
@@ -366,8 +300,6 @@ class PortraitSetController {
             node->removeChild(_redBattery);
             node->addChild(_redBattery);
         }
-//        node->removeChild(_noBattery);
-//        node->addChild(_noBattery);
     }
 
     void
@@ -379,13 +311,6 @@ class PortraitSetController {
         _greenBattery->setFrame(0);
         _curBattery = _greenBattery;
         node->addChild(_curBattery);
-//        node->addChild(_noBattery);
-    }
-
-    void resetScale() {
-//        CULog("%f",
-//              _greenBattery->getSize().width / _noBattery->getSize().width);
-//        _noBatteryScale = _resetScale * _greenBatteryScale * 1.2;
     }
 
 #pragma mark Helpers
@@ -408,7 +333,6 @@ class PortraitSetController {
             _assets, portraitPosition +
                          Vec2(_assets->get<Texture>("map")->getSize() / 2)));
         vector.emplace_back(_portraitViews[id]->getNode());
-        //        _portraitViews[id]->addChildTo(node); //TODO: add to node
         return camera;
     }
 

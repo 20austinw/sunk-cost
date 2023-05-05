@@ -244,7 +244,7 @@ void SGameController::update(float dt) {
         // logic for door lock
         if ((inputController->isTouchDown() || _spirit.getModel()->isOnLock) &&
             _spirit.getModel()->doors >= 0 && !blocked &&
-            !_spirit.getModel()->isOnTrap && !_spawn) {
+            !_spirit.getModel()->isOnTrap && !_spawn && !_spirit.getModel()->isOnKill) {
             if (_spirit.getModel()->isOnLock ||
                 _spirit.touchInLockBound(cameraPos)) {
                 canSwitch = false;
@@ -280,7 +280,7 @@ void SGameController::update(float dt) {
         // logic for trap placement
         if ((inputController->isTouchDown() || _spirit.getModel()->isOnTrap) &&
             _spirit.getModel()->traps >= 0 && !_spirit.getModel()->isOnLock &&
-            !blocked && !_spawn) {
+            !blocked && !_spawn && !_spirit.getModel()->isOnKill) {
             if (_spirit.getModel()->isOnTrap ||
                 _spirit.touchInTrapBound(cameraPos)) {
                 canSwitch = false;

@@ -491,22 +491,14 @@
                     }
                 },
                 "code": {
-                    "type": "Button",
+                    "type": "Image",
                     "data": {
-                        "upnode": "up",
+                        "texture": "code_blanks",
                         "anchor": [
                             0.5,
                             0.5
                         ],
                         "scale": 1.4
-                    },
-                    "children": {
-                        "up": {
-                            "type": "Image",
-                            "data": {
-                                "texture": "code_blanks"
-                            }
-                        }
                     },
                     "layout": {
                         "x_anchor": "center",

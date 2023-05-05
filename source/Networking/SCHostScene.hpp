@@ -62,6 +62,8 @@ class HostScene : public cugl::Scene2 {
     int _numPlayers;
 
     std::vector<cugl::scene2::PolygonNode> _numbers;
+    
+    std::shared_ptr<cugl::scene2::PolygonNode> _codeLines;
 
   public:
 #pragma mark -

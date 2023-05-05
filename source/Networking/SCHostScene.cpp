@@ -90,6 +90,8 @@ bool HostScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
         _assets->get<scene2::SceneNode>("host_center_start"));
     _backout = std::dynamic_pointer_cast<scene2::Button>(
         _assets->get<scene2::SceneNode>("host_back"));
+    
+    _codeLines = std::dynamic_pointer_cast<scene2::PolygonNode>(_assets->get<scene2::SceneNode>("host_code"));
     //    _gameid =
     //    std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("host_center_game_field_text"));
     _player = scene2::Label::allocWithText(
@@ -327,9 +329,7 @@ void HostScene::displayCode(std::string code) {
             _assets->get<Texture>(numToFile(*it));
         std::shared_ptr<scene2::PolygonNode> number =
             scene2::PolygonNode::allocWithTexture(numberTexture);
-        number->setPosition(
-            Vec2(300 + position * 230,
-                 Application::get()->getDisplaySize().height / 2 - 250));
+        number->setPosition(Vec2(_codeLines->getAnchorInPixels().x - _codeLines->getWidth() / 4 + ((_codeLines->getSize().width / 4.8) * position), _codeLines->getPositionY() + number->getSize().height / 2));
         number->setScale(1.5);
         addChildWithName(number, "code " + std::to_string(position));
         position++;

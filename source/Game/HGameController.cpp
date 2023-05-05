@@ -1329,7 +1329,7 @@ void HGameController::processData(const std::string source,
             int idx = static_cast<int>(mes[1]);
 //            CULog("door index: %d", idx);
             addlocks(idx);
-        } else if (mes[0] == 6) {
+        } else if (mes[0] == 9) {
             CULog("got killed");
             _killed = true;
         }

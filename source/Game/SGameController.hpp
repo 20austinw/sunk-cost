@@ -146,7 +146,7 @@ class SGameController {
 
     int _prevInd;
 
-    bool _spawn;
+    bool _spawn = false;
 
     int _ticks;
 

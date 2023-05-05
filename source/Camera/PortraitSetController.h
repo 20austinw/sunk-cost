@@ -35,17 +35,19 @@ class PortraitSetController {
     int _index;
 
     /** The scale for noBattery*/
-    float _noBatteryScale;
+//    float _noBatteryScale;
     float _greenBatteryScale;
     float _redBatteryScale;
-    float _resetScale;
+//    float _resetScale;
 
     float _buttonSize = 400;
 
     std::shared_ptr<scene2::PolygonNode> _block;
     std::shared_ptr<scene2::SpriteNode> _redBattery;
     std::shared_ptr<scene2::SpriteNode> _greenBattery;
-    std::shared_ptr<scene2::PolygonNode> _noBattery;
+    
+    std::shared_ptr<scene2::SpriteNode> _curBattery;
+//    std::shared_ptr<scene2::PolygonNode> _noBattery;
 
   private:
     float getZoom() {
@@ -164,12 +166,12 @@ class PortraitSetController {
                           std::shared_ptr<cugl::Texture> no) {
         _greenBattery = scene2::SpriteNode::allocWithSheet(green, 5, 8, 40);
         _redBattery = scene2::SpriteNode::allocWithSheet(red, 5, 8, 40);
-        _noBattery = scene2::PolygonNode::allocWithTexture(no);
+//        _noBattery = scene2::PolygonNode::allocWithTexture(no);
         _greenBatteryScale = _buttonSize / _greenBattery->getSize().width;
         _redBatteryScale = _buttonSize / _redBattery->getSize().width;
-        _noBatteryScale = 0;
-        _resetScale =
-            _greenBattery->getSize().width / _noBattery->getSize().width;
+//        _noBatteryScale = 0;
+//        _resetScale =
+//            _greenBattery->getSize().width / _noBattery->getSize().width;
     }
 
     /**
@@ -268,31 +270,33 @@ class PortraitSetController {
      */
     void lookAt(const Vec3 target) { _portraits[_index]->lookAt(target); }
 
-    void updateBattery() {
-        for (int i = 0; i < _portraits.size(); i++) {
-            if (((_index != _portraits[i]->getID()) ||
-                 (!_portraits[i]->getState())) &&
-                (_portraits[i]->getBattery() < _maxBattery)) {
-                float newBattery = _portraits[i]->getBattery() + 1;
-                if (newBattery < _maxBattery) {
-                    _portraits[i]->updateBattery(newBattery);
-                } else {
-                    _portraits[i]->updateBattery(_maxBattery);
+    void updateBattery(bool selection) {
+        if(!selection){
+            for (int i = 1; i < _portraits.size(); i++) {
+                if (((_index != _portraits[i]->getID()) ||
+                     (!_portraits[i]->getState())) &&
+                    (_portraits[i]->getBattery() < _maxBattery)) {
+                    float newBattery = _portraits[i]->getBattery() + 1;
+                    if (newBattery < _maxBattery) {
+                        _portraits[i]->updateBattery(newBattery);
+                    } else {
+                        _portraits[i]->updateBattery(_maxBattery);
+                    }
+                } else if (_index == _portraits[i]->getID() && _portraits[i]->getState() &&
+                           _portraits[i]->getBattery() > 0) {
+                    float newBattery = _portraits[i]->getBattery() - 0.5;
+                    if (newBattery > 0) {
+                        _portraits[i]->updateBattery(newBattery);
+                    } else {
+                        _portraits[i]->updateBattery(0);
+                    }
                 }
-            } else if (_index == _portraits[i]->getID() &&
-                       _portraits[i]->getBattery() > 0) {
-                float newBattery = _portraits[i]->getBattery() - 0.5;
-                if (newBattery > 0) {
-                    _portraits[i]->updateBattery(newBattery);
-                } else {
-                    _portraits[i]->updateBattery(0);
+                if (_portraits[i]->getBattery() <= 0) {
+                    _portraits[i]->updateState(false);
+                } else if (!_portraits[i]->getState() &&
+                           _portraits[i]->getBattery() >= _maxBattery) {
+                    _portraits[i]->updateState(true);
                 }
-            }
-            if (_portraits[i]->getBattery() <= 0) {
-                _portraits[i]->updateState(false);
-            } else if (!_portraits[i]->getState() &&
-                       _portraits[i]->getBattery() >= _maxBattery) {
-                _portraits[i]->updateState(true);
             }
         }
     }
@@ -301,32 +305,38 @@ class PortraitSetController {
                            float offset) {
         _greenBattery->setScale(_greenBatteryScale / getZoom());
         _redBattery->setScale(_redBatteryScale / getZoom());
-        _noBattery->setScale(_noBatteryScale / getZoom());
+//        _noBattery->setScale(_noBatteryScale / getZoom());
         Vec2 pos = _scene->getCamera()->screenToWorldCoords(
             Vec2(_greenBattery->getSize().width * getZoom() / 2,
                  _scene->getSize().height -
                      _greenBattery->getSize().height * getZoom() / 2));
-        bool curState = getCurState();
         int frame = getCurFrame();
         _greenBattery->setFrame(frame);
         _redBattery->setFrame(frame);
         _greenBattery->setPosition(pos);
         _redBattery->setPosition(pos);
-        _noBattery->setPosition(pos);
-        if (_noBatteryScale > 0) {
-            _noBatteryScale -= 0.01;
+//        _noBattery->setPosition(pos);
+//        if (_noBatteryScale > 0) {
+//            _noBatteryScale -= 0.01;
+//        }
+        node->removeChild(_curBattery);
+        if (getCurState()){
+            _curBattery = _greenBattery;
+        } else {
+            _curBattery = _redBattery;
         }
-        if (curState != _prevState) {
-            if (curState) {
-                node->removeChild(_redBattery); // TODO: add to node instead
-                node->addChild(_greenBattery);
-            } else {
-                node->removeChild(_greenBattery);
-                node->addChild(_redBattery);
-            }
-            node->removeChild(_noBattery);
-            node->addChild(_noBattery);
-        }
+        node->addChild(_curBattery);
+//        if (curState != _prevState) {
+//            if (curState) {
+//                node->removeChild(_redBattery); // TODO: add to node instead
+//                node->addChild(_greenBattery);
+//            } else {
+//                node->removeChild(_greenBattery);
+//                node->addChild(_redBattery);
+//            }
+////            node->removeChild(_noBattery);
+////            node->addChild(_noBattery);
+//        }
     }
 
     float getCurBattery() {
@@ -356,8 +366,8 @@ class PortraitSetController {
             node->removeChild(_redBattery);
             node->addChild(_redBattery);
         }
-        node->removeChild(_noBattery);
-        node->addChild(_noBattery);
+//        node->removeChild(_noBattery);
+//        node->addChild(_noBattery);
     }
 
     void
@@ -367,14 +377,15 @@ class PortraitSetController {
         _block->setColor(Color4::BLACK);
         _block->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
         _greenBattery->setFrame(0);
-        node->addChild(_greenBattery);
-        node->addChild(_noBattery);
+        _curBattery = _greenBattery;
+        node->addChild(_curBattery);
+//        node->addChild(_noBattery);
     }
 
     void resetScale() {
-        CULog("%f",
-              _greenBattery->getSize().width / _noBattery->getSize().width);
-        _noBatteryScale = _resetScale * _greenBatteryScale * 1.2;
+//        CULog("%f",
+//              _greenBattery->getSize().width / _noBattery->getSize().width);
+//        _noBatteryScale = _resetScale * _greenBatteryScale * 1.2;
     }
 
 #pragma mark Helpers

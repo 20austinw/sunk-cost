@@ -367,8 +367,8 @@ void SGameController::update(float dt) {
         if (!_portraits->getCurState() && _portraits->getPrevState()) {
             // Redraw doors
             _portraits->addBlock(_thirdLayer);
-            _portraits->refreshBatteryNodes(
-                _fifthLayer); // drawing order refresh
+//            _portraits->refreshBatteryNodes(
+//                _fifthLayer); // drawing order refresh
             blocked = true;
         } else if (_portraits->getCurState() && !_portraits->getPrevState()) {
             // Redraw doors
@@ -428,9 +428,7 @@ void SGameController::update(float dt) {
         }
 
         // Draw battery (has to come after the minimap update)
-        if (!_spawn) {
-            _portraits->updateBattery();
-        }
+        _portraits->updateBattery(_selection);
 
         _portraits->updateBatteryNode(_fifthLayer, 50);
 

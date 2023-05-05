@@ -96,6 +96,10 @@ class Button {
     }
 
     int getCameraIndex() { return cameraIdx; }
+    
+    void setCameraIndex(int i) {
+        cameraIdx = i;
+    }
 
     bool isClicked(Vec2 position) {
         if (!_active) {

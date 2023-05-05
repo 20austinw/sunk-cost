@@ -624,6 +624,7 @@ void SGameController::checkLevelLoaded() {
         _portraits->setIndex(4);
         std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
             ->setZoom(0.85);
+        _viewButton->setCameraIndex(4);
         _spirit.updateLocksPos(false);
         _spirit.updateTrapBtnsPos(false);
         _spirit.updateKillBtnsPos(false);

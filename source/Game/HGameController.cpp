@@ -417,7 +417,6 @@ void HGameController::update(float dt) {
             _scene->addChild(_exit);
             _scene->addChild(_winLabel);
             _didWin = true;
-            transmitHunterWin();
         }
 
         if (!_didFinalwin && _didWin && !_didLose &&
@@ -429,6 +428,7 @@ void HGameController::update(float dt) {
                 std::make_shared<EndScene>(_scene, _assets, false, false);
             _endScene->addChildTo(_scene);
             _didFinalwin = true;
+            transmitHunterWin();
             _gameStatus = 1;
         }
 

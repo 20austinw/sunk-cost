@@ -94,6 +94,9 @@
         "shadow": {
             "file": "textures/diver_shadow.png"
         },
+        "ghost": {
+            "file": "textures/ghost.png"
+        },
         "greenBattery": {
             "file": "textures/greenBattery.png"
         },

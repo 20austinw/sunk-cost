@@ -284,12 +284,14 @@ class SpiritModel {
     }
 
     void moveHunter(Vec2 position) {
-        Vec2 diff = position - _hunterModel->position;
-        forward = diff.y;
-        right = diff.x;
-        _hunterModel->setPosition(position);
-        _hunterView->setPosition(position);
-        updateHeartsPos(position, _hunterView->getSize());
+        if(!_killing){
+            Vec2 diff = position - _hunterModel->position;
+            forward = diff.y;
+            right = diff.x;
+            _hunterModel->setPosition(position);
+            _hunterView->setPosition(position);
+            updateHeartsPos(position, _hunterView->getSize());
+        }
     }
 
     void alertTreasure(Vec2 position) {}

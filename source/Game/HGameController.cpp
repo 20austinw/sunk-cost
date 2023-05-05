@@ -764,23 +764,6 @@ void HGameController::update(float dt) {
             transmitTreasureStolen();
             _treasureCount++;
         }
-        
-        if((_ghost->getPosition().x-Vec2(3900,5700).x)<400 && (_ghost->getPosition().y-Vec2(3900,5700).y)<300){
-            if((_hunter->getPosition().x-Vec2(3900,5700).x)<300 && (_hunter->getPosition().y-Vec2(3900,5700).y)<300){
-                Vec2 normal=(_hunter->getPosition()-_ghost->getPosition()).getNormalization();
-                _ghost->setPosition(_ghost->getPosition()+normal*5);
-            }
-            else{
-                Vec2 normal=(Vec2(3900,5700)-_ghost->getPosition()).getNormalization();
-                _ghost->setPosition(_ghost->getPosition()+normal*5);
-            }
-        }
-        
-        if(abs(_hunter->getPosition().x-_ghost->getPosition().x)<10 && abs(_hunter->getPosition().y-_ghost->getPosition().y)<15){
-            _killed=true;
-            _ghost->setPosition(Vec2(3900,5700));
-        }
-        
 
         //        ea->setPosition(Vec2(a,b));
         _shadow->setPosition(_hunter->getPosition() - Vec2(130, 270));
@@ -998,15 +981,6 @@ void HGameController::checkLevelLoaded() {
         //            _scene->addChild(_shadowSet[i]);
         //        }
         _hunterNodes.emplace_back(_shadowSet[0]);
-        
-        _ghost =
-            scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("ghost"));
-
-        _ghost->setPosition(Vec2(3900,5700));
-        
-        _ghost->setScale(0.5);
-
-        _ghost->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
 
         // Draw hunter after shadow
         //        for (int i = 0; i < 3; i++){
@@ -1033,8 +1007,6 @@ void HGameController::checkLevelLoaded() {
         for (int i = 0; i < _textureNodes.size(); i++) {
             _obstacleNode->addChild(_textureNodes.at(i));
         }
-        
-        _scene->addChild(_ghost);
 
         //        std::vector<std::shared_ptr<scene2::PolygonNode>> cur;
         //        cur.emplace_back(_textureNodes.at(0));

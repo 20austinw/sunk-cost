@@ -175,7 +175,6 @@ class HGameController {
 
     std::shared_ptr<scene2::PolygonNode> _filter;
     std::shared_ptr<scene2::PolygonNode> _shadow;
-    std::shared_ptr<scene2::PolygonNode> _ghost;
     std::unordered_map<int, std::shared_ptr<scene2::PolygonNode>> _shadowSet;
     std::shared_ptr<scene2::PolygonNode> _map;
 

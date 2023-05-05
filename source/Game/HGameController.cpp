@@ -253,47 +253,44 @@ HGameController::HGameController(
     //    _hunter->setPosition(Vec2(10000,10000)*_scale);
 
     initCamera();
-        for (int i = 0;i <3;i++){
-            _livehearts.push_back(scene2::SpriteNode::allocWithSheet(assets->get<Texture>("heart_live"), 2, 8, 11));
-            _deadhearts.push_back(scene2::PolygonNode::allocWithTexture(assets->get<Texture>("heart_dead")));
-            _livehearts[i]->setScale(0.45);
-            _livehearts[i]->setFrame(0);
-            _livehearts[i]->setAnchor(Vec2::ANCHOR_CENTER);
-            _livehearts[i]->setPosition(_scene->getCamera()->getPosition()+Vec2(-130*i-1000,500));
-            _livehearts[i]->setVisible(true);
-            _deadhearts[i]->setScale(0.45);
-            _deadhearts[i]->setAnchor(Vec2::ANCHOR_CENTER);
-            _deadhearts[i]->setPosition(_scene->getCamera()->getPosition()+Vec2(-130*i-1000,500));
-            _deadhearts[i]->setVisible(false);
-//            _scene->addChild(_deadhearts[i]);
-//            _scene->addChild(_livehearts[i]);
-            
-            
-        }
-      
-    
-        
-        
-        _spriteSheets.push_back(assets->get<Texture>("kill_one"));
-        _spriteSheets.push_back(assets->get<Texture>("kill_two"));
-        _spriteSheets.push_back(assets->get<Texture>("kill_three"));
-        _spriteSheets.push_back(assets->get<Texture>("kill_four"));
-        _spriteSheets.push_back(assets->get<Texture>("kill_five"));
-        _spriteSheets.push_back(assets->get<Texture>("kill_six"));
+    for (int i = 0; i < 3; i++) {
+        _livehearts.push_back(scene2::SpriteNode::allocWithSheet(
+            assets->get<Texture>("heart_live"), 2, 8, 11));
+        _deadhearts.push_back(scene2::PolygonNode::allocWithTexture(
+            assets->get<Texture>("heart_dead")));
+        _livehearts[i]->setScale(0.45);
+        _livehearts[i]->setFrame(0);
+        _livehearts[i]->setAnchor(Vec2::ANCHOR_CENTER);
+        _livehearts[i]->setPosition(_scene->getCamera()->getPosition() +
+                                    Vec2(-130 * i - 1000, 500));
+        _livehearts[i]->setVisible(true);
+        _deadhearts[i]->setScale(0.45);
+        _deadhearts[i]->setAnchor(Vec2::ANCHOR_CENTER);
+        _deadhearts[i]->setPosition(_scene->getCamera()->getPosition() +
+                                    Vec2(-130 * i - 1000, 500));
+        _deadhearts[i]->setVisible(false);
+        //            _scene->addChild(_deadhearts[i]);
+        //            _scene->addChild(_livehearts[i]);
+    }
 
-        for (int i = 0; i < _spriteSheets.size(); i++) {
-            _spriteNodes.push_back( scene2::SpriteNode::allocWithSheet(_spriteSheets[i], 5, 2, 10));
-            _spriteNodes[i]->setScale(1.7);
-            _spriteNodes[i]->setFrame(0);
-            _spriteNodes[i]->setAnchor(Vec2::ANCHOR_CENTER);
-//            _spriteNodes[i]->setPosition(Vec2(0, 0));
-            _spriteNodes[i]->setVisible(false);
-//            _scene->addChild(_spriteNodes[i]);
-        }
-       
+    _spriteSheets.push_back(assets->get<Texture>("kill_one"));
+    _spriteSheets.push_back(assets->get<Texture>("kill_two"));
+    _spriteSheets.push_back(assets->get<Texture>("kill_three"));
+    _spriteSheets.push_back(assets->get<Texture>("kill_four"));
+    _spriteSheets.push_back(assets->get<Texture>("kill_five"));
+    _spriteSheets.push_back(assets->get<Texture>("kill_six"));
 
-        
-        
+    for (int i = 0; i < _spriteSheets.size(); i++) {
+        _spriteNodes.push_back(
+            scene2::SpriteNode::allocWithSheet(_spriteSheets[i], 5, 2, 10));
+        _spriteNodes[i]->setScale(1.7);
+        _spriteNodes[i]->setFrame(0);
+        _spriteNodes[i]->setAnchor(Vec2::ANCHOR_CENTER);
+        //            _spriteNodes[i]->setPosition(Vec2(0, 0));
+        _spriteNodes[i]->setVisible(false);
+        //            _scene->addChild(_spriteNodes[i]);
+    }
+
     _trappedbool = false;
 
     // Initialize the world
@@ -358,8 +355,7 @@ void HGameController::update(float dt) {
         //        }
         sortNodes();
 
-        AudioEngine::get()->play("theme", _theme, false, 0.5,
-                                 false);
+        AudioEngine::get()->play("theme", _theme, false, 0.5, false);
 
         _loseLabel->setText("You Lose!");
         _loseLabel->setPosition(_scene->getCamera()->getPosition() -
@@ -400,22 +396,21 @@ void HGameController::update(float dt) {
         //        }else{
         //            _huntertwo->setPosition(Vec2(-10000000,-1000000));
         //        }
- 
+
         if (int(_timer / 60 / 60) == 0) {
-            AudioEngine::get()->play("tension", _tension, false,
-                                     0.5, false);
+            AudioEngine::get()->play("tension", _tension, false, 0.5, false);
         }
-    
 
         if ((int(_timer / 60 / 60) == 0 && (int(_timer / 60) % 60 == 0) &&
-            !_didLose && !_didFinalwin)||  (_finalCount>=216) ) {
+             !_didLose && !_didFinalwin) ||
+            (_finalCount >= 216)) {
             //        _scene->addChild(_loseNode);
             //        _scene->addChild(_loseLabel);
-            _endScene = std::make_shared<EndScene>(_scene, _assets, true);
+            _endScene =
+                std::make_shared<EndScene>(_scene, _assets, false, true);
             _endScene->addChildTo(_scene);
             _didLose = true;
             _gameStatus = 1;
-            
         }
 
         if (_treasureCount >= 3 && !_didWin && !_didLose) {
@@ -429,7 +424,8 @@ void HGameController::update(float dt) {
             abs(_hunter->getPosition().y - _exitpos.y) < 200) {
             _scene->removeChild(_winLabel);
             _scene->addChild(_finalWinLabel);
-            _endScene = std::make_shared<EndScene>(_scene, _assets, false);
+            _endScene =
+                std::make_shared<EndScene>(_scene, _assets, false, false);
             _endScene->addChildTo(_scene);
             _didFinalwin = true;
             _gameStatus = 1;
@@ -468,12 +464,11 @@ void HGameController::update(float dt) {
         if (inputController->didPressReset()) {
             reset();
         }
-//                if (inputController->didPress() && inputController->getPosition().x>1700 ){
-//                    _killed = true;
-//                }
-        //for hunter side kill testing
-        
-        
+        //                if (inputController->didPress() &&
+        //                inputController->getPosition().x>1700 ){
+        //                    _killed = true;
+        //                }
+        // for hunter side kill testing
 
         for (int i = 0; i < _doorslocked.size(); i++) {
             if (_hunter->detectedDoor(
@@ -568,56 +563,53 @@ void HGameController::update(float dt) {
         float forward = inputController->getForward();
 
         float rightward = inputController->getRight();
-        
-        for (int i = 0;i<3;i++){
-            _deadhearts[i]->setPosition(_scene->getCamera()->getPosition()+Vec2(-180*i-850,500));
-            _livehearts[i]->setPosition(_scene->getCamera()->getPosition()+Vec2(-180*i-850,500));
+
+        for (int i = 0; i < 3; i++) {
+            _deadhearts[i]->setPosition(_scene->getCamera()->getPosition() +
+                                        Vec2(-180 * i - 850, 500));
+            _livehearts[i]->setPosition(_scene->getCamera()->getPosition() +
+                                        Vec2(-180 * i - 850, 500));
         }
-        
 
         _count++;
         if (_count == 6) {
-            _hunter->setViewFrame(forward, rightward,_beingKilled);
-            if (_heart_frame >= 11){
+            _hunter->setViewFrame(forward, rightward, _beingKilled);
+            if (_heart_frame >= 11) {
                 _heart_frame = 0;
             }
-            for (int i = 0;i<3;i++){
-                _livehearts[i] ->setFrame(_heart_frame);
+            for (int i = 0; i < 3; i++) {
+                _livehearts[i]->setFrame(_heart_frame);
             }
-            _heart_frame+=1;
+            _heart_frame += 1;
             _count = 0;
         }
         _countfortimer++;
-        
+
         _beingKilled = false;
-        if(_kill_ani_count<84){
-            _kill_ani_count +=1;
+        if (_kill_ani_count < 84) {
+            _kill_ani_count += 1;
             _beingKilled = true;
         }
-        if (_finalKilled){
+        if (_finalKilled) {
             for (int i = 0; i < _spriteNodes.size(); i++) {
-                _spriteNodes[i]->setPosition( _scene->getCamera()->getPosition());
-            
+                _spriteNodes[i]->setPosition(
+                    _scene->getCamera()->getPosition());
             }
-            _spriteNodes[_finalCount/40]->setVisible(true);
-            _spriteNodes[_finalCount/40]->setFrame((_finalCount%40)/4);
-       
+            _spriteNodes[_finalCount / 40]->setVisible(true);
+            _spriteNodes[_finalCount / 40]->setFrame((_finalCount % 40) / 4);
 
-//            _spriteNodes[0]->setVisible(true);
-//            _spriteNodes[0]->setFrame(0);
-            _finalCount +=1;
-            //move frame
-            
+            //            _spriteNodes[0]->setVisible(true);
+            //            _spriteNodes[0]->setFrame(0);
+            _finalCount += 1;
+            // move frame
         }
 
-        if (_finalCount<1 && !_beingKilled){
+        if (_finalCount < 1 && !_beingKilled) {
             _move = true;
-        }else{
+        } else {
             _move = false;
         }
-    
-  
-        
+
         for (auto obsta : _obstaclePoly) {
             if (obsta.contains(_shadow->getPosition() + Vec2(40, 0) +
                                Vec2(rightward * _hunter->getVelocity().x,
@@ -664,29 +656,26 @@ void HGameController::update(float dt) {
         }
 
         if (_hunter->getTrapSize() == 0 && _move) {
-                    _hunter->move(forward, rightward);
-                } else {
-                    _ismovedonece = false;
-                    if(_hunter->getTrapSize()>0){
-                        for (int i = 0; i < 1; i++) {
-                            if (_hunter->getTraps()[i]->getTrigger()) {
-                                _ismovedonece = true;
-                            }
-                        }
-                        if (!_ismovedonece && _move) {
-                            _hunter->move(forward, rightward);
-                        }
+            _hunter->move(forward, rightward);
+        } else {
+            _ismovedonece = false;
+            if (_hunter->getTrapSize() > 0) {
+                for (int i = 0; i < 1; i++) {
+                    if (_hunter->getTraps()[i]->getTrigger()) {
+                        _ismovedonece = true;
                     }
                 }
- 
-
-        
+                if (!_ismovedonece && _move) {
+                    _hunter->move(forward, rightward);
+                }
+            }
+        }
 
         if (_didLose || _didFinalwin) {
             // Freeze movement after lose/win
             forward = 0;
             rightward = 0;
-            _hunter->setViewFrame(forward, rightward,_beingKilled);
+            _hunter->setViewFrame(forward, rightward, _beingKilled);
         }
 
         if (_trappedbool == false) {
@@ -699,8 +688,7 @@ void HGameController::update(float dt) {
                             _hunter->getPosition().y) <= 300) {
                         if (_neverPlayed) {
                             AudioEngine::get()->play("trapSound", _trapSound,
-                                                     false, 0.8,
-                                                     true);
+                                                     false, 0.8, true);
                             _neverPlayed = false;
                         }
                         _trappedbool = true;
@@ -740,7 +728,8 @@ void HGameController::update(float dt) {
             CULog("IN ");
             _collision.didHitTreasure = true;
             _treasure.getNode()->setVisible(false);
-            AudioEngine::get()->play("treasureSound", _treasureSound, false, 0.8, true);
+            AudioEngine::get()->play("treasureSound", _treasureSound, false,
+                                     0.8, true);
             transmitTreasureStolen();
             _treasureCount++;
         }
@@ -750,7 +739,8 @@ void HGameController::update(float dt) {
             CULog("IN 2");
             _collision.didHitTreasure2 = true;
             _treasure2.getNode()->setVisible(false);
-            AudioEngine::get()->play("treasureSound", _treasureSound, false, 0.8, true);
+            AudioEngine::get()->play("treasureSound", _treasureSound, false,
+                                     0.8, true);
             transmitTreasureStolen();
             _treasureCount++;
         }
@@ -760,7 +750,8 @@ void HGameController::update(float dt) {
             CULog("IN 3");
             _collision.didHitTreasure3 = true;
             _treasure3.getNode()->setVisible(false);
-            AudioEngine::get()->play("treasureSound", _treasureSound, false, 0.8, true);
+            AudioEngine::get()->play("treasureSound", _treasureSound, false,
+                                     0.8, true);
             transmitTreasureStolen();
             _treasureCount++;
         }
@@ -804,30 +795,27 @@ void HGameController::update(float dt) {
                 transmitPos(pos);
                 _lastpos = Vec2(currPos);
             }
-//            for (int i = 0; i < _spriteNodes.size(); i++) {
-//                _spriteNodes[i]->setPosition( _scene->getCamera()->getPosition());
-//
-//            }
-            if (_killed){
+            //            for (int i = 0; i < _spriteNodes.size(); i++) {
+            //                _spriteNodes[i]->setPosition(
+            //                _scene->getCamera()->getPosition());
+            //
+            //            }
+            if (_killed) {
                 _livehearts[_killCount]->setVisible(false);
                 _deadhearts[_killCount]->setVisible(true);
-                        _killCount+=1;
-                        _killed = false;
-                _kill_ani_count =0;
-            //            _move = false;
-                    }
-                    if (_killCount== 3){
-                        _finalKilled = true;
-                        for (int i = 0; i < _spriteNodes.size(); i++) {
-                           
-               
-                                _scene->addChild(_spriteNodes[i]);
-                        
-                        }
-                        _killCount +=1;
-                      
-         
-                    }
+                _killCount += 1;
+                _killed = false;
+                _kill_ani_count = 0;
+                //            _move = false;
+            }
+            if (_killCount == 3) {
+                _finalKilled = true;
+                for (int i = 0; i < _spriteNodes.size(); i++) {
+
+                    _scene->addChild(_spriteNodes[i]);
+                }
+                _killCount += 1;
+            }
         }
     } else if (_gameStatus == 1) {
         // Hunter lose or win
@@ -1036,7 +1024,7 @@ void HGameController::checkLevelLoaded() {
         _filter->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
         _filter->setScale(Vec2(_dimen.width / 1280, _dimen.height / 720));
         _scene->addChild(_filter);
-        for (int i = 0;i<3;i++){
+        for (int i = 0; i < 3; i++) {
             _scene->addChild(_deadhearts[i]);
             _scene->addChild(_livehearts[i]);
         }
@@ -1128,24 +1116,24 @@ void HGameController::checkLevelLoaded() {
         srand(time(NULL));
 
         int index = rand() % 3;
-        
-        //Manually add more treasurepos
-        _treasurepos.emplace_back(Vec2(3900,5700));
+
+        // Manually add more treasurepos
+        _treasurepos.emplace_back(Vec2(3900, 5700));
 
         _treasure = TreasureController(_assets, _scene->getSize(), PLAYER_SIZE,
                                        _treasurepos.at(index));
         _treasure2 = TreasureController(_assets, _scene->getSize(), PLAYER_SIZE,
-                                       _treasurepos.at((index+1)%3));
+                                        _treasurepos.at((index + 1) % 3));
         _treasure3 = TreasureController(_assets, _scene->getSize(), PLAYER_SIZE,
-                                       _treasurepos.at((index+2)%3));
+                                        _treasurepos.at((index + 2) % 3));
         CULog("init POS %f", _treasurepos.at(index).x);
         _treasure.setPosition(_treasurepos.at(index));
         _treasure.addChildTo(_scene);
-        _treasure2.setPosition(_treasurepos.at((index+1)%3));
+        _treasure2.setPosition(_treasurepos.at((index + 1) % 3));
         _treasure2.addChildTo(_scene);
-        _treasure3.setPosition(_treasurepos.at((index+2)%3));
+        _treasure3.setPosition(_treasurepos.at((index + 2) % 3));
         _treasure3.addChildTo(_scene);
-        
+
         _hunter->setPosition(_hunterspun.at(2));
         _exitpos = _hunterspun.at(index);
 
@@ -1176,7 +1164,8 @@ void HGameController::initCamera() {
     _scene->getCamera()->setFar(100000);
     _scene->getCamera()->setNear(0);
     _scene->getCamera()->update();
-    std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())->setZoom(2.5);
+//    std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+//        ->setZoom(2.5);
 }
 
 /**
@@ -1586,4 +1575,3 @@ void HGameController::sortNodes() {
         }
     }
 }
-

@@ -32,11 +32,11 @@ class SpiritModel {
     float _clamCool;
     /** Cooldown time for switching camera */
     float _cameraCool;
-    
+
     int _killTicks;
-    
+
     bool _killing;
-    
+
     std::shared_ptr<scene2::SpriteNode> _killAnimation;
 
     std::vector<std::shared_ptr<TrapModel>> _trapModels;
@@ -53,18 +53,18 @@ class SpiritModel {
     bool _isOnLock;
 
     bool _isOnTrap;
-    
+
     bool _isOnKill;
-    
+
     float _killCool;
 
     Vec2 _lastTrapPos;
-    
+
     int _health;
-    
+
     std::vector<std::shared_ptr<scene2::PolygonNode>> _deadHearts;
     std::vector<std::shared_ptr<scene2::SpriteNode>> _liveHearts;
-    
+
     bool _hunterAdded;
 
     float _offset;
@@ -109,7 +109,9 @@ class SpiritModel {
                 float energy)
         : traps(_traps), doors(_doors), energy(_energy),
           cameraCool(_cameraCool), clamCool(_clamCool), doorCool(_doorCool),
-          isOnLock(_isOnLock), isOnTrap(_isOnTrap), lastTrapPos(_lastTrapPos) ,isOnKill(_isOnKill), killCool(_killCool), health(_health), killing(_killing), hunterAdded(_hunterAdded)  {
+          isOnLock(_isOnLock), isOnTrap(_isOnTrap), lastTrapPos(_lastTrapPos),
+          isOnKill(_isOnKill), killCool(_killCool), health(_health),
+          killing(_killing), hunterAdded(_hunterAdded) {
         setTraps(clams);
         setDoors(doors);
         setEnergy(energy);
@@ -126,12 +128,13 @@ class SpiritModel {
         setHealth(3);
         initHearts();
         _hunterAdded = false;
-              setKilling(false);
-            _killAnimation = scene2::SpriteNode::allocWithSheet(assets->get<Texture>("hunterhurt"), 5, 3, 14);
-            _killAnimation->setFrame(0);
-            _killAnimation->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-            _killAnimation->setScale(0.5);
-            _killTicks = 0;
+        setKilling(false);
+        _killAnimation = scene2::SpriteNode::allocWithSheet(
+            assets->get<Texture>("hunterhurt"), 5, 3, 14);
+        _killAnimation->setFrame(0);
+        _killAnimation->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+        _killAnimation->setScale(0.5);
+        _killTicks = 0;
     }
 
 #pragma mark Setters
@@ -163,20 +166,14 @@ class SpiritModel {
      * @param clams the number of clams
      */
     void setTraps(int traps) { _traps = traps; };
-    
-    void setHealth(int health) {
-            _health = health;
-        }
-    
-    bool isKilling() {return _killing;}
 
-    void setKilling(bool b) {
-        _killing = b;
-    }
-    
-    Vec2 getHunterPos(){
-            return _hunterModel->getPosition();
-        }
+    void setHealth(int health) { _health = health; }
+
+    bool isKilling() { return _killing; }
+
+    void setKilling(bool b) { _killing = b; }
+
+    Vec2 getHunterPos() { return _hunterModel->getPosition(); }
 
     /**
      * Sets the number of available doors for the spirit
@@ -190,18 +187,12 @@ class SpiritModel {
     void setTrapState(bool trap) { _isOnTrap = trap; }
 
     void setLastTrapPos(Vec2 pos) { _lastTrapPos = pos; }
-    
-    void setKillCooldown(float cool) {
-        _killCool = cool;
-    }
 
-    bool isKillable() {
-        return _killCool <= 0;
-    }
-    
-    void setKillState(bool kill){
-        _isOnKill = kill;
-    }
+    void setKillCooldown(float cool) { _killCool = cool; }
+
+    bool isKillable() { return _killCool <= 0; }
+
+    void setKillState(bool kill) { _isOnKill = kill; }
 
     /**
      * Sets the available energy for the spirit
@@ -231,20 +222,20 @@ class SpiritModel {
     // 0: nothing; 1: remove 1 trap; 2: remove 2 traps
     int update(bool trapTriggered, Vec2 pos,
                std::shared_ptr<cugl::scene2::PolygonNode>& node) {
-        
+
         if (_hunterAdded) {
-                    updateHeartsFrame();
-                }
-        
+            updateHeartsFrame();
+        }
+
         bool result = 0;
         std::vector<std::shared_ptr<TrapModel>> pendingTrapModels;
         std::vector<std::shared_ptr<TrapView>> pendingTrapViews;
 
         int target = -1;
-        if(trapTriggered){
+        if (trapTriggered) {
             target = cloestTrapToHunter(pos);
         }
-        
+
         if (trapTriggered && target != -1) {
             result = 1;
             // remove the trap closest to the hunter position
@@ -264,8 +255,8 @@ class SpiritModel {
         _trapViews = pendingTrapViews;
         if (_hunterView && _ticks == 0) {
             //            CULog("%d, %d", right, forward);
-            _hunterView->advanceFrame(forward, right,false);
-            //to be edited for hurting animation
+            _hunterView->advanceFrame(forward, right, false);
+            // to be edited for hurting animation
             forward = 0;
             right = 0;
         }
@@ -286,7 +277,7 @@ class SpiritModel {
         //        _hunterView->addChildTo(_scene);
         _hunterView->addChildToNode(hunterNodes);
         updateHeartsPos(position, _hunterView->getSize());
-        for(int i=0; i<_liveHearts.size(); i++){
+        for (int i = 0; i < _liveHearts.size(); i++) {
             hunterNodes.emplace_back(_liveHearts.at(i));
         }
         _hunterAdded = true;
@@ -319,78 +310,81 @@ class SpiritModel {
         }
         return result;
     }
-    
-    void initHearts(){
-        for (int i=0; i<_health; i++){
-            _liveHearts.emplace_back(scene2::SpriteNode::allocWithSheet(_assets->get<Texture>("heart_live"), 2, 8, 11));
-            _liveHearts.at(_liveHearts.size()-1)->setFrame(0);
-            _liveHearts.at(_liveHearts.size()-1)->setScale(0.2);
+
+    void initHearts() {
+        for (int i = 0; i < _health; i++) {
+            _liveHearts.emplace_back(scene2::SpriteNode::allocWithSheet(
+                _assets->get<Texture>("heart_live"), 2, 8, 11));
+            _liveHearts.at(_liveHearts.size() - 1)->setFrame(0);
+            _liveHearts.at(_liveHearts.size() - 1)->setScale(0.2);
         }
-        _offset = _liveHearts.at(0)->getWidth()/2;
+        _offset = _liveHearts.at(0)->getWidth() / 2;
     }
 
-    void updateHeartsPos(Vec2 pos, Size size){
-        Vec2 curPos = pos + Vec2(-_offset+size.width/2, size.height*1.2);
-        for (int i=0; i<_liveHearts.size(); i++){
+    void updateHeartsPos(Vec2 pos, Size size) {
+        Vec2 curPos = pos + Vec2(-_offset + size.width / 2, size.height * 1.2);
+        for (int i = 0; i < _liveHearts.size(); i++) {
             _liveHearts.at(i)->setPosition(curPos);
             curPos.x += _offset;
         }
-        for (int i=0; i<_deadHearts.size(); i++){
+        for (int i = 0; i < _deadHearts.size(); i++) {
             _deadHearts.at(i)->setPosition(curPos);
             curPos.x += _offset;
         }
     }
 
-    void updateHeartsFrame(){
-        for (int i=0; i<_liveHearts.size(); i++){
+    void updateHeartsFrame() {
+        for (int i = 0; i < _liveHearts.size(); i++) {
             int frame = _liveHearts.at(i)->getFrame();
-            if (frame < 10){
-                _liveHearts.at(i)->setFrame(frame+1);
-            }else {
+            if (frame < 10) {
+                _liveHearts.at(i)->setFrame(frame + 1);
+            } else {
                 _liveHearts.at(i)->setFrame(0);
             }
-
         }
     }
 
-    void updateHeart(std::vector<std::shared_ptr<scene2::PolygonNode>>& hunterNodes){
+    void updateHeart(
+        std::vector<std::shared_ptr<scene2::PolygonNode>>& hunterNodes) {
         _killing = true;
         hunterNodes.clear();
         _liveHearts.pop_back();
         _killAnimation->setPosition(getHunterPos());
-        
+
         hunterNodes.emplace_back(_killAnimation);
-        for (int i=0; i<_liveHearts.size(); i++){
+        for (int i = 0; i < _liveHearts.size(); i++) {
             hunterNodes.emplace_back(_liveHearts.at(i));
         }
-        
-        _deadHearts.emplace_back(scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("heart_dead")));
-        _deadHearts.at(_deadHearts.size()-1)->setScale(0.2);
 
-        for (int i=0; i<_deadHearts.size(); i++){
+        _deadHearts.emplace_back(scene2::PolygonNode::allocWithTexture(
+            _assets->get<Texture>("heart_dead")));
+        _deadHearts.at(_deadHearts.size() - 1)->setScale(0.2);
+
+        for (int i = 0; i < _deadHearts.size(); i++) {
             hunterNodes.emplace_back(_deadHearts.at(i));
         }
-        
+
         updateHeartsPos(getHunterPos(), _hunterView->getSize());
     }
-    
-    void updateOnKill(std::vector<std::shared_ptr<scene2::PolygonNode>>& hunterNodes) {
+
+    void updateOnKill(
+        std::vector<std::shared_ptr<scene2::PolygonNode>>& hunterNodes) {
         int frame = _killAnimation->getFrame();
-        if (frame != 13){
-            if (_killTicks%4 == 0){
-                _killAnimation->setFrame(frame+1);
+        if (frame != 13) {
+            if (_killTicks % 4 == 0) {
+                _killAnimation->setFrame(frame + 1);
             }
-            _killTicks ++;
-        }else {
+            _killTicks++;
+        } else {
             _killTicks = 0;
             _killAnimation->setFrame(0);
             _killing = false;
             hunterNodes.clear();
             _hunterView->addChildToNode(hunterNodes);
-            for (int i=0; i<_liveHearts.size(); i++){
+            for (int i = 0; i < _liveHearts.size(); i++) {
                 hunterNodes.emplace_back(_liveHearts.at(i));
             }
-            for (int i=0; i<_deadHearts.size(); i++){
+            for (int i = 0; i < _deadHearts.size(); i++) {
                 hunterNodes.emplace_back(_deadHearts.at(i));
             }
             updateHeartsPos(getHunterPos(), _hunterView->getSize());

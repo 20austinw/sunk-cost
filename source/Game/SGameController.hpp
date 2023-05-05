@@ -104,7 +104,7 @@ class SGameController {
 
     /** Whether we quit the game */
     bool _quit;
-    
+
     bool _selection;
 
     std::shared_ptr<cugl::net::NetcodeSerializer> _serializer;
@@ -155,7 +155,7 @@ class SGameController {
     float _buttonHeight;
 
     bool _selectionPhase;
-    
+
     /** The theme sound */
     std::shared_ptr<cugl::Sound> _theme;
     /** The sound of tension when time left is less than 1 min */

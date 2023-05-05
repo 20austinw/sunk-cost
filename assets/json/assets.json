@@ -118,11 +118,17 @@
         "back_button": {
             "file": "textures/back.png"
         },
-        "hunters_win": {
-            "file": "textures/hunter_win_animation.png"
+        "hunter_win": {
+            "file": "textures/hunter_win.png"
         },
-        "hunters_lose": {
-            "file": "textures/live_painting.png"
+        "hunter_lose": {
+            "file": "textures/hunter_win.png"
+        },
+        "spirit_win": {
+            "file": "textures/spirit_win.png"
+        },
+        "spirit_lose": {
+            "file": "textures/spirit_lose.png"
         },
         "spirit_win_animation": {
             "file": "textures/spirit_end_animation.png"
@@ -239,9 +245,9 @@
             "file": "textures/eye_bubble.png"
         },
         "kill_button":
-               {
-          "file":  "textures/kill_button.png"
-        }
+            {
+                "file": "textures/kill_button.png"
+            }
     },
     "fonts": {
         "pixel32": {

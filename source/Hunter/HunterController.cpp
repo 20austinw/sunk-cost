@@ -67,8 +67,9 @@ void HunterController::render(const std::shared_ptr<cugl::SpriteBatch>& batch) {
     //        cugl::Application::get()->getAssets()->getRenderer()->drawEnd();
 }
 
-void HunterController::setViewFrame(float forward, float right,bool beingKilled) {
-    _view->advanceFrame(forward, right,beingKilled);
+void HunterController::setViewFrame(float forward, float right,
+                                    bool beingKilled) {
+    _view->advanceFrame(forward, right, beingKilled);
 }
 
 std::vector<std::shared_ptr<TrapModel>> HunterController::getTraps() {

@@ -43,14 +43,14 @@ class HunterView {
         _frameNum = 8;
         _hurtFrame = 0;
 
-            _spriteSheets.push_back(assets->get<Texture>("hunterrunning"));
-            _spriteSheets.push_back(assets->get<Texture>("hunterleft"));
-//        } else if (color == 1) {
-//            _spriteSheets.push_back(assets->get<Texture>("hunterorange"));
-//        } else {
-//            _spriteSheets.push_back(assets->get<Texture>("huntergreen"));
-//        }
-//
+        _spriteSheets.push_back(assets->get<Texture>("hunterrunning"));
+        _spriteSheets.push_back(assets->get<Texture>("hunterleft"));
+        //        } else if (color == 1) {
+        //            _spriteSheets.push_back(assets->get<Texture>("hunterorange"));
+        //        } else {
+        //            _spriteSheets.push_back(assets->get<Texture>("huntergreen"));
+        //        }
+        //
 
         float width = size.width * 1.5f;
 
@@ -66,17 +66,13 @@ class HunterView {
         }
         _spriteNodes[0]->setVisible(true);
         _size = _spriteNodes[0]->getSize();
-        _spriteNodes.push_back( scene2::SpriteNode::allocWithSheet(assets->get<Texture>("hunterhurt"), 5, 3, 14));
+        _spriteNodes.push_back(scene2::SpriteNode::allocWithSheet(
+            assets->get<Texture>("hunterhurt"), 5, 3, 14));
         _spriteNodes[2]->setScale(0.5);
         _spriteNodes[2]->setFrame(0);
         _spriteNodes[2]->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
         _spriteNodes[2]->setPosition(Vec2(0, width / 2.5f));
         _spriteNodes[2]->setVisible(false);
-      
-  
-        
-        
-        
     };
 
     /** Deletes this HunterView */
@@ -84,7 +80,6 @@ class HunterView {
         for (int i = 0; i < _spriteNodes.size(); i++) {
             _spriteNodes[i]->removeFromParent();
         }
-
     }
 
 #pragma mark Scene Methods
@@ -98,7 +93,6 @@ class HunterView {
         for (int i = 0; i < _spriteNodes.size(); i++) {
             scene->addChild(_spriteNodes[i]);
         }
-
     }
 
     void addChildToNode(
@@ -106,7 +100,6 @@ class HunterView {
         for (int i = 0; i < _spriteNodes.size(); i++) {
             hunterNodes.emplace_back(_spriteNodes[i]);
         }
-    
     }
 
     /**
@@ -127,8 +120,8 @@ class HunterView {
         // TODO: Implement me
         return _spriteNodes;
     }
-    
-    Size getSize(){return _size; }
+
+    Size getSize() { return _size; }
 
 #pragma mark Setters
     /**
@@ -164,8 +157,8 @@ class HunterView {
      * This method includes some dampening of the turn, and should be called
      * before moving the ship.
      */
-    void advanceFrame(float forward, float right,bool beingKilled) {
-        if (beingKilled){
+    void advanceFrame(float forward, float right, bool beingKilled) {
+        if (beingKilled) {
             _spriteNodes[0]->setVisible(false);
             _spriteNodes[1]->setVisible(false);
             _spriteNodes[2]->setVisible(true);
@@ -174,24 +167,25 @@ class HunterView {
             }
             _spriteNodes[2]->setFrame(_frameNum);
             _frameNum++;
-            
-        }else{
+
+        } else {
             _spriteNodes[2]->setVisible(false);
             if (_frameNum >= 10) {
                 _frameNum = 0;
             }
             if (forward == 0 && right == 0) {
-                if (!_spriteNodes[0]->isVisible() && ! _spriteNodes[1]->isVisible()){
+                if (!_spriteNodes[0]->isVisible() &&
+                    !_spriteNodes[1]->isVisible()) {
                     _spriteNodes[0]->setVisible(true);
                 }
                 _spriteNodes[0]->setFrame(8);
                 _spriteNodes[1]->setFrame(8);
             }
-            
+
             else if (right < 0) {
                 _spriteNodes[0]->setVisible(false);
                 _spriteNodes[1]->setVisible(true);
-                
+
                 _spriteNodes[1]->setFrame(_frameNum);
                 _frameNum++;
             } else {
@@ -201,7 +195,6 @@ class HunterView {
                 _frameNum++;
             }
         }
-        
     }
 };
 

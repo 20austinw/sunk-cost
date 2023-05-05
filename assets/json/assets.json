@@ -194,10 +194,10 @@
             "file": "textures/menu_background.png"
         },
         "host_button": {
-            "file": "textures/host_button.png"
+            "file": "textures/spirit_select.png"
         },
         "client_button": {
-            "file": "textures/client_button.png"
+            "file": "textures/hunter_select.png"
         },
         "host_title": {
             "file": "textures/host_title.png"
@@ -247,7 +247,10 @@
         "kill_button":
             {
                 "file": "textures/kill_button.png"
-            }
+            },
+        "network_background": {
+                "file": "textures/network_background.png"
+        }
     },
     "fonts": {
         "pixel32": {
@@ -322,7 +325,7 @@
                             0.5,
                             0.5
                         ],
-                        "scale": 0.65
+                        "scale": 0.95
                     },
                     "layout": {
                         "x_anchor": "center",
@@ -340,7 +343,7 @@
                             0.5,
                             0.5
                         ],
-                        "scale": 0.5
+                        "scale": 0.7
                     },
                     "children": {
                         "up": {
@@ -374,7 +377,7 @@
                             0.5,
                             0.5
                         ],
-                        "scale": 0.5
+                        "scale": 0.7
                     },
                     "children": {
                         "up": {
@@ -466,12 +469,12 @@
                 "background": {
                     "type": "Image",
                     "data": {
-                        "texture": "menu_background",
+                        "texture": "network_background",
                         "anchor": [
                             0.5,
                             0.5
                         ],
-                        "scale": 0.65
+                        "scale": 0.95
                     },
                     "layout": {
                         "x_anchor": "center",
@@ -600,12 +603,12 @@
                         "type": "Anchored"
                     },
                     "data": {
-                        "texture": "menu_background",
+                        "texture": "network_background",
                         "anchor": [
                             0.5,
                             0.5
                         ],
-                        "scale": 0.65
+                        "scale": 0.95
                     },
                     "layout": {
                         "x_anchor": "center",
@@ -630,7 +633,8 @@
                             20
                         ],
                         "halign": "center",
-                        "valign": "middle"
+                        "valign": "middle",
+                        "foreground": [255, 255, 255, 255]
                     },
                     "layout": {
                         "x_anchor": "center",

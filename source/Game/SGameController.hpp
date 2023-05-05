@@ -315,6 +315,8 @@ class SGameController {
     void transmitKill();
     
     void transmitSpiritWin();
+    
+    void transmitHunterWin();
 
     void initDoors();
 

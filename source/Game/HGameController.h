@@ -456,6 +456,8 @@ class HGameController {
     void transmitTrapTriggered(Vec2 position);
     
     void transmitHunterWin();
+    
+    void transmitSpiritWin();
 
     void initHunter(int hunterId);
 

@@ -419,6 +419,7 @@ void HGameController::update(float dt) {
                 std::make_shared<EndScene>(_scene, _assets, false, true);
             _endScene->addChildTo(_scene);
             _didLose = true;
+            transmitSpiritWin();
             _gameStatus = 1;
         }
 
@@ -1328,9 +1329,11 @@ void HGameController::processData(const std::string source,
             _killed = true;
         } else if (mes[0] == 10) {
             _didLose = true;
+            _didFinalwin = false;
             _didWin = false;
         } else if (mes[0] == 8) {
             _didWin = true;
+            _didFinalwin = true;
             _didLose = false;
        }
 
@@ -1402,6 +1405,14 @@ void HGameController::transmitTrapTriggered(Vec2 position) {
 void HGameController::transmitHunterWin() {
     std::vector<float> message = std::vector<float>();
     message.push_back(8);
+    _serializer->writeFloatVector(message);
+    _network->sendToHost(_serializer->serialize());
+    _serializer->reset();
+}
+
+void HGameController::transmitSpiritWin() {
+    std::vector<float> message = std::vector<float>();
+    message.push_back(10);
     _serializer->writeFloatVector(message);
     _network->sendToHost(_serializer->serialize());
     _serializer->reset();

@@ -707,8 +707,10 @@ void SGameController::processData(const std::string source,
         }
 
         // Win alert for spirit
-        // _gameStatus = 1;
-
+        if (mes[0] == 10) {
+             _gameStatus = 1;
+        }
+       
         // Lose alert for spirit
         if (mes[0] == 8) {
              _gameStatus = -1;

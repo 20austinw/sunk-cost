@@ -1325,7 +1325,10 @@ void HGameController::processData(const std::string source,
         } else if (mes[0] == 10) {
             _didLose = true;
             _didWin = false;
-        }
+        } else if (mes[0] == 8) {
+            _didWin = true;
+            _didLose = false;
+       }
 
         _deserializer->reset();
     }

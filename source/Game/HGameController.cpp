@@ -431,7 +431,7 @@ void HGameController::update(float dt) {
         if (!_didFinalwin && _didWin && !_didLose &&
             abs(_hunter->getPosition().x - _exitpos.x) < 200 &&
             abs(_hunter->getPosition().y - _exitpos.y) < 200) {
-            _scene->removeChild(_winLabel);
+//            _scene->removeChild(_winLabel);
             _scene->addChild(_finalWinLabel);
             _endScene =
                 std::make_shared<EndScene>(_scene, _assets, false, false);

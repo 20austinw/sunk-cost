@@ -210,23 +210,31 @@ void SCApp::updateResetScene(float timestep) {
     switch (_reset.getChoice()) {
     case ResetScene::Choice::LEAVE:
         CULog("leaveeee");
-        _menu.dispose();
         _joingame.setActive(false);
-        _hostgame.setActive(false);
+//        _hostgame.setActive(false);
         _joingame.dispose();
-        _hostgame.dispose();
+//        _hostgame.dispose();
+//        _menu.dispose();
         _reset.setActive(false);
-        _reset.dispose();
-        _loading.setActive(true);
-        _loaded = true;
-        _scene = State::LOAD;
+        _played = false;
+//        _reset.dispose();
+//        _spawn.dispose();
+//        _hunterGameplay.reset();
+//        _spiritGameplay.reset();
+////        _loading.setActive(true);
+//        _loaded = true;
+//        _scene = State::LOAD;
+//        break;
+        _joingame.setActive(false);
+        _menu.setActive(true);
+        _scene = State::MENU;
         break;
     case ResetScene::Choice::REPLAY:
         CULog("replayyy");
-        _reset.setActive(false);
-        _joingame.dispose();
-        _joingame.setActive(true);
-        _scene = State::CLIENTGAME;
+//        _reset.setActive(false);
+//        _joingame.dispose();
+//        _joingame.setActive(true);
+//        _scene = State::CLIENTGAME;
         break;
     case ResetScene::Choice::NONE:
         // DO NOTHING

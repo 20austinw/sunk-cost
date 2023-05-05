@@ -58,7 +58,7 @@ HGameController::HGameController(
 #define PLAYER_SIZE Vec2(40, 40)
 
     Vec2 gravity(0, 0);
-
+    _gameStatus = 0;
     _count = 0;
 
     _triggered = false;
@@ -358,7 +358,7 @@ void HGameController::update(float dt) {
         //        }
         sortNodes();
 
-        AudioEngine::get()->play("theme", _theme, true, 0.5,
+        AudioEngine::get()->play("theme", _theme, false, 0.5,
                                  false);
 
         _loseLabel->setText("You Lose!");
@@ -402,7 +402,7 @@ void HGameController::update(float dt) {
         //        }
  
         if (int(_timer / 60 / 60) == 0) {
-            AudioEngine::get()->play("tension", _tension, true,
+            AudioEngine::get()->play("tension", _tension, false,
                                      0.5, false);
         }
     
@@ -833,6 +833,8 @@ void HGameController::update(float dt) {
         // Hunter lose or win
         _endScene->update();
         _countEndAnim++;
+        AudioEngine::get()->clear("tension", 1);
+        AudioEngine::get()->clear("theme", 1);
         if (_countEndAnim > 100) {
             _status = RESET;
         }
@@ -1580,3 +1582,4 @@ void HGameController::sortNodes() {
         }
     }
 }
+

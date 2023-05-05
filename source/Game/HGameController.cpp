@@ -669,12 +669,11 @@ void HGameController::update(float dt) {
             _hunter->move(forward, rightward);
         } else {
             _ismovedonece = false;
-            if (_hunter->getTrapSize() > 0) {
+            
                 for (int i = 0; i < 1; i++) {
                     if (_hunter->getTraps()[i]->getTrigger()) {
                         _ismovedonece = true;
                     }
-                }
                 if (!_ismovedonece && _move) {
                     _hunter->move(forward, rightward);
                 }

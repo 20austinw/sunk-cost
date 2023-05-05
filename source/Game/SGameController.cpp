@@ -466,6 +466,8 @@ void SGameController::update(float dt) {
         _scene->getCamera()->update();
     } else {
         _endScene->update();
+        AudioEngine::get()->clear("tension", 1);
+        AudioEngine::get()->clear("theme", 1);
         if (_timeLeft <= -5 * 60) {
             CULog("Switch to reset screen!");
             _status = ABORT;

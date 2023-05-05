@@ -739,6 +739,14 @@ void SGameController::transmitLockedDoor(int i) {
     _serializer->reset();
 }
 
+void SGameController::transmitKill() {
+    std::vector<float> idx = std::vector<float>();
+    idx.push_back(6);
+    _serializer->writeFloatVector(idx);
+    _network->broadcast(_serializer->serialize());
+    _serializer->reset();
+}
+
 void SGameController::addFloorTile(int type, int c, int r) {
     if (type == 0) {
         _tilemap->addTile(c, r, Color4::BLACK, false,

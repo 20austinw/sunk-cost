@@ -221,6 +221,14 @@ class SpiritController {
     bool touchInTrapBound(Vec2 touchPos);
 
     void updateMovingTrap(Vec2 pos);
+    
+    void updateKillFrame();
+    
+    void updateKillBtnsPos();
+    
+    bool touchInKillBound(Vec2 touchPos);
+    
+    bool hunterInBound(Vec2 pos);
 };
 
 #endif /* _SPIRIT_CONTROLLER_H */

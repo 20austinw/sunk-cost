@@ -21,6 +21,7 @@ class HunterView {
     std::shared_ptr<cugl::scene2::SpriteNode> _hurt;
     int _frameNum;
     int _hurtFrame;
+    Size _size;
 
 #pragma mark Main Functions
   public:
@@ -64,6 +65,7 @@ class HunterView {
             _spriteNodes[i]->setVisible(false);
         }
         _spriteNodes[0]->setVisible(true);
+        _size = _spriteNodes[0]->getSize();
         _spriteNodes.push_back( scene2::SpriteNode::allocWithSheet(assets->get<Texture>("hunterhurt"), 5, 3, 14));
         _spriteNodes[2]->setScale(0.5);
         _spriteNodes[2]->setFrame(0);
@@ -125,6 +127,8 @@ class HunterView {
         // TODO: Implement me
         return _spriteNodes;
     }
+    
+    Size getSize(){return _size; }
 
 #pragma mark Setters
     /**

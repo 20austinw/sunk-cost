@@ -237,6 +237,10 @@
         },
         "view_button": {
             "file": "textures/eye_bubble.png"
+        },
+        "kill_button":
+               {
+          "file":  "textures/kill_button.png"
         }
     },
     "fonts": {

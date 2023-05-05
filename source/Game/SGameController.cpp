@@ -52,15 +52,12 @@ SGameController::SGameController(
     _background->setColor(Color4::BLACK);
     _background->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _firstLayer->addChild(_background);
-    //    _scene->addChild(_background); //TODO: first
 
     _tilemap = std::make_shared<TilemapController>();
     _tilemap->addChildToNode(_firstLayer);
-    //    _tilemap->addChildTo(_scene); //TODO: first
 
     _obstacleNode = scene2::PolygonNode::alloc();
     _secondLayer->addChild(_obstacleNode);
-    //    _scene->addChild(_obstacleNode); //TODO: second
 
     // Initialize PortraitSetController
     _portraits = std::make_shared<PortraitSetController>(_assets, _scene, 0,
@@ -90,7 +87,6 @@ SGameController::SGameController(
         Vec2(0, 0), minutes + ":" + seconds, _assets->get<Font>("pixel32"));
     _timerScale = _textHeight / _timerLabel->getSize().height;
     _fifthLayer->addChild(_timerLabel);
-    //    _scene->addChild(_timerLabel); //TODO: fourth
     _endScene = std::make_shared<EndScene>(_scene, assets, true);
 
     _trapTriggered = false;
@@ -156,7 +152,7 @@ void SGameController::update(float dt) {
         if (!_viewButton->update()) {
             _spirit.getView()->setVisible(true);
             Vec3 offset = Vec3(_assets->get<Texture>("map")->getSize() / 2);
-            CULog("%f, %f", offset.x, offset.y);
+//            CULog("%f, %f", offset.x, offset.y);
             if (_viewButton->getCameraIndex() != -1) {
                 _portraits->setIndex(_viewButton->getCameraIndex());
                 _scene->getCamera()->setPosition(
@@ -178,6 +174,7 @@ void SGameController::update(float dt) {
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
                 ->setZoom(0.3);
         }
+        
         _scene->getCamera()->update();
         // Draw background
         _background->setScale(1 / getZoom());
@@ -199,7 +196,6 @@ void SGameController::update(float dt) {
         }
         if (_alertTimer == 0 && _treasureStolen) {
             _fifthLayer->addChild(_alertLabel);
-            //            _scene->addChild(_alertLabel); //TODO: fourth
             _alertTimer++;
         } else if (_alertTimer > 0 && _alertTimer != 300) {
             _alertTimer++;
@@ -233,7 +229,7 @@ void SGameController::update(float dt) {
                 canSwitch = false;
                 if (!_spirit.getModel()->isOnLock) {
                     _spirit.getView()->removeLastLockExtraTo(
-                        _fourthLayer); // TODO: node
+                        _fourthLayer);
                     _spirit.getModel()->setLockState(true);
                 }
                 bool isLocked = false;
@@ -248,7 +244,7 @@ void SGameController::update(float dt) {
                     _spirit.getModel()->setLockState(false);
                     if (isLocked) {
                         _spirit.removeLastLock(
-                            _fourthLayer); // TODO: remove from node
+                            _fourthLayer);
 
                     } else {
                         _spirit.getView()->addLastLockExtraTo(_fourthLayer);
@@ -283,26 +279,73 @@ void SGameController::update(float dt) {
                 // A trap has been placed
                 if (_spirit.placeTrap(_tilemap, _spirit.getModel()->lastTrapPos,
                                       _secondLayer)) {
-                    _spirit.removeLastTrapBtn(_fourthLayer); // TODO: node
+                    _spirit.removeLastTrapBtn(_fourthLayer);
                 } else {
                     _spirit.getView()->addLastTrapExtraTo(
-                        _fourthLayer); // TODO: node
+                        _fourthLayer);
                 }
             }
         } else if (blocked && _spirit.getModel()->isOnTrap && !_spawn) {
             _spirit.getModel()->setTrapState(false);
         }
+        
+        //logic for killing hunter
+        if(_spirit.getModel()->isKilling()){
+            for(int i=0; i<_hunterNodes.size(); i++){
+                _obstacleNode->removeChild(_hunterNodes.at(i));
+            }
+            _spirit.getModel()->updateOnKill(_hunterNodes);
+            for(int i=0; i<_hunterNodes.size(); i++){
+                _obstacleNode->addChild(_hunterNodes.at(i));
+            }
+            if (!_spirit.getModel()->isKilling() && _spirit.getModel()->health == 0){
+                //TODO: hunter has been killed, end
+            }
+        }
+        
+        if (!_spirit.getModel()->isKilling() && (inputController->isTouchDown() || _spirit.getModel()->isOnKill) && _spirit.getModel()->isKillable() && !_spirit.getModel()->isOnLock && !_spirit.getModel()->isOnTrap && !blocked){
+            canSwitch = false;
+            if(_spirit.getModel()->isOnKill || _spirit.touchInKillBound(cameraPos)){
+                if (! _spirit.getModel()->isOnKill){
+                    _spirit.getModel()->setKillState(true);
+                }
+                _spirit.getView()->updateKillInProgress(cameraPos);
+            }
+            if( _spirit.getModel()->isOnKill && release){
+                _spirit.getModel()->setKillState(false);
+                
+                if(_spirit.getModel()->hunterAdded && _spirit.hunterInBound(cameraPos)) {
+                    //TODO: networking; transmit to hunter for losing 1 health
+                    _spirit.getModel()->setHealth(_spirit.getModel()->health-1);
+                    
+                    for(int i=0; i<_hunterNodes.size(); i++){
+                        _obstacleNode->removeChild(_hunterNodes.at(i));
+                    }
+                    
+                    _spirit.getModel()->updateHeart(_hunterNodes);
+                    
+                    for(int i=0; i<_hunterNodes.size(); i++){
+                        _obstacleNode->addChild(_hunterNodes.at(i));
+                    }
+                    
+                    _spirit.getModel()->setKillCooldown(300);
+                    _spirit.getView()->setKillFrame(0);
+                }
+            }
+        } else if (blocked&&_spirit.getModel()->isOnKill){
+            _spirit.getModel()->setKillState(false);
+        }
 
         // Black screen
         if (!_portraits->getCurState() && _portraits->getPrevState()) {
             // Redraw doors
-            _portraits->addBlock(_thirdLayer); // TODO: add node
+            _portraits->addBlock(_thirdLayer);
             _portraits->refreshBatteryNodes(
-                _fifthLayer); // drawing order refresh //TODO: delete
+                _fifthLayer); // drawing order refresh
             blocked = true;
         } else if (_portraits->getCurState() && !_portraits->getPrevState()) {
             // Redraw doors
-            _portraits->removeBlock(_thirdLayer); // TODO: remove from node
+            _portraits->removeBlock(_thirdLayer);
             blocked = false;
         }
 
@@ -311,7 +354,7 @@ void SGameController::update(float dt) {
         if (_doorUnlocked && _doorToUnlock != -1) {
             if (_doors.at(_doorToUnlock)->isLocked()) {
                 _doors.at(_doorToUnlock)->resetHunterUnlock();
-                _spirit.addNewLock(_fourthLayer); // TODO: node
+                _spirit.addNewLock(_fourthLayer);
                 _doorUnlocked = false;
                 _doorToUnlock = -1;
             }
@@ -325,10 +368,10 @@ void SGameController::update(float dt) {
             _trapPos = Vec2::ZERO;
         }
         if (result == 1) {
-            _spirit.addNewTrapBtn(_fourthLayer); // TODO: node
+            _spirit.addNewTrapBtn(_fourthLayer);
         } else if (result == 2) {
-            _spirit.addNewTrapBtn(_fourthLayer); // TODO: node
-            _spirit.addNewTrapBtn(_fourthLayer); // TODO: node
+            _spirit.addNewTrapBtn(_fourthLayer);
+            _spirit.addNewTrapBtn(_fourthLayer);
         }
 
         if (_network) {
@@ -348,9 +391,11 @@ void SGameController::update(float dt) {
             }
         }
 
-        _spirit.updateLocksPos();    // TODO: drawing order refresh
-        _spirit.updateTrapBtnsPos(); // TODO: drawing order refresh
-
+        _spirit.updateLocksPos();
+        _spirit.updateTrapBtnsPos();
+        _spirit.updateKillBtnsPos();
+        _spirit.updateKillFrame();
+        
         if (!didSwitch) {
             _spirit.decreaseCameraCool();
         }
@@ -361,7 +406,7 @@ void SGameController::update(float dt) {
         }
 
         _portraits->updateBatteryNode(_fifthLayer,
-                                      50); // TODO: drawing order refresh
+                                      50);
 
         // Draw timer and alert labels
         string minutes = std::to_string(_timeLeft / 60 / 60);
@@ -388,8 +433,6 @@ void SGameController::update(float dt) {
         _alertLabel->setPosition(
             _scene->getCamera()->screenToWorldCoords(Vec2(hPos, vPos)));
         _timerLabel->setForeground(cugl::Color4::WHITE);
-        //        _scene->removeChild(_timerLabel); //TODO: remove
-        //        _scene->addChild(_timerLabel); //TODO: node
         if (_timeLeft <= 0) {
             _gameStatus = 1;
             _endScene = std::make_shared<EndScene>(_scene, _assets, true);
@@ -540,27 +583,8 @@ void SGameController::checkLevelLoaded() {
                 _sortedObstacles[n][m]->addChildTo(_obstacleNode);
             }
         }
-
-        //        for(int i=0; i<_obstacles.size(); i++) {
-        //            _obstacles.at(i)->removeChildFrom(_obstacleNode);
-        //            _obstacles.at(i)->addChildTo(_obstacleNode);
-        //        }
-
-        //        walls = _level->getCandleTextures();
-        //        height = walls[0].size();
-        //        width = walls.size();
-        //        for (int i = 0; i < height*width; ++i) {
-        //            int c = i % height;
-        //            int r = i / height;
-        //            int type = walls[r][c];
-        //            addCandles(type, c, width-1-r);
-        //        }
-
-        //        addPolys();
-
-        //        _tilemap->addDoorTo(_scene);
+        
         for (int i = 0; i < _level->getPortaits().size(); i++) {
-            // TODO: add tile for doors
             _portraits->addPortrait(
                 _textureNodes, i, _level->getPortaits()[i].first,
                 _level->getPortaits()[i].second, Vec3(0, 0, -1), Vec2::ZERO,
@@ -578,9 +602,10 @@ void SGameController::checkLevelLoaded() {
         _portraits->initializeBatteryNodes(_fifthLayer);
         _spirit.getView()->addLocksTo(_fourthLayer);
         _spirit.getView()->addTrapButtonsTo(_fourthLayer);
+        _spirit.getView()->addKillButtonTo(_fourthLayer);
 
         initDoors();
-        // TODO: sort
+        
         std::sort(_textureNodes.begin(), _textureNodes.end(),
                   [](std::shared_ptr<scene2::PolygonNode>& a,
                      std::shared_ptr<scene2::PolygonNode>& b) {
@@ -590,31 +615,13 @@ void SGameController::checkLevelLoaded() {
         for (int i = 0; i < _textureNodes.size(); i++) {
             _obstacleNode->addChild(_textureNodes.at(i));
         }
-
-        //        std::vector<std::shared_ptr<scene2::PolygonNode>> cur;
-        //        cur.emplace_back(_textureNodes.at(0));
-        //        for (int i=1; i<_textureNodes.size(); i++){
-        //            if (_textureNodes.at(i)->getPositionX() !=
-        //            _textureNodes.at(i-1)->getPositionX()){
-        //                _sortedTextures.emplace_back(cur);
-        //                cur.clear();
-        //            }
-        //            cur.emplace_back(_textureNodes.at(i));
-        //        }
-        //        _textureNodes.clear();
-        //
-        //        for (int i=0; i<_sortedTextures.size();i++){
-        //            std::sort(_sortedTextures.at(i).begin(),_sortedTextures.at(i).end(),
-        //            [](std::shared_ptr<scene2::PolygonNode> &a,
-        //            std::shared_ptr<scene2::PolygonNode> &b){ return
-        //            a->getPositionY()>b->getPositionY(); });
-        //        }
-
+        
         _portraits->setIndex(4);
         std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
             ->setZoom(0.85);
         _spirit.updateLocksPos();
         _spirit.updateTrapBtnsPos();
+        _spirit.updateKillBtnsPos();
         _levelLoaded = true;
     }
 }
@@ -628,7 +635,6 @@ void SGameController::initDoors() {
     for (int i = 0; i < doors.size(); i++) {
         _doors.emplace_back(std::make_shared<DoorController>(
             _assets, doors[i].first, doors[i].second, 1));
-        //        _doors.at(i)->addChildTo(_scene); //TODO: obstcales
         _doors.at(i)->addChildToVector(_textureNodes);
     }
 }
@@ -679,7 +685,7 @@ void SGameController::processData(const std::string source,
         }
 
         if (mes[0] == 6) {
-            // TODO: handle index of door for unlocking
+            //handle index of door for unlocking
             _doorUnlocked = true;
             _doorToUnlock = static_cast<int>(mes[1]);
         }

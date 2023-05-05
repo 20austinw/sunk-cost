@@ -155,3 +155,31 @@ void SpiritController::addNewLock(
     _view->addNewLock(node);
     updateLocksPos();
 }
+
+void SpiritController::updateKillFrame() {
+    _model->setKillCooldown(_model->killCool-1);
+    if (_model->isKillable()){
+        _view->setKillFrame(12);
+        return;
+    }
+    float step = 300/11;
+    int frame = _model->killCool /step;
+    _view->setKillFrame(12 - frame);
+}
+
+void SpiritController::updateKillBtnsPos(){
+    if(!_model->isOnKill) {
+        _view->updateUnusedKillPos();
+    }
+}
+
+bool SpiritController::touchInKillBound(Vec2 touchPos) {
+    float dist = _view->getKillBtnPos().distance(touchPos);
+    return abs(dist) <= _view->getKillSize().width/2 && abs(dist) <= _view->getKillSize().height/2;
+}
+
+
+bool SpiritController::hunterInBound(Vec2 pos) {
+    float dis = abs(_model->getHunterPos().distance(pos));
+    return dis <= _view->getKillSize().width;
+}

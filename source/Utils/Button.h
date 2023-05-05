@@ -87,7 +87,7 @@ class Button {
                 Vec2 worldPos =
                     _scene->getCamera()->screenToWorldCoords(_position);
                 cameraIdx = _portraits->getNearest(worldPos);
-                CULog("%i", cameraIdx);
+//                CULog("%i", cameraIdx);
             }
         } else {
             reset();

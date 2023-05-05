@@ -210,15 +210,15 @@ void SCApp::updateResetScene(float timestep) {
     switch (_reset.getChoice()) {
     case ResetScene::Choice::LEAVE:
         CULog("leaveeee");
+        _reset.setActive(false);
         _joingame.setActive(false);
         _joingame.dispose();
         _hostgame.setActive(false);
         _hostgame.dispose();
-        _reset.setActive(false);
         _played = false;
         _spiritGameplay = SGameController(getDisplaySize(), _assets);
         _hunterGameplay = HGameController(getDisplaySize(), _assets);
-        _joingame.setActive(false);
+//        _joingame.setActive(false);
         _menu.setActive(true);
         _scene = State::MENU;
         break;

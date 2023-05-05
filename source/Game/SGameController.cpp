@@ -320,13 +320,12 @@ void SGameController::update(float dt) {
             if (_spirit.getModel()->isOnKill && release) {
                 _spirit.getModel()->setKillState(false);
 
-                if (_spirit.getModel()->hunterAdded &&
-                    _spirit.hunterInBound(cameraPos)) {
-                    // TODO: networking; transmit to hunter for losing 1 health
-                    _spirit.getModel()->setHealth(_spirit.getModel()->health -
-                                                  1);
+                if(_spirit.getModel()->hunterAdded && _spirit.hunterInBound(cameraPos)) {
+                    //TODO: networking; transmit to hunter for losing 1 health
+                    transmitKill();
+                    _spirit.getModel()->setHealth(_spirit.getModel()->health-1);
 
-                    for (int i = 0; i < _hunterNodes.size(); i++) {
+                    for(int i=0; i<_hunterNodes.size(); i++){
                         _obstacleNode->removeChild(_hunterNodes.at(i));
                     }
 
@@ -736,6 +735,14 @@ void SGameController::transmitLockedDoor(int i) {
     std::vector<float> idx = std::vector<float>();
     idx.push_back(5);
     idx.push_back(i);
+    _serializer->writeFloatVector(idx);
+    _network->broadcast(_serializer->serialize());
+    _serializer->reset();
+}
+
+void SGameController::transmitKill() {
+    std::vector<float> idx = std::vector<float>();
+    idx.push_back(9);
     _serializer->writeFloatVector(idx);
     _network->broadcast(_serializer->serialize());
     _serializer->reset();

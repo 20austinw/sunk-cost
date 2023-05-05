@@ -1311,13 +1311,16 @@ void HGameController::processData(const std::string source,
         if (mes[0] == 1) {
             _hunter->addTrap(Vec2(mes[1], mes[2]));
         } else if (mes[0] == 3) {
-            CULog("portrait received");
+//            CULog("portrait received");
             int idx = static_cast<int>(mes[1]);
             _indexfromspirit = idx;
         } else if (mes[0] == 5) {
             int idx = static_cast<int>(mes[1]);
-            CULog("door index: %d", idx);
+//            CULog("door index: %d", idx);
             addlocks(idx);
+        } else if (mes[0] == 9) {
+            CULog("got killed");
+            _killed = true;
         }
 
         _deserializer->reset();

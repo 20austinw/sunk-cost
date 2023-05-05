@@ -311,6 +311,8 @@ class SGameController {
     void transmitTrap(std::vector<float> pos);
 
     void transmitActiveCamIndex(int i);
+    
+    void transmitKill();
 
     void initDoors();
 

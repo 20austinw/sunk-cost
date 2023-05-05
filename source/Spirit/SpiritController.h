@@ -198,7 +198,7 @@ class SpiritController {
 
     void updateLocks(bool start, bool released, Vec2 touchPos);
 
-    void updateLocksPos();
+    void updateLocksPos(bool selection);
 
     void removeLastLock(std::shared_ptr<cugl::scene2::PolygonNode>& node);
 
@@ -212,7 +212,7 @@ class SpiritController {
 
     // Trap button functions
 
-    void updateTrapBtnsPos();
+    void updateTrapBtnsPos(bool selection);
 
     void removeLastTrapBtn(std::shared_ptr<cugl::scene2::PolygonNode>& node);
 
@@ -224,7 +224,7 @@ class SpiritController {
     
     void updateKillFrame();
     
-    void updateKillBtnsPos();
+    void updateKillBtnsPos(bool selection);
     
     bool touchInKillBound(Vec2 touchPos);
     

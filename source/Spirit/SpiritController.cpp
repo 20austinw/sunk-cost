@@ -86,15 +86,15 @@ int SpiritController::update(bool trap, Vec2 pos,
     return result;
 }
 
-void SpiritController::updateLocksPos() {
+void SpiritController::updateLocksPos(bool selection) {
     if (!_model->isOnLock) {
-        _view->updateUnusedLocksPos();
+        _view->updateUnusedLocksPos(selection);
     }
 }
 
-void SpiritController::updateTrapBtnsPos() {
+void SpiritController::updateTrapBtnsPos(bool selection) {
     if (!_model->isOnTrap) {
-        _view->updateUnusedTrapsPos();
+        _view->updateUnusedTrapsPos(selection);
     }
 }
 
@@ -146,14 +146,14 @@ void SpiritController::addNewTrapBtn(
     std::shared_ptr<cugl::scene2::PolygonNode>& node) {
     _model->setTraps(_model->traps + 1);
     _view->addNewTrap(node);
-    updateTrapBtnsPos();
+    updateTrapBtnsPos(false);
 }
 
 void SpiritController::addNewLock(
     std::shared_ptr<cugl::scene2::PolygonNode>& node) {
     _model->setDoors(_model->doors + 1);
     _view->addNewLock(node);
-    updateLocksPos();
+    updateLocksPos(false);
 }
 
 void SpiritController::updateKillFrame() {
@@ -167,9 +167,9 @@ void SpiritController::updateKillFrame() {
     _view->setKillFrame(12 - frame);
 }
 
-void SpiritController::updateKillBtnsPos(){
+void SpiritController::updateKillBtnsPos(bool selection){
     if(!_model->isOnKill) {
-        _view->updateUnusedKillPos();
+        _view->updateUnusedKillPos(selection);
     }
 }
 

@@ -104,6 +104,8 @@ class SGameController {
 
     /** Whether we quit the game */
     bool _quit;
+    
+    bool _selection;
 
     std::shared_ptr<cugl::net::NetcodeSerializer> _serializer;
 

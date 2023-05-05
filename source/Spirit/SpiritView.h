@@ -187,12 +187,13 @@ class SpiritView {
         }
     }
 
-    void updateUnusedLocksPos() {
-        float zoom =
-            std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-                ->getZoom();
+    void updateUnusedLocksPos(bool selection) {
         Vec2 pos = _scene->getCamera()->screenToWorldCoords(
-            _scene->getSize() - getLockSize() / 2 * zoom);
+            _scene->getSize() - getLockSize() / 2 * getZoom());
+        
+        if(selection) {
+            pos += Vec2(10000,10000);
+        }
 
         for (int i = 0; i < _locks.size(); i++) {
             _locks.at(i)->setPosition(pos);
@@ -204,11 +205,12 @@ class SpiritView {
         }
     }
 
-    void updateUnusedTrapsPos() {
-        float zoom =
-            std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-                ->getZoom();
+    void updateUnusedTrapsPos(bool selection) {
         Vec2 pos = _scene->getCamera()->screenToWorldCoords(_scene->getSize() - getLockSize()/2*getZoom()) + Vec2(0, +getLockSize().height);
+        
+        if(selection) {
+            pos += Vec2(10000,10000);
+        }
 
         for (int i = 0; i < _trapButtons.size(); i++) {
             _trapButtons.at(i)->setPosition(pos);
@@ -220,8 +222,12 @@ class SpiritView {
         }
     }
     
-    void updateUnusedKillPos(){
+    void updateUnusedKillPos(bool selection){
         Vec2 pos = _scene->getCamera()->screenToWorldCoords(_scene->getSize() - getLockSize()/2*getZoom()) + Vec2(0, (getLockSize().height +getTrapSize().height));
+        
+        if(selection) {
+            pos += Vec2(10000,10000);
+        }
 
             _killButton->setPosition(pos);
             _killButton->setScale(_killScaleFactor/getZoom());

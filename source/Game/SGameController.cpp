@@ -93,6 +93,7 @@ SGameController::SGameController(
     _doorUnlocked = false;
     _treasureStolen = false;
     _trapPos = Vec2::ZERO;
+        _selection = false;
 
     _alertLabel = cugl::scene2::Label::allocWithText(
         Vec2(0, displaySize.height / 2), "The treasure has been STOLEN",
@@ -150,8 +151,9 @@ void SGameController::update(float dt) {
         }
         // Not in selection phase
         if (!_viewButton->update()) {
+            _selection = false;
             _spirit.getView()->setVisible(true);
-            Vec3 offset = Vec3(_assets->get<Texture>("map")->getSize() / 2);
+//            Vec3 offset = Vec3(_assets->get<Texture>("map")->getSize() / 2);
 //            CULog("%f, %f", offset.x, offset.y);
             if (_viewButton->getCameraIndex() != -1) {
                 _portraits->setIndex(_viewButton->getCameraIndex());
@@ -164,11 +166,12 @@ void SGameController::update(float dt) {
         }
         // In selection phase
         else {
+            _selection = true;
             _spirit.getView()->setVisible(false);
-            float mapWidth =
-                _tilemap->getDimensions().width * _tilemap->getTileSize().width;
-            float mapHeight = _tilemap->getDimensions().height *
-                              _tilemap->getTileSize().height;
+//            float mapWidth =
+//                _tilemap->getDimensions().width * _tilemap->getTileSize().width;
+//            float mapHeight = _tilemap->getDimensions().height *
+//                              _tilemap->getTileSize().height;
             // Why is this not centering?
             _scene->getCamera()->setPosition(_portraits->getPosition(0));
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
@@ -391,9 +394,9 @@ void SGameController::update(float dt) {
             }
         }
 
-        _spirit.updateLocksPos();
-        _spirit.updateTrapBtnsPos();
-        _spirit.updateKillBtnsPos();
+        _spirit.updateLocksPos(_selection);
+        _spirit.updateTrapBtnsPos(_selection);
+        _spirit.updateKillBtnsPos(_selection);
         _spirit.updateKillFrame();
         
         if (!didSwitch) {
@@ -619,9 +622,9 @@ void SGameController::checkLevelLoaded() {
         _portraits->setIndex(4);
         std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
             ->setZoom(0.85);
-        _spirit.updateLocksPos();
-        _spirit.updateTrapBtnsPos();
-        _spirit.updateKillBtnsPos();
+        _spirit.updateLocksPos(false);
+        _spirit.updateTrapBtnsPos(false);
+        _spirit.updateKillBtnsPos(false);
         _levelLoaded = true;
     }
 }

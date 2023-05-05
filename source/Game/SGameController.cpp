@@ -151,16 +151,16 @@ void SGameController::update(float dt) {
             } else {
                 _spawn = false;
             }
-            return;
         }
         // Not in selection phase
         if (!_viewButton->update()) {
             _spirit.getView()->setVisible(true);
             Vec3 offset = Vec3(_assets->get<Texture>("map")->getSize() / 2);
+            CULog("%f, %f", offset.x, offset.y);
             if (_viewButton->getCameraIndex() != -1) {
                 _portraits->setIndex(_viewButton->getCameraIndex());
                 _scene->getCamera()->setPosition(
-                    _portraits->getPosition(_portraits->getIndex()) + offset);
+                    _portraits->getPosition(_portraits->getIndex()));
                 std::dynamic_pointer_cast<OrthographicCamera>(
                     _scene->getCamera())
                     ->setZoom(0.85);
@@ -174,8 +174,7 @@ void SGameController::update(float dt) {
             float mapHeight = _tilemap->getDimensions().height *
                               _tilemap->getTileSize().height;
             // Why is this not centering?
-            _scene->getCamera()->setPosition(
-                Vec3(Vec2(mapWidth, mapHeight) / 2));
+            _scene->getCamera()->setPosition(_portraits->getPosition(0));
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
                 ->setZoom(0.3);
         }

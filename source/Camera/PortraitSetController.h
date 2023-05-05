@@ -194,7 +194,7 @@ class PortraitSetController {
     const int getNearest(Vec2 position) {
         int idx = 0;
         int minDist = INT_MAX;
-        for (int i = 0; i < _portraits.size(); i++) {
+        for (int i = 1; i < _portraits.size(); i++) {
             float dist = _portraits[i]->getPosition().distance(position);
             if (minDist > dist) {
                 idx = i;

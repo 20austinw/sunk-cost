@@ -784,6 +784,14 @@ void SGameController::transmitSpiritWin() {
     _serializer->reset();
 }
 
+void SGameController::transmitHunterWin() {
+    std::vector<float> idx = std::vector<float>();
+    idx.push_back(8);
+    _serializer->writeFloatVector(idx);
+    _network->broadcast(_serializer->serialize());
+    _serializer->reset();
+}
+
 void SGameController::addFloorTile(int type, int c, int r) {
     if (type == 0) {
         _tilemap->addTile(c, r, Color4::BLACK, false,

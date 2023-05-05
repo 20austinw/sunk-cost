@@ -676,6 +676,9 @@ void HGameController::update(float dt) {
                     }
                 }
             }
+            else{
+                _hunter->move(forward, rightward);
+            }
         }
 
         if (_didLose || _didFinalwin) {

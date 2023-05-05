@@ -68,9 +68,9 @@ class EndScene {
         //        _spriteNode->setVisible(true);
         if (!spirit) {
             _node = win ? cugl::scene2::PolygonNode::allocWithTexture(
-                              assets->get<Texture>("hunter_win"))
+                              assets->get<Texture>("hunter_lose"))
                         : cugl::scene2::PolygonNode::allocWithTexture(
-                              assets->get<Texture>("hunter_lose"));
+                              assets->get<Texture>("hunter_win"));
         } else {
             _node = win ? cugl::scene2::PolygonNode::allocWithTexture(
                               assets->get<Texture>("spirit_win"))

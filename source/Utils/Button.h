@@ -87,7 +87,7 @@ class Button {
                 Vec2 worldPos =
                     _scene->getCamera()->screenToWorldCoords(_position);
                 cameraIdx = _portraits->getNearest(worldPos);
-                CULog("%i", cameraIdx);
+//                CULog("%i", cameraIdx);
             }
         } else {
             reset();
@@ -96,6 +96,10 @@ class Button {
     }
 
     int getCameraIndex() { return cameraIdx; }
+    
+    void setCameraIndex(int i) {
+        cameraIdx = i;
+    }
 
     bool isClicked(Vec2 position) {
         if (!_active) {

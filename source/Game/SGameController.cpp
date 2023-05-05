@@ -149,6 +149,8 @@ void SGameController::update(float dt) {
                 _spawn = false;
             }
         }
+        
+        bool preSelection = _selection;
         // Not in selection phase
         if (!_viewButton->update()) {
             _selection = false;
@@ -178,6 +180,21 @@ void SGameController::update(float dt) {
             _scene->getCamera()->setPosition(_portraits->getPosition(0));
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
                 ->setZoom(0.3);
+        }
+        
+        if(preSelection != _selection){
+            //start select- remove hunter
+            if (_selection){
+                for (int n = 0; n < _hunterNodes.size(); n++) {
+                    _obstacleNode->removeChild(_hunterNodes.at(n));
+                }
+            }
+            //end select - add hunter
+            else{
+                for (int n = 0; n < _hunterNodes.size(); n++) {
+                    _obstacleNode->addChild(_hunterNodes.at(n));
+                }
+            }
         }
 
         _scene->getCamera()->update();
@@ -625,6 +642,7 @@ void SGameController::checkLevelLoaded() {
         _portraits->setIndex(4);
         std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
             ->setZoom(0.85);
+        _viewButton->setCameraIndex(4);
         _spirit.updateLocksPos(false);
         _spirit.updateTrapBtnsPos(false);
         _spirit.updateKillBtnsPos(false);
@@ -894,9 +912,11 @@ void SGameController::modifyTexture(std::shared_ptr<Texture>& texture,
 }
 
 void SGameController::sortNodes() {
-    for (int n = 0; n < _hunterNodes.size(); n++) {
-        _obstacleNode->removeChild(_hunterNodes.at(n));
-        _obstacleNode->addChild(_hunterNodes.at(n));
+    if(!_selection){
+        for (int n = 0; n < _hunterNodes.size(); n++) {
+            _obstacleNode->removeChild(_hunterNodes.at(n));
+            _obstacleNode->addChild(_hunterNodes.at(n));
+        }
     }
 
     for (int i = 0; i < _sortedObstacles.size(); i++) {

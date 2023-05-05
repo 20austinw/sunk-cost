@@ -60,7 +60,7 @@ HGameController::HGameController(
     Vec2 gravity(0, 0);
     _gameStatus = 0;
     _count = 0;
-
+    _status = START;
     _triggered = false;
     _inprogress = false;
 
@@ -290,7 +290,14 @@ HGameController::HGameController(
         _spriteNodes[i]->setVisible(false);
         //            _scene->addChild(_spriteNodes[i]);
     }
+        
+    _filterTexture = _assets->get<Texture>("filter");
+    _filter = scene2::PolygonNode::allocWithTexture(_filterTexture);
+    _filter->setPosition(_scene->getCamera()->getPosition());
 
+    _filter->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+    _filter->setScale(Vec2(_dimen.width / 1280, _dimen.height / 720));
+        
     _trappedbool = false;
 
     // Initialize the world
@@ -344,6 +351,7 @@ float HGameController::getZoom() {
 void HGameController::update(float dt) {
 
     if (_gameStatus == 0) {
+        _status = START;
         if (!_levelLoaded) {
             checkLevelLoaded();
         }
@@ -404,6 +412,7 @@ void HGameController::update(float dt) {
         if ((int(_timer / 60 / 60) == 0 && (int(_timer / 60) % 60 == 0) &&
              !_didLose && !_didFinalwin) ||
             (_finalCount >= 216)) {
+
             //        _scene->addChild(_loseNode);
             //        _scene->addChild(_loseLabel);
             _endScene =
@@ -422,7 +431,7 @@ void HGameController::update(float dt) {
         if (!_didFinalwin && _didWin && !_didLose &&
             abs(_hunter->getPosition().x - _exitpos.x) < 200 &&
             abs(_hunter->getPosition().y - _exitpos.y) < 200) {
-            _scene->removeChild(_winLabel);
+//            _scene->removeChild(_winLabel);
             _scene->addChild(_finalWinLabel);
             _endScene =
                 std::make_shared<EndScene>(_scene, _assets, false, false);
@@ -470,6 +479,7 @@ void HGameController::update(float dt) {
         //                    _killed = true;
         //                }
         // for hunter side kill testing
+
 
         for (int i = 0; i < _doorslocked.size(); i++) {
             if (_hunter->detectedDoor(
@@ -660,12 +670,11 @@ void HGameController::update(float dt) {
             _hunter->move(forward, rightward);
         } else {
             _ismovedonece = false;
-            if (_hunter->getTrapSize() > 0) {
+            
                 for (int i = 0; i < 1; i++) {
                     if (_hunter->getTraps()[i]->getTrigger()) {
                         _ismovedonece = true;
                     }
-                }
                 if (!_ismovedonece && _move) {
                     _hunter->move(forward, rightward);
                 }
@@ -776,6 +785,7 @@ void HGameController::update(float dt) {
                 }
             }
         }
+        
 
         // TODO: update direction index for portraits on spirit control
         //    _portraits->updateDirectionIndex(<#Vec3 direction#>, <#int
@@ -825,7 +835,9 @@ void HGameController::update(float dt) {
         AudioEngine::get()->clear("tension", 1);
         AudioEngine::get()->clear("theme", 1);
         if (_countEndAnim > 100) {
+            CULog("stuck here!!!!");
             _status = RESET;
+            _gameStatus = 0;
         }
 
     } else {
@@ -1018,12 +1030,6 @@ void HGameController::checkLevelLoaded() {
         //
 
         //        _hunter->setPosition(Vec2(0,0));
-        _filterTexture = _assets->get<Texture>("filter");
-        _filter = scene2::PolygonNode::allocWithTexture(_filterTexture);
-        _filter->setPosition(_scene->getCamera()->getPosition());
-
-        _filter->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-        _filter->setScale(Vec2(_dimen.width / 1280, _dimen.height / 720));
         _scene->addChild(_filter);
         for (int i = 0; i < 3; i++) {
             _scene->addChild(_deadhearts[i]);

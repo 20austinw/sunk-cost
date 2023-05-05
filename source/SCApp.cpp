@@ -284,7 +284,7 @@ void SCApp::updateHostScene(float timestep) {
 }
 
 void SCApp::updateClientScene(float timestep) {
-    CULog("inside updateClient scene!!!!!");
+//    CULog("inside updateClient scene!!!!!");
     switch (_joingame.getStatus()) {
     case ClientScene::Status::ABORT:
         _joingame.setActive(false);

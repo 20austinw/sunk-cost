@@ -236,7 +236,7 @@
             "file": "textures/zero_button.png"
         },
         "left": {
-            "file": "textures/left_arrow.png"
+            "file": "textures/Side_Button.png"
         },
         "exit": {
             "file": "textures/exit.png"
@@ -1038,7 +1038,7 @@
                                             0.5,
                                             0.5
                                         ],
-                                        "scale": 0.7
+                                        "scale": 0.5
                                     },
                                     "children": {
                                         "up": {
@@ -1049,8 +1049,7 @@
                                         }
                                     },
                                     "layout": {
-                                        "priority": 1,
-                                        "x_anchor": "right",
+                                        "x_anchor": "left",
                                         "y_anchor": "middle",
                                         "absolute": true
                                     }

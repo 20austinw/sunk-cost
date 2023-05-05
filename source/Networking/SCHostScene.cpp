@@ -329,8 +329,8 @@ void HostScene::displayCode(std::string code) {
             _assets->get<Texture>(numToFile(*it));
         std::shared_ptr<scene2::PolygonNode> number =
             scene2::PolygonNode::allocWithTexture(numberTexture);
-        number->setPosition(Vec2(_codeLines->getAnchorInPixels().x + ((_codeLines->getSize().width / 4.8) * position), _codeLines->getPositionY() + number->getSize().height / 2));
         number->setScale(1.5);
+        number->setPosition(Vec2(_codeLines->getAnchorInPixels().x - number->getWidth() / 4  + ((_codeLines->getSize().width / 4.8) * position), _codeLines->getPositionY() + number->getSize().height / 2));
         addChildWithName(number, "code " + std::to_string(position));
         position++;
     }

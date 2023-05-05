@@ -30,8 +30,6 @@ class PortraitSetController {
     /** The max battery */
     float _maxBattery;
 
-    bool _prevState;
-
     int _index;
 
     float _greenBatteryScale;
@@ -66,8 +64,6 @@ class PortraitSetController {
         _screenSize = screenSize;
         _maxBattery = maxBattery;
         _index = 0;
-        _prevState = true;
-        //        initializePortraitSet();
     }
 
     void update() {
@@ -160,11 +156,8 @@ class PortraitSetController {
 
     Vec3 getPosition(int index) { return _portraits[index]->getPosition(); }
 
-    bool getPrevState() { return _prevState; }
-
 #pragma mark Main Functions
   public:
-    void setPrevState(bool state) { _prevState = state; }
 
     /**
      * Updates camera position

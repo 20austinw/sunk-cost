@@ -44,9 +44,6 @@ SGameController::SGameController(
     _fifthLayer = scene2::PolygonNode::alloc();
     _scene->addChild(_fifthLayer);
 
-    _spawn = true;
-    _ticks = 120;
-
     _background = scene2::PolygonNode::allocWithPoly(
         cugl::Rect(0, 0, _scene->getSize().width, _scene->getSize().height));
     _background->setColor(Color4::BLACK);
@@ -142,22 +139,12 @@ bool blocked = false;
 void SGameController::update(float dt) {
 
     if (_gameStatus == 0) {
-        if (_spawn) {
-            if (_ticks > 0) {
-                _ticks--;
-            } else {
-                _spawn = false;
-            }
-        }
         
         bool preSelection = _selection;
         // Not in selection phase
         if (!_viewButton->update()) {
             _selection = false;
             _spirit.getView()->setVisible(true);
-            //            Vec3 offset =
-            //            Vec3(_assets->get<Texture>("map")->getSize() / 2);
-            //            CULog("%f, %f", offset.x, offset.y);
             if (_viewButton->getCameraIndex() != -1) {
                 _portraits->setIndex(_viewButton->getCameraIndex());
                 _scene->getCamera()->setPosition(
@@ -171,12 +158,6 @@ void SGameController::update(float dt) {
         else {
             _selection = true;
             _spirit.getView()->setVisible(false);
-            //            float mapWidth =
-            //                _tilemap->getDimensions().width *
-            //                _tilemap->getTileSize().width;
-            //            float mapHeight = _tilemap->getDimensions().height *
-            //                              _tilemap->getTileSize().height;
-            // Why is this not centering?
             _scene->getCamera()->setPosition(_portraits->getPosition(0));
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
                 ->setZoom(0.3);
@@ -244,7 +225,7 @@ void SGameController::update(float dt) {
         // logic for door lock
         if ((inputController->isTouchDown() || _spirit.getModel()->isOnLock) &&
             _spirit.getModel()->doors >= 0 && !blocked &&
-            !_spirit.getModel()->isOnTrap && !_spawn && !_spirit.getModel()->isOnKill) {
+            !_spirit.getModel()->isOnTrap && !_spirit.getModel()->isOnKill) {
             if (_spirit.getModel()->isOnLock ||
                 _spirit.touchInLockBound(cameraPos)) {
                 canSwitch = false;
@@ -270,7 +251,7 @@ void SGameController::update(float dt) {
                     }
                 }
             }
-        } else if (blocked && _spirit.getModel()->isOnLock && !_spawn) {
+        } else if (blocked && _spirit.getModel()->isOnLock) {
             _spirit.getModel()->setLockState(false);
             for (int i = 0; i < _doors.size(); i++) {
                 _doors.at(i)->resetToUnlock();
@@ -280,7 +261,7 @@ void SGameController::update(float dt) {
         // logic for trap placement
         if ((inputController->isTouchDown() || _spirit.getModel()->isOnTrap) &&
             _spirit.getModel()->traps >= 0 && !_spirit.getModel()->isOnLock &&
-            !blocked && !_spawn && !_spirit.getModel()->isOnKill) {
+            !blocked && !_spirit.getModel()->isOnKill) {
             if (_spirit.getModel()->isOnTrap ||
                 _spirit.touchInTrapBound(cameraPos)) {
                 canSwitch = false;
@@ -303,7 +284,7 @@ void SGameController::update(float dt) {
                     _spirit.getView()->addLastTrapExtraTo(_fourthLayer);
                 }
             }
-        } else if (blocked && _spirit.getModel()->isOnTrap && !_spawn) {
+        } else if (blocked && _spirit.getModel()->isOnTrap ) {
             _spirit.getModel()->setTrapState(false);
         }
 
@@ -318,7 +299,7 @@ void SGameController::update(float dt) {
             }
             if (!_spirit.getModel()->isKilling() &&
                 _spirit.getModel()->health == 0) {
-                // TODO: hunter has been killed, end
+                // hunter has been killed, end
                 _gameStatus = 1;
                 _endScene = std::make_shared<EndScene>(_scene, _assets, true, true);
                 _endScene->addChildTo(_scene);
@@ -373,8 +354,6 @@ void SGameController::update(float dt) {
             _portraits->addBlock(_thirdLayer);
             blocked = true;
         }
-
-        _portraits->setPrevState(_portraits->getCurState());
 
         if (_doorUnlocked && _doorToUnlock != -1) {
             if (_doors.at(_doorToUnlock)->isLocked()) {

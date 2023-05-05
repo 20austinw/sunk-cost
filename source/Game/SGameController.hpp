@@ -144,10 +144,6 @@ class SGameController {
 
     float _hunterXPos;
 
-    int _prevInd;
-
-    bool _spawn = false;
-
     int _ticks;
 
     std::shared_ptr<Button> _viewButton;
@@ -174,8 +170,6 @@ class SGameController {
     std::vector<std::shared_ptr<scene2::SpriteNode>> _candleNodes;
     std::vector<std::shared_ptr<scene2::PolygonNode>> _hunterNodes;
     std::vector<std::shared_ptr<scene2::PolygonNode>> _textureNodes;
-    //    std::vector<std::vector<std::shared_ptr<scene2::PolygonNode>>>
-    //    _sortedTextures;
 
 #pragma mark Main Methods
   public:
@@ -338,14 +332,10 @@ class SGameController {
 
     void addCandles(int type, int c, int r);
 
-    //    void addPolys();
-
     void modifyTexture(std::shared_ptr<Texture>& texture, int index, int row,
                        int col);
 
     void sortNodes();
-
-    int getHunterInd();
 };
 
 #endif /* SGameController_hpp */

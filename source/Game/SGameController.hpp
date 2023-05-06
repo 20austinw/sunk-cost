@@ -113,7 +113,7 @@ class SGameController {
 
     bool _hunterAdded;
 
-    bool _gameStatus = 0;
+    int _gameStatus = 0;
 
     std::shared_ptr<EndScene> _endScene;
 

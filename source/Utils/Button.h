@@ -18,14 +18,16 @@ using namespace cugl;
 class Button {
 #pragma mark Internal References
   private:
-    std::shared_ptr<scene2::PolygonNode> _node;
+//    std::shared_ptr<scene2::PolygonNode> _node;
+    std::shared_ptr<scene2::SpriteNode> _node;
+    
     std::shared_ptr<Scene2> _scene;
     std::shared_ptr<cugl::AssetManager> _assets;
     std::shared_ptr<Texture> _texture;
     std::shared_ptr<InputController> _inputController;
     std::shared_ptr<PortraitSetController> _portraits;
 
-    float _buttonHeight;
+    float _buttonSize;
     float _scale;
 
     Vec2 _defaultPosition;
@@ -36,6 +38,11 @@ class Button {
 
     bool _selectionPhase;
     int cameraIdx = -1;
+    
+    int _cooldown;
+    
+    float COOLDOWN = 180;
+    
 
 #pragma mark Main Functions
   public:
@@ -44,13 +51,15 @@ class Button {
            const std::shared_ptr<PortraitSetController>& portraits)
         : _texture(texture), _scene(scene), _selectionPhase(selectionPhase),
           _portraits(portraits) {
-        _buttonHeight = 400;
-        _scale = _buttonHeight / texture->getSize().height;
-        _node = scene2::PolygonNode::allocWithTexture(texture);
-        _node->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+        _buttonSize = 400;
+        _scale = _buttonSize / scene2::SpriteNode::allocWithSheet(texture, 2, 8, 16)->getSize().width;
+        _node = scene2::SpriteNode::allocWithSheet(texture, 2, 8, 16);
+              _node->setFrame(0);
+              _node->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
         _node->setScale(_scale / getZoom());
         _inputController = InputController::getInstance();
         _isDragged = false;
+              _cooldown = 0;
     };
 
     ~Button() {}
@@ -65,6 +74,10 @@ class Button {
     void addChildTo(const std::shared_ptr<cugl::Scene2>& scene) {
         scene->addChild(_node);
     }
+    
+    void addChildToNode(std::shared_ptr<cugl::scene2::PolygonNode>& node) {
+        node->addChild(_node);
+    }
 
     void removeChildFrom(const std::shared_ptr<cugl::Scene2>& scene) {
         scene->removeChild(_node);
@@ -76,13 +89,35 @@ class Button {
         _defaultPosition = pos;
         _position = pos;
     }
+    
+    void setCooldown(int i) {
+        _cooldown = i;
+    }
+    
+    void updateFrame(){
+        if(!canSwitch()){
+            _cooldown --;
+        }
+        if (canSwitch()) {
+            _node->setFrame(15);
+            return;
+        }
+        float step = COOLDOWN / 14;
+        int frame = _cooldown / step;
+        _node->setFrame(15 - frame);
+    }
+    
+    bool canSwitch() {
+        return _cooldown<=0;
+    }
 
     bool update() {
+        updateFrame();
         _scene->getCamera()->update();
         _node->setScale(_scale / getZoom());
         _node->setPosition(_scene->getCamera()->screenToWorldCoords(
-            _position - Vec2(_buttonHeight, -_buttonHeight) / 2));
-        if (_inputController->isTouchDown()) {
+            _position - Vec2(_buttonSize, -_buttonSize) / 2));
+        if (_inputController->isTouchDown() && canSwitch()) {
             if (isClicked(_inputController->getTouchPos())) {
                 Vec2 worldPos =
                     _scene->getCamera()->screenToWorldCoords(_position);
@@ -93,6 +128,14 @@ class Button {
             reset();
         }
         return _selectionPhase;
+    }
+    
+    void setButtonFrame(int frame) {
+        _node->setFrame(frame);
+    }
+    
+    float getMaxCool() {
+        return COOLDOWN;
     }
 
     int getCameraIndex() { return cameraIdx; }
@@ -109,12 +152,12 @@ class Button {
             return _selectionPhase;
         }
         // Check if position on button
-        if (position.x < _position.x - _buttonHeight / 2 ||
-            position.x > _position.x + _buttonHeight / 2) {
+        if (position.x < _position.x - _buttonSize / 2 ||
+            position.x > _position.x + _buttonSize / 2) {
             return _selectionPhase;
         }
-        if (position.y > _position.y + _buttonHeight / 2 ||
-            position.y < _position.y - _buttonHeight / 2) {
+        if (position.y > _position.y + _buttonSize / 2 ||
+            position.y < _position.y - _buttonSize / 2) {
             return _selectionPhase;
         }
 
@@ -153,11 +196,11 @@ class Button {
 
     bool getClicked(Vec2 position) {
         if (position.x < _position.x ||
-            position.x > _position.x + _buttonHeight) {
+            position.x > _position.x + _buttonSize) {
             return false;
         }
         if (position.y > _position.y ||
-            position.y < _position.y - _buttonHeight) {
+            position.y < _position.y - _buttonSize) {
             return false;
         }
         return true;

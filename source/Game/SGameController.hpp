@@ -63,7 +63,7 @@ class SGameController {
     // block screen
     std::shared_ptr<cugl::scene2::PolygonNode> _thirdLayer;
 
-    // lock and trap button
+    // lock, trap, eyeball, kill buttons
     std::shared_ptr<cugl::scene2::PolygonNode> _fourthLayer;
 
     // minimap, battery, timer

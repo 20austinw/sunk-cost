@@ -246,7 +246,11 @@
         },
         "kill_button":
             {
-                "file": "textures/kill_button.png"
+                "file": "textures/hand_fill.png"
+            },
+        "eye_button":
+            {
+                "file": "textures/eyeball_fill.png"
             },
         "network_background": {
                 "file": "textures/network_background.png"

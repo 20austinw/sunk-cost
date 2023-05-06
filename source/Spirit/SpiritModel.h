@@ -68,6 +68,8 @@ class SpiritModel {
     bool _hunterAdded;
 
     float _offset;
+    
+    float KILL_COOL = 600;
 
   public:
     /** A public accessible, read-only version of the energy level */
@@ -174,6 +176,10 @@ class SpiritModel {
     void setKilling(bool b) { _killing = b; }
 
     Vec2 getHunterPos() { return _hunterModel->getPosition(); }
+    
+    float getMaxKillCool() {
+        return KILL_COOL;
+    }
 
     /**
      * Sets the number of available doors for the spirit

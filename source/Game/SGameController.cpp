@@ -101,12 +101,14 @@ SGameController::SGameController(
 
     _selectionPhase = false;
     _buttonHeight = 400;
-    _viewButton = std::make_shared<Button>(_assets->get<Texture>("view_button"),
+        
+    _viewButton = std::make_shared<Button>(_assets->get<Texture>("eye_button"),
                                            _scene, _selectionPhase, _portraits);
     _viewButton->setDefaultPosition(Vec2(_buttonHeight, _buttonHeight) / 2);
     _viewButton->setVisible(true);
     _viewButton->setInteractive(true);
-    _viewButton->addChildTo(_scene);
+//    _viewButton->addChildTo(_scene);
+        _viewButton->addChildToNode(_fourthLayer);
 
     while (!_levelLoaded) {
         checkLevelLoaded();
@@ -175,6 +177,8 @@ void SGameController::update(float dt) {
                 for (int n = 0; n < _hunterNodes.size(); n++) {
                     _obstacleNode->addChild(_hunterNodes.at(n));
                 }
+                _viewButton->setCooldown(_viewButton->getMaxCool());
+                _viewButton->setButtonFrame(0);
             }
         }
 
@@ -336,7 +340,7 @@ void SGameController::update(float dt) {
                         _obstacleNode->addChild(_hunterNodes.at(i));
                     }
 
-                    _spirit.getModel()->setKillCooldown(300);
+                    _spirit.getModel()->setKillCooldown(_spirit.getModel()->getMaxKillCool());
                     _spirit.getView()->setKillFrame(0);
                 }
             }

@@ -106,7 +106,7 @@ class SpiritView {
                                              ->getWidth();
         _trapScaleFactor = _buttonSize / _trapAsset->getSize().width;
         _killScaleFactor = _buttonSize / scene2::SpriteNode::allocWithSheet(
-                                             _killAsset, 4, 4, 13)
+                                             _killAsset, 2, 8, 16)
                                              ->getWidth();
         //        CULog("%f", _scaleFactor);
         for (int i = 0; i < locks; i++) {
@@ -124,7 +124,7 @@ class SpiritView {
             addExtra(_trapExtra, i + 1);
         }
 
-        _killButton = scene2::SpriteNode::allocWithSheet(_killAsset, 4, 4, 13);
+        _killButton = scene2::SpriteNode::allocWithSheet(_killAsset, 2, 8, 16);
         _killButton->setFrame(0);
         _killButton->setScale(_killScaleFactor / getZoom());
 

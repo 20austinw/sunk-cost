@@ -143,6 +143,8 @@ class SGameController {
     float _hunterYPos;
 
     float _hunterXPos;
+    
+    bool _spawn;
 
     int _ticks;
 

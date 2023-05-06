@@ -418,6 +418,7 @@ void HGameController::update(float dt) {
             _endScene =
                 std::make_shared<EndScene>(_scene, _assets, false, true);
             _endScene->addChildTo(_scene);
+            CULog("enter!!");
             _didLose = true;
             transmitSpiritWin();
             _gameStatus = 1;
@@ -1039,7 +1040,7 @@ void HGameController::checkLevelLoaded() {
         _scene->addChild(_timerLabellock);
         _timerLabellock->setVisible(false);
 
-        _timer = 5400;
+        _timer = 5270;
         _timerLabel = cugl::scene2::Label::allocWithText(
             Vec2(200, 200), "2:00", _assets->get<Font>("pixel32"));
         _scene->addChild(_timerLabel);

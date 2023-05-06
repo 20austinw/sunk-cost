@@ -447,7 +447,11 @@ void SGameController::update(float dt) {
             _endScene->addChildTo(_scene);
         }
         _scene->getCamera()->update();
-    } else {
+    }else if (_gameStatus = -1) {
+        _endScene = std::make_shared<EndScene>(_scene, _assets, true, false);
+        _endScene->addChildTo(_scene);
+    }
+    else {
         _endScene->update();
         AudioEngine::get()->clear("tension", 1);
         AudioEngine::get()->clear("theme", 1);

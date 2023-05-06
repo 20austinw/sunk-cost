@@ -17,8 +17,7 @@ using namespace std;
 #pragma mark Level Layout
 
 /** Regardless of logo, lock the height to this */
-#define SCENE_HEIGHT  720
-
+#define SCENE_HEIGHT 720
 
 #pragma mark -
 #pragma mark Constructors
@@ -39,24 +38,27 @@ using namespace std;
 bool ResetScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     // Initialize the scene to a locked width
     Size dimen = Application::get()->getDisplaySize();
-    dimen *= SCENE_HEIGHT/dimen.height;
+    dimen *= SCENE_HEIGHT / dimen.height;
     if (assets == nullptr) {
         return false;
     } else if (!Scene2::init(dimen)) {
         return false;
     }
-    
+
     // Start up the input handler
     _assets = assets;
-    
+
     // Acquire the scene built by the asset loader and resize it the scene
-    std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("resett");
+    std::shared_ptr<scene2::SceneNode> scene =
+        _assets->get<scene2::SceneNode>("resett");
     scene->setContentSize(dimen);
     scene->doLayout(); // Repositions the HUD
     _choice = Choice::NONE;
-    _leavebutton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("resett_leave"));
-    _replaybutton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("resett_replay"));
-    
+    _leavebutton = std::dynamic_pointer_cast<scene2::Button>(
+        _assets->get<scene2::SceneNode>("resett_leave"));
+    _replaybutton = std::dynamic_pointer_cast<scene2::Button>(
+        _assets->get<scene2::SceneNode>("resett_replay"));
+
     // Program the buttons
     _leavebutton->addListener([this](const std::string& name, bool down) {
         if (down) {
@@ -65,7 +67,7 @@ bool ResetScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
         }
     });
     _replaybutton->addListener([this](const std::string& name, bool down) {
-        CULog("down is %d", down==true);
+        CULog("down is %d", down == true);
         if (down) {
             CULog("replay!");
             _choice = Choice::REPLAY;
@@ -86,7 +88,6 @@ void ResetScene::dispose() {
         _active = false;
     }
 }
-
 
 /**
  * Sets whether the scene is currently active

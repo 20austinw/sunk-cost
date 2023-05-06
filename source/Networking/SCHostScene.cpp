@@ -19,7 +19,7 @@ using namespace std;
 #pragma mark Level Layout
 
 /** Regardless of logo, lock the height to this */
-#define SCENE_HEIGHT  720
+#define SCENE_HEIGHT 720
 
 /**
  * Converts a hexadecimal string to a decimal string
@@ -35,13 +35,13 @@ using namespace std;
  * @return the decimal equivalent to hex
  */
 static std::string hex2dec(const std::string hex) {
-    Uint32 value = strtool::stou32(hex,0,16);
+    Uint32 value = strtool::stou32(hex, 0, 16);
     std::string result = strtool::to_string(value);
     if (result.size() < 5) {
-        size_t diff = 5-result.size();
-        std::string alt(5,'0');
-        for(size_t ii = 0; ii < result.size(); ii++) {
-            alt[diff+ii] = result[ii];
+        size_t diff = 5 - result.size();
+        std::string alt(5, '0');
+        for (size_t ii = 0; ii < result.size(); ii++) {
+            alt[diff + ii] = result[ii];
         }
         result = alt;
     }
@@ -67,31 +67,40 @@ static std::string hex2dec(const std::string hex) {
 bool HostScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     // Initialize the scene to a locked width
     Size dimen = Application::get()->getDisplaySize();
-    dimen *= SCENE_HEIGHT/dimen.height;
+    dimen *= SCENE_HEIGHT / dimen.height;
     if (assets == nullptr) {
         return false;
     } else if (!Scene2::init(dimen)) {
         return false;
     }
-    
+
     _codeDisplayed = false;
     _numPlayers = 0;
-    
+
     // Start up the input handler
     _assets = assets;
-    
+
     // Acquire the scene built by the asset loader and resize it the scene
-    std::shared_ptr<scene2::SceneNode> scene = _assets->get<scene2::SceneNode>("host");
+    std::shared_ptr<scene2::SceneNode> scene =
+        _assets->get<scene2::SceneNode>("host");
     scene->setContentSize(dimen);
     scene->doLayout(); // Repositions the HUD
 
-    _startgame = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("host_center_start"));
-    _backout = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("host_back"));
-//    _gameid = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("host_center_game_field_text"));
-    _player = scene2::Label::allocWithText(Vec2(Application::get()->getDisplaySize().width/2, Application::get()->getDisplaySize().height/2 + 150), "0/4 Players Joined", _assets->get<Font>("pixel32"));
+    _startgame = std::dynamic_pointer_cast<scene2::Button>(
+        _assets->get<scene2::SceneNode>("host_center_start"));
+    _backout = std::dynamic_pointer_cast<scene2::Button>(
+        _assets->get<scene2::SceneNode>("host_back"));
+    
+    _codeLines = std::dynamic_pointer_cast<scene2::PolygonNode>(_assets->get<scene2::SceneNode>("host_code"));
+    //    _gameid =
+    //    std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("host_center_game_field_text"));
+    _player = scene2::Label::allocWithText(
+        Vec2(Application::get()->getDisplaySize().width / 2,
+             Application::get()->getDisplaySize().height / 2 + 150),
+        "0/4 Players Joined", _assets->get<Font>("pixel32"));
     scene->addChild(_player);
     _status = Status::WAIT;
-    
+
     // Program the buttons
     _backout->addListener([this](const std::string& name, bool down) {
         if (down) {
@@ -107,13 +116,13 @@ bool HostScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             startGame();
         }
     });
-    
+
     // Create the server configuration
     auto json = _assets->get<JsonValue>("server");
     _config.set(json);
-    
+
     connect();
-    
+
     addChild(scene);
     setActive(false);
     return true;
@@ -147,7 +156,7 @@ void HostScene::setActive(bool value) {
             _status = WAIT;
             configureStartButton();
             _backout->activate();
-            
+
             connect();
         } else {
             _startgame->deactivate();
@@ -158,7 +167,6 @@ void HostScene::setActive(bool value) {
         }
     }
 }
-
 
 /**
  * Updates the text in the given button.
@@ -171,10 +179,11 @@ void HostScene::setActive(bool value) {
  * @param button    The button to modify
  * @param text      The new text value
  */
-void HostScene::updateText(const std::shared_ptr<scene2::Button>& button, const std::string text) {
-    auto label = std::dynamic_pointer_cast<scene2::Label>(button->getChildByName("up")->getChildByName("label"));
+void HostScene::updateText(const std::shared_ptr<scene2::Button>& button,
+                           const std::string text) {
+    auto label = std::dynamic_pointer_cast<scene2::Label>(
+        button->getChildByName("up")->getChildByName("label"));
     label->setText(text);
-
 }
 
 #pragma mark -
@@ -191,7 +200,7 @@ void HostScene::update(float timestep) {
     if (_network) {
         _network->receive([this](const std::string source,
                                  const std::vector<std::byte>& data) {
-            processData(source,data);
+            processData(source, data);
         });
         checkConnection();
         // Do this last for button safety
@@ -217,7 +226,6 @@ void HostScene::processData(const std::string source,
                             const std::vector<std::byte>& data) {
     // No real data is handled in this scene
 }
-
 
 /**
  * Connects to the game server as specified in the assets file
@@ -249,34 +257,34 @@ bool HostScene::checkConnection() {
     // IMPLEMENT ME
     NetcodeConnection::State network_state = _network->getState();
     switch (network_state) {
-        case NetcodeConnection::State::CONNECTING:
-        case NetcodeConnection::State::MIGRATING:
-        case NetcodeConnection::State::NEGOTIATING:
-            _status = Status::WAIT;
-            break;
-        case NetcodeConnection::State::INSESSION:
-        case NetcodeConnection::State::CONNECTED:
-            if (_status != Status::START) {
-                _status = Status::IDLE;
-            }
-//            _gameid->setText(hex2dec(_network->getRoom()));
-//            _player->setText(std::to_string(_network->getNumPlayers()));
-            _numPlayers = _network->getNumPlayers();
-            _player->setColor(Color4f::WHITE);
-            _player->setText(std::to_string(_numPlayers) + "/4 Players Joined");
-            if (!_codeDisplayed) {
-                displayCode(hex2dec(_network->getRoom()));
-            }
-            break;
-        case NetcodeConnection::State::DENIED:
-        case NetcodeConnection::State::MISMATCHED:
-        case NetcodeConnection::State::INVALID:
-        case NetcodeConnection::State::FAILED:
-        case NetcodeConnection::State::DISPOSED:
-        case NetcodeConnection::State::DISCONNECTED:
-            disconnect();
-            _status = Status::WAIT;
-            return false;
+    case NetcodeConnection::State::CONNECTING:
+    case NetcodeConnection::State::MIGRATING:
+    case NetcodeConnection::State::NEGOTIATING:
+        _status = Status::WAIT;
+        break;
+    case NetcodeConnection::State::INSESSION:
+    case NetcodeConnection::State::CONNECTED:
+        if (_status != Status::START) {
+            _status = Status::IDLE;
+        }
+        //            _gameid->setText(hex2dec(_network->getRoom()));
+        //            _player->setText(std::to_string(_network->getNumPlayers()));
+        _numPlayers = _network->getNumPlayers();
+        _player->setColor(Color4f::WHITE);
+        _player->setText(std::to_string(_numPlayers) + "/4 Players Joined");
+        if (!_codeDisplayed) {
+            displayCode(hex2dec(_network->getRoom()));
+        }
+        break;
+    case NetcodeConnection::State::DENIED:
+    case NetcodeConnection::State::MISMATCHED:
+    case NetcodeConnection::State::INVALID:
+    case NetcodeConnection::State::FAILED:
+    case NetcodeConnection::State::DISPOSED:
+    case NetcodeConnection::State::DISCONNECTED:
+        disconnect();
+        _status = Status::WAIT;
+        return false;
     }
     return true;
 }
@@ -293,11 +301,10 @@ void HostScene::configureStartButton() {
         updateText(_startgame, "Waiting");
         _startgame->deactivate();
     } else {
-        updateText(_startgame,"Start Game");
+        updateText(_startgame, "Start Game");
         _startgame->activate();
     }
 }
-
 
 /**
  * Starts the game.
@@ -312,17 +319,18 @@ void HostScene::startGame() {
     std::vector<std::byte> data = std::vector<std::byte>();
     data.push_back(std::byte{255});
     _network->broadcast(data);
-
 }
 
 void HostScene::displayCode(std::string code) {
     removeCode();
     int position = 0;
-    for(auto it = code.cbegin(); it != code.cend(); ++it) {
-        std::shared_ptr<Texture> numberTexture = _assets->get<Texture>(numToFile(*it));
-        std::shared_ptr<scene2::PolygonNode> number = scene2::PolygonNode::allocWithTexture(numberTexture);
-        number->setPosition(Vec2(300 + position * 230, Application::get()->getDisplaySize().height/2 - 250));
+    for (auto it = code.cbegin(); it != code.cend(); ++it) {
+        std::shared_ptr<Texture> numberTexture =
+            _assets->get<Texture>(numToFile(*it));
+        std::shared_ptr<scene2::PolygonNode> number =
+            scene2::PolygonNode::allocWithTexture(numberTexture);
         number->setScale(1.5);
+        number->setPosition(Vec2(_codeLines->getAnchorInPixels().x - number->getWidth() / 4  + ((_codeLines->getSize().width / 4.8) * position), _codeLines->getPositionY() + number->getSize().height / 2));
         addChildWithName(number, "code " + std::to_string(position));
         position++;
     }
@@ -333,32 +341,31 @@ void HostScene::displayCode(std::string code) {
 
 std::string HostScene::numToFile(char num) {
     switch (num) {
-        case '1':
-            return "one_button";
-        case '2':
-            return "two_button";
-        case '3':
-            return "three_button";
-        case '4':
-            return "four_button";
-        case '5':
-            return "five_button";
-        case '6':
-            return "six_button";
-        case '7':
-            return "seven_button";
-        case '8':
-            return "eight_button";
-        case '9':
-            return "nine_button";
-        default:
-            return "zero_button";
+    case '1':
+        return "one_button";
+    case '2':
+        return "two_button";
+    case '3':
+        return "three_button";
+    case '4':
+        return "four_button";
+    case '5':
+        return "five_button";
+    case '6':
+        return "six_button";
+    case '7':
+        return "seven_button";
+    case '8':
+        return "eight_button";
+    case '9':
+        return "nine_button";
+    default:
+        return "zero_button";
     }
 }
 
 void HostScene::removeCode() {
-    for(int i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; i++) {
         removeChildByName("code " + std::to_string(i));
     }
 }
-

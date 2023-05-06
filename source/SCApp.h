@@ -14,21 +14,19 @@
 #define _SC_APP_H__
 #include "HGameController.h"
 #include "LoadingScene.h"
-#include "SGameController.hpp"
-#include <cugl/cugl.h>
+#include "SCClientScene.hpp"
+#include "SCHostScene.hpp"
 #include "SCMenuScene.h"
 #include "SCResetScene.hpp"
-#include "SGameController.hpp"
-#include "SCHostScene.hpp"
-#include "SCClientScene.hpp"
 #include "SCSpawnScene.hpp"
+#include "SGameController.hpp"
 #include <cugl/cugl.h>
 
 /**
  * This class represents the application root for the ship demo.
  */
 class SCApp : public cugl::Application {
-protected:
+  protected:
     /**
      * The current active scene
      */
@@ -42,15 +40,15 @@ protected:
         HOST,
         /** The scene to join a game */
         CLIENT,
-        
+
         HOSTGAME,
-        
+
         CLIENTGAME,
-        
+
         RESET
     };
-    
-protected:
+
+  protected:
     /** The global sprite batch for drawing (only want one of these) */
     std::shared_ptr<cugl::SpriteBatch> _batch;
     /** The global asset manager */
@@ -62,26 +60,26 @@ protected:
     SGameController _spiritGameplay;
     /** The controller for the loading screen */
     LoadingScene _loading;
-    
+
     /** The scene to host a game */
     HostScene _hostgame;
-//    /** The scene to join a game */
+    //    /** The scene to join a game */
     ClientScene _joingame;
-    
+
     MenuScene _menu;
     SpawnScene _spawn;
-    
+
     ResetScene _reset;
-    
+
     /** Whether or not we have finished loading all assets */
     bool _loaded;
-    
+
     /** The current active scene */
     SCApp::State _scene;
     int _count;
     bool _played;
-    
-public:
+
+  public:
     /**
      * Creates, but does not initialized a new application.
      *
@@ -178,7 +176,7 @@ public:
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     void updateLoadingScene(float timestep);
-    
+
     /**
      * Inidividualized update method for the menu scene.
      *
@@ -189,7 +187,7 @@ public:
      */
     void updateMenuScene(float timestep);
     void updateSpawnScene(float timestep);
-    
+
     /**
      * Inidividualized update method for the menu scene.
      *
@@ -199,21 +197,21 @@ public:
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     void updateResetScene(float timestep);
-    
+
     /**
      * Inidividualized update method for the host scene.
      *
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     void updateSGameController(float timestep);
-    
+
     /**
      * Inidividualized update method for the client scene.
      *
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     void updateHGameController(float timestep);
-    
+
     /**
      * Inidividualized update method for the host scene.
      *
@@ -223,7 +221,7 @@ public:
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     void updateHostScene(float timestep);
-    
+
     /**
      * Inidividualized update method for the client scene.
      *
@@ -233,7 +231,7 @@ public:
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     void updateClientScene(float timestep);
-    
+
     /**
      * The method called to draw the application to the screen.
      *
@@ -244,7 +242,6 @@ public:
      * at all. The default implmentation does nothing.
      */
     virtual void draw() override;
-    
 };
 
 #endif /* _SC_APP_H__ */

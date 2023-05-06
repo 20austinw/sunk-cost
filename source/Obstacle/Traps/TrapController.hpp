@@ -31,7 +31,6 @@ class TrapController {
                    Size screenSize);
 
     std::unique_ptr<TrapModel> getModel();
-    std::unique_ptr<TrapView> getView();
     void setViewFrame();
     Vec2 getPosition();
     void setPosition(cugl::Vec2 position);

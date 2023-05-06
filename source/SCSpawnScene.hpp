@@ -8,21 +8,19 @@
 #ifndef SCSpawnScene_hpp
 #define SCSpawnScene_hpp
 
-
 /**
  * This class presents the menu to the player.
  */
 class SpawnScene : public cugl::Scene2 {
-public:
+  public:
     /**
      * The menu choice.
      *
      * This state allows the top level application to know what the user
      * chose.
      */
-  
 
-protected:
+  protected:
     /** The asset manager for this scene. */
     std::shared_ptr<cugl::AssetManager> _assets;
     /** The menu button for hosting a game */
@@ -34,8 +32,8 @@ protected:
     std::shared_ptr<cugl::scene2::SpriteNode> scene;
     int _frameNum;
     int _count;
-    
-public:
+
+  public:
 #pragma mark -
 #pragma mark Constructors
     /**
@@ -45,7 +43,7 @@ public:
      * This allows us to use the object without a heap pointer.
      */
     SpawnScene() : cugl::Scene2() {}
-    
+
     /**
      * Disposes of all (non-static) resources allocated to this mode.
      *
@@ -53,12 +51,12 @@ public:
      * static resources, like the input controller.
      */
     ~SpawnScene() { dispose(); }
-    
+
     /**
      * Disposes of all (non-static) resources allocated to this mode.
      */
     void dispose() override;
-    
+
     /**
      * Initializes the controller contents.
      *
@@ -85,8 +83,7 @@ public:
      * @param value whether the scene is currently active
      */
     virtual void setActive(bool value) override;
-    
-    
+
     /**
      * Returns the user's menu choice.
      *
@@ -97,12 +94,6 @@ public:
 
     void update();
     void advanceFrame();
-
 };
 
-
-
 #endif /* SCSpawnScene_hpp */
-
-
-

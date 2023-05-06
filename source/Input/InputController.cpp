@@ -22,13 +22,8 @@
  */
 InputController::InputController()
     : _model(std::make_unique<InputModel>()), _forward(0), _rightward(0),
-      _active(false),
-        _currDown(false),
-        _prevDown(false),
-        _touchDown(false),
-        _touchID(0),
-        _touchKey(0),
-        _joyStickPressed(false) {}
+      _active(false), _currDown(false), _prevDown(false), _touchDown(false),
+      _touchID(0), _touchKey(0), _joyStickPressed(false) {}
 
 bool InputController::initListeners() {
     _ts = Input::get<Touchscreen>();
@@ -91,7 +86,7 @@ std::shared_ptr<InputController> InputController::getInstance() {
         inputController = std::make_shared<InputController>();
         inputController->initListeners();
     }
-    
+
     return inputController;
 }
 
@@ -137,9 +132,8 @@ void InputController::readInput() {
             _didReset = true;
         }
     }
-    
-    if(_ts){
-        
+
+    if (_ts) {
     }
 }
 
@@ -250,8 +244,7 @@ void InputController::touchDownCB(const cugl::TouchEvent& event, bool focus) {
         _touchDown = true;
         _touchID = event.touch;
         _touchPos = event.position;
-        _center =event.position;
-
+        _center = event.position;
     }
 }
 
@@ -282,11 +275,11 @@ void InputController::touchMotionCB(const cugl::TouchEvent& event, bool focus) {
 
     //        CULog("display x %f",_touchPos.x);
     //        CULog("display y %f",_dimen.height);
-    if (_touchPos.x<900){
-        Vec2 direction = Vec2(_touchPos -_center);
-        //590 920
-        float sum = sqrt(direction.x *direction.x+direction.y*direction.y);
-        Vec2 norm_dir = direction/sum;
+    if (_touchPos.x < 900) {
+        Vec2 direction = Vec2(_touchPos - _center);
+        // 590 920
+        float sum = sqrt(direction.x * direction.x + direction.y * direction.y);
+        Vec2 norm_dir = direction / sum;
 
         _rightward = norm_dir.x;
         _forward = -norm_dir.y;

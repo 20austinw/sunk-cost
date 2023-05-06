@@ -18,7 +18,10 @@ class HunterView {
     std::shared_ptr<scene2::PolygonNode> _node;
     std::vector<std::shared_ptr<cugl::Texture>> _spriteSheets;
     std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> _spriteNodes;
+    std::shared_ptr<cugl::scene2::SpriteNode> _hurt;
     int _frameNum;
+    int _hurtFrame;
+    Size _size;
 
 #pragma mark Main Functions
   public:
@@ -38,15 +41,16 @@ class HunterView {
                Size size, int color) {
 
         _frameNum = 8;
-        if(color==0){
-            _spriteSheets.push_back(assets->get<Texture>("hunterrunning"));
-            _spriteSheets.push_back(assets->get<Texture>("hunterleft"));
-        }else if(color==1){
-            _spriteSheets.push_back(assets->get<Texture>("hunterorange"));
-        }else{
-            _spriteSheets.push_back(assets->get<Texture>("huntergreen"));
-        }
-        
+        _hurtFrame = 0;
+
+        _spriteSheets.push_back(assets->get<Texture>("hunterrunning"));
+        _spriteSheets.push_back(assets->get<Texture>("hunterleft"));
+        //        } else if (color == 1) {
+        //            _spriteSheets.push_back(assets->get<Texture>("hunterorange"));
+        //        } else {
+        //            _spriteSheets.push_back(assets->get<Texture>("huntergreen"));
+        //        }
+        //
 
         float width = size.width * 1.5f;
 
@@ -61,6 +65,14 @@ class HunterView {
             _spriteNodes[i]->setVisible(false);
         }
         _spriteNodes[0]->setVisible(true);
+        _size = _spriteNodes[0]->getSize();
+        _spriteNodes.push_back(scene2::SpriteNode::allocWithSheet(
+            assets->get<Texture>("hunterhurt"), 5, 3, 14));
+        _spriteNodes[2]->setScale(0.5);
+        _spriteNodes[2]->setFrame(0);
+        _spriteNodes[2]->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+        _spriteNodes[2]->setPosition(Vec2(0, width / 2.5f));
+        _spriteNodes[2]->setVisible(false);
     };
 
     /** Deletes this HunterView */
@@ -82,8 +94,9 @@ class HunterView {
             scene->addChild(_spriteNodes[i]);
         }
     }
-    
-    void addChildToNode(std::vector<std::shared_ptr<scene2::PolygonNode>>& hunterNodes) {
+
+    void addChildToNode(
+        std::vector<std::shared_ptr<scene2::PolygonNode>>& hunterNodes) {
         for (int i = 0; i < _spriteNodes.size(); i++) {
             hunterNodes.emplace_back(_spriteNodes[i]);
         }
@@ -107,6 +120,8 @@ class HunterView {
         // TODO: Implement me
         return _spriteNodes;
     }
+
+    Size getSize() { return _size; }
 
 #pragma mark Setters
     /**
@@ -142,26 +157,43 @@ class HunterView {
      * This method includes some dampening of the turn, and should be called
      * before moving the ship.
      */
-    void advanceFrame(float forward, float right) {
-        if (_frameNum >= 9) {
-            _frameNum = 0;
-        }
-        if (forward == 0 && right == 0) {
-            _spriteNodes[0]->setFrame(8);
-            _spriteNodes[1]->setFrame(8);
-        }
-
-        else if (right < 0) {
+    void advanceFrame(float forward, float right, bool beingKilled) {
+        if (beingKilled) {
             _spriteNodes[0]->setVisible(false);
-            _spriteNodes[1]->setVisible(true);
-
-            _spriteNodes[1]->setFrame(_frameNum);
-            _frameNum++;
-        } else {
             _spriteNodes[1]->setVisible(false);
-            _spriteNodes[0]->setVisible(true);
-            _spriteNodes[0]->setFrame(_frameNum);
+            _spriteNodes[2]->setVisible(true);
+            if (_frameNum >= 14) {
+                _frameNum = 0;
+            }
+            _spriteNodes[2]->setFrame(_frameNum);
             _frameNum++;
+
+        } else {
+            _spriteNodes[2]->setVisible(false);
+            if (_frameNum >= 10) {
+                _frameNum = 0;
+            }
+            if (forward == 0 && right == 0) {
+                if (!_spriteNodes[0]->isVisible() &&
+                    !_spriteNodes[1]->isVisible()) {
+                    _spriteNodes[0]->setVisible(true);
+                }
+                _spriteNodes[0]->setFrame(8);
+                _spriteNodes[1]->setFrame(8);
+            }
+
+            else if (right < 0) {
+                _spriteNodes[0]->setVisible(false);
+                _spriteNodes[1]->setVisible(true);
+
+                _spriteNodes[1]->setFrame(_frameNum);
+                _frameNum++;
+            } else {
+                _spriteNodes[1]->setVisible(false);
+                _spriteNodes[0]->setVisible(true);
+                _spriteNodes[0]->setFrame(_frameNum);
+                _frameNum++;
+            }
         }
     }
 };

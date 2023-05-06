@@ -12,7 +12,7 @@
  * This class presents the menu to the player.
  */
 class MenuScene : public cugl::Scene2 {
-public:
+  public:
     /**
      * The menu choice.
      *
@@ -28,7 +28,7 @@ public:
         CLIENT
     };
 
-protected:
+  protected:
     /** The asset manager for this scene. */
     std::shared_ptr<cugl::AssetManager> _assets;
     /** The menu button for hosting a game */
@@ -37,8 +37,8 @@ protected:
     std::shared_ptr<cugl::scene2::Button> _clientbutton;
     /** The player menu choice */
     Choice _choice;
-    
-public:
+
+  public:
 #pragma mark -
 #pragma mark Constructors
     /**
@@ -48,7 +48,7 @@ public:
      * This allows us to use the object without a heap pointer.
      */
     MenuScene() : cugl::Scene2() {}
-    
+
     /**
      * Disposes of all (non-static) resources allocated to this mode.
      *
@@ -56,12 +56,12 @@ public:
      * static resources, like the input controller.
      */
     ~MenuScene() { dispose(); }
-    
+
     /**
      * Disposes of all (non-static) resources allocated to this mode.
      */
     void dispose() override;
-    
+
     /**
      * Initializes the controller contents.
      *
@@ -88,7 +88,7 @@ public:
      * @param value whether the scene is currently active
      */
     virtual void setActive(bool value) override;
-    
+
     /**
      * Returns the user's menu choice.
      *
@@ -97,8 +97,6 @@ public:
      * @return the user's menu choice.
      */
     Choice getChoice() const { return _choice; }
-
 };
-
 
 #endif /* SCMenuScene_h */

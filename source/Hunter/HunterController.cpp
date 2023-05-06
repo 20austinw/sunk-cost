@@ -14,16 +14,19 @@
  * TODO: Implement Me
  * The constructor should set up the model, view, and camera controller
  */
-HunterController::HunterController(const std::shared_ptr<cugl::AssetManager>& assets, Size screenSize, const std::shared_ptr<cugl::Scene2> scene, Vec2 playerSize, int color,float scale) {
+HunterController::HunterController(
+    const std::shared_ptr<cugl::AssetManager>& assets, Size screenSize,
+    const std::shared_ptr<cugl::Scene2> scene, Vec2 playerSize, int color,
+    float scale) {
 
-
-    _model = std::make_shared<HunterModel>(assets, scene,scale);
+    _model = std::make_shared<HunterModel>(assets, scene, scale);
 
     _scene = scene;
-    
+
     _pscale = scale;
-    
-    _view = std::make_unique<HunterView>(assets, _model->getPosition(), playerSize, color);
+
+    _view = std::make_unique<HunterView>(assets, _model->getPosition(),
+                                         playerSize, color);
 
     _screenSize = screenSize;
     // A default camera ID = 1 if not specified
@@ -37,8 +40,9 @@ HunterController::HunterController(const std::shared_ptr<cugl::AssetManager>& as
     _vel = Vec2(7, 7);
 }
 
-bool HunterController::detectedDoor(cugl::Vec2 position){
-    if (abs(_model->getPosition().x-position.x)<300 && abs(_model->getPosition().y-position.y)<300){
+bool HunterController::detectedDoor(cugl::Vec2 position) {
+    if (abs(_model->getPosition().x - position.x) < 300 &&
+        abs(_model->getPosition().y - position.y) < 300) {
         return true;
     }
     return false;
@@ -63,18 +67,18 @@ void HunterController::render(const std::shared_ptr<cugl::SpriteBatch>& batch) {
     //        cugl::Application::get()->getAssets()->getRenderer()->drawEnd();
 }
 
-void HunterController::setViewFrame(float forward, float right) {
-    _view->advanceFrame(forward, right);
+void HunterController::setViewFrame(float forward, float right,
+                                    bool beingKilled) {
+    _view->advanceFrame(forward, right, beingKilled);
 }
 
-std::vector<std::shared_ptr<TrapModel>> HunterController::getTraps(){
+std::vector<std::shared_ptr<TrapModel>> HunterController::getTraps() {
     return _model->getTraps();
 }
 
-std::vector<std::shared_ptr<TrapView>> HunterController::getTrapViews(){
+std::vector<std::shared_ptr<TrapView>> HunterController::getTrapViews() {
     return _model->getTrapViews();
 }
-
 
 /**
  * TODO: Implement Me
@@ -84,20 +88,18 @@ std::vector<std::shared_ptr<TrapView>> HunterController::getTrapViews(){
  */
 void HunterController::update() {
     _input.readInput();
-//    _model->setPosition(Vec2(400000,400000)/100);
-//    //move(_input.getForward(), _input.getRight());
-//    applyForce(100000000000000*Vec2(_input.getForward(), _input.getRight()));
-//
-//    CULog("x:%f", _model->getPosition().x);
-//    CULog("y:%f", _model->getPosition().y);
+    //    _model->setPosition(Vec2(400000,400000)/100);
+    //    //move(_input.getForward(), _input.getRight());
+    //    applyForce(100000000000000*Vec2(_input.getForward(),
+    //    _input.getRight()));
+    //
+    //    CULog("x:%f", _model->getPosition().x);
+    //    CULog("y:%f", _model->getPosition().y);
 }
-
-
 
 void HunterController::applyForce(cugl::Vec2 force) {
     _model->applyForce(force);
-    }
-
+}
 
 /**
  * Moves the hunter by the specified amount.
@@ -138,40 +140,33 @@ void HunterController::applyForce(cugl::Vec2 force) {
 // }
 void HunterController::move(float forward, float rightward) {
     Vec2 pos = _model->getPosition();
-        
-        pos.x += rightward * _vel.x;
-        pos.y += forward * _vel.y;
+
+    pos.x += rightward * _vel.x;
+    pos.y += forward * _vel.y;
     _model->setPosition(pos);
-    //applyForce(Vec2(forward, rightward));
+    // applyForce(Vec2(forward, rightward));
     _view->setPosition(_model->getPosition());
 }
 
-Vec2 HunterController::getVelocity() {
-    return _vel;
-}
-
+Vec2 HunterController::getVelocity() { return _vel; }
 
 Vec2 HunterController::getPosition() { return _model->getPosition(); }
 
-std::shared_ptr<HunterModel> HunterController::getModel(){return _model;}
+std::shared_ptr<HunterModel> HunterController::getModel() { return _model; }
 
 void HunterController::setPosition(Vec2 position) {
-//    CULog("body pos x %f", position.x);
-//    CULog("body pos y %f", position.y);
+    //    CULog("body pos x %f", position.x);
+    //    CULog("body pos y %f", position.y);
     _model->setPosition(position);
-//    CULog("model pos x %f", _model->getPosition().x);
-//    CULog("model pos y %f", _model->getPosition().y);
+    //    CULog("model pos x %f", _model->getPosition().x);
+    //    CULog("model pos y %f", _model->getPosition().y);
     _view->setPosition(_model->getPosition());
-    
 }
 
+b2Body* HunterController::getHunterBody() { return _model->getBody(); }
 
-
-b2Body* HunterController::getHunterBody(){
-    return _model->getBody();
-}
-
-void HunterController::setAsObstacle(std::shared_ptr<cugl::physics2::ObstacleWorld> world){
+void HunterController::setAsObstacle(
+    std::shared_ptr<cugl::physics2::ObstacleWorld> world) {
     world->addObstacle(_model);
 }
 #pragma mark View Methods
@@ -191,7 +186,8 @@ void HunterController::addChildTo(const std::shared_ptr<cugl::Scene2>& scene) {
     }
 }
 
-void HunterController::addChildToNode(std::vector<std::shared_ptr<scene2::PolygonNode>> &node){
+void HunterController::addChildToNode(
+    std::vector<std::shared_ptr<scene2::PolygonNode>>& node) {
     std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> vec =
         _view->getSpriteNode();
 

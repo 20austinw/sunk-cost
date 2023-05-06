@@ -3,23 +3,23 @@
 #include <climits>
 #include <random>
 
-#include <cugl/cugl.h>
-#include <unordered_set>
-#include <vector>
+#include "Button.h"
+#include "DoorController.hpp"
+#include "EndScene.h"
 #include "HunterController.h"
 #include "InputController.h"
 #include "LevelModel.h"
+#include "Minimap.h"
 #include "PortraitSetController.h"
 #include "SpiritController.h"
 #include "TileController.h"
 #include "TilemapController.h"
-#include "EndScene.h"
-#include "DoorController.hpp"
 #include "TrapController.hpp"
-#include "Minimap.h"
+#include <cugl/cugl.h>
+#include <unordered_set>
+#include <vector>
 
 using namespace cugl;
-
 
 /**
  * The primary controller for the game logic.
@@ -30,7 +30,7 @@ using namespace cugl;
  * an attribute of a more general class.
  */
 class SGameController {
-public:
+  public:
     /**
      * The configuration status
      *
@@ -53,22 +53,21 @@ public:
     std::shared_ptr<cugl::Scene2> _scene;
     /** The asset manager for this game mode. */
     std::shared_ptr<cugl::AssetManager> _assets;
-    
-    //background and map floor(tilemap)
+
+    // background and map floor(tilemap)
     std::shared_ptr<cugl::scene2::PolygonNode> _firstLayer;
-    
-    //furnitures, walls, doors, traps
+
+    // furnitures, walls, doors, traps
     std::shared_ptr<cugl::scene2::PolygonNode> _secondLayer;
-    
+
     // block screen
     std::shared_ptr<cugl::scene2::PolygonNode> _thirdLayer;
-    
-    // lock and trap button
+
+    // lock, trap, eyeball, kill buttons
     std::shared_ptr<cugl::scene2::PolygonNode> _fourthLayer;
-    
+
     // minimap, battery, timer
     std::shared_ptr<cugl::scene2::PolygonNode> _fifthLayer;
-    
 
     // CONTROLLERS are attached directly to the scene (no pointers)
     /** The controller to manage the ship */
@@ -95,10 +94,9 @@ public:
     /** The network connection (as made by this scene) */
     std::shared_ptr<cugl::net::NetcodeConnection> _network;
 
-    bool _levelLoaded=false;
+    bool _levelLoaded = false;
 
     std::shared_ptr<scene2::PolygonNode> _map;
-    std::shared_ptr<Minimap> _miniMap;
 
     Status _status;
 
@@ -106,6 +104,8 @@ public:
 
     /** Whether we quit the game */
     bool _quit;
+
+    bool _selection;
 
     std::shared_ptr<cugl::net::NetcodeSerializer> _serializer;
 
@@ -122,34 +122,44 @@ public:
     float _textHeight = 100;
     float _timerScale;
     std::shared_ptr<cugl::scene2::Label> _timerLabel;
-    int _timeLeft = 90*60;
+    int _timeLeft = 90 * 60;
 
     /** If hunter trigger the trap */
     bool _trapTriggered;
     /** If hunter unlock a door */
     bool _doorUnlocked;
-    
+
     bool _treasureStolen;
-    
+
     // place holder for treasure alert
     std::shared_ptr<cugl::scene2::Label> _alertLabel;
-    
+
     int _alertTimer;
-    
+
     int _doorToUnlock;
-    
+
     Vec2 _trapPos;
-    
+
     float _hunterYPos;
-    
+
     float _hunterXPos;
-    
-    int _prevInd;
-    
-    bool _spawn;
-    
+
     int _ticks;
-    
+
+    std::shared_ptr<Button> _viewButton;
+
+    float _buttonHeight;
+
+    bool _selectionPhase;
+
+    /** The theme sound */
+    std::shared_ptr<cugl::Sound> _theme;
+    /** The sound of tension when time left is less than 1 min */
+    std::shared_ptr<cugl::Sound> _tension;
+    std::shared_ptr<cugl::Sound> _trapSound;
+    std::shared_ptr<cugl::Sound> _treasureSound;
+    bool _neverPlayed = true;
+
 #pragma mark External References
   private:
     /** The tilemap to procedurally generate */
@@ -160,7 +170,6 @@ public:
     std::vector<std::shared_ptr<scene2::SpriteNode>> _candleNodes;
     std::vector<std::shared_ptr<scene2::PolygonNode>> _hunterNodes;
     std::vector<std::shared_ptr<scene2::PolygonNode>> _textureNodes;
-//    std::vector<std::vector<std::shared_ptr<scene2::PolygonNode>>> _sortedTextures;
 
 #pragma mark Main Methods
   public:
@@ -200,9 +209,7 @@ public:
      */
     void render(std::shared_ptr<SpriteBatch>& batch);
 
-    Status getStatus() {
-        return _status;
-    }
+    Status getStatus() { return _status; }
 
     /**
      * Returns the network connection (as made by this scene)
@@ -222,7 +229,8 @@ public:
      *
      * @return the network connection (as made by this scene)
      */
-    void setConnection(const std::shared_ptr<cugl::net::NetcodeConnection>& network) {
+    void setConnection(
+        const std::shared_ptr<cugl::net::NetcodeConnection>& network) {
         _network = network;
     }
 
@@ -242,7 +250,7 @@ public:
      *
      * @param host  Whether the player is host.
      */
-    void setHost(bool host)  { _ishost = host; }
+    void setHost(bool host) { _ishost = host; }
 
     /**
      * Returns true if the player quits the game.
@@ -254,9 +262,9 @@ public:
     /**
      * Disconnects this scene from the network controller.
      *
-     * Technically, this method does not actually disconnect the network controller.
-     * Since the network controller is a smart pointer, it is only fully disconnected
-     * when ALL scenes have been disconnected.
+     * Technically, this method does not actually disconnect the network
+     * controller. Since the network controller is a smart pointer, it is only
+     * fully disconnected when ALL scenes have been disconnected.
      */
     void disconnect() { _network = nullptr; }
 
@@ -268,10 +276,10 @@ public:
     /**
      * Processes data sent over the network.
      *
-     * Once connection is established, all data sent over the network consistes of
-     * byte vectors. This function is a call back function to process that data.
-     * Note that this function may be called *multiple times* per animation frame,
-     * as the messages can come from several sources.
+     * Once connection is established, all data sent over the network consistes
+     * of byte vectors. This function is a call back function to process that
+     * data. Note that this function may be called *multiple times* per
+     * animation frame, as the messages can come from several sources.
      *
      * Typically this is where players would communicate their names after being
      * connected. In this lab, we only need it to do one thing: communicate that
@@ -280,14 +288,15 @@ public:
      * @param source    The UUID of the sender
      * @param data      The data received
      */
-    void processData(const std::string source, const std::vector<std::byte>& data);
+    void processData(const std::string source,
+                     const std::vector<std::byte>& data);
 
     /**
      * Checks that the network connection is still active.
      *
-     * Even if you are not sending messages all that often, you need to be calling
-     * this method regularly. This method is used to determine the current state
-     * of the scene.
+     * Even if you are not sending messages all that often, you need to be
+     * calling this method regularly. This method is used to determine the
+     * current state of the scene.
      *
      * @return true if the network connection is still active.
      */
@@ -296,35 +305,37 @@ public:
     void transmitTrap(std::vector<float> pos);
 
     void transmitActiveCamIndex(int i);
+    
+    void transmitKill();
+    
+    void transmitSpiritWin();
+    
+    void transmitHunterWin();
 
     void initDoors();
 
     void updateDoors();
-    
-    void transmitLockedDoor(int i);
-    
-    void addFloorTile(int type, int c, int r);
-    
-    void addWallTile(int type, int c, int r);
-    
-    void addWallUpper(int type, int c, int r);
-    
-    void addWallGrime(int type, int c, int r);
-    
-    void addWallLower(int type, int c, int r);
-    
-    void addFurnitures(int type, int c, int r);
-    
-    void addCandles(int type, int c, int r);
-    
-//    void addPolys();
-    
-    void modifyTexture(std::shared_ptr< Texture >& texture, int index, int row, int col);
-    
-    void sortNodes();
-    
-    int getHunterInd();
 
+    void transmitLockedDoor(int i);
+
+    void addFloorTile(int type, int c, int r);
+
+    void addWallTile(int type, int c, int r);
+
+    void addWallUpper(int type, int c, int r);
+
+    void addWallGrime(int type, int c, int r);
+
+    void addWallLower(int type, int c, int r);
+
+    void addFurnitures(int type, int c, int r);
+
+    void addCandles(int type, int c, int r);
+
+    void modifyTexture(std::shared_ptr<Texture>& texture, int index, int row,
+                       int col);
+
+    void sortNodes();
 };
 
 #endif /* SGameController_hpp */

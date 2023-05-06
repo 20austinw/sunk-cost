@@ -31,12 +31,10 @@ class Minimap {
      */
 
     Minimap(const std::shared_ptr<cugl::AssetManager>& assets, Vec2 position,
-               Size size, int color) {
-    };
+            Size size, int color){};
 
     /** Deletes this HunterView */
-    ~Minimap() {
-    }
+    ~Minimap() {}
 
 #pragma mark Scene Methods
   public:
@@ -45,17 +43,13 @@ class Minimap {
      *
      * @param sceneNode The scenenode to add the view to
      */
-    void addChildTo(const std::shared_ptr<cugl::Scene2>& scene) {
-    
-    }
+    void addChildTo(const std::shared_ptr<cugl::Scene2>& scene) {}
 
     /**
      * Removes the view component children from the given `sceneNode`.
      *
      * @param sceneNode The scenenode to remove the view from
      */
-    void removeChildFrom(const std::shared_ptr<cugl::Scene2>& scene) {
-    }
-
+    void removeChildFrom(const std::shared_ptr<cugl::Scene2>& scene) {}
 
 #endif /* Minimap_h */

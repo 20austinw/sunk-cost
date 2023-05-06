@@ -10,26 +10,28 @@
 
 #include <stdio.h>
 
-#include <cugl/cugl.h>
 #include "TreasureModel.hpp"
 #include "TreasureView.h"
+#include <cugl/cugl.h>
 
 using namespace cugl;
 
-class TreasureController{
+class TreasureController {
 #pragma mark Internal References
-private:
+  private:
     /** Model reference */
     std::shared_ptr<TreasureModel> _model;
     /** View reference */
     std::unique_ptr<TreasureView> _view;
     Size _screenSize;
     float _scale;
-public:
-    TreasureController() {};
-    
-    TreasureController(const std::shared_ptr<cugl::AssetManager>& assets, Size screenSize, Vec2 playerSize, Vec2 position);
-    
+
+  public:
+    TreasureController(){};
+
+    TreasureController(const std::shared_ptr<cugl::AssetManager>& assets,
+                       Size screenSize, Vec2 playerSize, Vec2 position);
+
     std::shared_ptr<TreasureModel> getModel();
     void setViewFrame();
     Vec2 getPosition();
@@ -42,10 +44,6 @@ public:
     void addChildTo(const std::shared_ptr<cugl::Scene2>& scene);
     void removeChildFrom(const std::shared_ptr<cugl::Scene2>& scene);
     void setAsObstacle(std::shared_ptr<cugl::physics2::ObstacleWorld>);
-    
 };
-
-
-
 
 #endif /* TreasureController_hpp */

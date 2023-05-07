@@ -34,9 +34,12 @@ class PortraitView {
      * @param color The tile color tint
      */
     PortraitView(const std::shared_ptr<cugl::AssetManager>& assets,
-                 Vec2 position) {
+                 Vec2 position,bool ishunter) {
         _frameNum = 0;
         _spriteSheet = assets->get<Texture>("painting_animation");
+        if (ishunter){
+            _spriteSheet = assets->get<Texture>("painting_animation_hunter");
+        }
         _spriteNode =
             scene2::SpriteNode::allocWithSheet(_spriteSheet, 5, 5, 23);
         _spriteNode->setScale(0.5);

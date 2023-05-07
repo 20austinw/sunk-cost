@@ -91,6 +91,9 @@
         "painting_animation": {
             "file": "textures/active_portrait.png"
         },
+        "painting_animation_hunter": {
+            "file": "textures/active_hunter_por.png"
+        },
         "shadow": {
             "file": "textures/diver_shadow.png"
         },

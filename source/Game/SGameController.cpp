@@ -609,7 +609,7 @@ void SGameController::checkLevelLoaded() {
         for (int i = 0; i < _level->getPortaits().size(); i++) {
             _portraits->addPortrait(
                 _textureNodes, i, _level->getPortaits()[i].first,
-                _level->getPortaits()[i].second, Vec3(0, 0, -1), Vec2::ZERO,
+                _level->getPortaits()[i].second, Vec3(0, 0, -1), Vec2::ZERO,false,
                 _level->getBattery());
         }
         _portraits->setMaxbattery(_level->getBattery());

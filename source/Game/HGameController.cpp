@@ -248,6 +248,8 @@ HGameController::HGameController(
     for (int i = 0; i < 3; i++) {
         initHunter(i);
     }
+        
+        _didWin=false;
 
     _hunter = _hunterSet[0];
     //    _hunter->setPosition(Vec2(10000,10000)*_scale);
@@ -443,6 +445,8 @@ void HGameController::update(float dt) {
             _gameStatus = 1;
         }
 
+        
+        _filter->setPosition(_scene->getCamera()->getPosition());
         _timerLabel->setText(std::to_string(int(_timer / 60 / 60)) + ":" +
                              std::to_string(int(_timer / 60) % 60));
         _timerLabel->setPosition(_scene->getCamera()->getPosition() -
@@ -1163,10 +1167,10 @@ void HGameController::initCamera() {
     //        Vec3 next = _offset + (Vec3(_star->getPosition().x,
     //        _star->getPosition().y, 1));
     //    }
-    _scene->getCamera()->translate(Vec3(0, 0, -0.8));
-    Vec3 next =
-        _offset + (Vec3(_hunter->getPosition().x, _hunter->getPosition().y, 1));
-    _scene->getCamera()->translate(next - curr);
+//    _scene->getCamera()->translate(Vec3(0, 0, -0.8));
+//    Vec3 next =
+//        _offset + (Vec3(_hunter->getPosition().x, _hunter->getPosition().y, 1));
+    _scene->getCamera()->setPosition(_hunter->getPosition());
     _scene->getCamera()->setFar(100000);
     _scene->getCamera()->setNear(0);
     _scene->getCamera()->update();
@@ -1185,8 +1189,7 @@ void HGameController::updateCamera(float timestep) {
         _filter->setAnchor(Vec2::ANCHOR_CENTER);
         Vec2 fixHunterOffset = Vec2(600, 0);
         Vec2 next =
-            _offset - fixHunterOffset +
-            ((Vec3(_hunter->getPosition().x, _hunter->getPosition().y, 1)));
+        _hunter->getPosition();
 
         int timeFactor = (_shiftback) ? 5 : 2;
 

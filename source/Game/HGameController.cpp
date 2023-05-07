@@ -934,11 +934,11 @@ void HGameController::checkLevelLoaded() {
         for (int i = 0; i < _level->getPortaits().size(); i++) {
             _portraits->addPortrait(
                                     _portraitNodes, i, _level->getPortaits()[i].first,
-                _level->getPortaits()[i].second, Vec3(0, 0, -1), Vec2::ZERO,false,
+                _level->getPortaits()[i].second, Vec3(0, 0, -1), Vec2::ZERO,true,
                 _level->getBattery());
         }
 
-        //        for (int i = 0; i < tiles.size() * tiles[0].size(); ++i) {
+        //        for (inint i = 0; i < tiles.size() * tiles[0].size(); ++i) {
         //            int c = i % tiles[0].size();
         //            int r = i / tiles[0].size();
         //

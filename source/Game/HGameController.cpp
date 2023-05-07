@@ -537,7 +537,7 @@ void HGameController::update(float dt) {
                     _triggered = false;
                     _timerlock = 300;
                     _doorslocked.erase(_doorslocked.begin() + _currdoorindex);
-                    _lockhunter->setFrame(6);
+                    _lockhunter->setFrame(0);
                     _lockhunter->setVisible(false);
                 }
             }
@@ -643,25 +643,20 @@ void HGameController::update(float dt) {
         if (_doorslocked.size() != 0) {
             for (int i = 0; i < _doorslocked.size(); i++) {
                 Vec2 position = _doors.at(_doorslocked[i])->getViewPosition();
-
-                if (_hunter->getPosition().y +
+                
+                
+                if (abs(_hunter->getPosition().x +
                         Vec2(rightward * _hunter->getVelocity().x,
                              forward * _hunter->getVelocity().y)
-                            .y <
-                    position.y - 127) {
-                    if (abs(_shadow->getPosition().x +
-                            Vec2(rightward * _hunter->getVelocity().x,
-                                 forward * _hunter->getVelocity().y)
-                                .x -
-                            position.x) < 300 and
-                        abs(_shadow->getPosition().y +
-                            Vec2(rightward * _hunter->getVelocity().x,
-                                 forward * _hunter->getVelocity().y)
-                                .y -
-                            (position.y - 128)) < 400) {
-                        _move = false;
-                    }
-                } else {
+                        .x -
+                        (position.x)) < 128*2 and
+                    abs(_hunter->getPosition().y +
+                        Vec2(rightward * _hunter->getVelocity().x,
+                             forward * _hunter->getVelocity().y)
+                        .y -
+                        (position.y-128)) < 30) {
+                    _move = false;
+                    
                 }
             }
         }
@@ -868,7 +863,7 @@ void HGameController::initDoors() {
     for (int i = 0; i < doors.size(); i++) {
         _doors.emplace_back(std::make_shared<DoorController>(
             _assets, doors[i].first, doors[i].second, 0));
-        _doors.at(i)->addChildToVector(_textureNodes);
+        _doors.at(i)->addChildToVector(_doorNodes);
         _doors.at(i)->setFrame(0);
     }
 }
@@ -938,7 +933,7 @@ void HGameController::checkLevelLoaded() {
 
         for (int i = 0; i < _level->getPortaits().size(); i++) {
             _portraits->addPortrait(
-                _textureNodes, i, _level->getPortaits()[i].first,
+                _portraitNodes, i, _level->getPortaits()[i].first,
                 _level->getPortaits()[i].second, Vec3(0, 0, -1), Vec2::ZERO,
                 _level->getBattery());
         }
@@ -1001,38 +996,28 @@ void HGameController::checkLevelLoaded() {
         _tilemap->addDoorTo(_scene);
 
         initDoors();
-
-        std::sort(_textureNodes.begin(), _textureNodes.end(),
+        
+        std::sort(_doorNodes.begin(), _doorNodes.end(),
                   [](std::shared_ptr<scene2::PolygonNode>& a,
                      std::shared_ptr<scene2::PolygonNode>& b) {
                       return a->getPositionY() < b->getPositionY();
                   });
-
-        for (int i = 0; i < _textureNodes.size(); i++) {
-            _obstacleNode->addChild(_textureNodes.at(i));
+        
+        std::sort(_portraitNodes.begin(), _portraitNodes.end(),
+                  [](std::shared_ptr<scene2::PolygonNode>& a,
+                     std::shared_ptr<scene2::PolygonNode>& b) {
+                      return a->getPositionY() < b->getPositionY();
+                  });
+        
+        for (int i = 0; i < _doorNodes.size(); i++) {
+            _obstacleNode->addChild(_doorNodes.at(i));
+        }
+        
+        for (int i = 0; i < _portraitNodes.size(); i++) {
+            _obstacleNode->addChild(_portraitNodes.at(i));
         }
 
-        //        std::vector<std::shared_ptr<scene2::PolygonNode>> cur;
-        //        cur.emplace_back(_textureNodes.at(0));
-        //        for (int i=1; i<_textureNodes.size(); i++){
-        //            if (_textureNodes.at(i)->getPositionX() !=
-        //            _textureNodes.at(i-1)->getPositionX()){
-        //                _sortedTextures.emplace_back(cur);
-        //                cur.clear();
-        //            }
-        //            cur.emplace_back(_textureNodes.at(i));
-        //        }
-        //        _textureNodes.clear();
-        //
-        //        for (int i=0; i<_sortedTextures.size();i++){
-        //            std::sort(_sortedTextures.at(i).begin(),_sortedTextures.at(i).end(),
-        //            [](std::shared_ptr<scene2::PolygonNode> &a,
-        //            std::shared_ptr<scene2::PolygonNode> &b){ return
-        //            a->getPositionY()>b->getPositionY(); });
-        //        }
-        //
-
-        //        _hunter->setPosition(Vec2(0,0));
+        
         _scene->addChild(_filter);
         for (int i = 0; i < 3; i++) {
             _scene->addChild(_deadhearts[i]);
@@ -1598,11 +1583,17 @@ void HGameController::sortNodes() {
         }
     }
 
-    for (int i = 0; i < _textureNodes.size(); i++) {
-        if (_hunter->getPosition().y >
-            _textureNodes.at(i)->getPositionY() - 128) {
-            _obstacleNode->removeChild(_textureNodes.at(i));
-            _obstacleNode->addChild(_textureNodes.at(i));
+    for (int i = 0; i < _doorNodes.size(); i++) {
+        if (_hunter->getPosition().y > _doorNodes.at(i)->getPositionY() + 32) {
+            _obstacleNode->removeChild(_doorNodes.at(i));
+            _obstacleNode->addChild(_doorNodes.at(i));
+        }
+    }
+
+    for (int i = 0; i < _portraitNodes.size(); i++) {
+        if (_hunter->getPosition().y > _portraitNodes.at(i)->getPositionY() - 64) {
+            _obstacleNode->removeChild(_portraitNodes.at(i));
+            _obstacleNode->addChild(_portraitNodes.at(i));
         } else {
             return;
         }

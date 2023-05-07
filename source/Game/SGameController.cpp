@@ -608,7 +608,7 @@ void SGameController::checkLevelLoaded() {
 
         for (int i = 0; i < _level->getPortaits().size(); i++) {
             _portraits->addPortrait(
-                _textureNodes, i, _level->getPortaits()[i].first,
+                _portraitNodes, i, _level->getPortaits()[i].first,
                 _level->getPortaits()[i].second, Vec3(0, 0, -1), Vec2::ZERO,
                 _level->getBattery());
         }
@@ -623,15 +623,25 @@ void SGameController::checkLevelLoaded() {
         _spirit.getView()->addKillButtonTo(_fourthLayer);
 
         initDoors();
-
-        std::sort(_textureNodes.begin(), _textureNodes.end(),
+        
+        std::sort(_doorNodes.begin(), _doorNodes.end(),
                   [](std::shared_ptr<scene2::PolygonNode>& a,
                      std::shared_ptr<scene2::PolygonNode>& b) {
                       return a->getPositionY() < b->getPositionY();
                   });
-
-        for (int i = 0; i < _textureNodes.size(); i++) {
-            _obstacleNode->addChild(_textureNodes.at(i));
+        
+        std::sort(_portraitNodes.begin(), _portraitNodes.end(),
+                  [](std::shared_ptr<scene2::PolygonNode>& a,
+                     std::shared_ptr<scene2::PolygonNode>& b) {
+                      return a->getPositionY() < b->getPositionY();
+                  });
+        
+        for (int i = 0; i < _doorNodes.size(); i++) {
+            _obstacleNode->addChild(_doorNodes.at(i));
+        }
+        
+        for (int i = 0; i < _portraitNodes.size(); i++) {
+            _obstacleNode->addChild(_portraitNodes.at(i));
         }
 
         _portraits->setIndex(4);
@@ -654,7 +664,7 @@ void SGameController::initDoors() {
     for (int i = 0; i < doors.size(); i++) {
         _doors.emplace_back(std::make_shared<DoorController>(
             _assets, doors[i].first, doors[i].second, 1));
-        _doors.at(i)->addChildToVector(_textureNodes);
+        _doors.at(i)->addChildToVector(_doorNodes);
     }
 }
 
@@ -934,11 +944,18 @@ void SGameController::sortNodes() {
             }
         }
     }
+    
+    for (int i = 0; i < _doorNodes.size(); i++) {
+        if (_hunterYPos > _doorNodes.at(i)->getPositionY() + 32) {
+            _obstacleNode->removeChild(_doorNodes.at(i));
+            _obstacleNode->addChild(_doorNodes.at(i));
+        }
+    }
 
-    for (int i = 0; i < _textureNodes.size(); i++) {
-        if (_hunterYPos > _textureNodes.at(i)->getPositionY() - 128) {
-            _obstacleNode->removeChild(_textureNodes.at(i));
-            _obstacleNode->addChild(_textureNodes.at(i));
+    for (int i = 0; i < _portraitNodes.size(); i++) {
+        if (_hunterYPos > _portraitNodes.at(i)->getPositionY() - 64) {
+            _obstacleNode->removeChild(_portraitNodes.at(i));
+            _obstacleNode->addChild(_portraitNodes.at(i));
         } else {
             return;
         }

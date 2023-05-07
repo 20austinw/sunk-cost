@@ -70,7 +70,7 @@ HGameController::HGameController(
     _currdoor = 0;
     _tick = 0;
     _frameNumClose = 0;
-    //    _didLose = false;
+    _didLose = false;
     _animates = true;
     _dimen = Application::get()->getDisplaySize();
     //    _offset = Vec3((_dimen.width)/2.0f,(_dimen.height)/2.0f,50);
@@ -537,7 +537,7 @@ void HGameController::update(float dt) {
                     _triggered = false;
                     _timerlock = 300;
                     _doorslocked.erase(_doorslocked.begin() + _currdoorindex);
-                    _lockhunter->setFrame(6);
+                    _lockhunter->setFrame(0);
                     _lockhunter->setVisible(false);
                 }
             }
@@ -643,25 +643,20 @@ void HGameController::update(float dt) {
         if (_doorslocked.size() != 0) {
             for (int i = 0; i < _doorslocked.size(); i++) {
                 Vec2 position = _doors.at(_doorslocked[i])->getViewPosition();
-
-                if (_hunter->getPosition().y +
+                
+                
+                if (abs(_hunter->getPosition().x +
                         Vec2(rightward * _hunter->getVelocity().x,
                              forward * _hunter->getVelocity().y)
-                            .y <
-                    position.y - 127) {
-                    if (abs(_shadow->getPosition().x +
-                            Vec2(rightward * _hunter->getVelocity().x,
-                                 forward * _hunter->getVelocity().y)
-                                .x -
-                            position.x) < 300 and
-                        abs(_shadow->getPosition().y +
-                            Vec2(rightward * _hunter->getVelocity().x,
-                                 forward * _hunter->getVelocity().y)
-                                .y -
-                            (position.y - 128)) < 400) {
-                        _move = false;
-                    }
-                } else {
+                        .x -
+                        (position.x)) < 128*2 and
+                    abs(_hunter->getPosition().y +
+                        Vec2(rightward * _hunter->getVelocity().x,
+                             forward * _hunter->getVelocity().y)
+                        .y -
+                        (position.y-128)) < 30) {
+                    _move = false;
+                    
                 }
             }
         }

@@ -20,6 +20,8 @@ class EndScene {
     int _idx;
     bool _win;
     bool _spirit;
+    bool _added;
+    bool halt;
     std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> _spriteNodes;
     std::shared_ptr<cugl::Scene2> _scene;
 #pragma mark Internal functions
@@ -41,6 +43,8 @@ class EndScene {
         _tick = 0;
         _frameNum = 0;
         _idx = 0;
+        _added = false;
+        halt = false;
 
         if (spirit) {
             if (win) {
@@ -100,6 +104,14 @@ class EndScene {
             scene->addChild(spriteNode);
         }
     }
+    
+    bool isAdded() {
+        return _added;
+    }
+    
+    void setAdded(bool add) {
+        _added = add;
+    }
 
     /**
      * Removes the view component children from the given `sceneNode`.
@@ -117,7 +129,7 @@ class EndScene {
         _spriteNodes[_idx]->setPosition(position);
     }
 
-    bool halt = false;
+    
     void update() {
         if (!halt) {
 
@@ -144,6 +156,35 @@ class EndScene {
         Vec2 pos = _scene->getCamera()->screenToWorldCoords(
             Vec2(0, _scene->getSize().height));
         _spriteNodes[_idx]->setPosition(pos);
+    }
+    
+    bool sUpdate() {
+        if (!halt) {
+
+            if (_tick % 7 == 0) {
+                _frameNum++;
+                _spriteNodes[_idx]->setFrame(_frameNum);
+            }
+
+            if (_frameNum >= _spriteNodes[_idx]->getSpan()) {
+                _spriteNodes[_idx]->setVisible(false);
+                _idx++;
+                _frameNum = 0;
+            }
+
+            if (_idx == _spriteNodes.size() - 1 &&
+                _frameNum == _spriteNodes[_idx]->getSpan() - 1) {
+                halt = true;
+            }
+
+            _tick++;
+        }
+
+        _spriteNodes[_idx]->setVisible(true);
+        Vec2 pos = _scene->getCamera()->screenToWorldCoords(
+            Vec2(0, _scene->getSize().height));
+        _spriteNodes[_idx]->setPosition(pos);
+        return halt;
     }
 };
 

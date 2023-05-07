@@ -448,9 +448,11 @@ void SGameController::update(float dt) {
         }
         _scene->getCamera()->update();
     }else if (_gameStatus == -1) {
-        _endScene = std::make_shared<EndScene>(_scene, _assets, true, false);
-        _endScene->addChildTo(_scene);
-        if (_timeLeft <= 0) {
+        if (!_endScene->isAdded()){
+            _endScene = std::make_shared<EndScene>(_scene, _assets, true, false);
+            _endScene->addChildTo(_scene);
+            _endScene->setAdded(true);
+        } else if (_endScene->sUpdate()) {
             CULog("Switch to reset screen!");
             AudioEngine::get()->clear("tension", 1);
             AudioEngine::get()->clear("theme", 1);
@@ -458,10 +460,11 @@ void SGameController::update(float dt) {
         }
     }
     else if (_gameStatus == 1){
-        _endScene = std::make_shared<EndScene>(_scene, _assets, true, true);
-        _endScene->addChildTo(_scene);
-//        _endScene->update();
-        if (_timeLeft <= -1 * 60) {
+        if (!_endScene->isAdded()){
+            _endScene = std::make_shared<EndScene>(_scene, _assets, true, true);
+            _endScene->addChildTo(_scene);
+            _endScene->setAdded(true);
+        } else if (_endScene->sUpdate()){
             CULog("Switch to reset screen!");
             AudioEngine::get()->clear("tension", 1);
             AudioEngine::get()->clear("theme", 1);

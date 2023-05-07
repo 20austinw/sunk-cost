@@ -595,7 +595,7 @@ void HGameController::update(float dt) {
             _heart_frame += 1;
             _count = 0;
         }
-        _countfortimer++;
+        //_countfortimer++;
 
         _beingKilled = false;
         if (_kill_ani_count < 84) {
@@ -665,16 +665,18 @@ void HGameController::update(float dt) {
         if (_move) {
             if (_hunter->getTrapSize() > 0) {
                 _ismovedonece = false;
-
-                for (int i = 0; i < 1; i++) {
+                
+                for (int i = 0; i < _hunter->getTrapSize(); i++) {
                     if (_hunter->getTraps()[i]->getTrigger()) {
                         _ismovedonece = true;
                     }
+                }
                     if (!_ismovedonece && _move) {
                         _hunter->move(forward, rightward);
                     }
-                }
-            } else {
+                
+            }
+            else{
                 _hunter->move(forward, rightward);
             }
         }
@@ -716,6 +718,7 @@ void HGameController::update(float dt) {
             _hunter->getTraps()[_trapped]->setTrigger(true);
             _hunter->getTrapViews()[_trapped]->setVisible(true, _frameNumClam);
 
+            _countfortimer++;
             if (_hunter->getTraps()[_trapped]->getTrigger() &&
                 _countfortimer >= 300) {
                 _hunter->getTraps()[_trapped]->setTrigger(false);

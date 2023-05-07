@@ -68,7 +68,7 @@ class SpiritModel {
     bool _hunterAdded;
 
     float _offset;
-    
+
     float KILL_COOL = 600;
 
   public:
@@ -176,10 +176,8 @@ class SpiritModel {
     void setKilling(bool b) { _killing = b; }
 
     Vec2 getHunterPos() { return _hunterModel->getPosition(); }
-    
-    float getMaxKillCool() {
-        return KILL_COOL;
-    }
+
+    float getMaxKillCool() { return KILL_COOL; }
 
     /**
      * Sets the number of available doors for the spirit
@@ -290,7 +288,7 @@ class SpiritModel {
     }
 
     void moveHunter(Vec2 position) {
-        if(!_killing){
+        if (!_killing) {
             Vec2 diff = position - _hunterModel->position;
             forward = diff.y;
             right = diff.x;

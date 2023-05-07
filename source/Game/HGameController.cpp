@@ -290,14 +290,14 @@ HGameController::HGameController(
         _spriteNodes[i]->setVisible(false);
         //            _scene->addChild(_spriteNodes[i]);
     }
-        
+
     _filterTexture = _assets->get<Texture>("filter");
     _filter = scene2::PolygonNode::allocWithTexture(_filterTexture);
     _filter->setPosition(_scene->getCamera()->getPosition());
 
     _filter->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _filter->setScale(Vec2(_dimen.width / 1280, _dimen.height / 720));
-        
+
     _trappedbool = false;
 
     // Initialize the world
@@ -432,7 +432,7 @@ void HGameController::update(float dt) {
         if (!_didFinalwin && _didWin && !_didLose &&
             abs(_hunter->getPosition().x - _exitpos.x) < 200 &&
             abs(_hunter->getPosition().y - _exitpos.y) < 200) {
-//            _scene->removeChild(_winLabel);
+            //            _scene->removeChild(_winLabel);
             _scene->addChild(_finalWinLabel);
             _endScene =
                 std::make_shared<EndScene>(_scene, _assets, false, false);
@@ -480,7 +480,6 @@ void HGameController::update(float dt) {
         //                    _killed = true;
         //                }
         // for hunter side kill testing
-
 
         for (int i = 0; i < _doorslocked.size(); i++) {
             if (_hunter->detectedDoor(
@@ -658,15 +657,14 @@ void HGameController::update(float dt) {
                         _move = false;
                     }
                 } else {
-                   
                 }
             }
         }
 
         if (_move) {
-            if(_hunter->getTrapSize() > 0){
+            if (_hunter->getTrapSize() > 0) {
                 _ismovedonece = false;
-                
+
                 for (int i = 0; i < 1; i++) {
                     if (_hunter->getTraps()[i]->getTrigger()) {
                         _ismovedonece = true;
@@ -675,8 +673,7 @@ void HGameController::update(float dt) {
                         _hunter->move(forward, rightward);
                     }
                 }
-            }
-            else{
+            } else {
                 _hunter->move(forward, rightward);
             }
         }
@@ -784,7 +781,6 @@ void HGameController::update(float dt) {
                 }
             }
         }
-        
 
         // TODO: update direction index for portraits on spirit control
         //    _portraits->updateDirectionIndex(<#Vec3 direction#>, <#int
@@ -1170,8 +1166,8 @@ void HGameController::initCamera() {
     _scene->getCamera()->setFar(100000);
     _scene->getCamera()->setNear(0);
     _scene->getCamera()->update();
-//    std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-//        ->setZoom(2.5);
+    //    std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+    //        ->setZoom(2.5);
 }
 
 /**
@@ -1317,25 +1313,25 @@ void HGameController::processData(const std::string source,
         if (mes[0] == 1) {
             _hunter->addTrap(Vec2(mes[1], mes[2]));
         } else if (mes[0] == 3) {
-//            CULog("portrait received");
+            //            CULog("portrait received");
             int idx = static_cast<int>(mes[1]);
             _indexfromspirit = idx;
         } else if (mes[0] == 5) {
             int idx = static_cast<int>(mes[1]);
-//            CULog("door index: %d", idx);
+            //            CULog("door index: %d", idx);
             addlocks(idx);
         } else if (mes[0] == 9) {
             CULog("got killed");
             _killed = true;
         } else if (mes[0] == 10) {
             _didLose = true;
-//            _didFinalwin = false;
+            //            _didFinalwin = false;
             _didWin = false;
         } else if (mes[0] == 8) {
             _didWin = true;
             _didFinalwin = true;
             _didLose = false;
-       }
+        }
 
         _deserializer->reset();
     }

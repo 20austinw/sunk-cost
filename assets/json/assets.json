@@ -253,7 +253,37 @@
                 "file": "textures/eyeball_fill.png"
             },
         "network_background": {
-                "file": "textures/network_background.png"
+            "file": "textures/network_background.png"
+        },
+        "hunter_lose_part_1": {
+            "file": "textures/hunter_lose_part_1.png"
+        },
+        "hunter_lose_part_2": {
+            "file": "textures/hunter_lose_part_2.png"
+        },
+        "hunter_win_part_1": {
+            "file": "textures/hunter_win_part_1.png"
+        },
+        "hunter_win_part_2": {
+            "file": "textures/hunter_win_part_2.png"
+        },
+        "hunter_win_part_3": {
+            "file": "textures/hunter_win_part_3.png"
+        },
+        "spirit_lose_part_1": {
+            "file": "textures/spirit_lose_part_1.png"
+        },
+        "spirit_lose_part_2": {
+            "file": "textures/spirit_lose_part_2.png"
+        },
+        "spirit_lose_part_3": {
+            "file": "textures/spirit_lose_part_3.png"
+        },
+        "spirit_win_part_1": {
+            "file": "textures/spirit_win_part_1.png"
+        },
+        "spirit_win_part_2": {
+            "file": "textures/spirit_win_part_2.png"
         }
     },
     "fonts": {
@@ -638,7 +668,12 @@
                         ],
                         "halign": "center",
                         "valign": "middle",
-                        "foreground": [255, 255, 255, 255]
+                        "foreground": [
+                            255,
+                            255,
+                            255,
+                            255
+                        ]
                     },
                     "layout": {
                         "x_anchor": "center",

@@ -101,14 +101,14 @@ SGameController::SGameController(
 
     _selectionPhase = false;
     _buttonHeight = 400;
-        
+
     _viewButton = std::make_shared<Button>(_assets->get<Texture>("eye_button"),
                                            _scene, _selectionPhase, _portraits);
     _viewButton->setDefaultPosition(Vec2(_buttonHeight, _buttonHeight) / 2);
     _viewButton->setVisible(true);
     _viewButton->setInteractive(true);
-//    _viewButton->addChildTo(_scene);
-        _viewButton->addChildToNode(_fourthLayer);
+    //    _viewButton->addChildTo(_scene);
+    _viewButton->addChildToNode(_fourthLayer);
 
     while (!_levelLoaded) {
         checkLevelLoaded();
@@ -141,7 +141,7 @@ bool blocked = false;
 void SGameController::update(float dt) {
 
     if (_gameStatus == 0) {
-        
+
         bool preSelection = _selection;
         // Not in selection phase
         if (!_viewButton->update()) {
@@ -164,16 +164,16 @@ void SGameController::update(float dt) {
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
                 ->setZoom(0.3);
         }
-        
-        if(preSelection != _selection){
-            //start select- remove hunter
-            if (_selection){
+
+        if (preSelection != _selection) {
+            // start select- remove hunter
+            if (_selection) {
                 for (int n = 0; n < _hunterNodes.size(); n++) {
                     _obstacleNode->removeChild(_hunterNodes.at(n));
                 }
             }
-            //end select - add hunter
-            else{
+            // end select - add hunter
+            else {
                 for (int n = 0; n < _hunterNodes.size(); n++) {
                     _obstacleNode->addChild(_hunterNodes.at(n));
                 }
@@ -288,7 +288,7 @@ void SGameController::update(float dt) {
                     _spirit.getView()->addLastTrapExtraTo(_fourthLayer);
                 }
             }
-        } else if (blocked && _spirit.getModel()->isOnTrap ) {
+        } else if (blocked && _spirit.getModel()->isOnTrap) {
             _spirit.getModel()->setTrapState(false);
         }
 
@@ -305,7 +305,8 @@ void SGameController::update(float dt) {
                 _spirit.getModel()->health == 0) {
                 // hunter has been killed, end
                 _gameStatus = 1;
-                _endScene = std::make_shared<EndScene>(_scene, _assets, true, true);
+                _endScene =
+                    std::make_shared<EndScene>(_scene, _assets, true, true);
                 _endScene->addChildTo(_scene);
             }
         }
@@ -325,12 +326,14 @@ void SGameController::update(float dt) {
             if (_spirit.getModel()->isOnKill && release) {
                 _spirit.getModel()->setKillState(false);
 
-                if(_spirit.getModel()->hunterAdded && _spirit.hunterInBound(cameraPos)) {
-                    //TODO: networking; transmit to hunter for losing 1 health
+                if (_spirit.getModel()->hunterAdded &&
+                    _spirit.hunterInBound(cameraPos)) {
+                    // TODO: networking; transmit to hunter for losing 1 health
                     transmitKill();
-                    _spirit.getModel()->setHealth(_spirit.getModel()->health-1);
+                    _spirit.getModel()->setHealth(_spirit.getModel()->health -
+                                                  1);
 
-                    for(int i=0; i<_hunterNodes.size(); i++){
+                    for (int i = 0; i < _hunterNodes.size(); i++) {
                         _obstacleNode->removeChild(_hunterNodes.at(i));
                     }
 
@@ -340,21 +343,21 @@ void SGameController::update(float dt) {
                         _obstacleNode->addChild(_hunterNodes.at(i));
                     }
 
-                    _spirit.getModel()->setKillCooldown(_spirit.getModel()->getMaxKillCool());
+                    _spirit.getModel()->setKillCooldown(
+                        _spirit.getModel()->getMaxKillCool());
                     _spirit.getView()->setKillFrame(0);
                 }
             }
         } else if (blocked && _spirit.getModel()->isOnKill) {
             _spirit.getModel()->setKillState(false);
         }
-        
-        
-        //update block screen
-        if (blocked){
+
+        // update block screen
+        if (blocked) {
             _portraits->removeBlock(_thirdLayer);
             blocked = false;
         }
-        if(!_portraits->getCurState() && !_selection){
+        if (!_portraits->getCurState() && !_selection) {
             _portraits->addBlock(_thirdLayer);
             blocked = true;
         }
@@ -706,12 +709,12 @@ void SGameController::processData(const std::string source,
 
         // Win alert for spirit
         if (mes[0] == 10) {
-             _gameStatus = 1;
+            _gameStatus = 1;
         }
-       
+
         // Lose alert for spirit
         if (mes[0] == 8) {
-             _gameStatus = -1;
+            _gameStatus = -1;
         }
 
         //        CULog("%f", mes[0]);
@@ -900,7 +903,7 @@ void SGameController::modifyTexture(std::shared_ptr<Texture>& texture,
 }
 
 void SGameController::sortNodes() {
-    if(!_selection && _spirit.getModel()->hunterAdded){
+    if (!_selection && _spirit.getModel()->hunterAdded) {
         for (int n = 0; n < _hunterNodes.size(); n++) {
             _obstacleNode->removeChild(_hunterNodes.at(n));
             _obstacleNode->addChild(_hunterNodes.at(n));

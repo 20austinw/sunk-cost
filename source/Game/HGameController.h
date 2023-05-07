@@ -298,9 +298,8 @@ class HGameController {
     std::shared_ptr<scene2::PolygonNode> _obstacleNode;
     std::vector<std::shared_ptr<scene2::SpriteNode>> _candleNodes;
     std::vector<std::shared_ptr<scene2::PolygonNode>> _hunterNodes;
-    std::vector<std::shared_ptr<scene2::PolygonNode>> _textureNodes;
-    //    std::vector<std::vector<std::shared_ptr<scene2::PolygonNode>>>
-    //    _sortedTextures;
+    std::vector<std::shared_ptr<scene2::PolygonNode>> _doorNodes;
+    std::vector<std::shared_ptr<scene2::PolygonNode>> _portraitNodes;
 
     std::vector<Poly2> _obstaclePoly;
 

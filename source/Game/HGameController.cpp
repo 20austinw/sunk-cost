@@ -1144,7 +1144,7 @@ void HGameController::checkLevelLoaded() {
         _treasure3.setPosition(_treasurepos.at((index + 2) % 3));
         _treasure3.addChildTo(_scene);
 
-        _hunter->setPosition(_hunterspun.at(2));
+        _hunter->setPosition(_hunterspun.at(index));
         _exitpos = _hunterspun.at(index);
 
         _exitTexture = _assets->get<Texture>("exit");

@@ -151,6 +151,7 @@ void SGameController::update(float dt) {
                 _portraits->setIndex(_viewButton->getCameraIndex());
                 _scene->getCamera()->setPosition(
                     _portraits->getPosition(_portraits->getIndex()));
+                transmitActiveCamIndex(_portraits->getIndex());
                 std::dynamic_pointer_cast<OrthographicCamera>(
                     _scene->getCamera())
                     ->setZoom(0.85);

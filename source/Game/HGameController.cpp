@@ -70,7 +70,7 @@ HGameController::HGameController(
     _currdoor = 0;
     _tick = 0;
     _frameNumClose = 0;
-    //    _didLose = false;
+    _didLose = false;
     _animates = true;
     _dimen = Application::get()->getDisplaySize();
     //    _offset = Vec3((_dimen.width)/2.0f,(_dimen.height)/2.0f,50);
@@ -410,7 +410,8 @@ void HGameController::update(float dt) {
         if (int(_timer / 60 / 60) == 0) {
             AudioEngine::get()->play("tension", _tension, false, 0.5, false);
         }
-
+        CULog("didlose %d",_didLose);
+        
         if ((int(_timer / 60 / 60) == 0 && (int(_timer / 60) % 60 == 0) &&
              !_didLose && !_didFinalwin) ||
             (_finalCount >= 216)) {
@@ -420,7 +421,6 @@ void HGameController::update(float dt) {
             _endScene =
                 std::make_shared<EndScene>(_scene, _assets, false, true);
             _endScene->addChildTo(_scene);
-            CULog("enter!!");
             _didLose = true;
             transmitSpiritWin();
             _gameStatus = 1;
@@ -1332,7 +1332,7 @@ void HGameController::processData(const std::string source,
             _killed = true;
         } else if (mes[0] == 10) {
             _didLose = true;
-            //            _didFinalwin = false;
+            _didFinalwin = false;
             _didWin = false;
         } else if (mes[0] == 8) {
             _didWin = true;

@@ -680,12 +680,12 @@ void HGameController::update(float dt) {
             }
         }
 
-        if (_didLose || _didFinalwin) {
-            // Freeze movement after lose/win
-            forward = 0;
-            rightward = 0;
-            _hunter->setViewFrame(forward, rightward, _beingKilled);
-        }
+//        if (_didLose || _didFinalwin) {
+//            // Freeze movement after lose/win
+//            forward = 0;
+//            rightward = 0;
+//            _hunter->setViewFrame(forward, rightward, _beingKilled);
+//        }
 
         if (_trappedbool == false) {
             if (_hunter->getTrapSize() != 0) {

@@ -410,7 +410,8 @@ void HGameController::update(float dt) {
         if (int(_timer / 60 / 60) == 0) {
             AudioEngine::get()->play("tension", _tension, false, 0.5, false);
         }
-
+        CULog("didlose %d",_didLose);
+        
         if ((int(_timer / 60 / 60) == 0 && (int(_timer / 60) % 60 == 0) &&
              !_didLose && !_didFinalwin) ||
             (_finalCount >= 216)) {
@@ -420,7 +421,6 @@ void HGameController::update(float dt) {
             _endScene =
                 std::make_shared<EndScene>(_scene, _assets, false, true);
             _endScene->addChildTo(_scene);
-            CULog("enter!!");
             _didLose = true;
             transmitSpiritWin();
             _gameStatus = 1;
@@ -1129,7 +1129,7 @@ void HGameController::checkLevelLoaded() {
         _treasure3.setPosition(_treasurepos.at((index + 2) % 3));
         _treasure3.addChildTo(_scene);
 
-        _hunter->setPosition(_hunterspun.at(2));
+        _hunter->setPosition(_hunterspun.at(index));
         _exitpos = _hunterspun.at(index);
 
         _exitTexture = _assets->get<Texture>("exit");
@@ -1317,7 +1317,7 @@ void HGameController::processData(const std::string source,
             _killed = true;
         } else if (mes[0] == 10) {
             _didLose = true;
-            //            _didFinalwin = false;
+            _didFinalwin = false;
             _didWin = false;
         } else if (mes[0] == 8) {
             _didWin = true;

@@ -157,7 +157,7 @@ void SpiritController::addNewLock(
 }
 
 void SpiritController::updateKillFrame() {
-    if (!_model->isKillable()){
+    if (!_model->isKillable()) {
         _model->setKillCooldown(_model->killCool - 1);
     }
     if (_model->isKillable()) {

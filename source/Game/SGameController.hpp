@@ -113,7 +113,7 @@ class SGameController {
 
     bool _hunterAdded;
 
-    bool _gameStatus = 0;
+    int _gameStatus = 0;
 
     std::shared_ptr<EndScene> _endScene;
 
@@ -143,6 +143,8 @@ class SGameController {
     float _hunterYPos;
 
     float _hunterXPos;
+    
+    bool _spawn;
 
     int _ticks;
 
@@ -169,7 +171,8 @@ class SGameController {
     std::shared_ptr<scene2::PolygonNode> _obstacleNode;
     std::vector<std::shared_ptr<scene2::SpriteNode>> _candleNodes;
     std::vector<std::shared_ptr<scene2::PolygonNode>> _hunterNodes;
-    std::vector<std::shared_ptr<scene2::PolygonNode>> _textureNodes;
+    std::vector<std::shared_ptr<scene2::PolygonNode>> _doorNodes;
+    std::vector<std::shared_ptr<scene2::PolygonNode>> _portraitNodes;
 
 #pragma mark Main Methods
   public:
@@ -305,11 +308,11 @@ class SGameController {
     void transmitTrap(std::vector<float> pos);
 
     void transmitActiveCamIndex(int i);
-    
+
     void transmitKill();
-    
+
     void transmitSpiritWin();
-    
+
     void transmitHunterWin();
 
     void initDoors();

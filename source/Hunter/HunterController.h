@@ -173,8 +173,7 @@ class HunterController {
 
     void removeTrap(int index) { _model->removeTrap(index); }
 
-    int getTrapSize() {
-        return _model->getTrapSize(); }
+    int getTrapSize() { return _model->getTrapSize(); }
 
     void
     addChildToNode(std::vector<std::shared_ptr<scene2::PolygonNode>>& node);

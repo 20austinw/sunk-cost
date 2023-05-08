@@ -218,7 +218,7 @@ void SCApp::updateResetScene(float timestep) {
         _played = false;
         _spiritGameplay = SGameController(getDisplaySize(), _assets);
         _hunterGameplay = HGameController(getDisplaySize(), _assets);
-//        _joingame.setActive(false);
+        //        _joingame.setActive(false);
         _menu.setActive(true);
         _scene = State::MENU;
         break;
@@ -284,7 +284,7 @@ void SCApp::updateHostScene(float timestep) {
 }
 
 void SCApp::updateClientScene(float timestep) {
-//    CULog("inside updateClient scene!!!!!");
+    //    CULog("inside updateClient scene!!!!!");
     switch (_joingame.getStatus()) {
     case ClientScene::Status::ABORT:
         _joingame.setActive(false);

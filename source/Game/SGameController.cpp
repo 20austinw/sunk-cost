@@ -101,14 +101,14 @@ SGameController::SGameController(
 
     _selectionPhase = false;
     _buttonHeight = 400;
-        
+
     _viewButton = std::make_shared<Button>(_assets->get<Texture>("eye_button"),
                                            _scene, _selectionPhase, _portraits);
     _viewButton->setDefaultPosition(Vec2(_buttonHeight, _buttonHeight) / 2);
     _viewButton->setVisible(true);
     _viewButton->setInteractive(true);
-//    _viewButton->addChildTo(_scene);
-        _viewButton->addChildToNode(_fourthLayer);
+    //    _viewButton->addChildTo(_scene);
+    _viewButton->addChildToNode(_fourthLayer);
 
     while (!_levelLoaded) {
         checkLevelLoaded();
@@ -141,7 +141,7 @@ bool blocked = false;
 void SGameController::update(float dt) {
 
     if (_gameStatus == 0) {
-        
+
         bool preSelection = _selection;
         // Not in selection phase
         if (!_viewButton->update()) {
@@ -151,6 +151,7 @@ void SGameController::update(float dt) {
                 _portraits->setIndex(_viewButton->getCameraIndex());
                 _scene->getCamera()->setPosition(
                     _portraits->getPosition(_portraits->getIndex()));
+                transmitActiveCamIndex(_portraits->getIndex());
                 std::dynamic_pointer_cast<OrthographicCamera>(
                     _scene->getCamera())
                     ->setZoom(0.85);
@@ -164,16 +165,16 @@ void SGameController::update(float dt) {
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
                 ->setZoom(0.3);
         }
-        
-        if(preSelection != _selection){
-            //start select- remove hunter
-            if (_selection){
+
+        if (preSelection != _selection) {
+            // start select- remove hunter
+            if (_selection) {
                 for (int n = 0; n < _hunterNodes.size(); n++) {
                     _obstacleNode->removeChild(_hunterNodes.at(n));
                 }
             }
-            //end select - add hunter
-            else{
+            // end select - add hunter
+            else {
                 for (int n = 0; n < _hunterNodes.size(); n++) {
                     _obstacleNode->addChild(_hunterNodes.at(n));
                 }
@@ -288,7 +289,7 @@ void SGameController::update(float dt) {
                     _spirit.getView()->addLastTrapExtraTo(_fourthLayer);
                 }
             }
-        } else if (blocked && _spirit.getModel()->isOnTrap ) {
+        } else if (blocked && _spirit.getModel()->isOnTrap) {
             _spirit.getModel()->setTrapState(false);
         }
 
@@ -305,7 +306,8 @@ void SGameController::update(float dt) {
                 _spirit.getModel()->health == 0) {
                 // hunter has been killed, end
                 _gameStatus = 1;
-                _endScene = std::make_shared<EndScene>(_scene, _assets, true, true);
+                _endScene =
+                    std::make_shared<EndScene>(_scene, _assets, true, true);
                 _endScene->addChildTo(_scene);
             }
         }
@@ -325,12 +327,14 @@ void SGameController::update(float dt) {
             if (_spirit.getModel()->isOnKill && release) {
                 _spirit.getModel()->setKillState(false);
 
-                if(_spirit.getModel()->hunterAdded && _spirit.hunterInBound(cameraPos)) {
-                    //TODO: networking; transmit to hunter for losing 1 health
+                if (_spirit.getModel()->hunterAdded &&
+                    _spirit.hunterInBound(cameraPos)) {
+                    // TODO: networking; transmit to hunter for losing 1 health
                     transmitKill();
-                    _spirit.getModel()->setHealth(_spirit.getModel()->health-1);
+                    _spirit.getModel()->setHealth(_spirit.getModel()->health -
+                                                  1);
 
-                    for(int i=0; i<_hunterNodes.size(); i++){
+                    for (int i = 0; i < _hunterNodes.size(); i++) {
                         _obstacleNode->removeChild(_hunterNodes.at(i));
                     }
 
@@ -340,21 +344,21 @@ void SGameController::update(float dt) {
                         _obstacleNode->addChild(_hunterNodes.at(i));
                     }
 
-                    _spirit.getModel()->setKillCooldown(_spirit.getModel()->getMaxKillCool());
+                    _spirit.getModel()->setKillCooldown(
+                        _spirit.getModel()->getMaxKillCool());
                     _spirit.getView()->setKillFrame(0);
                 }
             }
         } else if (blocked && _spirit.getModel()->isOnKill) {
             _spirit.getModel()->setKillState(false);
         }
-        
-        
-        //update block screen
-        if (blocked){
+
+        // update block screen
+        if (blocked) {
             _portraits->removeBlock(_thirdLayer);
             blocked = false;
         }
-        if(!_portraits->getCurState() && !_selection){
+        if (!_portraits->getCurState() && !_selection) {
             _portraits->addBlock(_thirdLayer);
             blocked = true;
         }
@@ -444,12 +448,27 @@ void SGameController::update(float dt) {
             _endScene->addChildTo(_scene);
         }
         _scene->getCamera()->update();
-    } else {
-        _endScene->update();
-        AudioEngine::get()->clear("tension", 1);
-        AudioEngine::get()->clear("theme", 1);
-        if (_timeLeft <= -5 * 60) {
+    }else if (_gameStatus == -1) {
+        if (!_endScene->isAdded()){
+            _endScene = std::make_shared<EndScene>(_scene, _assets, true, false);
+            _endScene->addChildTo(_scene);
+            _endScene->setAdded(true);
+        } else if (_endScene->sUpdate()) {
             CULog("Switch to reset screen!");
+            AudioEngine::get()->clear("tension", 1);
+            AudioEngine::get()->clear("theme", 1);
+            _status = ABORT;
+        }
+    }
+    else if (_gameStatus == 1){
+        if (!_endScene->isAdded()){
+            _endScene = std::make_shared<EndScene>(_scene, _assets, true, true);
+            _endScene->addChildTo(_scene);
+            _endScene->setAdded(true);
+        } else if (_endScene->sUpdate()){
+            CULog("Switch to reset screen!");
+            AudioEngine::get()->clear("tension", 1);
+            AudioEngine::get()->clear("theme", 1);
             _status = ABORT;
         }
     }
@@ -593,8 +612,8 @@ void SGameController::checkLevelLoaded() {
 
         for (int i = 0; i < _level->getPortaits().size(); i++) {
             _portraits->addPortrait(
-                _textureNodes, i, _level->getPortaits()[i].first,
-                _level->getPortaits()[i].second, Vec3(0, 0, -1), Vec2::ZERO,
+                                    _portraitNodes, i, _level->getPortaits()[i].first,
+                _level->getPortaits()[i].second, Vec3(0, 0, -1), Vec2::ZERO,false,
                 _level->getBattery());
         }
         _portraits->setMaxbattery(_level->getBattery());
@@ -608,15 +627,25 @@ void SGameController::checkLevelLoaded() {
         _spirit.getView()->addKillButtonTo(_fourthLayer);
 
         initDoors();
-
-        std::sort(_textureNodes.begin(), _textureNodes.end(),
+        
+        std::sort(_doorNodes.begin(), _doorNodes.end(),
                   [](std::shared_ptr<scene2::PolygonNode>& a,
                      std::shared_ptr<scene2::PolygonNode>& b) {
                       return a->getPositionY() < b->getPositionY();
                   });
-
-        for (int i = 0; i < _textureNodes.size(); i++) {
-            _obstacleNode->addChild(_textureNodes.at(i));
+        
+        std::sort(_portraitNodes.begin(), _portraitNodes.end(),
+                  [](std::shared_ptr<scene2::PolygonNode>& a,
+                     std::shared_ptr<scene2::PolygonNode>& b) {
+                      return a->getPositionY() < b->getPositionY();
+                  });
+        
+        for (int i = 0; i < _doorNodes.size(); i++) {
+            _obstacleNode->addChild(_doorNodes.at(i));
+        }
+        
+        for (int i = 0; i < _portraitNodes.size(); i++) {
+            _obstacleNode->addChild(_portraitNodes.at(i));
         }
 
         _portraits->setIndex(4);
@@ -639,7 +668,7 @@ void SGameController::initDoors() {
     for (int i = 0; i < doors.size(); i++) {
         _doors.emplace_back(std::make_shared<DoorController>(
             _assets, doors[i].first, doors[i].second, 1));
-        _doors.at(i)->addChildToVector(_textureNodes);
+        _doors.at(i)->addChildToVector(_doorNodes);
     }
 }
 
@@ -706,12 +735,12 @@ void SGameController::processData(const std::string source,
 
         // Win alert for spirit
         if (mes[0] == 10) {
-             _gameStatus = 1;
+            _gameStatus = 1;
         }
-       
+
         // Lose alert for spirit
         if (mes[0] == 8) {
-             _gameStatus = -1;
+            _gameStatus = -1;
         }
 
         //        CULog("%f", mes[0]);
@@ -900,7 +929,7 @@ void SGameController::modifyTexture(std::shared_ptr<Texture>& texture,
 }
 
 void SGameController::sortNodes() {
-    if(!_selection && _spirit.getModel()->hunterAdded){
+    if (!_selection && _spirit.getModel()->hunterAdded) {
         for (int n = 0; n < _hunterNodes.size(); n++) {
             _obstacleNode->removeChild(_hunterNodes.at(n));
             _obstacleNode->addChild(_hunterNodes.at(n));
@@ -919,11 +948,18 @@ void SGameController::sortNodes() {
             }
         }
     }
+    
+    for (int i = 0; i < _doorNodes.size(); i++) {
+        if (_hunterYPos > _doorNodes.at(i)->getPositionY() + 32) {
+            _obstacleNode->removeChild(_doorNodes.at(i));
+            _obstacleNode->addChild(_doorNodes.at(i));
+        }
+    }
 
-    for (int i = 0; i < _textureNodes.size(); i++) {
-        if (_hunterYPos > _textureNodes.at(i)->getPositionY() - 128) {
-            _obstacleNode->removeChild(_textureNodes.at(i));
-            _obstacleNode->addChild(_textureNodes.at(i));
+    for (int i = 0; i < _portraitNodes.size(); i++) {
+        if (_hunterYPos > _portraitNodes.at(i)->getPositionY() - 64) {
+            _obstacleNode->removeChild(_portraitNodes.at(i));
+            _obstacleNode->addChild(_portraitNodes.at(i));
         } else {
             return;
         }

@@ -18,9 +18,9 @@ using namespace cugl;
 class Button {
 #pragma mark Internal References
   private:
-//    std::shared_ptr<scene2::PolygonNode> _node;
+    //    std::shared_ptr<scene2::PolygonNode> _node;
     std::shared_ptr<scene2::SpriteNode> _node;
-    
+
     std::shared_ptr<Scene2> _scene;
     std::shared_ptr<cugl::AssetManager> _assets;
     std::shared_ptr<Texture> _texture;
@@ -38,11 +38,10 @@ class Button {
 
     bool _selectionPhase;
     int cameraIdx = -1;
-    
+
     int _cooldown;
-    
+
     float COOLDOWN = 180;
-    
 
 #pragma mark Main Functions
   public:
@@ -52,14 +51,17 @@ class Button {
         : _texture(texture), _scene(scene), _selectionPhase(selectionPhase),
           _portraits(portraits) {
         _buttonSize = 400;
-        _scale = _buttonSize / scene2::SpriteNode::allocWithSheet(texture, 2, 8, 16)->getSize().width;
+        _scale =
+            _buttonSize / scene2::SpriteNode::allocWithSheet(texture, 2, 8, 16)
+                              ->getSize()
+                              .width;
         _node = scene2::SpriteNode::allocWithSheet(texture, 2, 8, 16);
-              _node->setFrame(0);
-              _node->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+        _node->setFrame(0);
+        _node->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
         _node->setScale(_scale / getZoom());
         _inputController = InputController::getInstance();
         _isDragged = false;
-              _cooldown = 0;
+        _cooldown = 0;
     };
 
     ~Button() {}
@@ -74,7 +76,7 @@ class Button {
     void addChildTo(const std::shared_ptr<cugl::Scene2>& scene) {
         scene->addChild(_node);
     }
-    
+
     void addChildToNode(std::shared_ptr<cugl::scene2::PolygonNode>& node) {
         node->addChild(_node);
     }
@@ -89,14 +91,12 @@ class Button {
         _defaultPosition = pos;
         _position = pos;
     }
-    
-    void setCooldown(int i) {
-        _cooldown = i;
-    }
-    
-    void updateFrame(){
-        if(!canSwitch()){
-            _cooldown --;
+
+    void setCooldown(int i) { _cooldown = i; }
+
+    void updateFrame() {
+        if (!canSwitch()) {
+            _cooldown--;
         }
         if (canSwitch()) {
             _node->setFrame(15);
@@ -106,10 +106,8 @@ class Button {
         int frame = _cooldown / step;
         _node->setFrame(15 - frame);
     }
-    
-    bool canSwitch() {
-        return _cooldown<=0;
-    }
+
+    bool canSwitch() { return _cooldown <= 0; }
 
     bool update() {
         updateFrame();
@@ -122,27 +120,21 @@ class Button {
                 Vec2 worldPos =
                     _scene->getCamera()->screenToWorldCoords(_position);
                 cameraIdx = _portraits->getNearest(worldPos);
-//                CULog("%i", cameraIdx);
+                //                CULog("%i", cameraIdx);
             }
         } else {
             reset();
         }
         return _selectionPhase;
     }
-    
-    void setButtonFrame(int frame) {
-        _node->setFrame(frame);
-    }
-    
-    float getMaxCool() {
-        return COOLDOWN;
-    }
+
+    void setButtonFrame(int frame) { _node->setFrame(frame); }
+
+    float getMaxCool() { return COOLDOWN; }
 
     int getCameraIndex() { return cameraIdx; }
-    
-    void setCameraIndex(int i) {
-        cameraIdx = i;
-    }
+
+    void setCameraIndex(int i) { cameraIdx = i; }
 
     bool isClicked(Vec2 position) {
         if (!_active) {

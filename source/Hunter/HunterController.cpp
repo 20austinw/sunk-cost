@@ -41,8 +41,8 @@ HunterController::HunterController(
 }
 
 bool HunterController::detectedDoor(cugl::Vec2 position) {
-    if (abs(_model->getPosition().x - position.x) < 300 &&
-        abs(_model->getPosition().y - position.y) < 300) {
+    if (abs(_model->getPosition().x - position.x) < 400 &&
+        abs(_model->getPosition().y - position.y) < 400) {
         return true;
     }
     return false;

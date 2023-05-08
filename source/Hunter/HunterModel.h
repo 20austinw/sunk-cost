@@ -95,8 +95,7 @@ class HunterModel : public physics2::WheelObstacle {
      */
     std::vector<std::shared_ptr<TrapView>> getTrapViews() { return _trapViews; }
 
-    int getTrapSize() {
-        return _size1;}
+    int getTrapSize() { return _size1; }
 
     /**
      * Sets direction for this hunter

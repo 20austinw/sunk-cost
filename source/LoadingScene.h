@@ -48,11 +48,11 @@ class LoadingScene : public cugl::Scene2 {
     float _progress;
     /** Whether or not the player has pressed play to continue */
     bool _completed;
-    
+
     int _frameNum = 0;
-    
+
     std::shared_ptr<cugl::scene2::SpriteNode> _background;
-    
+
     int _ticks = 0;
 
   public:

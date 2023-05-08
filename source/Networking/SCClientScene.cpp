@@ -185,7 +185,7 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             deleteLastDigit();
         }
     });
-    
+
     //    _gameid->addExitListener([this](const std::string& name, const
     //    std::string& value) {
     //        connect(value);

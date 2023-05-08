@@ -70,7 +70,7 @@ HGameController::HGameController(
     _currdoor = 0;
     _tick = 0;
     _frameNumClose = 0;
-    //    _didLose = false;
+    _didLose = false;
     _animates = true;
     _dimen = Application::get()->getDisplaySize();
     //    _offset = Vec3((_dimen.width)/2.0f,(_dimen.height)/2.0f,50);
@@ -248,6 +248,8 @@ HGameController::HGameController(
     for (int i = 0; i < 3; i++) {
         initHunter(i);
     }
+        
+        _didWin=false;
 
     _hunter = _hunterSet[0];
     //    _hunter->setPosition(Vec2(10000,10000)*_scale);
@@ -290,14 +292,14 @@ HGameController::HGameController(
         _spriteNodes[i]->setVisible(false);
         //            _scene->addChild(_spriteNodes[i]);
     }
-        
+
     _filterTexture = _assets->get<Texture>("filter");
     _filter = scene2::PolygonNode::allocWithTexture(_filterTexture);
     _filter->setPosition(_scene->getCamera()->getPosition());
 
     _filter->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     _filter->setScale(Vec2(_dimen.width / 1280, _dimen.height / 720));
-        
+
     _trappedbool = false;
 
     // Initialize the world
@@ -408,7 +410,8 @@ void HGameController::update(float dt) {
         if (int(_timer / 60 / 60) == 0) {
             AudioEngine::get()->play("tension", _tension, false, 0.5, false);
         }
-
+        CULog("didlose %d",_didLose);
+        
         if ((int(_timer / 60 / 60) == 0 && (int(_timer / 60) % 60 == 0) &&
              !_didLose && !_didFinalwin) ||
             (_finalCount >= 216)) {
@@ -432,7 +435,7 @@ void HGameController::update(float dt) {
         if (!_didFinalwin && _didWin && !_didLose &&
             abs(_hunter->getPosition().x - _exitpos.x) < 200 &&
             abs(_hunter->getPosition().y - _exitpos.y) < 200) {
-//            _scene->removeChild(_winLabel);
+            //            _scene->removeChild(_winLabel);
             _scene->addChild(_finalWinLabel);
             _endScene =
                 std::make_shared<EndScene>(_scene, _assets, false, false);
@@ -442,6 +445,8 @@ void HGameController::update(float dt) {
             _gameStatus = 1;
         }
 
+        
+        _filter->setPosition(_scene->getCamera()->getPosition());
         _timerLabel->setText(std::to_string(int(_timer / 60 / 60)) + ":" +
                              std::to_string(int(_timer / 60) % 60));
         _timerLabel->setPosition(_scene->getCamera()->getPosition() -
@@ -480,7 +485,6 @@ void HGameController::update(float dt) {
         //                    _killed = true;
         //                }
         // for hunter side kill testing
-
 
         for (int i = 0; i < _doorslocked.size(); i++) {
             if (_hunter->detectedDoor(
@@ -533,7 +537,7 @@ void HGameController::update(float dt) {
                     _triggered = false;
                     _timerlock = 300;
                     _doorslocked.erase(_doorslocked.begin() + _currdoorindex);
-                    _lockhunter->setFrame(6);
+                    _lockhunter->setFrame(0);
                     _lockhunter->setVisible(false);
                 }
             }
@@ -595,7 +599,7 @@ void HGameController::update(float dt) {
             _heart_frame += 1;
             _count = 0;
         }
-        _countfortimer++;
+        //_countfortimer++;
 
         _beingKilled = false;
         if (_kill_ani_count < 84) {
@@ -639,54 +643,49 @@ void HGameController::update(float dt) {
         if (_doorslocked.size() != 0) {
             for (int i = 0; i < _doorslocked.size(); i++) {
                 Vec2 position = _doors.at(_doorslocked[i])->getViewPosition();
-
-                if (_hunter->getPosition().y +
+                
+                
+                if (abs(_hunter->getPosition().x +
                         Vec2(rightward * _hunter->getVelocity().x,
                              forward * _hunter->getVelocity().y)
-                            .y <
-                    position.y - 127) {
-                    if (abs(_shadow->getPosition().x +
-                            Vec2(rightward * _hunter->getVelocity().x,
-                                 forward * _hunter->getVelocity().y)
-                                .x -
-                            position.x) < 300 and
-                        abs(_shadow->getPosition().y +
-                            Vec2(rightward * _hunter->getVelocity().x,
-                                 forward * _hunter->getVelocity().y)
-                                .y -
-                            (position.y - 128)) < 400) {
-                        _move = false;
-                    }
-                } else {
-                   
+                        .x -
+                        (position.x)) < 128*2 and
+                    abs(_hunter->getPosition().y +
+                        Vec2(rightward * _hunter->getVelocity().x,
+                             forward * _hunter->getVelocity().y)
+                        .y -
+                        (position.y-128)) < 30) {
+                    _move = false;
+                    
                 }
             }
         }
 
         if (_move) {
-            if(_hunter->getTrapSize() > 0){
+            if (_hunter->getTrapSize() > 0) {
                 _ismovedonece = false;
                 
-                for (int i = 0; i < 1; i++) {
+                for (int i = 0; i < _hunter->getTrapSize(); i++) {
                     if (_hunter->getTraps()[i]->getTrigger()) {
                         _ismovedonece = true;
                     }
+                }
                     if (!_ismovedonece && _move) {
                         _hunter->move(forward, rightward);
                     }
-                }
+                
             }
             else{
                 _hunter->move(forward, rightward);
             }
         }
 
-        if (_didLose || _didFinalwin) {
-            // Freeze movement after lose/win
-            forward = 0;
-            rightward = 0;
-            _hunter->setViewFrame(forward, rightward, _beingKilled);
-        }
+//        if (_didLose || _didFinalwin) {
+//            // Freeze movement after lose/win
+//            forward = 0;
+//            rightward = 0;
+//            _hunter->setViewFrame(forward, rightward, _beingKilled);
+//        }
 
         if (_trappedbool == false) {
             if (_hunter->getTrapSize() != 0) {
@@ -718,6 +717,7 @@ void HGameController::update(float dt) {
             _hunter->getTraps()[_trapped]->setTrigger(true);
             _hunter->getTrapViews()[_trapped]->setVisible(true, _frameNumClam);
 
+            _countfortimer++;
             if (_hunter->getTraps()[_trapped]->getTrigger() &&
                 _countfortimer >= 300) {
                 _hunter->getTraps()[_trapped]->setTrigger(false);
@@ -784,7 +784,6 @@ void HGameController::update(float dt) {
                 }
             }
         }
-        
 
         // TODO: update direction index for portraits on spirit control
         //    _portraits->updateDirectionIndex(<#Vec3 direction#>, <#int
@@ -864,7 +863,7 @@ void HGameController::initDoors() {
     for (int i = 0; i < doors.size(); i++) {
         _doors.emplace_back(std::make_shared<DoorController>(
             _assets, doors[i].first, doors[i].second, 0));
-        _doors.at(i)->addChildToVector(_textureNodes);
+        _doors.at(i)->addChildToVector(_doorNodes);
         _doors.at(i)->setFrame(0);
     }
 }
@@ -934,12 +933,12 @@ void HGameController::checkLevelLoaded() {
 
         for (int i = 0; i < _level->getPortaits().size(); i++) {
             _portraits->addPortrait(
-                _textureNodes, i, _level->getPortaits()[i].first,
-                _level->getPortaits()[i].second, Vec3(0, 0, -1), Vec2::ZERO,
+                                    _portraitNodes, i, _level->getPortaits()[i].first,
+                _level->getPortaits()[i].second, Vec3(0, 0, -1), Vec2::ZERO,true,
                 _level->getBattery());
         }
 
-        //        for (int i = 0; i < tiles.size() * tiles[0].size(); ++i) {
+        //        for (inint i = 0; i < tiles.size() * tiles[0].size(); ++i) {
         //            int c = i % tiles[0].size();
         //            int r = i / tiles[0].size();
         //
@@ -997,38 +996,28 @@ void HGameController::checkLevelLoaded() {
         _tilemap->addDoorTo(_scene);
 
         initDoors();
-
-        std::sort(_textureNodes.begin(), _textureNodes.end(),
+        
+        std::sort(_doorNodes.begin(), _doorNodes.end(),
                   [](std::shared_ptr<scene2::PolygonNode>& a,
                      std::shared_ptr<scene2::PolygonNode>& b) {
                       return a->getPositionY() < b->getPositionY();
                   });
-
-        for (int i = 0; i < _textureNodes.size(); i++) {
-            _obstacleNode->addChild(_textureNodes.at(i));
+        
+        std::sort(_portraitNodes.begin(), _portraitNodes.end(),
+                  [](std::shared_ptr<scene2::PolygonNode>& a,
+                     std::shared_ptr<scene2::PolygonNode>& b) {
+                      return a->getPositionY() < b->getPositionY();
+                  });
+        
+        for (int i = 0; i < _doorNodes.size(); i++) {
+            _obstacleNode->addChild(_doorNodes.at(i));
+        }
+        
+        for (int i = 0; i < _portraitNodes.size(); i++) {
+            _obstacleNode->addChild(_portraitNodes.at(i));
         }
 
-        //        std::vector<std::shared_ptr<scene2::PolygonNode>> cur;
-        //        cur.emplace_back(_textureNodes.at(0));
-        //        for (int i=1; i<_textureNodes.size(); i++){
-        //            if (_textureNodes.at(i)->getPositionX() !=
-        //            _textureNodes.at(i-1)->getPositionX()){
-        //                _sortedTextures.emplace_back(cur);
-        //                cur.clear();
-        //            }
-        //            cur.emplace_back(_textureNodes.at(i));
-        //        }
-        //        _textureNodes.clear();
-        //
-        //        for (int i=0; i<_sortedTextures.size();i++){
-        //            std::sort(_sortedTextures.at(i).begin(),_sortedTextures.at(i).end(),
-        //            [](std::shared_ptr<scene2::PolygonNode> &a,
-        //            std::shared_ptr<scene2::PolygonNode> &b){ return
-        //            a->getPositionY()>b->getPositionY(); });
-        //        }
-        //
-
-        //        _hunter->setPosition(Vec2(0,0));
+        
         _scene->addChild(_filter);
         for (int i = 0; i < 3; i++) {
             _scene->addChild(_deadhearts[i]);
@@ -1043,7 +1032,7 @@ void HGameController::checkLevelLoaded() {
         _scene->addChild(_timerLabellock);
         _timerLabellock->setVisible(false);
 
-        _timer = 5400;
+        _timer = 5270;
         _timerLabel = cugl::scene2::Label::allocWithText(
             Vec2(200, 200), "2:00", _assets->get<Font>("pixel32"));
         _scene->addChild(_timerLabel);
@@ -1140,7 +1129,7 @@ void HGameController::checkLevelLoaded() {
         _treasure3.setPosition(_treasurepos.at((index + 2) % 3));
         _treasure3.addChildTo(_scene);
 
-        _hunter->setPosition(_hunterspun.at(2));
+        _hunter->setPosition(_hunterspun.at(index));
         _exitpos = _hunterspun.at(index);
 
         _exitTexture = _assets->get<Texture>("exit");
@@ -1163,15 +1152,15 @@ void HGameController::initCamera() {
     //        Vec3 next = _offset + (Vec3(_star->getPosition().x,
     //        _star->getPosition().y, 1));
     //    }
-    _scene->getCamera()->translate(Vec3(0, 0, -0.8));
-    Vec3 next =
-        _offset + (Vec3(_hunter->getPosition().x, _hunter->getPosition().y, 1));
-    _scene->getCamera()->translate(next - curr);
+//    _scene->getCamera()->translate(Vec3(0, 0, -0.8));
+//    Vec3 next =
+//        _offset + (Vec3(_hunter->getPosition().x, _hunter->getPosition().y, 1));
+    _scene->getCamera()->setPosition(_hunter->getPosition());
     _scene->getCamera()->setFar(100000);
     _scene->getCamera()->setNear(0);
     _scene->getCamera()->update();
-//    std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-//        ->setZoom(2.5);
+    //    std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+    //        ->setZoom(2.5);
 }
 
 /**
@@ -1185,8 +1174,7 @@ void HGameController::updateCamera(float timestep) {
         _filter->setAnchor(Vec2::ANCHOR_CENTER);
         Vec2 fixHunterOffset = Vec2(600, 0);
         Vec2 next =
-            _offset - fixHunterOffset +
-            ((Vec3(_hunter->getPosition().x, _hunter->getPosition().y, 1)));
+        _hunter->getPosition();
 
         int timeFactor = (_shiftback) ? 5 : 2;
 
@@ -1317,25 +1305,25 @@ void HGameController::processData(const std::string source,
         if (mes[0] == 1) {
             _hunter->addTrap(Vec2(mes[1], mes[2]));
         } else if (mes[0] == 3) {
-//            CULog("portrait received");
+            //            CULog("portrait received");
             int idx = static_cast<int>(mes[1]);
             _indexfromspirit = idx;
         } else if (mes[0] == 5) {
             int idx = static_cast<int>(mes[1]);
-//            CULog("door index: %d", idx);
+            //            CULog("door index: %d", idx);
             addlocks(idx);
         } else if (mes[0] == 9) {
             CULog("got killed");
             _killed = true;
         } else if (mes[0] == 10) {
             _didLose = true;
-//            _didFinalwin = false;
+            _didFinalwin = false;
             _didWin = false;
         } else if (mes[0] == 8) {
             _didWin = true;
             _didFinalwin = true;
             _didLose = false;
-       }
+        }
 
         _deserializer->reset();
     }
@@ -1595,11 +1583,17 @@ void HGameController::sortNodes() {
         }
     }
 
-    for (int i = 0; i < _textureNodes.size(); i++) {
-        if (_hunter->getPosition().y >
-            _textureNodes.at(i)->getPositionY() - 128) {
-            _obstacleNode->removeChild(_textureNodes.at(i));
-            _obstacleNode->addChild(_textureNodes.at(i));
+    for (int i = 0; i < _doorNodes.size(); i++) {
+        if (_hunter->getPosition().y > _doorNodes.at(i)->getPositionY() + 32) {
+            _obstacleNode->removeChild(_doorNodes.at(i));
+            _obstacleNode->addChild(_doorNodes.at(i));
+        }
+    }
+
+    for (int i = 0; i < _portraitNodes.size(); i++) {
+        if (_hunter->getPosition().y > _portraitNodes.at(i)->getPositionY() - 64) {
+            _obstacleNode->removeChild(_portraitNodes.at(i));
+            _obstacleNode->addChild(_portraitNodes.at(i));
         } else {
             return;
         }

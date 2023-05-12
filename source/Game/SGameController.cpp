@@ -76,12 +76,12 @@ SGameController::SGameController(
     _deserializer = NetcodeDeserializer::alloc();
     _status = Status::START;
     _alertTimer = 0;
-    _font = assets->get<Font>("pixel32");
+    _font = assets->get<Font>("gamefont");
     string minutes = std::to_string(_timeLeft / 60 / 60);
     string seconds = std::to_string(_timeLeft / 60 % 60);
     seconds = seconds.length() <= 1 ? "0" + seconds : seconds;
     _timerLabel = cugl::scene2::Label::allocWithText(
-        Vec2(0, 0), minutes + ":" + seconds, _assets->get<Font>("pixel32"));
+        Vec2(0, 0), minutes + ":" + seconds, _assets->get<Font>("gamefont"));
     _timerScale = _textHeight / _timerLabel->getSize().height;
     _fifthLayer->addChild(_timerLabel);
     _endScene = std::make_shared<EndScene>(_scene, assets, true, true);
@@ -94,7 +94,7 @@ SGameController::SGameController(
 
     _alertLabel = cugl::scene2::Label::allocWithText(
         Vec2(0, displaySize.height / 2), "The treasure has been STOLEN",
-        _assets->get<Font>("pixel32"));
+        _assets->get<Font>("gamefont"));
     _alertLabel->setPosition(_scene->getCamera()->getPosition() +
                              Vec2(350, 350));
     _alertLabel->setForeground(cugl::Color4f::RED);

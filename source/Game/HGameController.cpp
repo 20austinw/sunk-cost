@@ -461,7 +461,7 @@ void HGameController::update(float dt) {
         _timerLabel->setForeground(cugl::Color4f::WHITE);
 
         _treasureLabel->setText(std::to_string(int(_treasureCount)) +
-                                " Treasure Collected");
+                                "/3 Treasure Collected");
         
         _treasureLabel->setFont(_assets->get<Font>("gamefont"));
         
@@ -1051,7 +1051,7 @@ void HGameController::checkLevelLoaded() {
 
         _treasureCount = 0;
         _treasureLabel = cugl::scene2::Label::allocWithText(
-            Vec2(200, 200), "0 Treasure Collected",
+            Vec2(300, 300), "0/3 Treasure Collected",
             _assets->get<Font>("gamefont"));
         _treasureLabel->setColor(cugl::Color4f::WHITE);
         _scene->addChild(_treasureLabel);

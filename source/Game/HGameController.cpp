@@ -450,7 +450,7 @@ void HGameController::update(float dt) {
         _timerLabel->setText(std::to_string(int(_timer / 60 / 60)) + ":" +
                              std::to_string(int(_timer / 60) % 60));
         _timerLabel->setPosition(_scene->getCamera()->getPosition() -
-                                 Vec2(0, 700));
+                                 Vec2(50, 700));
 //        float vPos = _scene->getSize().height - 20 -
 //                     _timerLabel->getSize().height * getZoom() / 2;
 //        float hPos = _scene->getSize().width / 2 -
@@ -1210,7 +1210,7 @@ void HGameController::updateCamera(float timestep) {
         _scene->getCamera()->translate((next - curr) * timeFactor * timestep);
 
         _timerLabel->setPosition(_scene->getCamera()->getPosition() -
-                                 Vec2(0, 500));
+                                 Vec2(50, 500));
     }
 
     if (_didWin) {

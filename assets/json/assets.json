@@ -297,6 +297,10 @@
         "gyparody": {
             "file": "fonts/gyparody-hv.ttf",
             "size": 48
+        },
+        "gamefont":{
+            "file": "fonts/IMFellDoublePica-Regular.ttf",
+            "size": 48
         }
     },
     "sounds": {

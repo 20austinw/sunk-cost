@@ -450,14 +450,26 @@ void HGameController::update(float dt) {
         _timerLabel->setText(std::to_string(int(_timer / 60 / 60)) + ":" +
                              std::to_string(int(_timer / 60) % 60));
         _timerLabel->setPosition(_scene->getCamera()->getPosition() -
-                                 Vec2(0, 300));
+                                 Vec2(0, 700));
+//        float vPos = _scene->getSize().height - 20 -
+//                     _timerLabel->getSize().height * getZoom() / 2;
+//        float hPos = _scene->getSize().width / 2 -
+//                     _timerLabel->getSize().width * getZoom() / 2;
+//        _timerLabel->setPosition(
+//            _scene->getCamera()->screenToWorldCoords(Vec2(hPos, vPos)));
+        _timerLabel->setScale(2);
         _timerLabel->setForeground(cugl::Color4f::WHITE);
 
         _treasureLabel->setText(std::to_string(int(_treasureCount)) +
                                 " Treasure Collected");
+        
+        _treasureLabel->setFont(_assets->get<Font>("gamefont"));
+        
+        
         _treasureLabel->setPosition(_scene->getCamera()->getPosition() +
-                                    Vec2(350, 350));
-        _treasureLabel->setForeground(cugl::Color4f::YELLOW);
+                                    Vec2(-200, 500));
+        
+        _treasureLabel->setForeground(cugl::Color4f::WHITE);
 
         // ea->setPosition(100*Vec2(_star->getBody()->GetTransform().p.x,_star->getBody()->GetTransform().p.y));
         //    _collision.init(_hunter.getHunterBody(), _trap.getTrapBody(),
@@ -1034,23 +1046,23 @@ void HGameController::checkLevelLoaded() {
 
         _timer = 5270;
         _timerLabel = cugl::scene2::Label::allocWithText(
-            Vec2(200, 200), "2:00", _assets->get<Font>("pixel32"));
+            Vec2(200, 200), "2:00", _assets->get<Font>("gamefont"));
         _scene->addChild(_timerLabel);
 
         _treasureCount = 0;
         _treasureLabel = cugl::scene2::Label::allocWithText(
             Vec2(200, 200), "0 Treasure Collected",
-            _assets->get<Font>("pixel32"));
-        _treasureLabel->setColor(cugl::Color4f::YELLOW);
+            _assets->get<Font>("gamefont"));
+        _treasureLabel->setColor(cugl::Color4f::WHITE);
         _scene->addChild(_treasureLabel);
 
         // win-lose labels
         _loseLabel = cugl::scene2::Label::allocWithText(
-            Vec2(800, 800), "You Lose!", _assets->get<Font>("pixel32"));
+            Vec2(800, 800), "You Lose!", _assets->get<Font>("gamefont"));
         _winLabel = cugl::scene2::Label::allocWithText(
-            Vec2(800, 800), "RUN to EXIT!", _assets->get<Font>("pixel32"));
+            Vec2(800, 800), "RUN to EXIT!", _assets->get<Font>("gamefont"));
         _finalWinLabel = cugl::scene2::Label::allocWithText(
-            Vec2(800, 800), "You Win!", _assets->get<Font>("pixel32"));
+            Vec2(800, 800), "You Win!", _assets->get<Font>("gamefont"));
 
         _timertriggered = false;
         initLock();
@@ -1198,7 +1210,7 @@ void HGameController::updateCamera(float timestep) {
         _scene->getCamera()->translate((next - curr) * timeFactor * timestep);
 
         _timerLabel->setPosition(_scene->getCamera()->getPosition() -
-                                 Vec2(0, 300));
+                                 Vec2(0, 500));
     }
 
     if (_didWin) {

@@ -81,8 +81,8 @@ SGameController::SGameController(
     string seconds = std::to_string(_timeLeft / 60 % 60);
     seconds = seconds.length() <= 1 ? "0" + seconds : seconds;
     _timerLabel = cugl::scene2::Label::allocWithText(
-        Vec2(0, 0), minutes + ":" + seconds, _assets->get<Font>("gamefont"));
-    _timerScale = _textHeight / _timerLabel->getSize().height;
+        Vec2(0, 0), "              ", _assets->get<Font>("gamefont"));
+    _timerScale = _textHeight / _timerLabel->getSize().height * 1.5;
     _fifthLayer->addChild(_timerLabel);
     _endScene = std::make_shared<EndScene>(_scene, assets, true, true);
 
@@ -100,7 +100,7 @@ SGameController::SGameController(
     _alertLabel->setForeground(cugl::Color4f::RED);
 
     _selectionPhase = false;
-    _buttonHeight = 400;
+    _buttonHeight = 350;
 
     _viewButton = std::make_shared<Button>(_assets->get<Texture>("eye_button"),
                                            _scene, _selectionPhase, _portraits);
@@ -448,9 +448,10 @@ void SGameController::update(float dt) {
             _endScene->addChildTo(_scene);
         }
         _scene->getCamera()->update();
-    }else if (_gameStatus == -1) {
-        if (!_endScene->isAdded()){
-            _endScene = std::make_shared<EndScene>(_scene, _assets, true, false);
+    } else if (_gameStatus == -1) {
+        if (!_endScene->isAdded()) {
+            _endScene =
+                std::make_shared<EndScene>(_scene, _assets, true, false);
             _endScene->addChildTo(_scene);
             _endScene->setAdded(true);
         } else if (_endScene->sUpdate()) {
@@ -459,13 +460,12 @@ void SGameController::update(float dt) {
             AudioEngine::get()->clear("theme", 1);
             _status = ABORT;
         }
-    }
-    else if (_gameStatus == 1){
-        if (!_endScene->isAdded()){
+    } else if (_gameStatus == 1) {
+        if (!_endScene->isAdded()) {
             _endScene = std::make_shared<EndScene>(_scene, _assets, true, true);
             _endScene->addChildTo(_scene);
             _endScene->setAdded(true);
-        } else if (_endScene->sUpdate()){
+        } else if (_endScene->sUpdate()) {
             CULog("Switch to reset screen!");
             AudioEngine::get()->clear("tension", 1);
             AudioEngine::get()->clear("theme", 1);
@@ -612,9 +612,9 @@ void SGameController::checkLevelLoaded() {
 
         for (int i = 0; i < _level->getPortaits().size(); i++) {
             _portraits->addPortrait(
-                                    _portraitNodes, i, _level->getPortaits()[i].first,
-                _level->getPortaits()[i].second, Vec3(0, 0, -1), Vec2::ZERO,false,
-                _level->getBattery());
+                _portraitNodes, i, _level->getPortaits()[i].first,
+                _level->getPortaits()[i].second, Vec3(0, 0, -1), Vec2::ZERO,
+                false, _level->getBattery());
         }
         _portraits->setMaxbattery(_level->getBattery());
 
@@ -627,23 +627,23 @@ void SGameController::checkLevelLoaded() {
         _spirit.getView()->addKillButtonTo(_fourthLayer);
 
         initDoors();
-        
+
         std::sort(_doorNodes.begin(), _doorNodes.end(),
                   [](std::shared_ptr<scene2::PolygonNode>& a,
                      std::shared_ptr<scene2::PolygonNode>& b) {
                       return a->getPositionY() < b->getPositionY();
                   });
-        
+
         std::sort(_portraitNodes.begin(), _portraitNodes.end(),
                   [](std::shared_ptr<scene2::PolygonNode>& a,
                      std::shared_ptr<scene2::PolygonNode>& b) {
                       return a->getPositionY() < b->getPositionY();
                   });
-        
+
         for (int i = 0; i < _doorNodes.size(); i++) {
             _obstacleNode->addChild(_doorNodes.at(i));
         }
-        
+
         for (int i = 0; i < _portraitNodes.size(); i++) {
             _obstacleNode->addChild(_portraitNodes.at(i));
         }
@@ -948,7 +948,7 @@ void SGameController::sortNodes() {
             }
         }
     }
-    
+
     for (int i = 0; i < _doorNodes.size(); i++) {
         if (_hunterYPos > _doorNodes.at(i)->getPositionY() + 32) {
             _obstacleNode->removeChild(_doorNodes.at(i));

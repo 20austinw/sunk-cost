@@ -70,7 +70,7 @@ SGameController::SGameController(
     if (_level == nullptr) {
         _levelLoaded = false;
     }
-
+    _blocked = false;
     _hunterAdded = false;
     _serializer = NetcodeSerializer::alloc();
     _deserializer = NetcodeDeserializer::alloc();
@@ -136,7 +136,6 @@ float SGameController::getZoom() {
 }
 
 int cnt = 0;
-bool blocked = false;
 
 void SGameController::update(float dt) {
     auto inputController = InputController::getInstance();
@@ -231,7 +230,7 @@ void SGameController::update(float dt) {
 
         // logic for door lock
         if ((inputController->isTouchDown() || _spirit.getModel()->isOnLock) &&
-            _spirit.getModel()->doors >= 0 && !blocked &&
+            _spirit.getModel()->doors >= 0 && !_blocked &&
             !_spirit.getModel()->isOnTrap && !_spirit.getModel()->isOnKill) {
             if (_spirit.getModel()->isOnLock ||
                 _spirit.touchInLockBound(cameraPos)) {
@@ -258,7 +257,7 @@ void SGameController::update(float dt) {
                     }
                 }
             }
-        } else if (blocked && _spirit.getModel()->isOnLock) {
+        } else if (_blocked && _spirit.getModel()->isOnLock) {
             _spirit.getModel()->setLockState(false);
             for (int i = 0; i < _doors.size(); i++) {
                 _doors.at(i)->resetToUnlock();
@@ -268,7 +267,7 @@ void SGameController::update(float dt) {
         // logic for trap placement
         if ((inputController->isTouchDown() || _spirit.getModel()->isOnTrap) &&
             _spirit.getModel()->traps >= 0 && !_spirit.getModel()->isOnLock &&
-            !blocked && !_spirit.getModel()->isOnKill) {
+            !_blocked && !_spirit.getModel()->isOnKill) {
             if (_spirit.getModel()->isOnTrap ||
                 _spirit.touchInTrapBound(cameraPos)) {
                 canSwitch = false;
@@ -291,7 +290,7 @@ void SGameController::update(float dt) {
                     _spirit.getView()->addLastTrapExtraTo(_fourthLayer);
                 }
             }
-        } else if (blocked && _spirit.getModel()->isOnTrap) {
+        } else if (_blocked && _spirit.getModel()->isOnTrap) {
             _spirit.getModel()->setTrapState(false);
         }
 
@@ -317,7 +316,7 @@ void SGameController::update(float dt) {
         if (!_spirit.getModel()->isKilling() &&
             (inputController->isTouchDown() || _spirit.getModel()->isOnKill) &&
             _spirit.getModel()->isKillable() && !_spirit.getModel()->isOnLock &&
-            !_spirit.getModel()->isOnTrap && !blocked) {
+            !_spirit.getModel()->isOnTrap && !_blocked) {
             canSwitch = false;
             if (_spirit.getModel()->isOnKill ||
                 _spirit.touchInKillBound(cameraPos)) {
@@ -351,18 +350,18 @@ void SGameController::update(float dt) {
                     _spirit.getView()->setKillFrame(0);
                 }
             }
-        } else if (blocked && _spirit.getModel()->isOnKill) {
+        } else if (_blocked && _spirit.getModel()->isOnKill) {
             _spirit.getModel()->setKillState(false);
         }
 
         // update block screen
-        if (blocked) {
+        if (_blocked) {
             _portraits->removeBlock(_thirdLayer);
-            blocked = false;
+            _blocked = false;
         }
         if (!_portraits->getCurState() && !_selection) {
             _portraits->addBlock(_thirdLayer);
-            blocked = true;
+            _blocked = true;
         }
 
         if (_doorUnlocked && _doorToUnlock != -1) {

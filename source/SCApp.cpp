@@ -60,7 +60,7 @@ void SCApp::onStartup() {
 
     // Queue up the other assets
     _assets->loadDirectoryAsync("json/assets.json", nullptr);
-    _assets->loadAsync<LevelModel>(LEVEL_THREE_KEY, LEVEL_THREE_FILE, nullptr);
+    _assets->loadAsync<LevelModel>(LEVEL_FINAL_KEY, LEVEL_FINAL_FILE, nullptr);
 
     net::NetworkLayer::start(net::NetworkLayer::Log::INFO);
     AudioEngine::start();

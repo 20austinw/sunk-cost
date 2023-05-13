@@ -478,8 +478,11 @@ class HGameController {
 
     void sortNodes();
 
-    void modifyTexture(std::shared_ptr<Texture>& texture, int index, int row,
-                       int col);
+    std::shared_ptr<Texture> getTexture(int type);
+    
+    void addDetails(int type, int c, int r);
+    
+    void modifyTexture(std::shared_ptr<Texture>& texture, int index);
 };
 
 #endif /* __HGAME_CONTROLLER_H__ */

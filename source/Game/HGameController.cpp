@@ -126,108 +126,75 @@ HGameController::HGameController(
     _portraits = std::make_shared<PortraitSetController>(_assets, _scene, 0,
                                                          displaySize);
 
-    _level = _assets->get<LevelModel>(LEVEL_THREE_KEY);
+    _level = _assets->get<LevelModel>(LEVEL_FINAL_KEY);
     if (_level == nullptr) {
         _levelLoaded = false;
         CULog("Fail!");
     }
 
     //        _tilemap->updatePosition(_scene->getSize() / 2);
-    std::vector<std::vector<int>> tiles = _level->getTileTextures();
-    int height = tiles[0].size();
-    int width = tiles.size();
-    _tilemap->updateDimensions(Vec2(height, width));
-    _tilemap->updateColor(Color4::WHITE);
-    _tilemap->updateTileSize(Size(128, 128));
-    for (int i = 0; i < tiles.size() * tiles[0].size(); ++i) {
-        int c = i % tiles[0].size();
-        int r = i / tiles[0].size();
-        int type = tiles[r][c];
-        addFloorTile(type, c, width - 1 - r);
-    }
-
-    std::vector<std::vector<int>> walls = _level->getWallTextures();
-    height = walls[0].size();
-    width = walls.size();
-    for (int i = 0; i < walls.size() * walls[0].size(); ++i) {
-        int c = i % walls[0].size();
-        int r = i / walls[0].size();
-        int type = walls[r][c];
-        addWallTile(type, c, width - 1 - r);
-    }
-
-    walls = _level->getWallUpperTextures();
-    height = walls[0].size();
-    width = walls.size();
-    for (int i = 0; i < height * width; ++i) {
-        int c = i % height;
-        int r = i / height;
-        int type = walls[r][c];
-        addWallUpper(type, c, width - 1 - r);
-    }
-
-    walls = _level->getWallGrimeTextures();
-    height = walls[0].size();
-    width = walls.size();
-    for (int i = 0; i < height * width; ++i) {
-        int c = i % height;
-        int r = i / height;
-        int type = walls[r][c];
-        addWallGrime(type, c, width - 1 - r);
-    }
-
-    walls = _level->getWallLowerTextures();
-    height = walls[0].size();
-    width = walls.size();
-    for (int i = 0; i < height * width; ++i) {
-        int c = i % height;
-        int r = i / height;
-        int type = walls[r][c];
-        addWallLower(type, c, width - 1 - r);
-    }
-
-    walls = _level->getFurnitureTextures();
-    height = walls[0].size();
-    width = walls.size();
-    for (int i = 0; i < height * width; ++i) {
-        int c = i % height;
-        int r = i / height;
-        int type = walls[r][c];
-        addFurnitures(type, c, width - 1 - r);
-    }
-
-    std::sort(_obstacles.begin(), _obstacles.end(),
-              [](std::shared_ptr<TileController>& a,
-                 std::shared_ptr<TileController>& b) {
-                  return a->getPosition().x < b->getPosition().x;
-              });
-
-    std::vector<std::shared_ptr<TileController>> tmp;
-    tmp.emplace_back(_obstacles.at(0));
-    for (int i = 1; i < _obstacles.size(); i++) {
-        if (_obstacles.at(i)->getPosition().x !=
-            _obstacles.at(i - 1)->getPosition().x) {
-            _sortedObstacles.emplace_back(tmp);
-            tmp.clear();
-        }
-        tmp.emplace_back(_obstacles.at(i));
-    }
-    _obstacles.clear();
-
-    for (int i = 0; i < _sortedObstacles.size(); i++) {
-        std::sort(_sortedObstacles.at(i).begin(), _sortedObstacles.at(i).end(),
-                  [](std::shared_ptr<TileController>& a,
-                     std::shared_ptr<TileController>& b) {
-                      return a->getYPos() > b->getYPos();
-                  });
-    }
-
-    for (int n = 0; n < _sortedObstacles.size(); n++) {
-        for (int m = 0; m < _sortedObstacles.at(n).size(); m++) {
-            _sortedObstacles[n][m]->removeChildFrom(_obstacleNode);
-            _sortedObstacles[n][m]->addChildTo(_obstacleNode);
-        }
-    }
+//    std::vector<std::vector<int>> tiles = _level->getTileTextures();
+//    int height = tiles[0].size();
+//    int width = tiles.size();
+//    _tilemap->updateDimensions(Vec2(height, width));
+//    _tilemap->updateColor(Color4::WHITE);
+//    _tilemap->updateTileSize(Size(128, 128));
+//    for (int i = 0; i < tiles.size() * tiles[0].size(); ++i) {
+//        int c = i % tiles[0].size();
+//        int r = i / tiles[0].size();
+//        int type = tiles[r][c];
+//        addFloorTile(type, c, width - 1 - r);
+//    }
+//
+//    std::vector<std::vector<int>> walls = _level->getWallTextures();
+//    height = walls[0].size();
+//    width = walls.size();
+//    for (int i = 0; i < walls.size() * walls[0].size(); ++i) {
+//        int c = i % walls[0].size();
+//        int r = i / walls[0].size();
+//        int type = walls[r][c];
+//        addWallTile(type, c, width - 1 - r);
+//    }
+//
+//    walls = _level->getWallUpperTextures();
+//    height = walls[0].size();
+//    width = walls.size();
+//    for (int i = 0; i < height * width; ++i) {
+//        int c = i % height;
+//        int r = i / height;
+//        int type = walls[r][c];
+//        addWallUpper(type, c, width - 1 - r);
+//    }
+//
+//    walls = _level->getWallGrimeTextures();
+//    height = walls[0].size();
+//    width = walls.size();
+//    for (int i = 0; i < height * width; ++i) {
+//        int c = i % height;
+//        int r = i / height;
+//        int type = walls[r][c];
+//        addWallGrime(type, c, width - 1 - r);
+//    }
+//
+//    walls = _level->getWallLowerTextures();
+//    height = walls[0].size();
+//    width = walls.size();
+//    for (int i = 0; i < height * width; ++i) {
+//        int c = i % height;
+//        int r = i / height;
+//        int type = walls[r][c];
+//        addWallLower(type, c, width - 1 - r);
+//    }
+//
+//    walls = _level->getFurnitureTextures();
+//    height = walls[0].size();
+//    width = walls.size();
+//    for (int i = 0; i < height * width; ++i) {
+//        int c = i % height;
+//        int r = i / height;
+//        int type = walls[r][c];
+//        addFurnitures(type, c, width - 1 - r);
+//    }
 
     //        walls = _level->getCandleTextures();
     //        height = walls[0].size();
@@ -566,8 +533,7 @@ void HGameController::update(float dt) {
                 transmitUnlockDoor(_doorslocked[_currdoorindex]);
             }
         }
-
-        std::vector<std::vector<int>> tiles = _level->getTileTextures();
+        
         int posx;
         int posxup;
         int posyup;
@@ -900,7 +866,7 @@ void HGameController::addlocks(int index) {
 }
 
 void HGameController::checkLevelLoaded() {
-    _level = _assets->get<LevelModel>(LEVEL_THREE_KEY);
+    _level = _assets->get<LevelModel>(LEVEL_FINAL_KEY);
     if (_level == nullptr) {
         _levelLoaded = false;
     }
@@ -910,21 +876,79 @@ void HGameController::checkLevelLoaded() {
         _level = nullptr;
 
         // Access and initialize level
-        _level = _assets->get<LevelModel>(LEVEL_THREE_KEY);
+        _level = _assets->get<LevelModel>(LEVEL_FINAL_KEY);
         _level->setAssets(_assets);
 
         // Initialize SpiritController
         _spirit = SpiritController();
 
-        _tileHeight = 128;
-        _tileWidth = 128;
-
-        // TODO: implement direction and direction limits
-        //_tilemap->updatePosition(_scene->getSize() / 2);
-        std::vector<std::vector<int>> tiles = _level->getTileTextures();
-        _tilemap->updateDimensions(Vec2(tiles[0].size(), tiles.size()));
+        _tileHeight = _level->getTileWidth();
+        _tileWidth = _level->getTileWidth();
+        
+        int width = _level->getDimensions().x;
+        int height = _level->getDimensions().y;
+        
+        _tilemap->updatePosition(_scene->getSize() / 2);
+        _tilemap->updateDimensions(_level->getDimensions());
         _tilemap->updateColor(Color4::WHITE);
-        _tilemap->updateTileSize(Size(_tileWidth, _tileHeight));
+        _tilemap->updateTileSize(_level->getTileSize());
+
+        std::vector<int> tiles = _level->getTileTextures();
+        for (int i = 0; i < tiles.size(); i++) {
+            int c = i % width;
+            int r = i / width;
+            int type = tiles[i];
+            addFloorTile(type, c, height-1-r);
+        }
+        
+        std::vector<std::vector<int>> details = _level->getDetails();
+        
+        for(int n=0; n<details.size(); n++){
+            for(int m=0; m<details.at(n).size(); m++){
+                int type = details[n][m];
+                if (type==0 || type >= 641){
+                    return;
+                }
+                int c = m % width;
+                int r = m / width;
+                addDetails(type, c, height-1-r);
+            }
+        }
+        
+        std::sort(_obstacles.begin(), _obstacles.end(),
+                  [](std::shared_ptr<TileController>& a,
+                     std::shared_ptr<TileController>& b) {
+                      return a->getPosition().x < b->getPosition().x;
+                  });
+
+        std::vector<std::shared_ptr<TileController>> tmp;
+        tmp.emplace_back(_obstacles.at(0));
+        for (int i = 1; i < _obstacles.size(); i++) {
+            if (_obstacles.at(i)->getPosition().x !=
+                _obstacles.at(i - 1)->getPosition().x) {
+                _sortedObstacles.emplace_back(tmp);
+                tmp.clear();
+            }
+            tmp.emplace_back(_obstacles.at(i));
+        }
+        _obstacles.clear();
+
+        for (int i = 0; i < _sortedObstacles.size(); i++) {
+            std::sort(_sortedObstacles.at(i).begin(), _sortedObstacles.at(i).end(),
+                      [](std::shared_ptr<TileController>& a,
+                         std::shared_ptr<TileController>& b) {
+                          return a->getYPos() > b->getYPos();
+                      });
+        }
+
+        for (int n = 0; n < _sortedObstacles.size(); n++) {
+            for (int m = 0; m < _sortedObstacles.at(n).size(); m++) {
+                _sortedObstacles[n][m]->removeChildFrom(_obstacleNode);
+                _sortedObstacles[n][m]->addChildTo(_obstacleNode);
+            }
+        }
+        
+        // TODO: implement direction and direction limits
 
         //        _map =
         //            scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("map"));
@@ -1429,130 +1453,129 @@ void HGameController::addFloorTile(int type, int c, int r) {
     if (type == 0) {
         _tilemap->addTile(c, r, Color4::BLACK, false,
                           _assets->get<Texture>("black"));
-        Vec2 pos(128 * c, 128 * r);
-        std::shared_ptr<TileController> tile = std::make_shared<TileController>(
-            pos, Size(128, 128), Color4::WHITE, false,
-            _assets->get<Texture>("black"), pos.y + 12);
-        _obstacles.emplace_back(tile);
-        tile->addChildTo(_obstacleNode);
+//        Vec2 pos(128 * c, 128 * r);
+//        std::shared_ptr<TileController> tile = std::make_shared<TileController>(
+//            pos, Size(128, 128), Color4::WHITE, false,
+//            _assets->get<Texture>("black"), pos.y + 12);
+//        _obstacles.emplace_back(tile);
+//        tile->addChildTo(_obstacleNode);
     } else {
-        std::shared_ptr<Texture> floor = _assets->get<Texture>("floor");
-        modifyTexture(floor, type - 65, 8, 8);
-        _tilemap->addTile(c, r, Color4::WHITE, true, floor);
+        std::shared_ptr<Texture> texture = getTexture(type);
+        _tilemap->addTile(c, r, Color4::WHITE, true, texture);
     }
 }
 
-void HGameController::addWallTile(int type, int c, int r) {
-    if (type == 0) {
-        return;
-    }
-    int index = type - 1;
-    std::shared_ptr<Texture> wall = _assets->get<Texture>("wall");
-    modifyTexture(wall, index, 8, 8);
-    Vec2 pos(128 * c, 128 * r);
-    int yPos = pos.y + 11;
-    if (index == 0 || index == 1 || index == 8 || index == 9 || index == 10 ||
-        index == 11 || index == 20 || index == 21 || index == 22 ||
-        index == 34 || index == 35) {
-        yPos -= 256;
-    } else if (index == 32 || index == 33) {
-        yPos -= 128;
-    } else if (index == 41 || index == 42 || index == 48 || index == 49) {
-        yPos += 128;
-    }
+//void HGameController::addWallTile(int type, int c, int r) {
+//    if (type == 0) {
+//        return;
+//    }
+//    int index = type - 1;
+//    std::shared_ptr<Texture> wall = _assets->get<Texture>("wall");
+//    modifyTexture(wall, index, 8, 8);
+//    Vec2 pos(128 * c, 128 * r);
+//    int yPos = pos.y + 11;
+//    if (index == 0 || index == 1 || index == 8 || index == 9 || index == 10 ||
+//        index == 11 || index == 20 || index == 21 || index == 22 ||
+//        index == 34 || index == 35) {
+//        yPos -= 256;
+//    } else if (index == 32 || index == 33) {
+//        yPos -= 128;
+//    } else if (index == 41 || index == 42 || index == 48 || index == 49) {
+//        yPos += 128;
+//    }
+//
+//    std::shared_ptr<TileController> tile = std::make_shared<TileController>(
+//        pos, Size(128, 128), Color4::WHITE, false, wall, yPos);
+//    _obstacles.emplace_back(tile);
+//    tile->addChildTo(_obstacleNode);
+//}
 
-    std::shared_ptr<TileController> tile = std::make_shared<TileController>(
-        pos, Size(128, 128), Color4::WHITE, false, wall, yPos);
-    _obstacles.emplace_back(tile);
-    tile->addChildTo(_obstacleNode);
-}
-
-void HGameController::addWallUpper(int type, int c, int r) {
-    if (type == 0) {
-        return;
-    }
-    std::shared_ptr<Texture> wall = _assets->get<Texture>("wall_upper");
-    modifyTexture(wall, type - 329, 8, 8);
-    Vec2 pos(128 * c, 128 * r + 16 * 128);
-    int ind = type - 329;
-    int yPos = pos.y + 10;
-    if (ind >= 16 && ind <= 63) {
-        yPos += 128;
-    }
-    std::shared_ptr<TileController> tile = std::make_shared<TileController>(
-        pos, Size(128, 128), Color4::WHITE, false, wall, yPos);
-    _obstacles.emplace_back(tile);
-    tile->addChildTo(_obstacleNode);
-}
-
-void HGameController::addWallGrime(int type, int c, int r) {
-    if (type == 0) {
-        return;
-    }
-    std::shared_ptr<Texture> wall = _assets->get<Texture>("wall_grime");
-    modifyTexture(wall, type - 193, 8, 8);
-    Vec2 pos(128 * c, 128 * r + 16 * 128);
-    std::shared_ptr<TileController> tile = std::make_shared<TileController>(
-        pos, Size(128, 128), Color4::WHITE, false, wall, pos.y + 9);
-    _obstacles.emplace_back(tile);
-    tile->addChildTo(_obstacleNode);
-}
-
-void HGameController::addWallLower(int type, int c, int r) {
-    if (type == 0) {
-        return;
-    }
-    std::shared_ptr<Texture> wall = _assets->get<Texture>("wall_lower");
-    modifyTexture(wall, type - 393, 8, 8);
-    Vec2 pos(128 * c, 128 * r + 16 * 128);
-    std::shared_ptr<TileController> tile = std::make_shared<TileController>(
-        pos, Size(128, 128), Color4::WHITE, false, wall, pos.y + 8);
-    _obstacles.emplace_back(tile);
-    tile->addChildTo(_obstacleNode);
-}
-
-void HGameController::addFurnitures(int type, int c, int r) {
-    if (type == 0 || type - 129 == 0) {
-        if (type - 129 == 0) {
-            _treasurepos.emplace_back(Vec2(128 * c, 128 * r + 16 * 128));
-        }
-        return;
-    }
-    int idx = type - 129;
-    std::shared_ptr<Texture> furnitures = _assets->get<Texture>("furnitures");
-    modifyTexture(furnitures, idx, 8, 8);
-    Vec2 pos(128 * c, 128 * r + 16 * 128);
-    float yPos = pos.y + 7;
-    if (idx == 6 || idx == 7) {
-        yPos -= 256;
-    } else if (idx == 14 || idx == 15) {
-        yPos -= 128;
-    }
-    std::shared_ptr<TileController> tile = std::make_shared<TileController>(
-        pos, Size(128, 128), Color4::WHITE, false, furnitures, yPos);
-    _obstacles.emplace_back(tile);
-    tile->addChildTo(_obstacleNode);
-}
-
-void HGameController::addCandles(int type, int c, int r) {
-    if (type == 0) {
-        return;
-    }
-    std::shared_ptr<Texture> candleTexture = _assets->get<Texture>("candle");
-    std::shared_ptr<scene2::SpriteNode> candle =
-        scene2::SpriteNode::allocWithSheet(candleTexture, 1, 8, 8);
-    candle->setFrame(type - 321);
-    candle->setPosition(Vec2(128 * c + 16 * 128 + 32, 128 * r + 32 * 128 + 32));
-    _candleNodes.emplace_back(candle);
-    _obstacleNode->addChild(_candleNodes.at(_candleNodes.size() - 1));
-}
+//void HGameController::addWallUpper(int type, int c, int r) {
+//    if (type == 0) {
+//        return;
+//    }
+//    std::shared_ptr<Texture> wall = _assets->get<Texture>("wall_upper");
+//    modifyTexture(wall, type - 329, 8, 8);
+//    Vec2 pos(128 * c, 128 * r + 16 * 128);
+//    int ind = type - 329;
+//    int yPos = pos.y + 10;
+//    if (ind >= 16 && ind <= 63) {
+//        yPos += 128;
+//    }
+//    std::shared_ptr<TileController> tile = std::make_shared<TileController>(
+//        pos, Size(128, 128), Color4::WHITE, false, wall, yPos);
+//    _obstacles.emplace_back(tile);
+//    tile->addChildTo(_obstacleNode);
+//}
+//
+//void HGameController::addWallGrime(int type, int c, int r) {
+//    if (type == 0) {
+//        return;
+//    }
+//    std::shared_ptr<Texture> wall = _assets->get<Texture>("wall_grime");
+//    modifyTexture(wall, type - 193, 8, 8);
+//    Vec2 pos(128 * c, 128 * r + 16 * 128);
+//    std::shared_ptr<TileController> tile = std::make_shared<TileController>(
+//        pos, Size(128, 128), Color4::WHITE, false, wall, pos.y + 9);
+//    _obstacles.emplace_back(tile);
+//    tile->addChildTo(_obstacleNode);
+//}
+//
+//void HGameController::addWallLower(int type, int c, int r) {
+//    if (type == 0) {
+//        return;
+//    }
+//    std::shared_ptr<Texture> wall = _assets->get<Texture>("wall_lower");
+//    modifyTexture(wall, type - 393, 8, 8);
+//    Vec2 pos(128 * c, 128 * r + 16 * 128);
+//    std::shared_ptr<TileController> tile = std::make_shared<TileController>(
+//        pos, Size(128, 128), Color4::WHITE, false, wall, pos.y + 8);
+//    _obstacles.emplace_back(tile);
+//    tile->addChildTo(_obstacleNode);
+//}
+//
+//void HGameController::addFurnitures(int type, int c, int r) {
+//    if (type == 0 || type - 129 == 0) {
+//        if (type - 129 == 0) {
+//            _treasurepos.emplace_back(Vec2(128 * c, 128 * r + 16 * 128));
+//        }
+//        return;
+//    }
+//    int idx = type - 129;
+//    std::shared_ptr<Texture> furnitures = _assets->get<Texture>("furnitures");
+//    modifyTexture(furnitures, idx, 8, 8);
+//    Vec2 pos(128 * c, 128 * r + 16 * 128);
+//    float yPos = pos.y + 7;
+//    if (idx == 6 || idx == 7) {
+//        yPos -= 256;
+//    } else if (idx == 14 || idx == 15) {
+//        yPos -= 128;
+//    }
+//    std::shared_ptr<TileController> tile = std::make_shared<TileController>(
+//        pos, Size(128, 128), Color4::WHITE, false, furnitures, yPos);
+//    _obstacles.emplace_back(tile);
+//    tile->addChildTo(_obstacleNode);
+//}
+//
+//void HGameController::addCandles(int type, int c, int r) {
+//    if (type == 0) {
+//        return;
+//    }
+//    std::shared_ptr<Texture> candleTexture = _assets->get<Texture>("candle");
+//    std::shared_ptr<scene2::SpriteNode> candle =
+//        scene2::SpriteNode::allocWithSheet(candleTexture, 1, 8, 8);
+//    candle->setFrame(type - 321);
+//    candle->setPosition(Vec2(128 * c + 16 * 128 + 32, 128 * r + 32 * 128 + 32));
+//    _candleNodes.emplace_back(candle);
+//    _obstacleNode->addChild(_candleNodes.at(_candleNodes.size() - 1));
+//}
 
 void HGameController::modifyTexture(std::shared_ptr<Texture>& texture,
-                                    int index, int row, int col) {
-    float x = 1.0 / row;
-    float y = 1.0 / col;
-    int c = index % row;
-    int r = index / row;
+                                    int index) {
+    float x = 1.0 / 8;
+    float y = 1.0 / 8;
+    int c = index % 8;
+    int r = index / 8;
     texture = texture->getSubTexture(c * y, (c + 1) * y, r * x, (r + 1) * x);
 }
 
@@ -1610,4 +1633,49 @@ void HGameController::sortNodes() {
             return;
         }
     }
+}
+
+std::shared_ptr<Texture> HGameController::getTexture(int type) {
+    std::shared_ptr< Texture > texture;
+    int idx = type;
+    if (type < 65){
+        idx -= 1;
+        texture = _assets->get<Texture>("final_wall");
+    } else if (type < 129) {
+        idx -= 65;
+        texture = _assets->get<Texture>("final_floor");
+    } else if (type < 193) {
+        idx -= 129;
+        texture = _assets->get<Texture>("final_decor");
+    } else if (type < 257) {
+        idx -= 193;
+        texture = _assets->get<Texture>("final_wall_grime");
+    } else if (type < 321) {
+        return nullptr;
+    } else if (type < 385) {
+        idx -= 321;
+        texture = _assets->get<Texture>("final_wall_upper");
+    } else if (type < 449) {
+        idx -= 385;
+        texture = _assets->get<Texture>("final_floor_ao");
+    } else if (type < 513) {
+        idx -= 449;
+        texture = _assets->get<Texture>("final_decor2");
+    } else if (type < 577) {
+        idx -= 513;
+        texture = _assets->get<Texture>("final_env");
+    } else {
+        idx -= 577;
+        texture = _assets->get<Texture>("final_env2");
+    }
+    modifyTexture(texture, idx);
+    return texture;
+}
+
+void HGameController::addDetails(int type, int c, int r) {
+    std::shared_ptr< Texture > texture = getTexture(type);
+    Vec2 pos(_level->getTileWidth() * c, _level->getTileWidth() * r);
+    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, _level->getTileSize(), Color4::WHITE, false, texture, pos.x);
+    _obstacles.emplace_back(tile);
+    tile->addChildTo(_obstacleNode);
 }

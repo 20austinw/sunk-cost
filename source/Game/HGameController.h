@@ -298,7 +298,7 @@ class HGameController {
     std::shared_ptr<scene2::PolygonNode> _obstacleNode;
     std::vector<std::shared_ptr<TileController>> _holes;
     std::vector<std::shared_ptr<TileController>> _carpets;
-    
+
     std::vector<std::shared_ptr<scene2::SpriteNode>> _candleNodes;
     std::vector<std::shared_ptr<scene2::PolygonNode>> _hunterNodes;
     std::vector<std::shared_ptr<scene2::PolygonNode>> _doorNodes;
@@ -482,11 +482,11 @@ class HGameController {
     void sortNodes();
 
     std::shared_ptr<Texture> getTexture(int type);
-    
+
     void addDetails(int type, int c, int r);
-    
+
     void modifyTexture(std::shared_ptr<Texture>& texture, int index);
-    
+
     float getYPos(int type, float pos, std::shared_ptr<TileController>& tile);
 };
 

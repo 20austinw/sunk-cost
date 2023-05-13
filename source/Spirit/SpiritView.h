@@ -191,7 +191,7 @@ class SpiritView {
 
     void updateUnusedLocksPos(bool selection) {
         Vec2 pos = _scene->getCamera()->screenToWorldCoords(
-            _scene->getSize() - getLockSize() / 2 * getZoom());
+            _scene->getSize() - Vec2(_buttonSize, _buttonSize) * 0.6);
 
         if (selection) {
             pos += Vec2(10000, 10000);
@@ -208,9 +208,10 @@ class SpiritView {
     }
 
     void updateUnusedTrapsPos(bool selection) {
-        Vec2 pos = _scene->getCamera()->screenToWorldCoords(
-                       _scene->getSize() - getLockSize() / 2 * getZoom()) +
-                   Vec2(0, +getLockSize().height);
+        Vec2 pos =
+            _scene->getCamera()->screenToWorldCoords(
+                _scene->getSize() - Vec2(_buttonSize, _buttonSize) * 0.6) +
+            Vec2(0, +_buttonSize) * 0.6;
 
         if (selection) {
             pos += Vec2(10000, 10000);
@@ -227,9 +228,10 @@ class SpiritView {
     }
 
     void updateUnusedKillPos(bool selection) {
-        Vec2 pos = _scene->getCamera()->screenToWorldCoords(
-                       _scene->getSize() - getLockSize() / 2 * getZoom()) +
-                   Vec2(0, (getLockSize().height + getTrapSize().height));
+        Vec2 pos =
+            _scene->getCamera()->screenToWorldCoords(
+                _scene->getSize() - Vec2(_buttonSize, _buttonSize) * 0.6) +
+            2 * Vec2(0, +_buttonSize) * 0.6;
 
         if (selection) {
             pos += Vec2(10000, 10000);

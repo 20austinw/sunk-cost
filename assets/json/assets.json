@@ -288,33 +288,33 @@
         "spirit_win_part_2": {
             "file": "textures/spirit_win_part_2.png"
         },
-        "final_floor":{
-                   "file":  "textures/floor_tilesheet.png"
-               },
-        "final_wall_grime":{
-                   "file":  "textures/wall_grime_tilesheet.png"
-               },
-        "final_decor":{
-                   "file":  "textures/decor.png"
-               },
-        "final_decor2":{
-                   "file":  "textures/decor_2.png"
-               },
-        "final_floor_ao":{
-                   "file":  "textures/floor_ao.png"
-               },
-        "final_env":{
-                   "file":  "textures/environmental.png"
-               },
-        "final_env2":{
-                   "file":  "textures/environmental2.png"
-               },
-        "final_wall":{
-                   "file":  "textures/walls_tilesheet_2.png"
-               },
-        "final_wall_upper":{
-                   "file":  "textures/walls_tilesheet_3.png"
-               }
+        "final_floor": {
+            "file": "textures/floor_tilesheet.png"
+        },
+        "final_wall_grime": {
+            "file": "textures/wall_grime_tilesheet.png"
+        },
+        "final_decor": {
+            "file": "textures/decor.png"
+        },
+        "final_decor2": {
+            "file": "textures/decor_2.png"
+        },
+        "final_floor_ao": {
+            "file": "textures/floor_ao.png"
+        },
+        "final_env": {
+            "file": "textures/environmental.png"
+        },
+        "final_env2": {
+            "file": "textures/environmental2.png"
+        },
+        "final_wall": {
+            "file": "textures/walls_tilesheet_2.png"
+        },
+        "final_wall_upper": {
+            "file": "textures/walls_tilesheet_3.png"
+        }
     },
     "fonts": {
         "pixel32": {
@@ -325,7 +325,7 @@
             "file": "fonts/gyparody-hv.ttf",
             "size": 48
         },
-        "gamefont":{
+        "gamefont": {
             "file": "fonts/IMFellDoublePica-Regular.ttf",
             "size": 48
         }

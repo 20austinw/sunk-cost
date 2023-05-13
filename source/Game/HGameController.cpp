@@ -906,12 +906,11 @@ void HGameController::checkLevelLoaded() {
         for(int n=0; n<details.size(); n++){
             for(int m=0; m<details.at(n).size(); m++){
                 int type = details[n][m];
-                if (type==0 || type >= 641){
-                    return;
+                if (!(type==0 || type >= 641 || type == 129+16 || type == 129+24)){
+                    int c = m % width;
+                    int r = m / width;
+                    addDetails(type, c, height-1-r);
                 }
-                int c = m % width;
-                int r = m / width;
-                addDetails(type, c, height-1-r);
             }
         }
         
@@ -941,10 +940,22 @@ void HGameController::checkLevelLoaded() {
                       });
         }
 
+        for (int i=0; i<_holes.size(); i++){
+            _holes[i]->removeChildFrom(_obstacleNode);
+            _holes[i]->addChildTo(_obstacleNode);
+        }
+        
+        for (int i=0; i<_carpets.size(); i++){
+            _carpets[i]->removeChildFrom(_obstacleNode);
+            _carpets[i]->addChildTo(_obstacleNode);
+        }
+
         for (int n = 0; n < _sortedObstacles.size(); n++) {
             for (int m = 0; m < _sortedObstacles.at(n).size(); m++) {
-                _sortedObstacles[n][m]->removeChildFrom(_obstacleNode);
-                _sortedObstacles[n][m]->addChildTo(_obstacleNode);
+                if (_sortedObstacles[n][m]->isObstacle()){
+                    _sortedObstacles[n][m]->removeChildFrom(_obstacleNode);
+                    _sortedObstacles[n][m]->addChildTo(_obstacleNode);
+                }
             }
         }
         
@@ -1610,7 +1621,7 @@ void HGameController::sortNodes() {
         if (xDiff < 128 * 2) {
             for (int n = 0; n < _sortedObstacles.at(i).size(); n++) {
                 if (_hunter->getPosition().y >
-                    _sortedObstacles[i][n]->getYPos()) {
+                    _sortedObstacles[i][n]->getYPos() && _sortedObstacles[i][n]->isObstacle()) {
                     _sortedObstacles[i][n]->removeChildFrom(_obstacleNode);
                     _sortedObstacles[i][n]->addChildTo(_obstacleNode);
                 }
@@ -1675,7 +1686,81 @@ std::shared_ptr<Texture> HGameController::getTexture(int type) {
 void HGameController::addDetails(int type, int c, int r) {
     std::shared_ptr< Texture > texture = getTexture(type);
     Vec2 pos(_level->getTileWidth() * c, _level->getTileWidth() * r);
-    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, _level->getTileSize(), Color4::WHITE, false, texture, pos.x);
+    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, _level->getTileSize(), Color4::WHITE, false, texture, pos.y);
+    float yPos = getYPos(type, pos.y, tile);
+    if (yPos != -FLT_MAX) {
+        tile->setYPos(yPos);
+    } else {
+        tile->setObstacle(false);
+    }
     _obstacles.emplace_back(tile);
     tile->addChildTo(_obstacleNode);
+}
+
+float HGameController::getYPos(int type, float pos, std::shared_ptr<TileController>& tile) {
+    float yPos = pos;
+    int tileSize = _level->getTileWidth();
+    int index = type;
+    if (type < 65){
+        //wall
+        index -= 1;
+        if (index == 0 || index == 1 || index == 8|| index == 9 || index == 10 || index == 11 || index == 20 || index == 21 || index == 22 || index == 34 || index == 35) {
+            yPos -= 2*tileSize;
+        } else if (index == 32 || index == 33){
+            yPos -= tileSize;
+        }
+    } else if (type < 129) {
+        //floor
+        return -FLT_MAX;
+    } else if (type < 193) {
+        //dector
+        index -= 129;
+        if (type == 16 || type == 24){
+            return FLT_MAX;
+        }
+        if(index == 6 || index == 7){
+            yPos -= 2*tileSize;
+        } else if(index == 14 || index == 15 || index == 1 || index == 2 || index == 3 || index == 4 || index == 17 || index == 18 || index == 19 || index == 20 || index == 32 || index == 33 || index == 34 || index == 35 || index == 36 || index == 37){
+            yPos -= tileSize;
+        }
+    } else if (type < 257) {
+        //grime
+        index -= 193;
+    } else if (type < 321) {
+        //placeholder
+        return -FLT_MAX;
+    } else if (type < 385) {
+        //wall upper
+        index -= 321;
+        if (index >= 16 && index <= 63){
+            yPos += tileSize;
+        }
+    } else if (type < 449) {
+        //ao
+        return -FLT_MAX;
+    } else if (type < 513) {
+        //dector2
+        index -= 449;
+        if (index == 36 || index == 37 || index == 38 || index == 44 || index == 45 || index == 46 || index == 52 || index == 53 || index == 54) {
+            _carpets.emplace_back(tile);
+            return -FLT_MAX;
+        }
+        if(index < 8 || (index>=16 && index <=23) || index == 32 || index == 48 || index == 49){
+            yPos -= tileSize;
+        }
+    } else if (type < 577) {
+        //env
+        index -= 513;
+        if (index == 24 || index == 25 || index == 32 || index == 33 || index == 40 || index == 41 || index == 35 || index == 36 || index == 37 || index == 48 || index == 49 || index == 50 || index == 54 || index == 55 || index == 62){
+            _holes.emplace_back(tile);
+            return -FLT_MAX;
+        }
+    } else {
+        //env2
+        index -= 577;
+        if(index == 0 || index == 1 || index == 6 || index == 7 || (index >= 16 && index <= 21)){
+            yPos -= tileSize;
+        }
+    }
+    return yPos;
 }

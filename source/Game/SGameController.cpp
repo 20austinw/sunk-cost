@@ -81,8 +81,8 @@ SGameController::SGameController(
     string seconds = std::to_string(_timeLeft / 60 % 60);
     seconds = seconds.length() <= 1 ? "0" + seconds : seconds;
     _timerLabel = cugl::scene2::Label::allocWithText(
-        Vec2(0, 0), minutes + ":" + seconds, _assets->get<Font>("gamefont"));
-    _timerScale = _textHeight / _timerLabel->getSize().height;
+        Vec2(0, 0), "              ", _assets->get<Font>("gamefont"));
+    _timerScale = _textHeight / _timerLabel->getSize().height * 1.5;
     _fifthLayer->addChild(_timerLabel);
     _endScene = std::make_shared<EndScene>(_scene, assets, true, true);
 
@@ -100,7 +100,7 @@ SGameController::SGameController(
     _alertLabel->setForeground(cugl::Color4f::RED);
 
     _selectionPhase = false;
-    _buttonHeight = 400;
+    _buttonHeight = 350;
 
     _viewButton = std::make_shared<Button>(_assets->get<Texture>("eye_button"),
                                            _scene, _selectionPhase, _portraits);

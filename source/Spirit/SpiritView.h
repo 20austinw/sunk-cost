@@ -47,7 +47,7 @@ class SpiritView {
 
     std::shared_ptr<cugl::Scene2> _scene;
 
-    float _buttonSize = 400;
+    float _buttonSize = 350;
 
     float _trapScaleFactor;
     float _lockScaleFactor;

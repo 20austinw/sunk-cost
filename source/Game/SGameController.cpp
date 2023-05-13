@@ -139,6 +139,9 @@ int cnt = 0;
 bool blocked = false;
 
 void SGameController::update(float dt) {
+    auto inputController = InputController::getInstance();
+    inputController->update(dt);
+    inputController->readInput();
 
     if (_gameStatus == 0) {
 
@@ -154,7 +157,7 @@ void SGameController::update(float dt) {
                 transmitActiveCamIndex(_portraits->getIndex());
                 std::dynamic_pointer_cast<OrthographicCamera>(
                     _scene->getCamera())
-                    ->setZoom(0.3);
+                    ->setZoom(1.5);
             }
         }
         // In selection phase
@@ -164,6 +167,9 @@ void SGameController::update(float dt) {
             _scene->getCamera()->setPosition(_portraits->getPosition(0));
             std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
                 ->setZoom(0.3);
+            auto worldPos = _scene->getCamera()->screenToWorldCoords(
+                inputController->getTouchPos());
+            CULog("%f, %f", worldPos.x, worldPos.y);
         }
 
         if (preSelection != _selection) {
@@ -212,12 +218,8 @@ void SGameController::update(float dt) {
             _alertTimer = 0;
             _treasureStolen = false;
             _fifthLayer->removeChild(_alertLabel);
-            //            _scene->removeChild(_alertLabel);
         }
 
-        auto inputController = InputController::getInstance();
-        inputController->update(dt);
-        inputController->readInput();
         if (inputController->didPressReset()) {
             reset();
         }

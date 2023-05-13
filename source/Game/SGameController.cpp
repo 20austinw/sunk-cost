@@ -154,7 +154,7 @@ void SGameController::update(float dt) {
                 transmitActiveCamIndex(_portraits->getIndex());
                 std::dynamic_pointer_cast<OrthographicCamera>(
                     _scene->getCamera())
-                    ->setZoom(0.2);
+                    ->setZoom(0.3);
             }
         }
         // In selection phase
@@ -448,9 +448,10 @@ void SGameController::update(float dt) {
             _endScene->addChildTo(_scene);
         }
         _scene->getCamera()->update();
-    }else if (_gameStatus == -1) {
-        if (!_endScene->isAdded()){
-            _endScene = std::make_shared<EndScene>(_scene, _assets, true, false);
+    } else if (_gameStatus == -1) {
+        if (!_endScene->isAdded()) {
+            _endScene =
+                std::make_shared<EndScene>(_scene, _assets, true, false);
             _endScene->addChildTo(_scene);
             _endScene->setAdded(true);
         } else if (_endScene->sUpdate()) {
@@ -459,13 +460,12 @@ void SGameController::update(float dt) {
             AudioEngine::get()->clear("theme", 1);
             _status = ABORT;
         }
-    }
-    else if (_gameStatus == 1){
-        if (!_endScene->isAdded()){
+    } else if (_gameStatus == 1) {
+        if (!_endScene->isAdded()) {
             _endScene = std::make_shared<EndScene>(_scene, _assets, true, true);
             _endScene->addChildTo(_scene);
             _endScene->setAdded(true);
-        } else if (_endScene->sUpdate()){
+        } else if (_endScene->sUpdate()) {
             CULog("Switch to reset screen!");
             AudioEngine::get()->clear("tension", 1);
             AudioEngine::get()->clear("theme", 1);
@@ -511,88 +511,86 @@ void SGameController::checkLevelLoaded() {
         _tension = _assets->get<Sound>("tension");
         _trapSound = _assets->get<Sound>("trapSound");
         _treasureSound = _assets->get<Sound>("treasureSound");
-        
-        
+
         int width = _level->getDimensions().x;
         int height = _level->getDimensions().y;
-        
+
         _tilemap->updatePosition(_scene->getSize() / 2);
         _tilemap->updateDimensions(_level->getDimensions());
         _tilemap->updateColor(Color4::WHITE);
         _tilemap->updateTileSize(_level->getTileSize());
-        
+
         std::vector<int> tiles = _level->getTileTextures();
         for (int i = 0; i < tiles.size(); i++) {
             int c = i % width;
             int r = i / width;
             int type = tiles[i];
-            addFloorTile(type, c, height-1-r);
+            addFloorTile(type, c, height - 1 - r);
         }
-        
+
         std::vector<std::vector<int>> details = _level->getDetails();
-        
-        for(int n=0; n<details.size(); n++){
-            for(int m=0; m<details.at(n).size(); m++){
+
+        for (int n = 0; n < details.size(); n++) {
+            for (int m = 0; m < details.at(n).size(); m++) {
                 int type = details[n][m];
-                if (!(type==0 || type >= 641 || type == 129+16 || type == 129+24)){
+                if (!(type == 0 || type >= 641 || type == 129 + 16 ||
+                      type == 129 + 24)) {
                     int c = m % width;
                     int r = m / width;
-                    addDetails(type, c, height-1-r);
+                    addDetails(type, c, height - 1 - r);
                 }
             }
         }
-        
-        
 
-//        std::vector<std::vector<int>> walls = _level->getWallTextures();
-//        height = walls[0].size();
-//        width = walls.size();
-//        for (int i = 0; i < walls.size() * walls[0].size(); ++i) {
-//            int c = i % walls[0].size();
-//            int r = i / walls[0].size();
-//            int type = walls[r][c];
-//            addWallTile(type, c, width - 1 - r);
-//        }
-//
-//        walls = _level->getWallUpperTextures();
-//        height = walls[0].size();
-//        width = walls.size();
-//        for (int i = 0; i < height * width; ++i) {
-//            int c = i % height;
-//            int r = i / height;
-//            int type = walls[r][c];
-//            addWallUpper(type, c, width - 1 - r);
-//        }
-//
-//        walls = _level->getWallGrimeTextures();
-//        height = walls[0].size();
-//        width = walls.size();
-//        for (int i = 0; i < height * width; ++i) {
-//            int c = i % height;
-//            int r = i / height;
-//            int type = walls[r][c];
-//            addWallGrime(type, c, width - 1 - r);
-//        }
-//
-//        walls = _level->getWallLowerTextures();
-//        height = walls[0].size();
-//        width = walls.size();
-//        for (int i = 0; i < height * width; ++i) {
-//            int c = i % height;
-//            int r = i / height;
-//            int type = walls[r][c];
-//            addWallLower(type, c, width - 1 - r);
-//        }
-//
-//        walls = _level->getFurnitureTextures();
-//        height = walls[0].size();
-//        width = walls.size();
-//        for (int i = 0; i < height * width; ++i) {
-//            int c = i % height;
-//            int r = i / height;
-//            int type = walls[r][c];
-//            addFurnitures(type, c, width - 1 - r);
-//        }
+        //        std::vector<std::vector<int>> walls =
+        //        _level->getWallTextures(); height = walls[0].size(); width =
+        //        walls.size(); for (int i = 0; i < walls.size() *
+        //        walls[0].size(); ++i) {
+        //            int c = i % walls[0].size();
+        //            int r = i / walls[0].size();
+        //            int type = walls[r][c];
+        //            addWallTile(type, c, width - 1 - r);
+        //        }
+        //
+        //        walls = _level->getWallUpperTextures();
+        //        height = walls[0].size();
+        //        width = walls.size();
+        //        for (int i = 0; i < height * width; ++i) {
+        //            int c = i % height;
+        //            int r = i / height;
+        //            int type = walls[r][c];
+        //            addWallUpper(type, c, width - 1 - r);
+        //        }
+        //
+        //        walls = _level->getWallGrimeTextures();
+        //        height = walls[0].size();
+        //        width = walls.size();
+        //        for (int i = 0; i < height * width; ++i) {
+        //            int c = i % height;
+        //            int r = i / height;
+        //            int type = walls[r][c];
+        //            addWallGrime(type, c, width - 1 - r);
+        //        }
+        //
+        //        walls = _level->getWallLowerTextures();
+        //        height = walls[0].size();
+        //        width = walls.size();
+        //        for (int i = 0; i < height * width; ++i) {
+        //            int c = i % height;
+        //            int r = i / height;
+        //            int type = walls[r][c];
+        //            addWallLower(type, c, width - 1 - r);
+        //        }
+        //
+        //        walls = _level->getFurnitureTextures();
+        //        height = walls[0].size();
+        //        width = walls.size();
+        //        for (int i = 0; i < height * width; ++i) {
+        //            int c = i % height;
+        //            int r = i / height;
+        //            int type = walls[r][c];
+        //            addFurnitures(type, c, width - 1 - r);
+        //        }
 
         std::sort(_obstacles.begin(), _obstacles.end(),
                   [](std::shared_ptr<TileController>& a,
@@ -620,20 +618,20 @@ void SGameController::checkLevelLoaded() {
                           return a->getYPos() > b->getYPos();
                       });
         }
-        
-        for (int i=0; i<_holes.size(); i++){
+
+        for (int i = 0; i < _holes.size(); i++) {
             _holes[i]->removeChildFrom(_obstacleNode);
             _holes[i]->addChildTo(_obstacleNode);
         }
-        
-        for (int i=0; i<_carpets.size(); i++){
+
+        for (int i = 0; i < _carpets.size(); i++) {
             _carpets[i]->removeChildFrom(_obstacleNode);
             _carpets[i]->addChildTo(_obstacleNode);
         }
 
         for (int n = 0; n < _sortedObstacles.size(); n++) {
             for (int m = 0; m < _sortedObstacles.at(n).size(); m++) {
-                if (_sortedObstacles[n][m]->isObstacle()){
+                if (_sortedObstacles[n][m]->isObstacle()) {
                     _sortedObstacles[n][m]->removeChildFrom(_obstacleNode);
                     _sortedObstacles[n][m]->addChildTo(_obstacleNode);
                 }
@@ -642,9 +640,9 @@ void SGameController::checkLevelLoaded() {
 
         for (int i = 0; i < _level->getPortaits().size(); i++) {
             _portraits->addPortrait(
-                                    _portraitNodes, i, _level->getPortaits()[i].first,
-                _level->getPortaits()[i].second, Vec3(0, 0, -1), Vec2::ZERO,false,
-                _level->getBattery());
+                _portraitNodes, i, _level->getPortaits()[i].first,
+                _level->getPortaits()[i].second, Vec3(0, 0, -1), Vec2::ZERO,
+                false, _level->getBattery());
         }
         _portraits->setMaxbattery(_level->getBattery());
 
@@ -657,23 +655,23 @@ void SGameController::checkLevelLoaded() {
         _spirit.getView()->addKillButtonTo(_fourthLayer);
 
         initDoors();
-        
+
         std::sort(_doorNodes.begin(), _doorNodes.end(),
                   [](std::shared_ptr<scene2::PolygonNode>& a,
                      std::shared_ptr<scene2::PolygonNode>& b) {
                       return a->getPositionY() < b->getPositionY();
                   });
-        
+
         std::sort(_portraitNodes.begin(), _portraitNodes.end(),
                   [](std::shared_ptr<scene2::PolygonNode>& a,
                      std::shared_ptr<scene2::PolygonNode>& b) {
                       return a->getPositionY() < b->getPositionY();
                   });
-        
+
         for (int i = 0; i < _doorNodes.size(); i++) {
             _obstacleNode->addChild(_doorNodes.at(i));
         }
-        
+
         for (int i = 0; i < _portraitNodes.size(); i++) {
             _obstacleNode->addChild(_portraitNodes.at(i));
         }
@@ -830,124 +828,125 @@ void SGameController::addFloorTile(int type, int c, int r) {
     if (type == 0) {
         _tilemap->addTile(c, r, Color4::BLACK, false,
                           _assets->get<Texture>("black"));
-//        Vec2 pos(128 * c, 128 * r);
-//        std::shared_ptr<TileController> tile = std::make_shared<TileController>(
-//            pos, Size(128, 128), Color4::WHITE, false,
-//            _assets->get<Texture>("black"), pos.y + 12);
-//        _obstacles.emplace_back(tile);
-//        tile->addChildTo(_obstacleNode);
+        //        Vec2 pos(128 * c, 128 * r);
+        //        std::shared_ptr<TileController> tile =
+        //        std::make_shared<TileController>(
+        //            pos, Size(128, 128), Color4::WHITE, false,
+        //            _assets->get<Texture>("black"), pos.y + 12);
+        //        _obstacles.emplace_back(tile);
+        //        tile->addChildTo(_obstacleNode);
     } else {
         std::shared_ptr<Texture> texture = getTexture(type);
         _tilemap->addTile(c, r, Color4::WHITE, true, texture);
     }
 }
 
-//void SGameController::addWallTile(int type, int c, int r) {
-//    if (type == 0) {
-//        return;
-//    }
-//    if (_tilemap->getDimensions().width > c &&
-//        _tilemap->getDimensions().height > r) {
-//        _tilemap->setTileTraversable(c, r, false);
-//    }
+// void SGameController::addWallTile(int type, int c, int r) {
+//     if (type == 0) {
+//         return;
+//     }
+//     if (_tilemap->getDimensions().width > c &&
+//         _tilemap->getDimensions().height > r) {
+//         _tilemap->setTileTraversable(c, r, false);
+//     }
 //
-//    int index = type - 1;
-//    std::shared_ptr<Texture> wall = _assets->get<Texture>("wall");
-//    modifyTexture(wall, index, 8, 8);
-//    Vec2 pos(128 * c, 128 * r);
-//    int yPos = pos.y + 11;
-//    if (index == 0 || index == 1 || index == 8 || index == 9 || index == 10 ||
-//        index == 11 || index == 20 || index == 21 || index == 22 ||
-//        index == 34 || index == 35) {
-//        yPos -= 256;
-//    } else if (index == 32 || index == 33) {
-//        yPos -= 128;
-//    } else if (index == 41 || index == 42 || index == 48 || index == 49) {
-//        yPos += 128;
-//    }
+//     int index = type - 1;
+//     std::shared_ptr<Texture> wall = _assets->get<Texture>("wall");
+//     modifyTexture(wall, index, 8, 8);
+//     Vec2 pos(128 * c, 128 * r);
+//     int yPos = pos.y + 11;
+//     if (index == 0 || index == 1 || index == 8 || index == 9 || index == 10
+//     ||
+//         index == 11 || index == 20 || index == 21 || index == 22 ||
+//         index == 34 || index == 35) {
+//         yPos -= 256;
+//     } else if (index == 32 || index == 33) {
+//         yPos -= 128;
+//     } else if (index == 41 || index == 42 || index == 48 || index == 49) {
+//         yPos += 128;
+//     }
 //
-//    std::shared_ptr<TileController> tile = std::make_shared<TileController>(
-//        pos, Size(128, 128), Color4::WHITE, false, wall, yPos);
-//    _obstacles.emplace_back(tile);
-//    tile->addChildTo(_obstacleNode);
-//}
+//     std::shared_ptr<TileController> tile = std::make_shared<TileController>(
+//         pos, Size(128, 128), Color4::WHITE, false, wall, yPos);
+//     _obstacles.emplace_back(tile);
+//     tile->addChildTo(_obstacleNode);
+// }
 //
-//void SGameController::addWallUpper(int type, int c, int r) {
-//    if (type == 0) {
-//        return;
-//    }
-//    std::shared_ptr<Texture> wall = _assets->get<Texture>("wall_upper");
-//    modifyTexture(wall, type - 329, 8, 8);
-//    Vec2 pos(128 * c, 128 * r + 16 * 128);
-//    int ind = type - 329;
-//    int yPos = pos.y + 10;
-//    if (ind >= 16 && ind <= 63) {
-//        yPos += 128;
-//    }
-//    std::shared_ptr<TileController> tile = std::make_shared<TileController>(
-//        pos, Size(128, 128), Color4::WHITE, false, wall, yPos);
-//    _obstacles.emplace_back(tile);
-//    tile->addChildTo(_obstacleNode);
-//}
+// void SGameController::addWallUpper(int type, int c, int r) {
+//     if (type == 0) {
+//         return;
+//     }
+//     std::shared_ptr<Texture> wall = _assets->get<Texture>("wall_upper");
+//     modifyTexture(wall, type - 329, 8, 8);
+//     Vec2 pos(128 * c, 128 * r + 16 * 128);
+//     int ind = type - 329;
+//     int yPos = pos.y + 10;
+//     if (ind >= 16 && ind <= 63) {
+//         yPos += 128;
+//     }
+//     std::shared_ptr<TileController> tile = std::make_shared<TileController>(
+//         pos, Size(128, 128), Color4::WHITE, false, wall, yPos);
+//     _obstacles.emplace_back(tile);
+//     tile->addChildTo(_obstacleNode);
+// }
 //
-//void SGameController::addWallGrime(int type, int c, int r) {
-//    if (type == 0) {
-//        return;
-//    }
-//    std::shared_ptr<Texture> wall = _assets->get<Texture>("wall_grime");
-//    modifyTexture(wall, type - 193, 8, 8);
-//    Vec2 pos(128 * c, 128 * r + 16 * 128);
-//    std::shared_ptr<TileController> tile = std::make_shared<TileController>(
-//        pos, Size(128, 128), Color4::WHITE, false, wall, pos.y + 9);
-//    _obstacles.emplace_back(tile);
-//    tile->addChildTo(_obstacleNode);
-//}
+// void SGameController::addWallGrime(int type, int c, int r) {
+//     if (type == 0) {
+//         return;
+//     }
+//     std::shared_ptr<Texture> wall = _assets->get<Texture>("wall_grime");
+//     modifyTexture(wall, type - 193, 8, 8);
+//     Vec2 pos(128 * c, 128 * r + 16 * 128);
+//     std::shared_ptr<TileController> tile = std::make_shared<TileController>(
+//         pos, Size(128, 128), Color4::WHITE, false, wall, pos.y + 9);
+//     _obstacles.emplace_back(tile);
+//     tile->addChildTo(_obstacleNode);
+// }
 //
-//void SGameController::addWallLower(int type, int c, int r) {
-//    if (type == 0) {
-//        return;
-//    }
-//    std::shared_ptr<Texture> wall = _assets->get<Texture>("wall_lower");
-//    modifyTexture(wall, type - 393, 8, 8);
-//    Vec2 pos(128 * c, 128 * r + 16 * 128);
-//    std::shared_ptr<TileController> tile = std::make_shared<TileController>(
-//        pos, Size(128, 128), Color4::WHITE, false, wall, pos.y + 8);
-//    _obstacles.emplace_back(tile);
-//    tile->addChildTo(_obstacleNode);
-//}
+// void SGameController::addWallLower(int type, int c, int r) {
+//     if (type == 0) {
+//         return;
+//     }
+//     std::shared_ptr<Texture> wall = _assets->get<Texture>("wall_lower");
+//     modifyTexture(wall, type - 393, 8, 8);
+//     Vec2 pos(128 * c, 128 * r + 16 * 128);
+//     std::shared_ptr<TileController> tile = std::make_shared<TileController>(
+//         pos, Size(128, 128), Color4::WHITE, false, wall, pos.y + 8);
+//     _obstacles.emplace_back(tile);
+//     tile->addChildTo(_obstacleNode);
+// }
 //
-//void SGameController::addFurnitures(int type, int c, int r) {
-//    if (type == 0 || type - 129 == 0) {
-//        return;
-//    }
-//    int idx = type - 129;
-//    std::shared_ptr<Texture> furnitures = _assets->get<Texture>("furnitures");
-//    modifyTexture(furnitures, idx, 8, 8);
-//    Vec2 pos(128 * c, 128 * r + 16 * 128);
-//    float yPos = pos.y + 7;
-//    if (idx == 6 || idx == 7) {
-//        yPos -= 256;
-//    } else if (idx == 14 || idx == 15) {
-//        yPos -= 128;
-//    }
-//    std::shared_ptr<TileController> tile = std::make_shared<TileController>(
-//        pos, Size(128, 128), Color4::WHITE, false, furnitures, yPos);
-//    _obstacles.emplace_back(tile);
-//    tile->addChildTo(_obstacleNode);
-//}
+// void SGameController::addFurnitures(int type, int c, int r) {
+//     if (type == 0 || type - 129 == 0) {
+//         return;
+//     }
+//     int idx = type - 129;
+//     std::shared_ptr<Texture> furnitures =
+//     _assets->get<Texture>("furnitures"); modifyTexture(furnitures, idx, 8,
+//     8); Vec2 pos(128 * c, 128 * r + 16 * 128); float yPos = pos.y + 7; if
+//     (idx == 6 || idx == 7) {
+//         yPos -= 256;
+//     } else if (idx == 14 || idx == 15) {
+//         yPos -= 128;
+//     }
+//     std::shared_ptr<TileController> tile = std::make_shared<TileController>(
+//         pos, Size(128, 128), Color4::WHITE, false, furnitures, yPos);
+//     _obstacles.emplace_back(tile);
+//     tile->addChildTo(_obstacleNode);
+// }
 //
-//void SGameController::addCandles(int type, int c, int r) {
-//    if (type == 0) {
-//        return;
-//    }
-//    std::shared_ptr<Texture> candleTexture = _assets->get<Texture>("candle");
-//    std::shared_ptr<scene2::SpriteNode> candle =
-//        scene2::SpriteNode::allocWithSheet(candleTexture, 1, 8, 8);
-//    candle->setFrame(type - 321);
-//    candle->setPosition(Vec2(128 * c + 16 * 128 + 32, 128 * r + 32 * 128 + 32));
-//    _candleNodes.emplace_back(candle);
-//    _obstacleNode->addChild(_candleNodes.at(_candleNodes.size() - 1));
-//}
+// void SGameController::addCandles(int type, int c, int r) {
+//     if (type == 0) {
+//         return;
+//     }
+//     std::shared_ptr<Texture> candleTexture = _assets->get<Texture>("candle");
+//     std::shared_ptr<scene2::SpriteNode> candle =
+//         scene2::SpriteNode::allocWithSheet(candleTexture, 1, 8, 8);
+//     candle->setFrame(type - 321);
+//     candle->setPosition(Vec2(128 * c + 16 * 128 + 32, 128 * r + 32 * 128 +
+//     32)); _candleNodes.emplace_back(candle);
+//     _obstacleNode->addChild(_candleNodes.at(_candleNodes.size() - 1));
+// }
 
 void SGameController::modifyTexture(std::shared_ptr<Texture>& texture,
                                     int index) {
@@ -971,14 +970,15 @@ void SGameController::sortNodes() {
             abs(_hunterXPos - _sortedObstacles[i][0]->getPosition().x);
         if (xDiff < 128 * 2) {
             for (int n = 0; n < _sortedObstacles.at(i).size(); n++) {
-                if (_hunterYPos > _sortedObstacles[i][n]->getYPos() && _sortedObstacles[i][n]->isObstacle()) {
+                if (_hunterYPos > _sortedObstacles[i][n]->getYPos() &&
+                    _sortedObstacles[i][n]->isObstacle()) {
                     _sortedObstacles[i][n]->removeChildFrom(_obstacleNode);
                     _sortedObstacles[i][n]->addChildTo(_obstacleNode);
                 }
             }
         }
     }
-    
+
     for (int i = 0; i < _doorNodes.size(); i++) {
         if (_hunterYPos > _doorNodes.at(i)->getPositionY() + 32) {
             _obstacleNode->removeChild(_doorNodes.at(i));
@@ -997,9 +997,9 @@ void SGameController::sortNodes() {
 }
 
 std::shared_ptr<Texture> SGameController::getTexture(int type) {
-    std::shared_ptr< Texture > texture;
+    std::shared_ptr<Texture> texture;
     int idx = type;
-    if (type < 65){
+    if (type < 65) {
         idx -= 1;
         texture = _assets->get<Texture>("final_wall");
     } else if (type < 129) {
@@ -1034,9 +1034,10 @@ std::shared_ptr<Texture> SGameController::getTexture(int type) {
 }
 
 void SGameController::addDetails(int type, int c, int r) {
-    std::shared_ptr< Texture > texture = getTexture(type);
+    std::shared_ptr<Texture> texture = getTexture(type);
     Vec2 pos(_level->getTileWidth() * c, _level->getTileWidth() * r);
-    std::shared_ptr<TileController> tile = std::make_shared<TileController>(pos, _level->getTileSize(), Color4::WHITE, false, texture, pos.y);
+    std::shared_ptr<TileController> tile = std::make_shared<TileController>(
+        pos, _level->getTileSize(), Color4::WHITE, false, texture, pos.y);
     float yPos = getYPos(type, pos.y, tile);
     if (yPos != -FLT_MAX) {
         tile->setYPos(yPos);
@@ -1047,68 +1048,81 @@ void SGameController::addDetails(int type, int c, int r) {
     tile->addChildTo(_obstacleNode);
 }
 
-float SGameController::getYPos(int type, float pos, std::shared_ptr<TileController>& tile) {
+float SGameController::getYPos(int type, float pos,
+                               std::shared_ptr<TileController>& tile) {
     float yPos = pos;
     int tileSize = _level->getTileWidth();
     int index = type;
-    if (type < 65){
-        //wall
+    if (type < 65) {
+        // wall
         index -= 1;
-        if (index == 0 || index == 1 || index == 8|| index == 9 || index == 10 || index == 11 || index == 20 || index == 21 || index == 22 || index == 34 || index == 35) {
-            yPos -= 2*tileSize;
-        } else if (index == 32 || index == 33){
+        if (index == 0 || index == 1 || index == 8 || index == 9 ||
+            index == 10 || index == 11 || index == 20 || index == 21 ||
+            index == 22 || index == 34 || index == 35) {
+            yPos -= 2 * tileSize;
+        } else if (index == 32 || index == 33) {
             yPos -= tileSize;
         }
     } else if (type < 129) {
-        //floor
+        // floor
         return -FLT_MAX;
     } else if (type < 193) {
-        //dector
+        // dector
         index -= 129;
-        if (type == 16 || type == 24){
+        if (type == 16 || type == 24) {
             return FLT_MAX;
         }
-        if(index == 6 || index == 7){
-            yPos -= 2*tileSize;
-        } else if(index == 14 || index == 15 || index == 1 || index == 2 || index == 3 || index == 4 || index == 17 || index == 18 || index == 19 || index == 20 || index == 32 || index == 33 || index == 34 || index == 35 || index == 36 || index == 37){
+        if (index == 6 || index == 7) {
+            yPos -= 2 * tileSize;
+        } else if (index == 14 || index == 15 || index == 1 || index == 2 ||
+                   index == 3 || index == 4 || index == 17 || index == 18 ||
+                   index == 19 || index == 20 || index == 32 || index == 33 ||
+                   index == 34 || index == 35 || index == 36 || index == 37) {
             yPos -= tileSize;
         }
     } else if (type < 257) {
-        //grime
+        // grime
         index -= 193;
     } else if (type < 321) {
-        //placeholder
+        // placeholder
         return -FLT_MAX;
     } else if (type < 385) {
-        //wall upper
+        // wall upper
         index -= 321;
-        if (index >= 16 && index <= 63){
+        if (index >= 16 && index <= 63) {
             yPos += tileSize;
         }
     } else if (type < 449) {
-        //ao
+        // ao
         return -FLT_MAX;
     } else if (type < 513) {
-        //dector2
+        // dector2
         index -= 449;
-        if (index == 36 || index == 37 || index == 38 || index == 44 || index == 45 || index == 46 || index == 52 || index == 53 || index == 54) {
+        if (index == 36 || index == 37 || index == 38 || index == 44 ||
+            index == 45 || index == 46 || index == 52 || index == 53 ||
+            index == 54) {
             _carpets.emplace_back(tile);
             return -FLT_MAX;
         }
-        if(index < 8 || (index>=16 && index <=23) || index == 32 || index == 48 || index == 49){
+        if (index < 8 || (index >= 16 && index <= 23) || index == 32 ||
+            index == 48 || index == 49) {
             yPos -= tileSize;
         }
     } else if (type < 577) {
-        //env
+        // env
         index -= 513;
-        if (index == 24 || index == 25 || index == 32 || index == 33 || index == 40 || index == 41 || index == 35 || index == 36 || index == 37 || index == 48 || index == 49 || index == 50 || index == 54 || index == 55 || index == 62){
+        if (index == 24 || index == 25 || index == 32 || index == 33 ||
+            index == 40 || index == 41 || index == 35 || index == 36 ||
+            index == 37 || index == 48 || index == 49 || index == 50 ||
+            index == 54 || index == 55 || index == 62) {
             _holes.emplace_back(tile);
             return -FLT_MAX;
         }
     } else {
-        //env2
+        // env2
         index -= 577;
-        if(index == 0 || index == 1 || index == 6 || index == 7 || (index >= 16 && index <= 21)){
+        if (index == 0 || index == 1 || index == 6 || index == 7 ||
+            (index >= 16 && index <= 21)) {
             yPos -= tileSize;
         }
     }

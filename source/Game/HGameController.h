@@ -210,6 +210,9 @@ class HGameController {
     std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> _livehearts;
 
     std::vector<std::shared_ptr<cugl::scene2::PolygonNode>> _deadhearts;
+    std::vector<std::shared_ptr<cugl::scene2::PolygonNode>> _indicators;
+    std::vector<std::shared_ptr<cugl::scene2::PolygonNode>> _shadows;
+
     int _heart_frame = 0;
 
     //

@@ -967,7 +967,7 @@ void HGameController::checkLevelLoaded() {
         //        //    _map ->setTexture(_assets->get<Texture>("map"));
         //        _scene->addChild(_map);
 
-        _scene->addChild(_debugnode);
+        
 
         _miniMap = scene2::PolygonNode::allocWithTexture(
             _assets->get<Texture>("minimaplarge"));
@@ -983,27 +983,7 @@ void HGameController::checkLevelLoaded() {
                                     Vec2::ZERO, true, _level->getBattery());
         }
 
-        //        for (inint i = 0; i < tiles.size() * tiles[0].size(); ++i) {
-        //            int c = i % tiles[0].size();
-        //            int r = i / tiles[0].size();
-        //
-        //            if (tiles[r][c] == "black") {
-        //                _tilemap->addTile(c, r, Color4::BLACK, false,
-        //                                  _assets->get<Texture>("black"));
-        //            } else if (tiles[r][c] == "green") {
-        //                _tilemap->addTile(c, r, Color4::GREEN, true,
-        //                                  _assets->get<Texture>("green"));
-        //            } else if (tiles[r][c] == "door") {
-        //                _tilemap->addDoor(c, r,
-        //                _assets->get<Texture>("fulldoor"));
-        //            }
-        //        }
-
-        // Initialize HunterController
-
-        //        _hunter = HunterController(_assets, _scene->getSize(),_scene,
-        //        PLAYER_SIZE);
-
+       
         // Draw hunter shadow
         for (int i = 0; i < 3; i++) {
             _shadowTexture = _assets->get<Texture>("shadow");
@@ -1109,24 +1089,6 @@ void HGameController::checkLevelLoaded() {
         _hunternow->setColor(Color4(Vec4(1, 0, 0, 1)));
         _scene->addChild(_hunternow);
 
-        //        _hunterone =
-        //        scene2::PolygonNode::allocWithPoly(_pf.makeCircle(Vec2(0,0),
-        //        60)); _hunterone->setAnchor(cugl::Vec2::ANCHOR_CENTER);
-        //        _hunterone->setScale(0.3f);
-        //        _hunterone->setColor(Color4(Vec4(0, 1, 0,1)));
-        //        _hunterone->setPosition(Vec2(-100000000,-100000000));
-        //        _scene->addChild(_hunterone);
-
-        //        _huntertwo =
-        //        scene2::PolygonNode::allocWithPoly(_pf.makeCircle(Vec2(0,0),
-        //        60)); _huntertwo->setAnchor(cugl::Vec2::ANCHOR_CENTER);
-        //        _huntertwo->setScale(0.3f);
-        //        _huntertwo->setColor(Color4(Vec4(0, 1, 0,1)));
-        //        _huntertwo->setPosition(Vec2(-100000000,-100000000));
-        //        _scene->addChild(_huntertwo);
-
-        // for testing only, delete when network added
-        //        _doorslocked.push_back(3);
 
         animatelocks();
 
@@ -1158,6 +1120,10 @@ void HGameController::checkLevelLoaded() {
 
         // Manually add more treasurepos
         _treasurepos.emplace_back(Vec2(3900, 5700));
+        
+        _treasurepos.emplace_back(Vec2(2000, 5700));
+        
+        _treasurepos.emplace_back(Vec2(1000, 5700));
 
         _treasure = TreasureController(_assets, _scene->getSize(), PLAYER_SIZE,
                                        _treasurepos.at(index));

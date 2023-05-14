@@ -54,18 +54,12 @@ class TileController {
     Vec2 getPosition() { return _model->getPosition(); }
 
     int getYPos() { return _model->yPos; }
-    
-    bool isObstacle() {
-        return _model->obstacle;
-    }
-    
-    void setYPos(float yPos) {
-        _model->setYPos(yPos);
-    }
-    
-    void setObstacle(bool b){
-        _model->setObstacle(b);
-    }
+
+    bool isObstacle() { return _model->obstacle; }
+
+    void setYPos(float yPos) { _model->setYPos(yPos); }
+
+    void setObstacle(bool b) { _model->setObstacle(b); }
 
 #pragma mark Update Methods
   public:

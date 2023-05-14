@@ -104,14 +104,10 @@ class EndScene {
             scene->addChild(spriteNode);
         }
     }
-    
-    bool isAdded() {
-        return _added;
-    }
-    
-    void setAdded(bool add) {
-        _added = add;
-    }
+
+    bool isAdded() { return _added; }
+
+    void setAdded(bool add) { _added = add; }
 
     /**
      * Removes the view component children from the given `sceneNode`.
@@ -129,7 +125,6 @@ class EndScene {
         _spriteNodes[_idx]->setPosition(position);
     }
 
-    
     void update() {
         if (!halt) {
 
@@ -157,7 +152,7 @@ class EndScene {
             Vec2(0, _scene->getSize().height));
         _spriteNodes[_idx]->setPosition(pos);
     }
-    
+
     bool sUpdate() {
         if (!halt) {
 

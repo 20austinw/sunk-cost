@@ -23,21 +23,21 @@ class LevelModel : public Asset {
 
     /** Vector of textures for tiles */
     std::vector<int> _tiles;
-    
+
     std::vector<std::vector<int>> _details;
 
-//    std::vector<std::vector<int>> _walls;
-//
-//    std::vector<std::vector<int>> _wallUpper;
-//
-//    std::vector<std::vector<int>> _wallGrime;
-//
-//    std::vector<std::vector<int>> _wallLower;
-//
-//    std::vector<std::vector<int>> _furnitures;
-//
-//    std::vector<std::vector<int>> _candles;
-//
+    //    std::vector<std::vector<int>> _walls;
+    //
+    //    std::vector<std::vector<int>> _wallUpper;
+    //
+    //    std::vector<std::vector<int>> _wallGrime;
+    //
+    //    std::vector<std::vector<int>> _wallLower;
+    //
+    //    std::vector<std::vector<int>> _furnitures;
+    //
+    //    std::vector<std::vector<int>> _candles;
+    //
     std::vector<std::vector<Vec2>> _collision;
 
     std::vector<Vec2> _boarder;
@@ -103,30 +103,34 @@ class LevelModel : public Asset {
     std::vector<int> getTileTextures() { return _tiles; }
 
     std::vector<std::vector<int>> getDetails() { return _details; }
-//
-//    std::vector<std::vector<int>> getWallUpperTextures() { return _wallUpper; }
-//
-//    std::vector<std::vector<int>> getWallGrimeTextures() { return _wallGrime; }
-//
-//    std::vector<std::vector<int>> getWallLowerTextures() { return _wallLower; }
-//
-//    std::vector<std::vector<int>> getFurnitureTextures() { return _furnitures; }
-//
-//    std::vector<std::vector<int>> getCandleTextures() { return _candles; }
-    
+    //
+    //    std::vector<std::vector<int>> getWallUpperTextures() { return
+    //    _wallUpper; }
+    //
+    //    std::vector<std::vector<int>> getWallGrimeTextures() { return
+    //    _wallGrime; }
+    //
+    //    std::vector<std::vector<int>> getWallLowerTextures() { return
+    //    _wallLower; }
+    //
+    //    std::vector<std::vector<int>> getFurnitureTextures() { return
+    //    _furnitures; }
+    //
+    //    std::vector<std::vector<int>> getCandleTextures() { return _candles; }
+
     Vec2 getDimensions() { return _dimensions; }
 
     Size getTileSize() { return Size(_tileSize, _tileSize); }
-    
-    int getTileWidth() {return _tileSize; }
+
+    int getTileWidth() { return _tileSize; }
 
     std::vector<std::vector<Vec2>> getCollision() { return _collision; }
 
     std::vector<Vec2> getBoarder() { return _boarder; }
 
-//    Size getDimensions() { return _dimensions; }
-//
-//    Size getTileSize() { return _tileSize; }
+    //    Size getDimensions() { return _dimensions; }
+    //
+    //    Size getTileSize() { return _tileSize; }
 
     Vec2 getDefaultCamPosition() { return _defaultcam; }
 
@@ -250,7 +254,7 @@ class LevelModel : public Asset {
      * @return true if the object was successfully loaded
      */
     bool loadTiles(const std::shared_ptr<JsonValue>& json);
-    
+
     bool loadDetails(const std::shared_ptr<JsonValue>& json);
     /**
      * Parses JSON and extracts tile positions and textures from it

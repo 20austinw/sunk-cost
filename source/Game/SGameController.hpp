@@ -162,6 +162,7 @@ class SGameController {
     std::shared_ptr<cugl::Sound> _trapSound;
     std::shared_ptr<cugl::Sound> _treasureSound;
     bool _neverPlayed = true;
+    std::vector<std::shared_ptr<cugl::scene2::PolygonNode>> _indicators;
 
 #pragma mark External References
   private:

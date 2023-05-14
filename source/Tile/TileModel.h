@@ -30,7 +30,7 @@ class TileModel {
     bool _traversable;
 
     float _yPos;
-    
+
     bool _obstacle;
 
   public:
@@ -40,7 +40,7 @@ class TileModel {
     const bool& traversable;
 
     const float& yPos;
-    
+
     const bool& obstacle;
 
 #pragma mark Main Functions
@@ -55,13 +55,14 @@ class TileModel {
      */
     TileModel(Vec2 position, Size size, Color4 color, bool traversable,
               float yPos)
-        : color(_color), traversable(_traversable), yPos(_yPos), obstacle(_obstacle) {
+        : color(_color), traversable(_traversable), yPos(_yPos),
+          obstacle(_obstacle) {
         setPosition(position);
         setSize(size);
         setColor(color);
         setTraversable(traversable);
         setYPos(yPos);
-            setObstacle(true);
+        setObstacle(true);
     }
 
 #pragma mark Setters
@@ -81,10 +82,8 @@ class TileModel {
      *  @param size Width and height of a single tile
      */
     void setSize(Size size) { _size = size; }
-    
-    void setObstacle(bool b) {
-        _obstacle = b;
-    }
+
+    void setObstacle(bool b) { _obstacle = b; }
 
     /**
      *  Sets the color of the tile.

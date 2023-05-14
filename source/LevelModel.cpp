@@ -55,7 +55,7 @@ bool LevelModel::preload(const std::shared_ptr<cugl::JsonValue>& json) {
     float w = json->get(WIDTH_FIELD)->asInt();
     float h = json->get(HEIGHT_FIELD)->asInt();
     _bounds.size.set(w, h);
-    
+
     int t = json->get(TILE_SIZE)->asInt();
     _tileSize = t;
     _dimensions = Vec2(w, h);
@@ -161,23 +161,23 @@ bool LevelModel::loadObject(const std::shared_ptr<JsonValue>& json) {
  */
 bool LevelModel::loadTiles(const std::shared_ptr<JsonValue>& json) {
     auto tiles = json->get("data");
-    
+
     bool success = tiles->get(0) != nullptr;
-    if (success){
-        for (int i=0; i<tiles->size(); i++){
+    if (success) {
+        for (int i = 0; i < tiles->size(); i++) {
             _tiles.emplace_back(tiles->get(i)->asInt());
         }
     }
     return success;
 }
 
-bool LevelModel::loadDetails(const std::shared_ptr<JsonValue> &json) {
+bool LevelModel::loadDetails(const std::shared_ptr<JsonValue>& json) {
     auto tiles = json->get("data");
-    
+
     bool success = tiles->get(0) != nullptr;
-    if (success){
+    if (success) {
         std::vector<int> list;
-        for (int i=0; i<tiles->size(); i++){
+        for (int i = 0; i < tiles->size(); i++) {
             list.emplace_back(tiles->get(i)->asInt());
         }
         _details.emplace_back(list);

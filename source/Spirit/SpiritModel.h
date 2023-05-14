@@ -205,16 +205,23 @@ class SpiritModel {
      */
     void setEnergy(float energy) { _energy = energy; };
 
-    void addTrap(Vec2 position,
+    bool addTrap(Vec2 position,
                  std::shared_ptr<cugl::scene2::PolygonNode>& node) {
         if (_trapModels.size() >= 3)
-            return;
+            return false;
+        // Position is too close to either of the other traps
+        for (auto& trap : _trapModels) {
+            if (position.distance(trap->getPosition()) < 500) {
+                return false;
+            }
+        }
         // a trap will last for 15s for now
         _trapModels.emplace_back(std::make_shared<TrapModel>(position, 900));
         auto trap = std::make_shared<TrapView>(_assets, position, 20);
         _trapViews.emplace_back(trap);
         trap->addChildToNode(node);
         //        trap->addChildTo(_scene); //TODO: add trap
+        return true;
     }
 
     float getZoom() {

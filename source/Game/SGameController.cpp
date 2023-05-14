@@ -167,7 +167,6 @@ void SGameController::update(float dt) {
                 transmitActiveCamIndex(_viewButton->getCameraIndex());
                 _scene->getCamera()->setPosition(
                     _indicators[_portraits->getIndex() - 1]->getPosition());
-                
                 std::dynamic_pointer_cast<OrthographicCamera>(
                     _scene->getCamera())
                     ->setZoom(_scene->getSize().width /
@@ -726,7 +725,7 @@ void SGameController::checkLevelLoaded() {
         _viewButton->setCameraIndex(4);
         _portraits->setIndex(_viewButton->getCameraIndex());
         _shadows[_viewButton->getCameraIndex() - 1]->setVisible(true);
-       
+
         _scene->getCamera()->setPosition(
             _indicators[_portraits->getIndex() - 1]->getPosition());
         std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())

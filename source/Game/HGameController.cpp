@@ -331,7 +331,6 @@ void HGameController::update(float dt) {
         //            }
         //        }
         sortNodes();
-   
 
         AudioEngine::get()->play("theme", _theme, false, 0.5, false);
 
@@ -454,13 +453,10 @@ void HGameController::update(float dt) {
 
         if (_animates) {
             _portraits->updatespecific(_indexfromspirit);
-            if(_indexfromspirit==0){
-                _indicators[_indicators.size()-1]->setVisible(
-                    true);
-            }
-            else{
-                _indicators[_indexfromspirit-1]->setVisible(
-                                                            true);
+            if (_indexfromspirit == 0) {
+                _indicators[_indicators.size() - 1]->setVisible(true);
+            } else {
+                _indicators[_indexfromspirit - 1]->setVisible(true);
             }
         }
 
@@ -979,8 +975,6 @@ void HGameController::checkLevelLoaded() {
         //        //    _map ->setTexture(_assets->get<Texture>("map"));
         //        _scene->addChild(_map);
 
-        
-
         _miniMap = scene2::PolygonNode::allocWithTexture(
             _assets->get<Texture>("minimaplarge"));
         _miniMap->setScale(0.4);
@@ -1002,11 +996,8 @@ void HGameController::checkLevelLoaded() {
             indicator->setVisible(false);
             _scene->addChild(indicator);
             _indicators.emplace_back(indicator);
-            
-            
         }
 
-       
         // Draw hunter shadow
         for (int i = 0; i < 3; i++) {
             _shadowTexture = _assets->get<Texture>("shadow");
@@ -1112,7 +1103,6 @@ void HGameController::checkLevelLoaded() {
         _hunternow->setColor(Color4(Vec4(1, 0, 0, 1)));
         _scene->addChild(_hunternow);
 
-
         animatelocks();
 
         _counterbool = false;
@@ -1143,9 +1133,9 @@ void HGameController::checkLevelLoaded() {
 
         // Manually add more treasurepos
         _treasurepos.emplace_back(Vec2(3900, 5700));
-        
+
         _treasurepos.emplace_back(Vec2(2000, 5700));
-        
+
         _treasurepos.emplace_back(Vec2(1000, 5700));
 
         _treasure = TreasureController(_assets, _scene->getSize(), PLAYER_SIZE,

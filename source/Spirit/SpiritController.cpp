@@ -66,7 +66,8 @@ bool SpiritController::placeTrap(
             _tilemap->mapPosToGridPos(pos).x < 0 ||
             _tilemap->mapPosToGridPos(pos).y < 0)
             return false;
-        _model->addTrap(pos, node);
+        if (!_model->addTrap(pos, node))
+            return false;
         _trapAdded = true;
         setLastTrapPos(pos);
     }

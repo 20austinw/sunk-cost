@@ -192,6 +192,9 @@ void SGameController::update(float dt) {
             }
         }
 
+        CULog("%f, %f", _scene->getCamera()->getPosition().x,
+              _scene->getCamera()->getPosition().y);
+
         _scene->getCamera()->update();
 
         if (preSelection != _selection) {
@@ -216,7 +219,7 @@ void SGameController::update(float dt) {
         _scene->getCamera()->update();
 
         // Draw background
-        _background->setScale(1 / getZoom());
+        _background->setScale(2 / getZoom());
         _background->setPosition(_scene->getCamera()->screenToWorldCoords(
             Vec2(0, _scene->getSize().height)));
         sortNodes();

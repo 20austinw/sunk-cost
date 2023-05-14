@@ -140,6 +140,7 @@ float SGameController::getZoom() {
 int cnt = 0;
 
 void SGameController::update(float dt) {
+
     auto inputController = InputController::getInstance();
     inputController->update(dt);
     inputController->readInput();
@@ -154,7 +155,7 @@ void SGameController::update(float dt) {
     }
 
     if (_gameStatus == 0) {
-
+        _scene->getCamera()->update();
         bool preSelection = _selection;
         // Not in selection phase
         if (!_viewButton->update()) {
@@ -209,6 +210,8 @@ void SGameController::update(float dt) {
                 _viewButton->setButtonFrame(0);
             }
         }
+
+        _scene->getCamera()->update();
 
         _scene->getCamera()->update();
 
@@ -719,9 +722,14 @@ void SGameController::checkLevelLoaded() {
         }
 
         _portraits->setIndex(4);
-        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-            ->setZoom(0.85);
         _viewButton->setCameraIndex(4);
+        _portraits->setIndex(_viewButton->getCameraIndex());
+        _shadows[_viewButton->getCameraIndex() - 1]->setVisible(true);
+        _scene->getCamera()->setPosition(
+            _indicators[_portraits->getIndex() - 1]->getPosition());
+        std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+            ->setZoom(_scene->getSize().width /
+                      _indicators[_portraits->getIndex() - 1]->getSize().width);
         _spirit.updateLocksPos(false);
         _spirit.updateTrapBtnsPos(false);
         _spirit.updateKillBtnsPos(false);

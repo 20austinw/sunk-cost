@@ -347,6 +347,39 @@
         },
         "indicator11": {
             "file": "textures/light/11_r11c0_light.png"
+        },
+        "shadow1": {
+            "file": "textures/shadow/1_r1c0_shadow.png"
+        },
+        "shadow2": {
+            "file": "textures/shadow/2_r1c1_shadow.png"
+        },
+        "shadow3": {
+            "file": "textures/shadow/3_r2c0_shadow.png"
+        },
+        "shadow4": {
+            "file": "textures/shadow/4_r3c0_shadow.png"
+        },
+        "shadow5": {
+            "file": "textures/shadow/5_r4c0_shadow.png"
+        },
+        "shadow6": {
+            "file": "textures/shadow/6_r5c0_shadow.png"
+        },
+        "shadow7": {
+            "file": "textures/shadow/7_r7c0_shadow.png"
+        },
+        "shadow8": {
+            "file": "textures/shadow/8_r8c0_shadow.png"
+        },
+        "shadow9": {
+            "file": "textures/shadow/9_r8c1_shadow.png"
+        },
+        "shadow10": {
+            "file": "textures/shadow/10_r9c0_shadow.png"
+        },
+        "shadow11": {
+            "file": "textures/shadow/11_r11c0_shadow.png"
         }
     },
     "fonts": {

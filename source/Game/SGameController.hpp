@@ -63,11 +63,14 @@ class SGameController {
     // block screen
     std::shared_ptr<cugl::scene2::PolygonNode> _thirdLayer;
 
-    // lock, trap, eyeball, kill buttons
+    // Shadow
     std::shared_ptr<cugl::scene2::PolygonNode> _fourthLayer;
 
-    // minimap, battery, timer
+    // lock, trap, eyeball, kill buttons
     std::shared_ptr<cugl::scene2::PolygonNode> _fifthLayer;
+
+    // Battery, timer
+    std::shared_ptr<cugl::scene2::PolygonNode> _sixthLayer;
 
     // CONTROLLERS are attached directly to the scene (no pointers)
     /** The controller to manage the ship */
@@ -163,6 +166,7 @@ class SGameController {
     std::shared_ptr<cugl::Sound> _treasureSound;
     bool _neverPlayed = true;
     std::vector<std::shared_ptr<cugl::scene2::PolygonNode>> _indicators;
+    std::vector<std::shared_ptr<cugl::scene2::PolygonNode>> _shadows;
 
 #pragma mark External References
   private:

@@ -43,6 +43,8 @@ SGameController::SGameController(
     _scene->addChild(_fourthLayer);
     _fifthLayer = scene2::PolygonNode::alloc();
     _scene->addChild(_fifthLayer);
+    _sixthLayer = scene2::PolygonNode::alloc();
+    _scene->addChild(_sixthLayer);
 
     _background = scene2::PolygonNode::allocWithPoly(
         cugl::Rect(0, 0, _scene->getSize().width, _scene->getSize().height));
@@ -83,7 +85,7 @@ SGameController::SGameController(
     _timerLabel = cugl::scene2::Label::allocWithText(
         Vec2(0, 0), "              ", _assets->get<Font>("gamefont"));
     _timerScale = _textHeight / _timerLabel->getSize().height * 1.5;
-    _fifthLayer->addChild(_timerLabel);
+    _sixthLayer->addChild(_timerLabel);
     _endScene = std::make_shared<EndScene>(_scene, assets, true, true);
 
     _trapTriggered = false;
@@ -108,7 +110,7 @@ SGameController::SGameController(
     _viewButton->setVisible(true);
     _viewButton->setInteractive(true);
     //    _viewButton->addChildTo(_scene);
-    _viewButton->addChildToNode(_fourthLayer);
+    _viewButton->addChildToNode(_sixthLayer);
 
     while (!_levelLoaded) {
         checkLevelLoaded();
@@ -146,6 +148,10 @@ void SGameController::update(float dt) {
     for (auto& indicator : _indicators) {
         indicator->setVisible(false);
     }
+    // Disable shadows by default
+    for (auto& shadow : _shadows) {
+        shadow->setVisible(false);
+    }
 
     if (_gameStatus == 0) {
 
@@ -156,6 +162,7 @@ void SGameController::update(float dt) {
             _spirit.getView()->setVisible(true);
             if (_viewButton->getCameraIndex() != -1) {
                 _portraits->setIndex(_viewButton->getCameraIndex());
+                _shadows[_viewButton->getCameraIndex() - 1]->setVisible(true);
                 _scene->getCamera()->setPosition(
                     _portraits->getPosition(_portraits->getIndex()));
                 transmitActiveCamIndex(_portraits->getIndex());
@@ -218,7 +225,7 @@ void SGameController::update(float dt) {
                                      0.8, true);
         }
         if (_alertTimer == 0 && _treasureStolen) {
-            _fifthLayer->addChild(_alertLabel);
+            _sixthLayer->addChild(_alertLabel);
             _alertTimer++;
         } else if (_alertTimer > 0 && _alertTimer != 300) {
             _alertTimer++;
@@ -227,7 +234,7 @@ void SGameController::update(float dt) {
         if (_alertTimer == 300) {
             _alertTimer = 0;
             _treasureStolen = false;
-            _fifthLayer->removeChild(_alertLabel);
+            _sixthLayer->removeChild(_alertLabel);
         }
 
         if (inputController->didPressReset()) {
@@ -247,7 +254,7 @@ void SGameController::update(float dt) {
                 _spirit.touchInLockBound(cameraPos)) {
                 canSwitch = false;
                 if (!_spirit.getModel()->isOnLock) {
-                    _spirit.getView()->removeLastLockExtraTo(_fourthLayer);
+                    _spirit.getView()->removeLastLockExtraTo(_fifthLayer);
                     _spirit.getModel()->setLockState(true);
                 }
                 bool isLocked = false;
@@ -261,10 +268,10 @@ void SGameController::update(float dt) {
                 if (release) {
                     _spirit.getModel()->setLockState(false);
                     if (isLocked) {
-                        _spirit.removeLastLock(_fourthLayer);
+                        _spirit.removeLastLock(_fifthLayer);
 
                     } else {
-                        _spirit.getView()->addLastLockExtraTo(_fourthLayer);
+                        _spirit.getView()->addLastLockExtraTo(_fifthLayer);
                     }
                 }
             }
@@ -283,7 +290,7 @@ void SGameController::update(float dt) {
                 _spirit.touchInTrapBound(cameraPos)) {
                 canSwitch = false;
                 if (!_spirit.getModel()->isOnTrap) {
-                    _spirit.getView()->removeLastTrapExtraTo(_fourthLayer);
+                    _spirit.getView()->removeLastTrapExtraTo(_fifthLayer);
 
                     _spirit.getModel()->setTrapState(true);
                 }
@@ -296,9 +303,9 @@ void SGameController::update(float dt) {
                 // A trap has been placed
                 if (_spirit.placeTrap(_tilemap, _spirit.getModel()->lastTrapPos,
                                       _secondLayer)) {
-                    _spirit.removeLastTrapBtn(_fourthLayer);
+                    _spirit.removeLastTrapBtn(_fifthLayer);
                 } else {
-                    _spirit.getView()->addLastTrapExtraTo(_fourthLayer);
+                    _spirit.getView()->addLastTrapExtraTo(_fifthLayer);
                 }
             }
         } else if (_blocked && _spirit.getModel()->isOnTrap) {
@@ -378,7 +385,7 @@ void SGameController::update(float dt) {
         if (_doorUnlocked && _doorToUnlock != -1) {
             if (_doors.at(_doorToUnlock)->isLocked()) {
                 _doors.at(_doorToUnlock)->resetHunterUnlock();
-                _spirit.addNewLock(_fourthLayer);
+                _spirit.addNewLock(_fifthLayer);
                 _doorUnlocked = false;
                 _doorToUnlock = -1;
             }
@@ -392,10 +399,10 @@ void SGameController::update(float dt) {
             _trapPos = Vec2::ZERO;
         }
         if (result == 1) {
-            _spirit.addNewTrapBtn(_fourthLayer);
+            _spirit.addNewTrapBtn(_fifthLayer);
         } else if (result == 2) {
-            _spirit.addNewTrapBtn(_fourthLayer);
-            _spirit.addNewTrapBtn(_fourthLayer);
+            _spirit.addNewTrapBtn(_fifthLayer);
+            _spirit.addNewTrapBtn(_fifthLayer);
         }
 
         if (_network) {
@@ -663,8 +670,15 @@ void SGameController::checkLevelLoaded() {
             indicator->setPosition(_level->getPortaits()[i][2]);
             indicator->setScale(2);
             indicator->setVisible(false);
-            _fifthLayer->addChild(indicator);
+            _fourthLayer->addChild(indicator);
             _indicators.emplace_back(indicator);
+            auto shadow = cugl::scene2::PolygonNode::allocWithTexture(
+                _assets->get<Texture>("shadow" + to_string(i)));
+            shadow->setPosition(_level->getPortaits()[i][2]);
+            shadow->setScale(2);
+            shadow->setVisible(false);
+            _fourthLayer->addChild(shadow);
+            _shadows.emplace_back(shadow);
         }
         _portraits->setMaxbattery(_level->getBattery());
 
@@ -673,9 +687,9 @@ void SGameController::checkLevelLoaded() {
                                      _assets->get<Texture>("noBattery"));
         _portraits->initializeBatteryNodes(_fifthLayer);
 
-        _spirit.getView()->addLocksTo(_fourthLayer);
-        _spirit.getView()->addTrapButtonsTo(_fourthLayer);
-        _spirit.getView()->addKillButtonTo(_fourthLayer);
+        _spirit.getView()->addLocksTo(_fifthLayer);
+        _spirit.getView()->addTrapButtonsTo(_fifthLayer);
+        _spirit.getView()->addKillButtonTo(_fifthLayer);
 
         initDoors();
 

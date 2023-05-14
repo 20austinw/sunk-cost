@@ -1697,68 +1697,88 @@ void HGameController::addDetails(int type, int c, int r) {
     tile->addChildTo(_obstacleNode);
 }
 
-float HGameController::getYPos(int type, float pos, std::shared_ptr<TileController>& tile) {
+float HGameController::getYPos(int type, float pos,
+                               std::shared_ptr<TileController>& tile) {
     float yPos = pos;
     int tileSize = _level->getTileWidth();
     int index = type;
-    if (type < 65){
-        //wall
+    if (type < 65) {
+        // wall
+        yPos += 11;
         index -= 1;
-        if (index == 0 || index == 1 || index == 8|| index == 9 || index == 10 || index == 11 || index == 20 || index == 21 || index == 22 || index == 34 || index == 35) {
-            yPos -= 2*tileSize;
-        } else if (index == 32 || index == 33){
+        if (index == 0 || index == 1 || index == 8 || index == 9 ||
+            index == 10 || index == 11 || index == 20 || index == 21 ||
+            index == 22 || index == 34 || index == 35) {
+            yPos -= 2 * tileSize;
+        } else if (index == 32 || index == 33) {
             yPos -= tileSize;
         }
     } else if (type < 129) {
-        //floor
+        // floor
         return -FLT_MAX;
     } else if (type < 193) {
-        //dector
+        // dector
+        yPos += 8;
         index -= 129;
-        if (type == 16 || type == 24){
+        if (type == 16 || type == 24) {
             return FLT_MAX;
         }
-        if(index == 6 || index == 7){
-            yPos -= 2*tileSize;
-        } else if(index == 14 || index == 15 || index == 1 || index == 2 || index == 3 || index == 4 || index == 17 || index == 18 || index == 19 || index == 20 || index == 32 || index == 33 || index == 34 || index == 35 || index == 36 || index == 37){
+        if (index == 6 || index == 7) {
+            yPos -= 2 * tileSize;
+        } else if (index == 14 || index == 15 || index == 1 || index == 2 ||
+                   index == 3 || index == 4 || index == 17 || index == 18 ||
+                   index == 19 || index == 20 || index == 32 || index == 33 ||
+                   index == 34 || index == 35 || index == 36 || index == 37) {
             yPos -= tileSize;
         }
     } else if (type < 257) {
-        //grime
+        // grime
+        yPos += 9;
         index -= 193;
     } else if (type < 321) {
-        //placeholder
+        // placeholder
         return -FLT_MAX;
     } else if (type < 385) {
-        //wall upper
+        // wall upper
+        yPos += 10;
         index -= 321;
-        if (index >= 16 && index <= 63){
+        if (index >= 16 && index <= 63) {
             yPos += tileSize;
         }
     } else if (type < 449) {
-        //ao
+        // ao
         return -FLT_MAX;
     } else if (type < 513) {
-        //dector2
+        // dector2
+        yPos += 8;
         index -= 449;
-        if (index == 36 || index == 37 || index == 38 || index == 44 || index == 45 || index == 46 || index == 52 || index == 53 || index == 54) {
+        if (index == 36 || index == 37 || index == 38 || index == 44 ||
+            index == 45 || index == 46 || index == 52 || index == 53 ||
+            index == 54) {
             _carpets.emplace_back(tile);
             return -FLT_MAX;
         }
-        if(index < 8 || (index>=16 && index <=23) || index == 32 || index == 48 || index == 49){
+        if (index < 8 || (index >= 16 && index <= 23) || index == 32 ||
+            index == 48 || index == 49) {
             yPos -= tileSize;
         }
     } else if (type < 577) {
-        //env
+        // env
+        yPos += 8;
         index -= 513;
-        if (index == 24 || index == 25 || index == 32 || index == 33 || index == 40 || index == 41 || index == 35 || index == 36 || index == 37 || index == 48 || index == 49 || index == 50 || index == 54 || index == 55 || index == 62){
+        if (index == 24 || index == 25 || index == 32 || index == 33 ||
+            index == 40 || index == 41 || index == 35 || index == 36 ||
+            index == 37 || index == 48 || index == 49 || index == 50 ||
+            index == 54 || index == 55 || index == 62) {
             _holes.emplace_back(tile);
             return -FLT_MAX;
         }
     } else {
-        //env2
+        // env2
+        yPos += 8;
         index -= 577;
-        if(index == 0 || index == 1 || index == 6 || index == 7 || (index >= 16 && index <= 21)){
+        if (index == 0 || index == 1 || index == 6 || index == 7 ||
+            (index >= 16 && index <= 21)) {
             yPos -= tileSize;
         }
     }

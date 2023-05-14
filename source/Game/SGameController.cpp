@@ -530,7 +530,6 @@ void SGameController::checkLevelLoaded() {
         }
 
         std::vector<std::vector<int>> details = _level->getDetails();
-
         for (int n = 0; n < details.size(); n++) {
             for (int m = 0; m < details.at(n).size(); m++) {
                 int type = details[n][m];
@@ -1056,6 +1055,7 @@ float SGameController::getYPos(int type, float pos,
     int index = type;
     if (type < 65) {
         // wall
+        yPos += 11;
         index -= 1;
         if (index == 0 || index == 1 || index == 8 || index == 9 ||
             index == 10 || index == 11 || index == 20 || index == 21 ||
@@ -1069,6 +1069,7 @@ float SGameController::getYPos(int type, float pos,
         return -FLT_MAX;
     } else if (type < 193) {
         // dector
+        yPos += 8;
         index -= 129;
         if (type == 16 || type == 24) {
             return FLT_MAX;
@@ -1083,12 +1084,14 @@ float SGameController::getYPos(int type, float pos,
         }
     } else if (type < 257) {
         // grime
+        yPos += 9;
         index -= 193;
     } else if (type < 321) {
         // placeholder
         return -FLT_MAX;
     } else if (type < 385) {
         // wall upper
+        yPos += 10;
         index -= 321;
         if (index >= 16 && index <= 63) {
             yPos += tileSize;
@@ -1098,6 +1101,7 @@ float SGameController::getYPos(int type, float pos,
         return -FLT_MAX;
     } else if (type < 513) {
         // dector2
+        yPos += 8;
         index -= 449;
         if (index == 36 || index == 37 || index == 38 || index == 44 ||
             index == 45 || index == 46 || index == 52 || index == 53 ||
@@ -1111,6 +1115,7 @@ float SGameController::getYPos(int type, float pos,
         }
     } else if (type < 577) {
         // env
+        yPos += 8;
         index -= 513;
         if (index == 24 || index == 25 || index == 32 || index == 33 ||
             index == 40 || index == 41 || index == 35 || index == 36 ||
@@ -1121,6 +1126,7 @@ float SGameController::getYPos(int type, float pos,
         }
     } else {
         // env2
+        yPos += 8;
         index -= 577;
         if (index == 0 || index == 1 || index == 6 || index == 7 ||
             (index >= 16 && index <= 21)) {

@@ -164,11 +164,14 @@ void SGameController::update(float dt) {
                 _portraits->setIndex(_viewButton->getCameraIndex());
                 _shadows[_viewButton->getCameraIndex() - 1]->setVisible(true);
                 _scene->getCamera()->setPosition(
-                    _portraits->getPosition(_portraits->getIndex()));
+                    _indicators[_portraits->getIndex() - 1]->getPosition());
                 transmitActiveCamIndex(_portraits->getIndex());
                 std::dynamic_pointer_cast<OrthographicCamera>(
                     _scene->getCamera())
-                    ->setZoom(1.5);
+                    ->setZoom(_scene->getSize().width /
+                              _indicators[_portraits->getIndex() - 1]
+                                  ->getSize()
+                                  .width);
             }
         }
         // In selection phase
@@ -186,8 +189,9 @@ void SGameController::update(float dt) {
                 _indicators[_viewButton->getCameraIndex() - 1]->setVisible(
                     true);
             }
-            CULog("%i", _viewButton->getCameraIndex());
         }
+
+        _scene->getCamera()->update();
 
         if (preSelection != _selection) {
             // start select- remove hunter
@@ -207,6 +211,7 @@ void SGameController::update(float dt) {
         }
 
         _scene->getCamera()->update();
+
         // Draw background
         _background->setScale(1 / getZoom());
         _background->setPosition(_scene->getCamera()->screenToWorldCoords(

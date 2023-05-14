@@ -191,50 +191,53 @@ class SpiritView {
 
     void updateUnusedLocksPos(bool selection) {
         Vec2 pos = _scene->getCamera()->screenToWorldCoords(
-            _scene->getSize() - Vec2(_buttonSize, _buttonSize) * 0.6);
-
-        if (selection) {
-            pos += Vec2(10000, 10000);
-        }
+            _scene->getSize() - Vec2(_buttonSize, _buttonSize) / 2);
 
         for (int i = 0; i < _locks.size(); i++) {
+            _locks.at(i)->setVisible(true);
+            if (selection)
+                _locks.at(i)->setVisible(false);
             _locks.at(i)->setPosition(pos);
             _locks[i]->setScale(_lockScaleFactor / getZoom());
         }
         for (int i = 0; i < _lockExtra.size(); i++) {
+            _lockExtra.at(i)->setVisible(true);
+            if (selection)
+                _lockExtra.at(i)->setVisible(false);
             _lockExtra.at(i)->setPosition(pos);
             _lockExtra[i]->setScale(_trapScaleFactor / getZoom());
         }
     }
 
     void updateUnusedTrapsPos(bool selection) {
-        Vec2 pos =
-            _scene->getCamera()->screenToWorldCoords(
-                _scene->getSize() - Vec2(_buttonSize, _buttonSize) * 0.6) +
-            Vec2(0, +_buttonSize) * 0.6;
-
-        if (selection) {
-            pos += Vec2(10000, 10000);
-        }
+        Vec2 pos = _scene->getCamera()->screenToWorldCoords(
+            _scene->getSize() - Vec2(_buttonSize, _buttonSize) / 2 -
+            Vec2(0, _buttonSize));
 
         for (int i = 0; i < _trapButtons.size(); i++) {
+            _trapButtons.at(i)->setVisible(true);
+            if (selection)
+                _trapButtons.at(i)->setVisible(false);
             _trapButtons.at(i)->setPosition(pos);
             _trapButtons[i]->setScale(_trapScaleFactor / getZoom());
         }
         for (int i = 0; i < _trapExtra.size(); i++) {
+            _trapExtra.at(i)->setVisible(true);
+            if (selection)
+                _trapExtra.at(i)->setVisible(false);
             _trapExtra.at(i)->setPosition(pos);
             _trapExtra[i]->setScale(_trapScaleFactor / getZoom());
         }
     }
 
     void updateUnusedKillPos(bool selection) {
-        Vec2 pos =
-            _scene->getCamera()->screenToWorldCoords(
-                _scene->getSize() - Vec2(_buttonSize, _buttonSize) * 0.6) +
-            2 * Vec2(0, +_buttonSize) * 0.6;
+        Vec2 pos = _scene->getCamera()->screenToWorldCoords(
+            _scene->getSize() - Vec2(_buttonSize, _buttonSize) / 2 -
+            2 * Vec2(0, _buttonSize));
 
+        _killButton->setVisible(true);
         if (selection) {
-            pos += Vec2(10000, 10000);
+            _killButton->setVisible(false);
         }
 
         _killButton->setPosition(pos);

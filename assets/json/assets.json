@@ -314,6 +314,9 @@
         },
         "final_wall_upper": {
             "file": "textures/walls_tilesheet_3.png"
+        },
+        "indicator1": {
+            "file": "textures/1_r1c0_light.png"
         }
     },
     "fonts": {

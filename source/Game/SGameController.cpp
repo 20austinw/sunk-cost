@@ -651,6 +651,15 @@ void SGameController::checkLevelLoaded() {
                                      _assets->get<Texture>("redBattery"),
                                      _assets->get<Texture>("noBattery"));
         _portraits->initializeBatteryNodes(_fifthLayer);
+
+        // Add camera selection indicator
+        auto indicator = cugl::scene2::PolygonNode::allocWithTexture(
+            _assets->get<Texture>("indicator1"));
+        indicator->setPosition(Vec2(3000, 3000));
+        indicator->setVisible(true);
+        _fourthLayer->addChild(indicator);
+        _indicators.emplace_back(indicator);
+
         _spirit.getView()->addLocksTo(_fourthLayer);
         _spirit.getView()->addTrapButtonsTo(_fourthLayer);
         _spirit.getView()->addKillButtonTo(_fourthLayer);

@@ -331,6 +331,7 @@ void HGameController::update(float dt) {
         //            }
         //        }
         sortNodes();
+   
 
         AudioEngine::get()->play("theme", _theme, false, 0.5, false);
 
@@ -412,6 +413,9 @@ void HGameController::update(float dt) {
             _gameStatus = 1;
         }
 
+        for (auto& indicator : _indicators) {
+            indicator->setVisible(false);
+        }
         _filter->setPosition(_scene->getCamera()->getPosition());
         _timerLabel->setText(std::to_string(int(_timer / 60 / 60)) + ":" +
                              std::to_string(int(_timer / 60) % 60));
@@ -450,6 +454,14 @@ void HGameController::update(float dt) {
 
         if (_animates) {
             _portraits->updatespecific(_indexfromspirit);
+            if(_indexfromspirit==0){
+                _indicators[_indicators.size()-1]->setVisible(
+                    true);
+            }
+            else{
+                _indicators[_indexfromspirit-1]->setVisible(
+                                                            true);
+            }
         }
 
         auto inputController = InputController::getInstance();
@@ -981,6 +993,17 @@ void HGameController::checkLevelLoaded() {
                                     _level->getPortaits()[i][0],
                                     _level->getPortaits()[i][1], Vec3(0, 0, -1),
                                     Vec2::ZERO, true, _level->getBattery());
+            if (i <= 0)
+                continue;
+            auto indicator = cugl::scene2::PolygonNode::allocWithTexture(
+                _assets->get<Texture>("indicator" + to_string(i)));
+            indicator->setPosition(_level->getPortaits()[i][2]);
+            indicator->setScale(2);
+            indicator->setVisible(false);
+            _scene->addChild(indicator);
+            _indicators.emplace_back(indicator);
+            
+            
         }
 
        
@@ -1110,7 +1133,7 @@ void HGameController::checkLevelLoaded() {
 
         _scene->addChild(_worldnode);
 
-        _hunterspun.emplace_back(Vec2(1000, 4500));
+        _hunterspun.emplace_back(Vec2(2000, 1000));
         _hunterspun.emplace_back(Vec2(6000, 5000));
         _hunterspun.emplace_back(Vec2(3300, 4800));
 

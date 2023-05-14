@@ -142,6 +142,11 @@ void SGameController::update(float dt) {
     inputController->update(dt);
     inputController->readInput();
 
+    // Disable indicators by default
+    for (auto& indicator : _indicators) {
+        indicator->setVisible(false);
+    }
+
     if (_gameStatus == 0) {
 
         bool preSelection = _selection;
@@ -168,7 +173,13 @@ void SGameController::update(float dt) {
                 ->setZoom(0.3);
             auto worldPos = _scene->getCamera()->screenToWorldCoords(
                 inputController->getTouchPos());
-            CULog("%f, %f", worldPos.x, worldPos.y);
+            auto nearestCameraPos =
+                _portraits->getPosition(_viewButton->getCameraIndex());
+            if (worldPos.distance(nearestCameraPos) <= 400) {
+                _indicators[_viewButton->getCameraIndex() - 1]->setVisible(
+                    true);
+            }
+            CULog("%i", _viewButton->getCameraIndex());
         }
 
         if (preSelection != _selection) {
@@ -640,10 +651,21 @@ void SGameController::checkLevelLoaded() {
         }
 
         for (int i = 0; i < _level->getPortaits().size(); i++) {
-            _portraits->addPortrait(
-                _portraitNodes, i, _level->getPortaits()[i].first,
-                _level->getPortaits()[i].second, Vec3(0, 0, -1), Vec2::ZERO,
-                false, _level->getBattery());
+            _portraits->addPortrait(_portraitNodes, i,
+                                    _level->getPortaits()[i][0],
+                                    _level->getPortaits()[i][1], Vec3(0, 0, -1),
+                                    Vec2::ZERO, false, _level->getBattery());
+
+            // Add camera selection indicator
+            if (i <= 0)
+                continue;
+            auto indicator = cugl::scene2::PolygonNode::allocWithTexture(
+                _assets->get<Texture>("indicator" + to_string(i)));
+            indicator->setPosition(_level->getPortaits()[i][2]);
+            indicator->setScale(2);
+            indicator->setVisible(false);
+            _fifthLayer->addChild(indicator);
+            _indicators.emplace_back(indicator);
         }
         _portraits->setMaxbattery(_level->getBattery());
 
@@ -651,14 +673,6 @@ void SGameController::checkLevelLoaded() {
                                      _assets->get<Texture>("redBattery"),
                                      _assets->get<Texture>("noBattery"));
         _portraits->initializeBatteryNodes(_fifthLayer);
-
-        // Add camera selection indicator
-        auto indicator = cugl::scene2::PolygonNode::allocWithTexture(
-            _assets->get<Texture>("indicator1"));
-        indicator->setPosition(Vec2(3000, 3000));
-        indicator->setVisible(true);
-        _fourthLayer->addChild(indicator);
-        _indicators.emplace_back(indicator);
 
         _spirit.getView()->addLocksTo(_fourthLayer);
         _spirit.getView()->addTrapButtonsTo(_fourthLayer);

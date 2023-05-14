@@ -977,10 +977,10 @@ void HGameController::checkLevelLoaded() {
                                -_miniMap->getSize().width - 500);
 
         for (int i = 0; i < _level->getPortaits().size(); i++) {
-            _portraits->addPortrait(
-                _portraitNodes, i, _level->getPortaits()[i].first,
-                _level->getPortaits()[i].second, Vec3(0, 0, -1), Vec2::ZERO,
-                true, _level->getBattery());
+            _portraits->addPortrait(_portraitNodes, i,
+                                    _level->getPortaits()[i][0],
+                                    _level->getPortaits()[i][1], Vec3(0, 0, -1),
+                                    Vec2::ZERO, true, _level->getBattery());
         }
 
         //        for (inint i = 0; i < tiles.size() * tiles[0].size(); ++i) {

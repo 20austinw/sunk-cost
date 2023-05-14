@@ -316,7 +316,37 @@
             "file": "textures/walls_tilesheet_3.png"
         },
         "indicator1": {
-            "file": "textures/1_r1c0_light.png"
+            "file": "textures/light/1_r1c0_light.png"
+        },
+        "indicator2": {
+            "file": "textures/light/2_r1c1_light.png"
+        },
+        "indicator3": {
+            "file": "textures/light/3_r2c0_light.png"
+        },
+        "indicator4": {
+            "file": "textures/light/4_r3c0_light.png"
+        },
+        "indicator5": {
+            "file": "textures/light/5_r4c0_light.png"
+        },
+        "indicator6": {
+            "file": "textures/light/6_r5c0_light.png"
+        },
+        "indicator7": {
+            "file": "textures/light/7_r7c0_light.png"
+        },
+        "indicator8": {
+            "file": "textures/light/8_r8c0_light.png"
+        },
+        "indicator9": {
+            "file": "textures/light/9_r8c1_light.png"
+        },
+        "indicator10": {
+            "file": "textures/light/10_r9c0_light.png"
+        },
+        "indicator11": {
+            "file": "textures/light/11_r11c0_light.png"
         }
     },
     "fonts": {

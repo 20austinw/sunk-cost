@@ -223,6 +223,12 @@ class TilemapController {
     Size getDimensions();
 
     Size getTileSize();
+
+    Vec2 getTilePosition(int index) {
+        int r = index / (int)getDimensions().width;
+        int c = index % (int)getDimensions().width;
+        return _tilemap[r][c]->getPosition();
+    }
 };
 
 #endif /* _TILEMAP_CONTROLLER_H__ */

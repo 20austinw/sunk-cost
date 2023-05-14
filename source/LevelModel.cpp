@@ -262,7 +262,8 @@ bool LevelModel::loadDoors(const std::shared_ptr<JsonValue>& json) {
 bool LevelModel::loadPortraitSetAndDefault(
     const std::shared_ptr<JsonValue>& json) {
     _portraits.push_back(
-        std::make_pair(Vec2(json->getFloat("x1"), json->getFloat("y1")),
-                       Vec2(json->getFloat("x2"), json->getFloat("y2"))));
+        std::vector({Vec2(json->getFloat("x1"), json->getFloat("y1")),
+                     Vec2(json->getFloat("x2"), json->getFloat("y2")),
+                     Vec2(json->getFloat("x3"), json->getFloat("y3"))}));
     return true;
 }

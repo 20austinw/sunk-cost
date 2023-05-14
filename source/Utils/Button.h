@@ -172,6 +172,8 @@ class Button {
         return _selectionPhase;
     }
 
+    Vec2 getPosition() { return _position; }
+
     void setVisible(bool b) { _node->setVisible(b); }
 
     void setInteractive(bool b) { _active = b; }

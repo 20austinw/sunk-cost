@@ -335,6 +335,7 @@ void SGameController::update(float dt) {
             if (!_spirit.getModel()->isKilling() &&
                 _spirit.getModel()->health == 0) {
                 // hunter has been killed, end
+                AudioEngine::get()->play("kill", _killSound, false, 0.5, false);
                 _gameStatus = 1;
                 _endScene =
                     std::make_shared<EndScene>(_scene, _assets, true, true);
@@ -361,6 +362,7 @@ void SGameController::update(float dt) {
                     _spirit.hunterInBound(cameraPos)) {
                     // TODO: networking; transmit to hunter for losing 1 health
                     transmitKill();
+                    AudioEngine::get()->play("damage", _damageSound, false, 0.5, false);
                     _spirit.getModel()->setHealth(_spirit.getModel()->health -
                                                   1);
 
@@ -541,6 +543,8 @@ void SGameController::checkLevelLoaded() {
         _tension = _assets->get<Sound>("tension");
         _trapSound = _assets->get<Sound>("trapSound");
         _treasureSound = _assets->get<Sound>("treasureSound");
+        _killSound = _assets->get<Sound>("kill");
+        _damageSound = _assets->get<Sound>("damage");
 
         int width = _level->getDimensions().x;
         int height = _level->getDimensions().y;

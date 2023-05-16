@@ -235,6 +235,8 @@ class HGameController {
     std::shared_ptr<cugl::Sound> _tension;
     std::shared_ptr<cugl::Sound> _trapSound;
     std::shared_ptr<cugl::Sound> _treasureSound;
+    std::shared_ptr<cugl::Sound> _killSound;
+    std::shared_ptr<cugl::Sound> _damageSound;
 
     // MODELS should be shared pointers or a data structure of shared pointers
 

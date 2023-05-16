@@ -397,6 +397,14 @@
         }
     },
     "sounds": {
+        "kill": {
+            "type": "sample",
+            "file": "sounds/hunter_kill.ogg"
+        },
+        "damage": {
+            "type": "sample",
+            "file": "sounds/hunter_damage.ogg"
+        },
         "trapSound": {
             "type": "sample",
             "file": "sounds/trap_triggered.wav"

@@ -792,6 +792,7 @@ void HGameController::update(float dt) {
             //
             //            }
             if (_killed) {
+                AudioEngine::get()->play("damage", _damageSound, false, 0.5, false);
                 _livehearts[_killCount]->setVisible(false);
                 _deadhearts[_killCount]->setVisible(true);
                 _killCount += 1;
@@ -800,6 +801,7 @@ void HGameController::update(float dt) {
                 //            _move = false;
             }
             if (_killCount == 3) {
+                AudioEngine::get()->play("kill", _killSound, false, 0.5, false);
                 _finalKilled = true;
                 for (int i = 0; i < _spriteNodes.size(); i++) {
 
@@ -1112,6 +1114,8 @@ void HGameController::checkLevelLoaded() {
         _tension = _assets->get<Sound>("tension");
         _trapSound = _assets->get<Sound>("trapSound");
         _treasureSound = _assets->get<Sound>("treasureSound");
+        _killSound = _assets->get<Sound>("kill");
+        _damageSound = _assets->get<Sound>("damage");
 
         addPolys();
         makePolyObstacle(_obstaclePoly);

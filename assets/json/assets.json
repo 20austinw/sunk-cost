@@ -411,7 +411,7 @@
         },
         "treasureSound": {
             "type": "sample",
-            "file": "sounds/collect_treasure.wav"
+            "file": "sounds/hunter_damage.ogg"
         },
         "theme": {
             "type": "sample",

@@ -186,16 +186,16 @@ bool LevelModel::loadDetails(const std::shared_ptr<JsonValue>& json) {
 }
 
 bool LevelModel::loadCollision(const std::shared_ptr<JsonValue>& json) {
-    int xOffset = json->get("x_offset")->asInt();
-    int yOffset = json->get("y_offset")->asInt();
+    float xOffset = json->get("x_offset")->asFloat();
+    float yOffset = json->get("y_offset")->asFloat();
     int x = json->get("x")->asInt();
     int y = json->get("y")->asInt();
     auto boarder = json->get("boarder");
     bool success = boarder->get(0) != nullptr;
     for (int i = 0; i < boarder->size(); i += 2) {
-        int xw = boarder->get(i)->asInt();
+        float xw = boarder->get(i)->asFloat();
         xw = (xOffset + x * xw) * 128;
-        int yw = boarder->get(i + 1)->asInt();
+        float yw = boarder->get(i + 1)->asFloat();
         yw = (yOffset + y * yw) * 128;
         _boarder.emplace_back(Vec2(xw, yw));
     }
@@ -204,9 +204,9 @@ bool LevelModel::loadCollision(const std::shared_ptr<JsonValue>& json) {
         auto obs = walls->get(i)->get("data");
         std::vector<Vec2> v;
         for (int n = 0; n < obs->size(); n += 2) {
-            int xw = obs->get(n)->asInt();
+            float xw = obs->get(n)->asFloat();
             xw = (xOffset + x * xw) * 128;
-            int yw = obs->get(n + 1)->asInt();
+            float yw = obs->get(n + 1)->asFloat();
             yw = (yOffset + y * yw) * 128;
             v.emplace_back(Vec2(xw, yw));
         }

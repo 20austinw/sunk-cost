@@ -1127,9 +1127,9 @@ void HGameController::checkLevelLoaded() {
 
         _scene->addChild(_worldnode);
 
-        _hunterspun.emplace_back(Vec2(2000, 1000));
-        _hunterspun.emplace_back(Vec2(6000, 5000));
-        _hunterspun.emplace_back(Vec2(3300, 4800));
+        _hunterspun.emplace_back(Vec2(17*128, (40-1-25)*128));
+        _hunterspun.emplace_back(Vec2(50*128, (40-1-5)*128));
+        _hunterspun.emplace_back(Vec2(59*128, (40-1-29)*128));
 
         srand(time(NULL));
 

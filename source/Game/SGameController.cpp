@@ -575,56 +575,6 @@ void SGameController::checkLevelLoaded() {
             }
         }
 
-        //        std::vector<std::vector<int>> walls =
-        //        _level->getWallTextures(); height = walls[0].size(); width =
-        //        walls.size(); for (int i = 0; i < walls.size() *
-        //        walls[0].size(); ++i) {
-        //            int c = i % walls[0].size();
-        //            int r = i / walls[0].size();
-        //            int type = walls[r][c];
-        //            addWallTile(type, c, width - 1 - r);
-        //        }
-        //
-        //        walls = _level->getWallUpperTextures();
-        //        height = walls[0].size();
-        //        width = walls.size();
-        //        for (int i = 0; i < height * width; ++i) {
-        //            int c = i % height;
-        //            int r = i / height;
-        //            int type = walls[r][c];
-        //            addWallUpper(type, c, width - 1 - r);
-        //        }
-        //
-        //        walls = _level->getWallGrimeTextures();
-        //        height = walls[0].size();
-        //        width = walls.size();
-        //        for (int i = 0; i < height * width; ++i) {
-        //            int c = i % height;
-        //            int r = i / height;
-        //            int type = walls[r][c];
-        //            addWallGrime(type, c, width - 1 - r);
-        //        }
-        //
-        //        walls = _level->getWallLowerTextures();
-        //        height = walls[0].size();
-        //        width = walls.size();
-        //        for (int i = 0; i < height * width; ++i) {
-        //            int c = i % height;
-        //            int r = i / height;
-        //            int type = walls[r][c];
-        //            addWallLower(type, c, width - 1 - r);
-        //        }
-        //
-        //        walls = _level->getFurnitureTextures();
-        //        height = walls[0].size();
-        //        width = walls.size();
-        //        for (int i = 0; i < height * width; ++i) {
-        //            int c = i % height;
-        //            int r = i / height;
-        //            int type = walls[r][c];
-        //            addFurnitures(type, c, width - 1 - r);
-        //        }
-
         std::sort(_obstacles.begin(), _obstacles.end(),
                   [](std::shared_ptr<TileController>& a,
                      std::shared_ptr<TileController>& b) {

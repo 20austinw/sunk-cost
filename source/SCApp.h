@@ -18,6 +18,7 @@
 #include "SCHostScene.hpp"
 #include "SCMenuScene.h"
 #include "SCResetScene.hpp"
+#include "SCTutorialScene.hpp"
 #include "SCSpawnScene.hpp"
 #include "SGameController.hpp"
 #include <cugl/cugl.h>
@@ -45,7 +46,8 @@ class SCApp : public cugl::Application {
 
         CLIENTGAME,
 
-        RESET
+        RESET,
+        TUTORIAL
     };
 
   protected:
@@ -70,6 +72,8 @@ class SCApp : public cugl::Application {
     SpawnScene _spawn;
 
     ResetScene _reset;
+    
+    TutorialScene _tutorial;
 
     /** Whether or not we have finished loading all assets */
     bool _loaded;
@@ -189,7 +193,7 @@ class SCApp : public cugl::Application {
     void updateSpawnScene(float timestep);
 
     /**
-     * Inidividualized update method for the menu scene.
+     * Inidividualized update method for the reset scene.
      *
      * This method keeps the primary {@link #update} from being a mess of switch
      * statements. It also handles the transition logic from the reset scene.
@@ -197,6 +201,16 @@ class SCApp : public cugl::Application {
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     void updateResetScene(float timestep);
+    
+    /**
+     * Inidividualized update method for the tutorial scene.
+     *
+     * This method keeps the primary {@link #update} from being a mess of switch
+     * statements. It also handles the transition logic from the reset scene.
+     *
+     * @param timestep  The amount of time (in seconds) since the last frame
+     */
+    void updateTutorialScene(float timestep);
 
     /**
      * Inidividualized update method for the host scene.

@@ -864,7 +864,7 @@ void HGameController::update(float dt) {
         if (_countEndAnim > 100) {
             CULog("stuck here!!!!");
             _status = RESET;
-            _gameStatus = 0;
+//            _gameStatus = 0;
         }
 
     } else {

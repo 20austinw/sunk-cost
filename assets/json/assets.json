@@ -63,7 +63,27 @@
         "heart_dead": {
             "file": "textures/dead_heart.png"
         },
-
+        "tutorial0": {
+            "file": "textures/t0.png"
+        },
+        "tutorial1": {
+            "file": "textures/t1.png"
+        },
+        "tutorial2": {
+            "file": "textures/t2.png"
+        },
+        "tutorial3": {
+            "file": "textures/t3.png"
+        },
+        "tutorial4": {
+            "file": "textures/t4.png"
+        },
+        "tutorial5": {
+            "file": "textures/t5.png"
+        },
+        "tutorial6": {
+            "file": "textures/t6.png"
+        },
         "hunterorange": {
             "file": "textures/diver_orange_walking_animation.png"
         },
@@ -258,6 +278,9 @@
         },
         "left": {
             "file": "textures/Side_Button.png"
+        },
+        "right": {
+            "file": "textures/Side_Button-1.png"
         },
         "exit": {
             "file": "textures/exit.png"

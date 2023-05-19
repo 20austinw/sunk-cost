@@ -364,9 +364,9 @@ void HGameController::update(float dt) {
                                 Vec2(200, 0));
         _loseLabel->setForeground(cugl::Color4f::RED);
 
-        if (_timer != 0) {
-            _timer = _timer - 1;
-        }
+//        if (_timer != 0) {
+//            _timer = _timer - 1;
+//        }
 
         _winLabel->setText("RUN to EXIT!");
         _winLabel->setPosition(_scene->getCamera()->getPosition() -
@@ -420,7 +420,7 @@ void HGameController::update(float dt) {
 
         if (_treasureCount >= 3 && !_didWin && !_didLose) {
             _scene->addChild(_exit);
-            _scene->addChild(_winLabel);
+//            _scene->addChild(_winLabel);
             _didWin = true;
         }
 
@@ -781,7 +781,10 @@ void HGameController::update(float dt) {
         //        ea->setPosition(Vec2(a,b));
         _shadow->setPosition(_hunter->getPosition() - Vec2(130, 270));
         updateCamera(dt);
-        cugl::Vec2 center = _inputController->getCenter();
+
+        cugl::Vec2 center = _inputController->getCenter();       
+      
+
         if (center.x < 900) {
             if (_inputController->didPress()) {
 
@@ -1212,7 +1215,7 @@ void HGameController::checkLevelLoaded() {
 
         _exitTexture = _assets->get<Texture>("exit");
         _exit = scene2::PolygonNode::allocWithTexture(_exitTexture);
-        _exit->setScale(0.8);
+        _exit->setScale(1.3);
         _exit->setPosition(_exitpos);
 
         //_scene->addChild(_exit);
@@ -1406,6 +1409,9 @@ void HGameController::processData(const std::string source,
             _didWin = true;
             _didFinalwin = true;
             _didLose = false;
+        }else if (mes[0] == 11) {
+            int idx = static_cast<int>(mes[1]);
+            _timer=idx;
         }
 
         _deserializer->reset();

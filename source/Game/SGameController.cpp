@@ -163,7 +163,7 @@ void SGameController::update(float dt) {
             _spirit.getView()->setVisible(true);
             if (_viewButton->getCameraIndex() != -1) {
                 _portraits->setIndex(_viewButton->getCameraIndex());
-                _shadows[_viewButton->getCameraIndex() - 1]->setVisible(true);
+//                _shadows[_viewButton->getCameraIndex() - 1]->setVisible(true);
                 transmitActiveCamIndex(_viewButton->getCameraIndex());
                 _scene->getCamera()->setPosition(
                     _indicators[_portraits->getIndex() - 1]->getPosition());
@@ -681,7 +681,7 @@ void SGameController::checkLevelLoaded() {
         _portraits->setIndex(4);
         _viewButton->setCameraIndex(4);
         _portraits->setIndex(_viewButton->getCameraIndex());
-        _shadows[_viewButton->getCameraIndex() - 1]->setVisible(true);
+//        _shadows[_viewButton->getCameraIndex() - 1]->setVisible(true);
 
         _scene->getCamera()->setPosition(
             _indicators[_portraits->getIndex() - 1]->getPosition());

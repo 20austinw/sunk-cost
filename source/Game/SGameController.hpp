@@ -332,6 +332,8 @@ class SGameController {
     void updateDoors();
 
     void transmitLockedDoor(int i);
+    
+    void transmitTimer(int i);
 
     void addFloorTile(int type, int c, int r);
 

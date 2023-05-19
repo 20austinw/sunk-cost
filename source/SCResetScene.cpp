@@ -39,6 +39,8 @@ using namespace std;
 bool ResetScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     // Initialize the scene to a locked width
     _dimen = Application::get()->getDisplaySize();
+    _scale = (_dimen.width / 2556 >= _dimen.height / 1194) ? _dimen.width / 2556
+                                  : _dimen.height / 1194;
     _inputController = InputController::getInstance();
     _inputController->initListeners();
     if (assets == nullptr) {
@@ -61,12 +63,21 @@ bool ResetScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     
     for (int i = 0; i<4;i++){
         _frames.push_back(scene2::PolygonNode::allocWithTexture(_sheets[i]));
-        _frames[i]->setScale(1);
-        _frames[i]->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-        _frames[i]->setPosition(Vec2(0,0));
+        _frames[i]->setScale(_scale*1.05);
+        _frames[i]->setAnchor(Vec2::ANCHOR_CENTER);
+        _frames[i]->setPosition(_dimen/2);
         _frames[i]->setVisible(false);
         _scene->addChild(_frames[i]);
     }
+    
+    _leave =scene2::PolygonNode::allocWithTexture(assets->get<Texture>("leave_ship"));
+    _leave->setAnchor(Vec2::ANCHOR_CENTER);
+    _leave->setPosition(Vec2((_dimen.width/2-400),(_dimen.height/2-400)));
+    _replay =scene2::PolygonNode::allocWithTexture(assets->get<Texture>("play_again"));
+    _replay->setAnchor(Vec2::ANCHOR_CENTER);
+    _replay->setPosition(Vec2((_dimen.width/2+400),(_dimen.height/2-400)));
+    _scene->addChild(_leave);
+    _scene->addChild(_replay);
 
     
 //    std::shared_ptr<scene2::SceneNode> scene =
@@ -113,14 +124,15 @@ void ResetScene::dispose() {
 
 void ResetScene::update(float dt){
     _inputController->update(dt);
-    if(_inputController->didPress() && abs(_inputController->getPosition().x - (_dimen.width/2-300)) <100 &&
-       abs(_inputController->getPosition().y -(_dimen.height/2+300)) <
+ 
+    if(_inputController->didPress() && abs(_inputController->getPosition().x - (_dimen.width/2-400)) <300 &&
+       abs(_inputController->getPosition().y -(_dimen.height/2+400)) <
        100){
         CULog("Leave");
         _choice = Choice::LEAVE;
     }
-    else if(_inputController->didPress() && abs(_inputController->getPosition().x - (_dimen.width/2+300)) <100 &&
-            abs(_inputController->getPosition().y -(_dimen.height/2+300)) <100){
+    else if(_inputController->didPress() && abs(_inputController->getPosition().x - (_dimen.width/2+400)) <300 &&
+            abs(_inputController->getPosition().y -(_dimen.height/2+400)) <100){
         CULog("replay");
         _choice = Choice::REPLAY;
     }

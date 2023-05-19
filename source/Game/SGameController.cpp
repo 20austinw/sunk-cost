@@ -61,6 +61,8 @@ SGameController::SGameController(
     // Initialize PortraitSetController
     _portraits = std::make_shared<PortraitSetController>(_assets, _scene, 0,
                                                          displaySize);
+        
+        _spawn = false;
 
     // Initialize HunterController
 
@@ -146,6 +148,10 @@ void SGameController::update(float dt) {
     inputController->update(dt);
     inputController->readInput();
     
+    if(_spawn){
+        updateSpawn();
+    }
+    
     transmitTimer(_timeLeft);
 
     // Disable indicators by default
@@ -164,50 +170,50 @@ void SGameController::update(float dt) {
         _scene->getCamera()->update();
         bool preSelection = _selection;
         // Not in selection phase
-        if (!_viewButton->update()) {
-            _selection = false;
-            _spirit.getView()->setVisible(true);
-            if (_viewButton->getCameraIndex() != -1) {
-                _portraits->setIndex(_viewButton->getCameraIndex());
-                if (_spirit.getModel()->isOnKill){
-                    _shadows[_viewButton->getCameraIndex() - 1]->setVisible(true);
-                } else {
-                    _grayshadows[_viewButton->getCameraIndex() - 1]->setVisible(true);
+        if(!_spawn){
+            if (!_viewButton->update()) {
+                _selection = false;
+                _spirit.getView()->setVisible(true);
+                if (_viewButton->getCameraIndex() != -1) {
+                    _portraits->setIndex(_viewButton->getCameraIndex());
+                    if (_spirit.getModel()->isOnKill){
+                        _shadows[_viewButton->getCameraIndex() - 1]->setVisible(true);
+                    } else {
+                        _grayshadows[_viewButton->getCameraIndex() - 1]->setVisible(true);
+                    }
+                    transmitActiveCamIndex(_viewButton->getCameraIndex());
+                    _scene->getCamera()->setPosition(
+                        _indicators[_portraits->getIndex() - 1]->getPosition());
+                    std::dynamic_pointer_cast<OrthographicCamera>(
+                        _scene->getCamera())
+                        ->setZoom(_scene->getSize().width /
+                                  _indicators[_portraits->getIndex() - 1]
+                                      ->getSize()
+                                      .width);
                 }
-                transmitActiveCamIndex(_viewButton->getCameraIndex());
-                _scene->getCamera()->setPosition(
-                    _indicators[_portraits->getIndex() - 1]->getPosition());
-                std::dynamic_pointer_cast<OrthographicCamera>(
-                    _scene->getCamera())
-                    ->setZoom(_scene->getSize().width /
-                              _indicators[_portraits->getIndex() - 1]
-                                  ->getSize()
-                                  .width);
+            }
+            // In selection phase
+            else {
+                _selection = true;
+                _spirit.getView()->setVisible(false);
+                _scene->getCamera()->setPosition(_portraits->getPosition(0));
+                std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+                    ->setZoom(0.3);
+                auto worldPos = _scene->getCamera()->screenToWorldCoords(
+                    inputController->getTouchPos());
+                auto nearestCameraPos =
+                    _portraits->getPosition(_viewButton->getCameraIndex());
+                if (worldPos.distance(nearestCameraPos) <= 400) {
+                    _indicators[_viewButton->getCameraIndex() - 1]->setVisible(
+                        true);
+                }
             }
         }
-        // In selection phase
-        else {
-            _selection = true;
-            _spirit.getView()->setVisible(false);
-            _scene->getCamera()->setPosition(_portraits->getPosition(0));
-            std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-                ->setZoom(0.3);
-            auto worldPos = _scene->getCamera()->screenToWorldCoords(
-                inputController->getTouchPos());
-            auto nearestCameraPos =
-                _portraits->getPosition(_viewButton->getCameraIndex());
-            if (worldPos.distance(nearestCameraPos) <= 400) {
-                _indicators[_viewButton->getCameraIndex() - 1]->setVisible(
-                    true);
-            }
-        }
-
-        CULog("%f, %f", _scene->getCamera()->getPosition().x,
-              _scene->getCamera()->getPosition().y);
+        
 
         _scene->getCamera()->update();
 
-        if (preSelection != _selection) {
+        if (!_spawn && preSelection != _selection) {
             // start select- remove hunter
             if (_selection) {
                 for (int n = 0; n < _hunterNodes.size(); n++) {
@@ -224,14 +230,11 @@ void SGameController::update(float dt) {
             }
         }
 
-        _scene->getCamera()->update();
-
-        _scene->getCamera()->update();
-
         // Draw background
         _background->setScale(2 / getZoom());
         _background->setPosition(_scene->getCamera()->screenToWorldCoords(
             Vec2(0, _scene->getSize().height)));
+        
         sortNodes();
 
         AudioEngine::get()->play("theme", _theme, false, 0.5, false);
@@ -270,7 +273,7 @@ void SGameController::update(float dt) {
         // logic for door lock
         if ((inputController->isTouchDown() || _spirit.getModel()->isOnLock) &&
             _spirit.getModel()->doors >= 0 && !_blocked &&
-            !_spirit.getModel()->isOnTrap && !_spirit.getModel()->isOnKill) {
+            !_spirit.getModel()->isOnTrap && !_spirit.getModel()->isOnKill && !_spawn) {
             if (_spirit.getModel()->isOnLock ||
                 _spirit.touchInLockBound(cameraPos)) {
                 canSwitch = false;
@@ -296,7 +299,7 @@ void SGameController::update(float dt) {
                     }
                 }
             }
-        } else if (_blocked && _spirit.getModel()->isOnLock) {
+        } else if (_blocked && _spirit.getModel()->isOnLock && !_spawn) {
             _spirit.getModel()->setLockState(false);
             for (int i = 0; i < _doors.size(); i++) {
                 _doors.at(i)->resetToUnlock();
@@ -306,7 +309,7 @@ void SGameController::update(float dt) {
         // logic for trap placement
         if ((inputController->isTouchDown() || _spirit.getModel()->isOnTrap) &&
             _spirit.getModel()->traps >= 0 && !_spirit.getModel()->isOnLock &&
-            !_blocked && !_spirit.getModel()->isOnKill) {
+            !_blocked && !_spirit.getModel()->isOnKill && !_spawn) {
             if (_spirit.getModel()->isOnTrap ||
                 _spirit.touchInTrapBound(cameraPos)) {
                 canSwitch = false;
@@ -330,7 +333,7 @@ void SGameController::update(float dt) {
                 }
                 endDetectTrap();
             }
-        } else if (_blocked && _spirit.getModel()->isOnTrap) {
+        } else if (_blocked && _spirit.getModel()->isOnTrap && !_spawn) {
             _spirit.getModel()->setTrapState(false);
             endDetectTrap();
         }
@@ -358,7 +361,7 @@ void SGameController::update(float dt) {
         if (!_spirit.getModel()->isKilling() &&
             (inputController->isTouchDown() || _spirit.getModel()->isOnKill) &&
             _spirit.getModel()->isKillable() && !_spirit.getModel()->isOnLock &&
-            !_spirit.getModel()->isOnTrap && !_blocked) {
+            !_spirit.getModel()->isOnTrap && !_blocked && !_spawn) {
             canSwitch = false;
             if (_spirit.getModel()->isOnKill ||
                 _spirit.touchInKillBound(cameraPos)) {
@@ -393,7 +396,7 @@ void SGameController::update(float dt) {
                     _spirit.getView()->setKillFrame(0);
                 }
             }
-        } else if (_blocked && _spirit.getModel()->isOnKill) {
+        } else if (_blocked && _spirit.getModel()->isOnKill && !_spawn) {
             _spirit.getModel()->setKillState(false);
         }
 
@@ -402,7 +405,7 @@ void SGameController::update(float dt) {
             _portraits->removeBlock(_thirdLayer);
             _blocked = false;
         }
-        if (!_portraits->getCurState() && !_selection) {
+        if (!_portraits->getCurState() && !_selection && !_spawn) {
             _portraits->addBlock(_thirdLayer);
             _blocked = true;
         }
@@ -447,19 +450,22 @@ void SGameController::update(float dt) {
             }
         }
 
-        _spirit.updateLocksPos(_selection);
-        _spirit.updateTrapBtnsPos(_selection);
-        _spirit.updateKillBtnsPos(_selection);
+        _spirit.updateLocksPos(_selection || _spawn);
+        _spirit.updateTrapBtnsPos(_selection || _spawn);
+        _spirit.updateKillBtnsPos(_selection || _spawn);
         _spirit.updateKillFrame();
 
         if (!didSwitch) {
             _spirit.decreaseCameraCool();
         }
 
-        // Draw battery (has to come after the minimap update)
-        _portraits->updateBattery(_selection);
+        if (!_spawn){
+            // Draw battery (has to come after the minimap update)
+            _portraits->updateBattery(_selection);
 
-        _portraits->updateBatteryNode(_fifthLayer, 50, _selection);
+            _portraits->updateBatteryNode(_fifthLayer, 50, _selection);
+        }
+        
 
         // Draw timer and alert labels
         string minutes = std::to_string(_timeLeft / 60 / 60);
@@ -518,7 +524,9 @@ void SGameController::update(float dt) {
 //            _status = ABORT;
 //        }
     }
-    _timeLeft--;
+    if (!_spawn){
+        _timeLeft--;
+    }
 }
 
 /**
@@ -1217,4 +1225,8 @@ void SGameController::updateDetectTrap(){
     }
     _detections.clear();
     beginDetectTrap();
+}
+
+void SGameController::updateSpawn(){
+    
 }

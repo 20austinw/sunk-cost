@@ -366,6 +366,8 @@ class SGameController {
     void updateDetectTrap();
     
     void endDetectTrap();
+    
+    void updateSpawn();
 };
 
 #endif /* SGameController_hpp */

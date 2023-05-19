@@ -170,6 +170,7 @@ class SGameController {
     bool _neverPlayed = true;
     std::vector<std::shared_ptr<cugl::scene2::PolygonNode>> _indicators;
     std::vector<std::shared_ptr<cugl::scene2::PolygonNode>> _shadows;
+    std::vector<std::shared_ptr<cugl::scene2::PolygonNode>> _grayshadows;
 
 #pragma mark External References
   private:

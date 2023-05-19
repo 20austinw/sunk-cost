@@ -154,6 +154,9 @@ void SGameController::update(float dt) {
     for (auto& shadow : _shadows) {
         shadow->setVisible(false);
     }
+    for (auto& grayshadow : _grayshadows) {
+        grayshadow->setVisible(false);
+    }
 
     if (_gameStatus == 0) {
         _scene->getCamera()->update();
@@ -164,7 +167,11 @@ void SGameController::update(float dt) {
             _spirit.getView()->setVisible(true);
             if (_viewButton->getCameraIndex() != -1) {
                 _portraits->setIndex(_viewButton->getCameraIndex());
-//                _shadows[_viewButton->getCameraIndex() - 1]->setVisible(true);
+                if (_spirit.getModel()->isOnKill){
+                    _shadows[_viewButton->getCameraIndex() - 1]->setVisible(true);
+                } else {
+                    _grayshadows[_viewButton->getCameraIndex() - 1]->setVisible(true);
+                }
                 transmitActiveCamIndex(_viewButton->getCameraIndex());
                 _scene->getCamera()->setPosition(
                     _indicators[_portraits->getIndex() - 1]->getPosition());
@@ -636,19 +643,28 @@ void SGameController::checkLevelLoaded() {
             if (i <= 0)
                 continue;
             auto indicator = cugl::scene2::PolygonNode::allocWithTexture(
-                _assets->get<Texture>("indicator" + to_string(i)));
+                _assets->get<Texture>("redindicator" + to_string(i)));
             indicator->setPosition(_level->getPortaits()[i][2]);
             indicator->setScale(2);
             indicator->setVisible(false);
             _fourthLayer->addChild(indicator);
             _indicators.emplace_back(indicator);
+            
             auto shadow = cugl::scene2::PolygonNode::allocWithTexture(
-                _assets->get<Texture>("shadow" + to_string(i)));
+                _assets->get<Texture>("blackshadow" + to_string(i)));
             shadow->setPosition(_level->getPortaits()[i][2]);
             shadow->setScale(2);
             shadow->setVisible(false);
             _fourthLayer->addChild(shadow);
             _shadows.emplace_back(shadow);
+            
+            auto grayshadow = cugl::scene2::PolygonNode::allocWithTexture(
+                _assets->get<Texture>("shadow" + to_string(i)));
+            grayshadow->setPosition(_level->getPortaits()[i][2]);
+            grayshadow->setScale(2);
+            grayshadow->setVisible(false);
+            _fourthLayer->addChild(grayshadow);
+            _grayshadows.emplace_back(grayshadow);
         }
         _portraits->setMaxbattery(_level->getBattery());
 
@@ -686,7 +702,7 @@ void SGameController::checkLevelLoaded() {
         _portraits->setIndex(4);
         _viewButton->setCameraIndex(4);
         _portraits->setIndex(_viewButton->getCameraIndex());
-//        _shadows[_viewButton->getCameraIndex() - 1]->setVisible(true);
+        _grayshadows[_viewButton->getCameraIndex() - 1]->setVisible(true);
 
         _scene->getCamera()->setPosition(
             _indicators[_portraits->getIndex() - 1]->getPosition());

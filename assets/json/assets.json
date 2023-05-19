@@ -383,6 +383,9 @@
         },
         "shadow11": {
             "file": "textures/shadow/11_r11c0_shadow.png"
+        },
+        "red_cue": {
+            "file": "textures/red_cue.png"
         }
     },
     "fonts": {

@@ -60,6 +60,10 @@ class TileController {
     void setYPos(float yPos) { _model->setYPos(yPos); }
 
     void setObstacle(bool b) { _model->setObstacle(b); }
+    
+    void setPlaceTrap(bool b) {_model->setPlaceTrap(b); }
+    
+    bool canPlaceTrap() {return _model->canPlaceTrap; }
 
 #pragma mark Update Methods
   public:

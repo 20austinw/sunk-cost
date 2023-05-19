@@ -176,6 +176,7 @@ class SGameController {
     std::shared_ptr<TilemapController> _tilemap;
     std::vector<std::shared_ptr<TileController>> _obstacles;
     std::vector<std::vector<std::shared_ptr<TileController>>> _sortedObstacles;
+    std::vector<std::shared_ptr<TileController>> _detections;
     std::shared_ptr<scene2::PolygonNode> _obstacleNode;
     std::vector<std::shared_ptr<TileController>> _holes;
     std::vector<std::shared_ptr<TileController>> _carpets;
@@ -355,6 +356,12 @@ class SGameController {
     void modifyTexture(std::shared_ptr<Texture>& texture, int index);
 
     float getYPos(int type, float pos, std::shared_ptr<TileController>& tile);
+    
+    void beginDetectTrap();
+    
+    void updateDetectTrap();
+    
+    void endDetectTrap();
 };
 
 #endif /* SGameController_hpp */

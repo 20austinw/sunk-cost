@@ -302,15 +302,15 @@ void SGameController::update(float dt) {
                 canSwitch = false;
                 if (!_spirit.getModel()->isOnTrap) {
                     _spirit.getView()->removeLastTrapExtraTo(_fifthLayer);
-
+                    beginDetectTrap();
                     _spirit.getModel()->setTrapState(true);
                 }
                 _spirit.getModel()->setLastTrapPos(cameraPos);
                 _spirit.updateMovingTrap(cameraPos);
+                updateDetectTrap();
             }
             if (_spirit.getModel()->isOnTrap && release) {
                 _spirit.getModel()->setTrapState(false);
-
                 // A trap has been placed
                 if (_spirit.placeTrap(_tilemap, _spirit.getModel()->lastTrapPos,
                                       _secondLayer)) {
@@ -318,9 +318,11 @@ void SGameController::update(float dt) {
                 } else {
                     _spirit.getView()->addLastTrapExtraTo(_fifthLayer);
                 }
+                endDetectTrap();
             }
         } else if (_blocked && _spirit.getModel()->isOnTrap) {
             _spirit.getModel()->setTrapState(false);
+            endDetectTrap();
         }
 
         // logic for killing hunter
@@ -1142,4 +1144,47 @@ float SGameController::getYPos(int type, float pos,
         }
     }
     return yPos;
+}
+
+void SGameController::beginDetectTrap(){
+    // get hunter position-> to grid
+    // for 3*3 -> generate red cue if is transable -> push to detection -> set false place trap in tile map
+    // add detections to fifth layer
+    Vec2 gridPos = _tilemap->mapPosToGridPos(Vec2(_hunterXPos, _hunterYPos));
+    for(int x = gridPos.x-1; x < gridPos.x+1; x++){
+        for(int y = gridPos.y-1; y < gridPos.y+1; y++){
+            if (x >= 0 && y >= 0 &&
+                x < _tilemap->getDimensions().width &&
+                y < _tilemap->getDimensions().height && _tilemap->isTileGridTraversable(x, y)) {
+                _tilemap->setPlaceTrap(x, y, false);
+                
+                Vec2 pos(_level->getTileWidth() * x, _level->getTileWidth() * y);
+                std::shared_ptr<TileController> tile = std::make_shared<TileController>(
+                    pos, _level->getTileSize(), Color4::WHITE, false, _assets->get<Texture>("red_cue"));
+                _detections.emplace_back(tile);
+            }
+        }
+    }
+    for(int i=0; i<_detections.size(); i++){
+        _detections.at(i)->addChildTo(_firstLayer);
+    }
+}
+
+void SGameController::endDetectTrap(){
+    for(int i=0; i<_detections.size(); i++){
+        _detections.at(i)->removeChildFrom(_firstLayer);
+    }
+    _detections.clear();
+    _tilemap->resetPlaceTrap();
+}
+
+void SGameController::updateDetectTrap(){
+    // remove detection from node
+    // clear detection
+    // begin detction
+    for(int i=0; i<_detections.size(); i++){
+        _detections.at(i)->removeChildFrom(_firstLayer);
+    }
+    _detections.clear();
+    beginDetectTrap();
 }

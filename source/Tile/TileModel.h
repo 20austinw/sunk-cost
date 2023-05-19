@@ -32,6 +32,8 @@ class TileModel {
     float _yPos;
 
     bool _obstacle;
+    
+    bool _canPlaceTrap;
 
   public:
     /** A public accessible, read-only version of the color */
@@ -42,6 +44,8 @@ class TileModel {
     const float& yPos;
 
     const bool& obstacle;
+    
+    const bool& canPlaceTrap;
 
 #pragma mark Main Functions
   public:
@@ -56,13 +60,14 @@ class TileModel {
     TileModel(Vec2 position, Size size, Color4 color, bool traversable,
               float yPos)
         : color(_color), traversable(_traversable), yPos(_yPos),
-          obstacle(_obstacle) {
+          obstacle(_obstacle), canPlaceTrap(_canPlaceTrap) {
         setPosition(position);
         setSize(size);
         setColor(color);
         setTraversable(traversable);
         setYPos(yPos);
         setObstacle(true);
+              setPlaceTrap(true);
     }
 
 #pragma mark Setters
@@ -84,6 +89,8 @@ class TileModel {
     void setSize(Size size) { _size = size; }
 
     void setObstacle(bool b) { _obstacle = b; }
+    
+    void setPlaceTrap(bool b) {_canPlaceTrap = b;}
 
     /**
      *  Sets the color of the tile.

@@ -271,7 +271,7 @@ void SCApp::updateLoadingScene(float timestep) {
         _spiritGameplay = SGameController(getDisplaySize(), _assets);
         _hunterGameplay = HGameController(getDisplaySize(), _assets);
         _tutorial.setActive(true);
-        _scene = State::TUTORIAL;
+        _scene = State::MENU;
     }
 }
 

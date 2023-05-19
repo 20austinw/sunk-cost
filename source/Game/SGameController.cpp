@@ -97,6 +97,7 @@ SGameController::SGameController(
     _alertLabel = cugl::scene2::Label::allocWithText(
         Vec2(0, displaySize.height / 2), "The treasure has been STOLEN",
         _assets->get<Font>("gamefont"));
+        
     _alertLabel->setPosition(_scene->getCamera()->getPosition() +
                              Vec2(350, 350));
     _alertLabel->setForeground(cugl::Color4f::RED);

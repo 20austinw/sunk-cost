@@ -197,6 +197,7 @@ class HGameController {
     std::shared_ptr<cugl::scene2::Label> _treasureLabel;
     std::shared_ptr<cugl::scene2::Label> _loseLabel;
     bool _didLose = false;
+    std::shared_ptr<InputController> _inputController;
 
     int _killCount = 0;
     bool _killed = false;

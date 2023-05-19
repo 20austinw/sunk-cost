@@ -43,8 +43,13 @@ class ResetScene : public cugl::Scene2 {
     std::shared_ptr<cugl::Scene2> _scene;
     std::shared_ptr<InputController> _inputController;
     Size _dimen;
+    float _scale;
     std::vector<std::shared_ptr<scene2::PolygonNode>> _frames;
     std::vector<std::shared_ptr<cugl::Texture>> _sheets;
+    
+    std::shared_ptr<scene2::PolygonNode> _leave;
+    std::shared_ptr<scene2::PolygonNode> _replay;
+    
 
     
 

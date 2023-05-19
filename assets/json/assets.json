@@ -134,16 +134,22 @@
             "file": "textures/back.png"
         },
         "hunter_win": {
-            "file": "textures/hunter_win_scene.png"
+            "file": "textures/H_end_win.png"
         },
         "hunter_lose": {
-            "file": "textures/hunter_lose_scene.png"
+            "file": "textures/H_end_lose.png"
         },
         "spirit_win": {
-            "file": "textures/spirit_win_scene.png"
+            "file": "textures/S_end_win.png"
         },
         "spirit_lose": {
-            "file": "textures/spirit_lose_scene.png"
+            "file": "textures/S_end_lose.png"
+        },
+        "leave_ship": {
+            "file": "textures/leave_ship.png"
+        },
+        "play_again": {
+            "file": "textures/play_again.png"
         },
         "spirit_win_animation": {
             "file": "textures/spirit_end_animation.png"

@@ -38,7 +38,7 @@ class TileController {
      * @param color     The tile color
      */
     TileController(Vec2 position, Size size, Color4 color, bool traversable,
-                   const std::shared_ptr<Texture>& texture, int yPos = -1) {
+                   const std::shared_ptr<Texture>& texture, float yPos = -1) {
         _model = std::make_unique<TileModel>(position, size, color, traversable,
                                              yPos);
         _view = std::make_unique<TileView>(position, size, color, texture);
@@ -54,6 +54,16 @@ class TileController {
     Vec2 getPosition() { return _model->getPosition(); }
 
     int getYPos() { return _model->yPos; }
+
+    bool isObstacle() { return _model->obstacle; }
+
+    void setYPos(float yPos) { _model->setYPos(yPos); }
+
+    void setObstacle(bool b) { _model->setObstacle(b); }
+    
+    void setPlaceTrap(bool b) {_model->setPlaceTrap(b); }
+    
+    bool canPlaceTrap() {return _model->canPlaceTrap; }
 
 #pragma mark Update Methods
   public:

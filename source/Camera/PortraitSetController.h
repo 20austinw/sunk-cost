@@ -35,7 +35,7 @@ class PortraitSetController {
     float _greenBatteryScale;
     float _redBatteryScale;
 
-    float _buttonSize = 400;
+    float _buttonSize = 350;
 
     std::shared_ptr<scene2::PolygonNode> _block;
     std::shared_ptr<scene2::SpriteNode> _redBattery;
@@ -100,11 +100,11 @@ class PortraitSetController {
      */
     void addPortrait(std::vector<std::shared_ptr<scene2::PolygonNode>>& vector,
                      int id, Vec3 cameraPosition, Vec3 portraitPosition,
-                     Vec3 direction, Vec2 directionLimits,bool ishunter, float battery = 600,
-                     int type = 2) {
+                     Vec3 direction, Vec2 directionLimits, bool ishunter, int portraitType,
+                     float battery = 600, int type = 2) {
         _portraits.push_back(makePortrait(id, cameraPosition, portraitPosition,
                                           direction, directionLimits, battery,
-                                          type, vector,ishunter));
+                                          type, vector, ishunter, portraitType));
     }
 
     void initializeSheets(std::shared_ptr<cugl::Texture> green,
@@ -223,7 +223,7 @@ class PortraitSetController {
                 } else if (_index == _portraits[i]->getID() &&
                            _portraits[i]->getState() &&
                            _portraits[i]->getBattery() > 0) {
-                    float newBattery = _portraits[i]->getBattery() - 0.5;
+                    float newBattery = _portraits[i]->getBattery() - 2;
                     if (newBattery > 0) {
                         _portraits[i]->updateBattery(newBattery);
                     } else {
@@ -311,7 +311,8 @@ class PortraitSetController {
     std::unique_ptr<CameraController>
     makePortrait(int id, Vec3 cameraPosition, Vec3 portraitPosition,
                  Vec3 direction, Vec2 directionLimits, float battery, int type,
-                 std::vector<std::shared_ptr<scene2::PolygonNode>>& vector,bool ishunter) {
+                 std::vector<std::shared_ptr<scene2::PolygonNode>>& vector,
+                 bool ishunter, int portraitType) {
         std::unique_ptr<CameraController> camera =
             std::make_unique<CameraController>(id, _screenSize);
         camera->updatePosition(cameraPosition);
@@ -320,11 +321,12 @@ class PortraitSetController {
         camera->updateType(CameraType(type));
         camera->updateBattery(battery);
         _portraitModels.push_back(
-            std::make_unique<PortraitModel>(cameraPosition));
-
+            std::make_unique<PortraitModel>(cameraPosition, portraitType));
+        
         _portraitViews.push_back(std::make_shared<PortraitView>(
-            _assets, portraitPosition +
-                         Vec2(_assets->get<Texture>("map")->getSize() / 2),ishunter));
+            _assets,
+            portraitPosition,
+            ishunter, portraitType));
         vector.emplace_back(_portraitViews[id]->getNode());
         return camera;
     }

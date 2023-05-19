@@ -29,7 +29,11 @@ class TileModel {
     /** Whether this tile is traversable or not */
     bool _traversable;
 
-    int _yPos;
+    float _yPos;
+
+    bool _obstacle;
+    
+    bool _canPlaceTrap;
 
   public:
     /** A public accessible, read-only version of the color */
@@ -37,7 +41,11 @@ class TileModel {
     /** A public accessible, read-only version of _traversable */
     const bool& traversable;
 
-    const int& yPos;
+    const float& yPos;
+
+    const bool& obstacle;
+    
+    const bool& canPlaceTrap;
 
 #pragma mark Main Functions
   public:
@@ -50,13 +58,16 @@ class TileModel {
      * @param traversable  The tile traversability
      */
     TileModel(Vec2 position, Size size, Color4 color, bool traversable,
-              int yPos)
-        : color(_color), traversable(_traversable), yPos(_yPos) {
+              float yPos)
+        : color(_color), traversable(_traversable), yPos(_yPos),
+          obstacle(_obstacle), canPlaceTrap(_canPlaceTrap) {
         setPosition(position);
         setSize(size);
         setColor(color);
         setTraversable(traversable);
         setYPos(yPos);
+        setObstacle(true);
+              setPlaceTrap(true);
     }
 
 #pragma mark Setters
@@ -77,6 +88,10 @@ class TileModel {
      */
     void setSize(Size size) { _size = size; }
 
+    void setObstacle(bool b) { _obstacle = b; }
+    
+    void setPlaceTrap(bool b) {_canPlaceTrap = b;}
+
     /**
      *  Sets the color of the tile.
      *
@@ -91,7 +106,7 @@ class TileModel {
      */
     void setTraversable(bool traversable) { _traversable = traversable; }
 
-    void setYPos(int yPos) { _yPos = yPos; }
+    void setYPos(float yPos) { _yPos = yPos; }
 };
 
 #endif /* _TILE_MODEL_H__ */

@@ -50,7 +50,7 @@ class Button {
            const std::shared_ptr<PortraitSetController>& portraits)
         : _texture(texture), _scene(scene), _selectionPhase(selectionPhase),
           _portraits(portraits) {
-        _buttonSize = 400;
+        _buttonSize = 350;
         _scale =
             _buttonSize / scene2::SpriteNode::allocWithSheet(texture, 2, 8, 16)
                               ->getSize()
@@ -171,6 +171,8 @@ class Button {
         }
         return _selectionPhase;
     }
+
+    Vec2 getPosition() { return _position; }
 
     void setVisible(bool b) { _node->setVisible(b); }
 

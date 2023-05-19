@@ -240,3 +240,11 @@ void TilemapController::clearMap() {
 Size TilemapController::getDimensions() { return _model->getDimensions(); }
 
 Size TilemapController::getTileSize() { return _model->getTileSize(); }
+
+void TilemapController::resetPlaceTrap(){
+    for (int c = 0; c < _model->dimensions.x; c++) {
+        for (int r = 0; r < _model->dimensions.y; r++) {
+            _tilemap[r][c]->setPlaceTrap(true);
+        }
+    }
+}

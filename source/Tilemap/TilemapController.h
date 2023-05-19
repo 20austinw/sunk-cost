@@ -154,6 +154,26 @@ class TilemapController {
         }
         return false;
     }
+    
+    bool isTileGridTraversable(int x, int y){
+        return _tilemap[y][x]->isTraversable();
+    }
+    
+    void setPlaceTrap(int x, int y, bool b){
+        _tilemap[y][x]->setPlaceTrap(b);
+    }
+    
+    bool canPlaceTrap(Vec2 mapPos) {
+        Vec2 gridPos(mapPosToGridPos(mapPos));
+        if (gridPos.x >= 0 && gridPos.y >= 0 &&
+            gridPos.x < _model->getDimensions().x &&
+            gridPos.y < _model->getDimensions().y) {
+            return _tilemap[gridPos.y][gridPos.x]->canPlaceTrap();
+        }
+        return false;
+    }
+    
+    void resetPlaceTrap();
 
     /**
      * Clears the tilemap of all tiles.
@@ -223,6 +243,13 @@ class TilemapController {
     Size getDimensions();
 
     Size getTileSize();
+
+    Vec2 getTilePosition(int index) {
+        int r = index / (int)getDimensions().width;
+        int c = index % (int)getDimensions().width;
+        return _tilemap[r][c]->getPosition();
+    }
+    
 };
 
 #endif /* _TILEMAP_CONTROLLER_H__ */

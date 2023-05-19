@@ -62,11 +62,12 @@ bool SpiritController::placeTrap(
     const std::shared_ptr<TilemapController> _tilemap, Vec2 pos,
     std::shared_ptr<cugl::scene2::PolygonNode>& node) {
     if (_portraits->getCurState()) {
-        if (!_tilemap->isTileTraversable(pos) ||
+        if (!_tilemap->isTileTraversable(pos) || !_tilemap->canPlaceTrap(pos) ||
             _tilemap->mapPosToGridPos(pos).x < 0 ||
             _tilemap->mapPosToGridPos(pos).y < 0)
             return false;
-        _model->addTrap(pos, node);
+        if (!_model->addTrap(pos, node))
+            return false;
         _trapAdded = true;
         setLastTrapPos(pos);
     }

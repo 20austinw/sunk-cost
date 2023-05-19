@@ -63,11 +63,14 @@ class SGameController {
     // block screen
     std::shared_ptr<cugl::scene2::PolygonNode> _thirdLayer;
 
-    // lock, trap, eyeball, kill buttons
+    // Shadow
     std::shared_ptr<cugl::scene2::PolygonNode> _fourthLayer;
 
-    // minimap, battery, timer
+    // lock, trap, eyeball, kill buttons
     std::shared_ptr<cugl::scene2::PolygonNode> _fifthLayer;
+
+    // Battery, timer
+    std::shared_ptr<cugl::scene2::PolygonNode> _sixthLayer;
 
     // CONTROLLERS are attached directly to the scene (no pointers)
     /** The controller to manage the ship */
@@ -104,6 +107,7 @@ class SGameController {
 
     /** Whether we quit the game */
     bool _quit;
+    bool _blocked;
 
     bool _selection;
 
@@ -143,7 +147,7 @@ class SGameController {
     float _hunterYPos;
 
     float _hunterXPos;
-    
+
     bool _spawn;
 
     int _ticks;
@@ -160,7 +164,11 @@ class SGameController {
     std::shared_ptr<cugl::Sound> _tension;
     std::shared_ptr<cugl::Sound> _trapSound;
     std::shared_ptr<cugl::Sound> _treasureSound;
+    std::shared_ptr<cugl::Sound> _killSound;
+    std::shared_ptr<cugl::Sound> _damageSound;
     bool _neverPlayed = true;
+    std::vector<std::shared_ptr<cugl::scene2::PolygonNode>> _indicators;
+    std::vector<std::shared_ptr<cugl::scene2::PolygonNode>> _shadows;
 
 #pragma mark External References
   private:
@@ -168,7 +176,11 @@ class SGameController {
     std::shared_ptr<TilemapController> _tilemap;
     std::vector<std::shared_ptr<TileController>> _obstacles;
     std::vector<std::vector<std::shared_ptr<TileController>>> _sortedObstacles;
+    std::vector<std::shared_ptr<TileController>> _detections;
     std::shared_ptr<scene2::PolygonNode> _obstacleNode;
+    std::vector<std::shared_ptr<TileController>> _holes;
+    std::vector<std::shared_ptr<TileController>> _carpets;
+
     std::vector<std::shared_ptr<scene2::SpriteNode>> _candleNodes;
     std::vector<std::shared_ptr<scene2::PolygonNode>> _hunterNodes;
     std::vector<std::shared_ptr<scene2::PolygonNode>> _doorNodes;
@@ -335,10 +347,21 @@ class SGameController {
 
     void addCandles(int type, int c, int r);
 
-    void modifyTexture(std::shared_ptr<Texture>& texture, int index, int row,
-                       int col);
-
     void sortNodes();
+
+    std::shared_ptr<Texture> getTexture(int type);
+
+    void addDetails(int type, int c, int r);
+
+    void modifyTexture(std::shared_ptr<Texture>& texture, int index);
+
+    float getYPos(int type, float pos, std::shared_ptr<TileController>& tile);
+    
+    void beginDetectTrap();
+    
+    void updateDetectTrap();
+    
+    void endDetectTrap();
 };
 
 #endif /* SGameController_hpp */

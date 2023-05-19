@@ -356,10 +356,11 @@ void SCApp::updateSGameController(float timestep) {
         _scene = State::HOSTGAME;
         _spiritGameplay.setHost(false);
         break;
+    case SGameController::Status::RESET:
+        _reset.setScene(2+int(_hunterGameplay.getWinStatus()));
+        _scene = State::RESET;
     case SGameController::Status::WAIT:
     case SGameController::Status::IDLE:
-//            
-//            _reset.setScene(2+int(_hunterGameplay.getWinStatus()));
         // DO NOTHING
         break;
     }

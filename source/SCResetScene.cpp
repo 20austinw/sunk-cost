@@ -56,8 +56,8 @@ bool ResetScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     
     _sheets.push_back(assets->get<Texture>("hunter_lose"));
     _sheets.push_back(assets->get<Texture>("hunter_win"));
-    _sheets.push_back(assets->get<Texture>("spirit_lose"));
     _sheets.push_back(assets->get<Texture>("spirit_win"));
+    _sheets.push_back(assets->get<Texture>("spirit_lose"));
     
     for (int i = 0; i<4;i++){
         _frames.push_back(scene2::PolygonNode::allocWithTexture(_sheets[i]));
@@ -113,7 +113,6 @@ void ResetScene::dispose() {
 
 void ResetScene::update(float dt){
     _inputController->update(dt);
-
     if(_inputController->didPress() && abs(_inputController->getPosition().x - (_dimen.width/2-300)) <100 &&
        abs(_inputController->getPosition().y -(_dimen.height/2+300)) <
        100){

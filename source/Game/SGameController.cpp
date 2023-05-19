@@ -625,7 +625,7 @@ void SGameController::checkLevelLoaded() {
             _portraits->addPortrait(_portraitNodes, i,
                                     _level->getPortaits()[i][0],
                                     _level->getPortaits()[i][1], Vec3(0, 0, -1),
-                                    Vec2::ZERO, false, _level->getBattery());
+                                    Vec2::ZERO, false, _level->getPortraitTypes()[i],_level->getBattery());
 
             // Add camera selection indicator
             if (i <= 0)

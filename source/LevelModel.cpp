@@ -265,5 +265,6 @@ bool LevelModel::loadPortraitSetAndDefault(
         std::vector({Vec2(json->getFloat("x1"), json->getFloat("y1")),
                      Vec2(json->getFloat("x2"), json->getFloat("y2")),
                      Vec2(json->getFloat("x3"), json->getFloat("y3"))}));
+    _portraitTypes.push_back(json->getInt("type"));
     return true;
 }

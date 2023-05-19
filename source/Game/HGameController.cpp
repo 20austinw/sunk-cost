@@ -358,8 +358,8 @@ void HGameController::update(float dt) {
         //        -30);
         //
         _miniMap->setPolygon(Rect(
-            (_scene->getCamera()->getPosition().x * 0.4 + 340),
-            (_scene->getCamera()->getPosition().y * 0.4 + 450), 1500, 1000));
+            (_scene->getCamera()->getPosition().x * 0.4 + 230),
+            (_scene->getCamera()->getPosition().y * 0.4 + 990), 1500, 1000));
 
         _miniMap->setPosition(_scene->getCamera()->getPosition() +
                               Vec2(1000, 370));

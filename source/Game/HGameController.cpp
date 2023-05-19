@@ -410,9 +410,9 @@ void HGameController::update(float dt) {
 
             //        _scene->addChild(_loseNode);
             //        _scene->addChild(_loseLabel);
-            _endScene =
-                std::make_shared<EndScene>(_scene, _assets, false, true);
-            _endScene->addChildTo(_scene);
+//            _endScene =
+//                std::make_shared<EndScene>(_scene, _assets, false, true);
+//            _endScene->addChildTo(_scene);
             _didLose = true;
             transmitSpiritWin();
             _gameStatus = 1;
@@ -429,9 +429,9 @@ void HGameController::update(float dt) {
             abs(_hunter->getPosition().y - _exitpos.y) < 200) {
             //            _scene->removeChild(_winLabel);
             _scene->addChild(_finalWinLabel);
-            _endScene =
-                std::make_shared<EndScene>(_scene, _assets, false, false);
-            _endScene->addChildTo(_scene);
+//            _endScene =
+//                std::make_shared<EndScene>(_scene, _assets, false, false);
+//            _endScene->addChildTo(_scene);
             _didFinalwin = true;
             transmitHunterWin();
             _gameStatus = 1;
@@ -851,7 +851,7 @@ void HGameController::update(float dt) {
         }
     } else if (_gameStatus == 1) {
         // Hunter lose or win
-        _endScene->update();
+//        _endScene->update();
         _countEndAnim++;
         AudioEngine::get()->clear("tension", 1);
         AudioEngine::get()->clear("theme", 1);

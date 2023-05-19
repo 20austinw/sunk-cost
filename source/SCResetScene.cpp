@@ -10,6 +10,7 @@
 #include <sstream>
 
 #include "SCResetScene.hpp"
+#include "InputController.h"
 
 using namespace cugl;
 using namespace std;
@@ -37,45 +38,65 @@ using namespace std;
  */
 bool ResetScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     // Initialize the scene to a locked width
-    Size dimen = Application::get()->getDisplaySize();
-    dimen *= SCENE_HEIGHT / dimen.height;
+    _dimen = Application::get()->getDisplaySize();
+    _inputController = InputController::getInstance();
+    _inputController->initListeners();
     if (assets == nullptr) {
         return false;
-    } else if (!Scene2::init(dimen)) {
+    } else if (!Scene2::init(_dimen)) {
         return false;
     }
-
+    
+    
     // Start up the input handler
     _assets = assets;
 
     // Acquire the scene built by the asset loader and resize it the scene
-    std::shared_ptr<scene2::SceneNode> scene =
-        _assets->get<scene2::SceneNode>("resett");
-    scene->setContentSize(dimen);
-    scene->doLayout(); // Repositions the HUD
-    _choice = Choice::NONE;
-    _leavebutton = std::dynamic_pointer_cast<scene2::Button>(
-        _assets->get<scene2::SceneNode>("resett_leave"));
-    _replaybutton = std::dynamic_pointer_cast<scene2::Button>(
-        _assets->get<scene2::SceneNode>("resett_replay"));
+    _scene = cugl::Scene2::alloc(_dimen);
+    
+    _sheets.push_back(assets->get<Texture>("hunter_lose"));
+    _sheets.push_back(assets->get<Texture>("hunter_win"));
+    _sheets.push_back(assets->get<Texture>("spirit_lose"));
+    _sheets.push_back(assets->get<Texture>("spirit_win"));
+    
+    for (int i = 0; i<4;i++){
+        _frames.push_back(scene2::PolygonNode::allocWithTexture(_sheets[i]));
+        _frames[i]->setScale(1);
+        _frames[i]->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+        _frames[i]->setPosition(Vec2(0,0));
+        _frames[i]->setVisible(false);
+        _scene->addChild(_frames[i]);
+    }
 
-    // Program the buttons
-    _leavebutton->addListener([this](const std::string& name, bool down) {
-        if (down) {
-            CULog("leave!");
-            _choice = Choice::LEAVE;
-        }
-    });
-    _replaybutton->addListener([this](const std::string& name, bool down) {
-        CULog("down is %d", down == true);
-        if (down) {
-            CULog("replay!");
-            _choice = Choice::REPLAY;
-        }
-    });
+    
+//    std::shared_ptr<scene2::SceneNode> scene =
+//        _assets->get<scene2::SceneNode>("resett");
+//    scene->setContentSize(dimen);
+//    scene->doLayout(); // Repositions the HUD
+//    _choice = Choice::NONE;
+//    _leavebutton = std::dynamic_pointer_cast<scene2::Button>(
+//        _assets->get<scene2::SceneNode>("resett_leave"));
+//    _replaybutton = std::dynamic_pointer_cast<scene2::Button>(
+//        _assets->get<scene2::SceneNode>("resett_replay"));
+//
+//    // Program the buttons
+//    _leavebutton->addListener([this](const std::string& name, bool down) {
+//        if (down) {
+//            CULog("leave!");
+//            _choice = Choice::LEAVE;
+//        }
+//    });
+//    _replaybutton->addListener([this](const std::string& name, bool down) {
+//        CULog("down is %d", down == true);
+//        if (down) {
+//            CULog("replay!");
+//            _choice = Choice::REPLAY;
+//        }
+//    });
+//
+//    addChild(scene);
+//    setActive(false);
 
-    addChild(scene);
-    setActive(false);
     return true;
 }
 
@@ -89,6 +110,24 @@ void ResetScene::dispose() {
     }
 }
 
+
+void ResetScene::update(float dt){
+    _inputController->update(dt);
+
+    if(_inputController->didPress() && abs(_inputController->getPosition().x - (_dimen.width/2-300)) <100 &&
+       abs(_inputController->getPosition().y -(_dimen.height/2+300)) <
+       100){
+        CULog("Leave");
+        _choice = Choice::LEAVE;
+    }
+    else if(_inputController->didPress() && abs(_inputController->getPosition().x - (_dimen.width/2+300)) <100 &&
+            abs(_inputController->getPosition().y -(_dimen.height/2+300)) <100){
+        CULog("replay");
+        _choice = Choice::REPLAY;
+    }
+
+}
+
 /**
  * Sets whether the scene is currently active
  *
@@ -99,20 +138,45 @@ void ResetScene::dispose() {
  * @param value whether the scene is currently active
  */
 void ResetScene::setActive(bool value) {
-    if (isActive() != value) {
-        Scene2::setActive(value);
-        if (value) {
-            CULog("none?????");
-            _choice = NONE;
-            _leavebutton->activate();
-            _replaybutton->activate();
-        } else {
-            CULog("else?????");
-            _leavebutton->deactivate();
-            _replaybutton->deactivate();
-            // If any were pressed, reset them
-            _leavebutton->setDown(false);
-            _replaybutton->setDown(false);
-        }
-    }
+//    if (isActive() != value) {
+//        Scene2::setActive(value);
+//        if (value) {
+//            CULog("none?????");
+//            _choice = NONE;
+//            _leavebutton->activate();
+//            _replaybutton->activate();
+//        } else {
+//            CULog("else?????");
+//            _leavebutton->deactivate();
+//            _replaybutton->deactivate();
+//            // If any were pressed, reset them
+//            _leavebutton->setDown(false);
+//            _replaybutton->setDown(false);
+//        }
+//    }
+}
+
+void ResetScene::render(std::shared_ptr<cugl::SpriteBatch>& batch) {
+    _scene->render(batch);
+}
+
+void ResetScene::setScene(int value) {
+    CULog("setScene");
+    _frames[value]->setVisible(true);
+//    if (isActive() != value) {
+//        Scene2::setActive(value);
+//        if (value) {
+//            CULog("none?????");
+//            _choice = NONE;
+//            _leavebutton->activate();
+//            _replaybutton->activate();
+//        } else {
+//            CULog("else?????");
+//            _leavebutton->deactivate();
+//            _replaybutton->deactivate();
+//            // If any were pressed, reset them
+//            _leavebutton->setDown(false);
+//            _replaybutton->setDown(false);
+//        }
+//    }
 }

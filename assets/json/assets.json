@@ -134,16 +134,16 @@
             "file": "textures/back.png"
         },
         "hunter_win": {
-            "file": "textures/hunter_win.png"
+            "file": "textures/hunter_win_scene.png"
         },
         "hunter_lose": {
-            "file": "textures/hunter_lose.png"
+            "file": "textures/hunter_lose_scene.png"
         },
         "spirit_win": {
-            "file": "textures/spirit_win.png"
+            "file": "textures/spirit_win_scene.png"
         },
         "spirit_lose": {
-            "file": "textures/spirit_lose.png"
+            "file": "textures/spirit_lose_scene.png"
         },
         "spirit_win_animation": {
             "file": "textures/spirit_end_animation.png"

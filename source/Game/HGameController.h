@@ -207,9 +207,14 @@ class HGameController {
     std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> _spriteNodes;
     std::vector<std::shared_ptr<cugl::Texture>> _spriteSheets;
 
-    std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> _livehearts;
-
-    std::vector<std::shared_ptr<cugl::scene2::PolygonNode>> _deadhearts;
+//    std::vector<std::shared_ptr<cugl::scene2::SpriteNode>> _livehearts;
+//
+//    std::vector<std::shared_ptr<cugl::scene2::PolygonNode>> _deadhearts;
+    
+    std::shared_ptr<scene2::PolygonNode> _oneheart;
+    std::shared_ptr<scene2::PolygonNode> _twohearts;
+    std::shared_ptr<scene2::PolygonNode> _threehearts;
+    
     std::vector<std::shared_ptr<cugl::scene2::PolygonNode>> _indicators;
     std::vector<std::shared_ptr<cugl::scene2::PolygonNode>> _shadows;
 

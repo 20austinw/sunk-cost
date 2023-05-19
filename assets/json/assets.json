@@ -48,6 +48,15 @@
         "kill_six": {
             "file": "textures/insta_kill_part_six.png"
         },
+        "oneheart": {
+            "file": "textures/oneheart.png"
+        },
+        "twohearts": {
+            "file": "textures/twohearts.png"
+        },
+        "threehearts": {
+            "file": "textures/threehearts.png"
+        },
         "heart_live": {
             "file": "textures/live_heart_animated.png"
         },

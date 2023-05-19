@@ -222,25 +222,50 @@ HGameController::HGameController(
     //    _hunter->setPosition(Vec2(10000,10000)*_scale);
 
     initCamera();
-    for (int i = 0; i < 3; i++) {
-        _livehearts.push_back(scene2::SpriteNode::allocWithSheet(
-            assets->get<Texture>("heart_live"), 2, 8, 11));
-        _deadhearts.push_back(scene2::PolygonNode::allocWithTexture(
-            assets->get<Texture>("heart_dead")));
-        _livehearts[i]->setScale(0.45);
-        _livehearts[i]->setFrame(0);
-        _livehearts[i]->setAnchor(Vec2::ANCHOR_CENTER);
-        _livehearts[i]->setPosition(_scene->getCamera()->getPosition() +
-                                    Vec2(-130 * i - 1000, 500));
-        _livehearts[i]->setVisible(true);
-        _deadhearts[i]->setScale(0.45);
-        _deadhearts[i]->setAnchor(Vec2::ANCHOR_CENTER);
-        _deadhearts[i]->setPosition(_scene->getCamera()->getPosition() +
-                                    Vec2(-130 * i - 1000, 500));
-        _deadhearts[i]->setVisible(false);
-        //            _scene->addChild(_deadhearts[i]);
-        //            _scene->addChild(_livehearts[i]);
-    }
+    _oneheart = scene2::PolygonNode::allocWithTexture(assets->get<Texture>("oneheart"));
+    _oneheart->setScale(1);
+    _oneheart->setAnchor(Vec2::ANCHOR_CENTER);
+    _oneheart->setPosition(_scene->getCamera()->getPosition() +
+                                Vec2(-150 - 1000, 500));
+    _oneheart->setVisible(false);
+//    _scene->addChild(_oneheart);
+        
+    _twohearts = scene2::PolygonNode::allocWithTexture(assets->get<Texture>("twohearts"));
+    _twohearts->setScale(1);
+    _twohearts->setAnchor(Vec2::ANCHOR_CENTER);
+    _twohearts->setPosition(_scene->getCamera()->getPosition() +
+                                Vec2(-150 - 1000, 500));
+    _twohearts->setVisible(false);
+//    _scene->addChild(_twohearts);
+        
+    _threehearts = scene2::PolygonNode::allocWithTexture(assets->get<Texture>("threehearts"));
+    _threehearts->setScale(1);
+    _threehearts->setAnchor(Vec2::ANCHOR_CENTER);
+    _threehearts->setPosition(_scene->getCamera()->getPosition() +
+                                Vec2(-150 - 1000, 500));
+    _threehearts->setVisible(true);
+//    _scene->addChild(_threehearts);
+        
+
+//    for (int i = 0; i < 3; i++) {
+//        _livehearts.push_back(scene2::SpriteNode::allocWithSheet(
+//            assets->get<Texture>("heart_live"), 2, 8, 11));
+//        _deadhearts.push_back(scene2::PolygonNode::allocWithTexture(
+//            assets->get<Texture>("heart_dead")));
+//        _livehearts[i]->setScale(0.45);
+//        _livehearts[i]->setFrame(0);
+//        _livehearts[i]->setAnchor(Vec2::ANCHOR_CENTER);
+//        _livehearts[i]->setPosition(_scene->getCamera()->getPosition() +
+//                                    Vec2(-130 * i - 1000, 500));
+//        _livehearts[i]->setVisible(true);
+//        _deadhearts[i]->setScale(0.45);
+//        _deadhearts[i]->setAnchor(Vec2::ANCHOR_CENTER);
+//        _deadhearts[i]->setPosition(_scene->getCamera()->getPosition() +
+//                                    Vec2(-130 * i - 1000, 500));
+//        _deadhearts[i]->setVisible(false);
+//        //            _scene->addChild(_deadhearts[i]);
+//        //            _scene->addChild(_livehearts[i]);
+//    }
 
     _spriteSheets.push_back(assets->get<Texture>("kill_one"));
     _spriteSheets.push_back(assets->get<Texture>("kill_two"));
@@ -565,13 +590,18 @@ void HGameController::update(float dt) {
         float forward = inputController->getForward();
 
         float rightward = inputController->getRight();
-
-        for (int i = 0; i < 3; i++) {
-            _deadhearts[i]->setPosition(_scene->getCamera()->getPosition() +
-                                        Vec2(-180 * i - 850, 500));
-            _livehearts[i]->setPosition(_scene->getCamera()->getPosition() +
-                                        Vec2(-180 * i - 850, 500));
-        }
+        _threehearts->setPosition(_scene->getCamera()->getPosition() +
+                                                Vec2(-150 - 850, 500));
+        _twohearts->setPosition(_scene->getCamera()->getPosition() +
+                                                Vec2(-150 - 850, 500));
+        _oneheart->setPosition(_scene->getCamera()->getPosition() +
+                                                Vec2(-150 - 850, 500));
+//        for (int i = 0; i < 3; i++) {
+//            _deadhearts[i]->setPosition(_scene->getCamera()->getPosition() +
+//                                        Vec2(-180 * i - 850, 500));
+//            _livehearts[i]->setPosition(_scene->getCamera()->getPosition() +
+//                                        Vec2(-180 * i - 850, 500));
+//        }
 
         _count++;
         if (_count == 6) {
@@ -579,13 +609,13 @@ void HGameController::update(float dt) {
             if (_heart_frame >= 11) {
                 _heart_frame = 0;
             }
-            for (int i = 0; i < 3; i++) {
-                _livehearts[i]->setFrame(_heart_frame);
-            }
+//            for (int i = 0; i < 3; i++) {
+//                _livehearts[i]->setFrame(_heart_frame);
+//            }
             _heart_frame += 1;
             _count = 0;
         }
-        //_countfortimer++;
+        _countfortimer++;
 
         _beingKilled = false;
         if (_kill_ani_count < 84) {
@@ -794,9 +824,17 @@ void HGameController::update(float dt) {
             //            }
             if (_killed) {
                 AudioEngine::get()->play("damage", _damageSound, false, 0.5, false);
-                _livehearts[_killCount]->setVisible(false);
-                _deadhearts[_killCount]->setVisible(true);
+//                _livehearts[_killCount]->setVisible(false);
+//                _deadhearts[_killCount]->setVisible(true);
                 _killCount += 1;
+                if(_killCount==1){
+                    _threehearts->setVisible(false);
+                    _twohearts->setVisible(true);
+                }
+                if(_killCount==2){
+                    _twohearts->setVisible(false);
+                    _oneheart->setVisible(true);
+                }
                 _killed = false;
                 _kill_ani_count = 0;
                 //            _move = false;
@@ -1060,10 +1098,14 @@ void HGameController::checkLevelLoaded() {
         }
 
         _scene->addChild(_filter);
-        for (int i = 0; i < 3; i++) {
-            _scene->addChild(_deadhearts[i]);
-            _scene->addChild(_livehearts[i]);
-        }
+        _scene->addChild(_oneheart);
+        _scene->addChild(_twohearts);
+        _scene->addChild(_threehearts);
+        
+//        for (int i = 0; i < 3; i++) {
+//            _scene->addChild(_deadhearts[i]);
+//            _scene->addChild(_livehearts[i]);
+//        }
 
         _scene->addChild(_miniMap);
 
@@ -1137,11 +1179,16 @@ void HGameController::checkLevelLoaded() {
         int index = rand() % 3;
 
         // Manually add more treasurepos
-        _treasurepos.emplace_back(Vec2(3900, 5700));
+//        _treasurepos.emplace_back(Vec2(3900, 5700));
+//
+//        _treasurepos.emplace_back(Vec2(2000, 5700));
+//
+//        _treasurepos.emplace_back(Vec2(1000, 5700));
+        _treasurepos.emplace_back(Vec2(15*128, (40-1-23)*128));
 
-        _treasurepos.emplace_back(Vec2(2000, 5700));
+        _treasurepos.emplace_back(Vec2(46*128, (40-1-7)*128));
 
-        _treasurepos.emplace_back(Vec2(1000, 5700));
+        _treasurepos.emplace_back(Vec2(55*128, (40-1-27)*128));
 
         _treasure = TreasureController(_assets, _scene->getSize(), PLAYER_SIZE,
                                        _treasurepos.at(index));

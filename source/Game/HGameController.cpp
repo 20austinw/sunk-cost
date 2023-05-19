@@ -416,8 +416,9 @@ void HGameController::update(float dt) {
             indicator->setVisible(false);
         }
         _filter->setPosition(_scene->getCamera()->getPosition());
+        string seconds = std::to_string(int(_timer / 60) % 60).length() <= 1 ? "0" + std::to_string(int(_timer / 60) % 60) : std::to_string(int(_timer / 60) % 60);
         _timerLabel->setText(std::to_string(int(_timer / 60 / 60)) + ":" +
-                             std::to_string(int(_timer / 60) % 60));
+                             seconds);
         _timerLabel->setPosition(_scene->getCamera()->getPosition() -
                                  Vec2(50, 700));
         //        float vPos = _scene->getSize().height - 20 -

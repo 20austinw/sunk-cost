@@ -323,10 +323,10 @@ class PortraitSetController {
         _portraitModels.push_back(
             std::make_unique<PortraitModel>(cameraPosition));
 
+        CULog("x: %f, y: %f", portraitPosition.x, portraitPosition.y);
         _portraitViews.push_back(std::make_shared<PortraitView>(
             _assets,
-            portraitPosition +
-                Vec2(_assets->get<Texture>("map")->getSize() / 2),
+            portraitPosition,
             ishunter));
         vector.emplace_back(_portraitViews[id]->getNode());
         return camera;

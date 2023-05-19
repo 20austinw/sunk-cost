@@ -62,7 +62,15 @@ bool LoadingScene::init(const std::shared_ptr<AssetManager>& assets) {
     _button = std::dynamic_pointer_cast<scene2::Button>(
         assets->get<scene2::SceneNode>("load_play"));
     _button->addListener(
-        [=](const std::string& name, bool down) { this->_active = down; });
+        [=](const std::string& name, bool down) {
+            this->_active = down;
+            if (down) {
+                _choice = Choice::PLAY;
+            }
+        });
+    
+    _settingsButton = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("load_row1_settings"));
+    
 
     _background = std::dynamic_pointer_cast<scene2::SpriteNode>(
         assets->get<scene2::SceneNode>("load_logo"));

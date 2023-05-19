@@ -30,6 +30,19 @@
  * this button will inform the application root to switch to the gameplay mode.
  */
 class LoadingScene : public cugl::Scene2 {
+public:
+    enum Choice {
+        NONE,
+        
+        SETTINGS,
+        
+        CREDITS,
+        
+        TUTORIAL,
+        
+        PLAY
+    };
+    
   protected:
     /** The asset manager for loading. */
     std::shared_ptr<cugl::AssetManager> _assets;
@@ -54,6 +67,16 @@ class LoadingScene : public cugl::Scene2 {
     std::shared_ptr<cugl::scene2::SpriteNode> _background;
 
     int _ticks = 0;
+    
+    std::shared_ptr<cugl::scene2::Button> _creditsButton;
+    
+    std::shared_ptr<cugl::scene2::Button> _settingsButton;
+    
+    std::shared_ptr<cugl::scene2::Button> _tutorialButton;
+    
+    Choice _choice;
+    
+    
 
   public:
 #pragma mark -

@@ -21,6 +21,15 @@
             "minfilter": "linear",
             "magfilter": "linear"
         },
+        "tutorial_button": {
+            "file": "textures/tutorial_button.png"
+        },
+        "credits_button": {
+            "file": "textures/credits_button.png"
+        },
+        "settings_button": {
+            "file": "textures/settings_button.png"
+        },
         "progress": {
             "file": "textures/progress.png",
             "wrapS": "clamp",
@@ -61,14 +70,6 @@
             "format": {
                 "type": "Anchored"
             },
-            "data": {
-                "color": [
-                    239,
-                    61,
-                    49,
-                    255
-                ]
-            },
             "children": {
                 "logo": {
                     "type": "Sprite",
@@ -92,26 +93,6 @@
                         "absolute": true
                     }
                 },
-                "name": {
-                    "type": "Image",
-                    "format": {
-                        "type": "Anchored"
-                    },
-                    "data": {
-                        "texture": "name",
-                        "anchor": [
-                            0.5,
-                            0.5
-                        ],
-                        "scale": 0.75
-                    },
-                    "layout": {
-                        "x_anchor": "center",
-                        "y_anchor": "middle",
-                        "y_offset": -55,
-                        "absolute": true
-                    }
-                },
                 "play": {
                     "type": "Button",
                     "data": {
@@ -122,7 +103,7 @@
                             0.5,
                             0.5
                         ],
-                        "scale": 0.5
+                        "scale": 0.4
                     },
                     "children": {
                         "up": {
@@ -135,7 +116,7 @@
                     "layout": {
                         "x_anchor": "center",
                         "y_anchor": "middle",
-                        "y_offset": -175,
+                        "y_offset": -90,
                         "absolute": true
                     }
                 },
@@ -154,8 +135,113 @@
                     "layout": {
                         "x_anchor": "center",
                         "y_anchor": "middle",
-                        "y_offset": -175,
+                        "y_offset": -120,
                         "absolute": true
+                    }
+                },
+                "row1": {
+                    "type": "Node",
+                    "format": {
+                        "type": "Float",
+                        "orientation": "horizontal",
+                        "x_alignment": "center",
+                        "y_alignment": "bottom"
+                    },
+                    "data": {
+                        "anchor": [
+                            0.5,
+                            0.5
+                        ],
+                        "size": [
+                            700,
+                            400
+                        ]
+                    },
+                    "children": {
+                        "settings": {
+                            "type": "Button",
+                            "data": {
+                                "upnode": "up",
+                                "visible": true,
+                                "pushsize": true,
+                                "anchor": [
+                                    0.5,
+                                    0.5
+                                ],
+                                "scale": 0.3
+                            },
+                            "children": {
+                                "up": {
+                                    "type": "Image",
+                                    "data": {
+                                        "texture": "credits_button"
+                                    }
+                                }
+                            },
+                            "layout": {
+                                "x_anchor": "right",
+                                "y_anchor": "bottom",
+                                "absolute": true
+                            }
+                        },
+                        "credits": {
+                            "type": "Button",
+                            "data": {
+                                "upnode": "up",
+                                "visible": true,
+                                "pushsize": true,
+                                "anchor": [
+                                    0.5,
+                                    0.5
+                                ],
+                                "scale": 0.3
+                            },
+                            "children": {
+                                "up": {
+                                    "type": "Image",
+                                    "data": {
+                                        "texture": "settings_button"
+                                    }
+                                }
+                            },
+                            "layout": {
+                                "x_anchor": "right",
+                                "y_anchor": "bottom",
+                                "padding": [150, 0, 150, 0],
+                                "absolute": true
+                            }
+                        },
+                        "tutorial": {
+                            "type": "Button",
+                            "data": {
+                                "upnode": "up",
+                                "visible": true,
+                                "pushsize": true,
+                                "anchor": [
+                                    0.5,
+                                    0.5
+                                ],
+                                "scale": 0.3
+                            },
+                            "children": {
+                                "up": {
+                                    "type": "Image",
+                                    "data": {
+                                        "texture": "tutorial_button"
+                                    }
+                                }
+                            },
+                            "layout": {
+                                "x_anchor": "right",
+                                "y_anchor": "bottom",
+                                "y-offset": -100,
+                                "absolute": true
+                            }
+                        }
+
+                    },
+                    "layout": {
+                        "priority": 1
                     }
                 }
             }

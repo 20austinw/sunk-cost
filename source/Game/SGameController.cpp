@@ -144,6 +144,8 @@ void SGameController::update(float dt) {
     auto inputController = InputController::getInstance();
     inputController->update(dt);
     inputController->readInput();
+    
+    transmitTimer(_timeLeft);
 
     // Disable indicators by default
     for (auto& indicator : _indicators) {
@@ -806,6 +808,15 @@ void SGameController::transmitActiveCamIndex(int i) {
 void SGameController::transmitLockedDoor(int i) {
     std::vector<float> idx = std::vector<float>();
     idx.push_back(5);
+    idx.push_back(i);
+    _serializer->writeFloatVector(idx);
+    _network->broadcast(_serializer->serialize());
+    _serializer->reset();
+}
+
+void SGameController::transmitTimer(int i) {
+    std::vector<float> idx = std::vector<float>();
+    idx.push_back(11);
     idx.push_back(i);
     _serializer->writeFloatVector(idx);
     _network->broadcast(_serializer->serialize());

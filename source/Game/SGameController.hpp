@@ -72,6 +72,8 @@ class SGameController {
 
     // Battery, timer
     std::shared_ptr<cugl::scene2::PolygonNode> _sixthLayer;
+    
+    std::shared_ptr<cugl::scene2::SpriteNode> _spawnNode;
 
     // CONTROLLERS are attached directly to the scene (no pointers)
     /** The controller to manage the ship */

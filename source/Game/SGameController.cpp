@@ -62,7 +62,7 @@ SGameController::SGameController(
     _portraits = std::make_shared<PortraitSetController>(_assets, _scene, 0,
                                                          displaySize);
         
-        _spawn = false;
+        
 
     // Initialize HunterController
 
@@ -719,9 +719,20 @@ void SGameController::checkLevelLoaded() {
         std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
             ->setZoom(_scene->getSize().width /
                       _indicators[_portraits->getIndex() - 1]->getSize().width);
-        _spirit.updateLocksPos(false);
-        _spirit.updateTrapBtnsPos(false);
-        _spirit.updateKillBtnsPos(false);
+//        _spirit.updateLocksPos(false);
+//        _spirit.updateTrapBtnsPos(false);
+//        _spirit.updateKillBtnsPos(false);
+        
+        _spawnNode = scene2::SpriteNode::allocWithSheet(_assets->get<Texture>("spawn"), 5, 5, 25);
+        Size dimen = Application::get()->getDisplaySize();
+        _spawnNode->setScale(Vec2(dimen.width / 1280, dimen.height / 720));
+        _spawnNode->setFrame(0);
+        _spawnNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+        
+        _scene->addChild(_spawnNode);
+        _spawn = true;
+        _ticks = 0;
+        
         _levelLoaded = true;
     }
 }
@@ -1228,5 +1239,15 @@ void SGameController::updateDetectTrap(){
 }
 
 void SGameController::updateSpawn(){
-    
+    _ticks++;
+    _spawnNode->setPosition(_scene->getCamera()->screenToWorldCoords(
+        Vec2(0, _scene->getSize().height)));
+    if(_ticks % 15 == 0){
+        if(_spawnNode->getFrame() < _spawnNode->getSpan()-1){
+            _spawnNode->setFrame(_spawnNode->getFrame()+1);
+        } else {
+            _spawn = false;
+            _scene->removeChild(_spawnNode);
+        }
+    }
 }

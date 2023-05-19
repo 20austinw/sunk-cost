@@ -1,21 +1,20 @@
 //
-//  SCResetScene.hpp
+//  SCTutorialScene.hpp
 //  Sunk
 //
-//  Created by 任清扬 on 18/4/23.
+//  Created by 任清扬 on 17/5/23.
 //
 
-#ifndef SCResetScene_hpp
-#define SCResetScene_hpp
+#ifndef SCTutorialScene_hpp
+#define SCTutorialScene_hpp
 #include "InputController.h"
-
 /**
  * This class presents the menu to the player.
  */
-class ResetScene : public cugl::Scene2 {
+class TutorialScene : public cugl::Scene2 {
   public:
     /**
-     * The reset choice.
+     * The menu choice.
      *
      * This state allows the top level application to know what the user
      * chose.
@@ -23,30 +22,32 @@ class ResetScene : public cugl::Scene2 {
     enum Choice {
         /** User has not yet made a choice */
         NONE,
-        /** User wants to leave a game */
-        LEAVE,
-        /** User wants to replay a game */
-        REPLAY
+        /** User wants to go back to loading scene */
+        BACK
+
     };
 
   protected:
     /** The asset manager for this scene. */
     std::shared_ptr<cugl::AssetManager> _assets;
-    /** The menu button for leaving a game */
-    std::shared_ptr<cugl::scene2::Button> _leavebutton;
-    /** The menu button for replaying a game */
-    std::shared_ptr<cugl::scene2::Button> _replaybutton;
+    /** The menu button for hosting a game */
+    std::shared_ptr<cugl::scene2::Button> _hostbutton;
+    /** The menu button for joining a game */
+    std::shared_ptr<cugl::scene2::Button> _clientbutton;
     /** The player menu choice */
     Choice _choice;
-    /** The page number for current scene. */
-    int _page =0;
     std::shared_ptr<cugl::Scene2> _scene;
     std::shared_ptr<InputController> _inputController;
     Size _dimen;
+    std::shared_ptr<scene2::PolygonNode> _frame0;
+    std::shared_ptr<scene2::PolygonNode> _frame1;
+    std::shared_ptr<scene2::PolygonNode> _frame2;
+    std::shared_ptr<scene2::PolygonNode> _frame3;
+    std::shared_ptr<scene2::PolygonNode> _frame4;
+    std::shared_ptr<scene2::PolygonNode> _frame5;
+    std::shared_ptr<scene2::PolygonNode> _frame6;
     std::vector<std::shared_ptr<scene2::PolygonNode>> _frames;
-    std::vector<std::shared_ptr<cugl::Texture>> _sheets;
-
-    
+    int _page=0;
 
   public:
 #pragma mark -
@@ -57,7 +58,7 @@ class ResetScene : public cugl::Scene2 {
      * This constructor does not allocate any objects or start the game.
      * This allows us to use the object without a heap pointer.
      */
-    ResetScene() : cugl::Scene2() {}
+    TutorialScene() : cugl::Scene2() {}
 
     /**
      * Disposes of all (non-static) resources allocated to this mode.
@@ -65,12 +66,21 @@ class ResetScene : public cugl::Scene2 {
      * This method is different from dispose() in that it ALSO shuts off any
      * static resources, like the input controller.
      */
-    ~ResetScene() { dispose(); }
+    ~TutorialScene() { dispose(); }
 
     /**
      * Disposes of all (non-static) resources allocated to this mode.
      */
     void dispose() override;
+    
+    void update(float dt);
+    
+    /**
+     * Renders the game elements using the`batch.
+     *
+     * @param batch The SpriteBatch used to render this scene
+     */
+    void render(std::shared_ptr<SpriteBatch>& batch);
 
     /**
      * Initializes the controller contents.
@@ -107,16 +117,7 @@ class ResetScene : public cugl::Scene2 {
      * @return the user's menu choice.
      */
     Choice getChoice() const { return _choice; }
-    
-    void setScene(int value);
-    
-    void update(float dt) override;
-    /**
-     * Renders the game elements using the`batch.
-     *
-     * @param batch The SpriteBatch used to render this scene
-     */
-    void render(std::shared_ptr<SpriteBatch>& batch);
 };
 
-#endif /* SCResetScene_hpp */
+#endif /* SCTutorialScene_hpp */
+

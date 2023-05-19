@@ -339,9 +339,9 @@ void SGameController::update(float dt) {
                 // hunter has been killed, end
                 AudioEngine::get()->play("kill", _killSound, false, 0.5, false);
                 _gameStatus = 1;
-                _endScene =
-                    std::make_shared<EndScene>(_scene, _assets, true, true);
-                _endScene->addChildTo(_scene);
+//                _endScene =
+//                    std::make_shared<EndScene>(_scene, _assets, true, true);
+//                _endScene->addChildTo(_scene);
             }
         }
 
@@ -483,28 +483,30 @@ void SGameController::update(float dt) {
         }
         _scene->getCamera()->update();
     } else if (_gameStatus == -1) {
-        if (!_endScene->isAdded()) {
-            _endScene =
-                std::make_shared<EndScene>(_scene, _assets, true, false);
-            _endScene->addChildTo(_scene);
-            _endScene->setAdded(true);
-        } else if (_endScene->sUpdate()) {
+//        if (!_endScene->isAdded()) {
+//            _endScene =
+//                std::make_shared<EndScene>(_scene, _assets, true, false);
+//            _endScene->addChildTo(_scene);
+//            _endScene->setAdded(true);
+//        } else if (_endScene->sUpdate()) {
             CULog("Switch to reset screen!");
             AudioEngine::get()->clear("tension", 1);
             AudioEngine::get()->clear("theme", 1);
-            _status = ABORT;
-        }
+//            _status = ABORT;
+            _status = RESET;
+//        }
     } else if (_gameStatus == 1) {
-        if (!_endScene->isAdded()) {
-            _endScene = std::make_shared<EndScene>(_scene, _assets, true, true);
-            _endScene->addChildTo(_scene);
-            _endScene->setAdded(true);
-        } else if (_endScene->sUpdate()) {
+//        if (!_endScene->isAdded()) {
+//            _endScene = std::make_shared<EndScene>(_scene, _assets, true, true);
+//            _endScene->addChildTo(_scene);
+//            _endScene->setAdded(true);
+//        } else if (_endScene->sUpdate()) {
             CULog("Switch to reset screen!");
             AudioEngine::get()->clear("tension", 1);
             AudioEngine::get()->clear("theme", 1);
-            _status = ABORT;
-        }
+            _status = RESET;
+//            _status = ABORT;
+//        }
     }
     _timeLeft--;
 }

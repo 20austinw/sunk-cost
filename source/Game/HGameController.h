@@ -365,6 +365,9 @@ class HGameController {
     void updateCamera(float timestep);
 
     Status getStatus() { return _status; }
+    
+    //if returns true, hunter wins. if returns false, hunter loses.
+    bool getWinStatus(){ return (_didFinalwin == true);}
 
     void setHost(bool b) { _ishost = b; }
     //    void updateCamera();

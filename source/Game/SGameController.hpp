@@ -45,6 +45,7 @@ class SGameController {
         START,
         /** Game was aborted; back to main menu */
         ABORT,
+        RESET
     };
 
 #pragma mark Internal References

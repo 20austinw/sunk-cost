@@ -210,7 +210,7 @@ void SCApp::updateResetScene(float timestep) {
     switch (_reset.getChoice()) {
     case ResetScene::Choice::LEAVE:
         CULog("leaveeee");
-        _reset.setActive(false);
+//        _reset.setActive(false);
         _joingame.setActive(false);
         _joingame.dispose();
         _hostgame.setActive(false);
@@ -224,7 +224,7 @@ void SCApp::updateResetScene(float timestep) {
         break;
     case ResetScene::Choice::REPLAY:
         CULog("replayyy");
-        _reset.setActive(false);
+//        _reset.setActive(false);
         _joingame.setActive(false);
         _joingame.dispose();
         _hostgame.setActive(false);
@@ -322,6 +322,7 @@ void SCApp::updateClientScene(float timestep) {
 
 void SCApp::updateHGameController(float timestep) {
     _hunterGameplay.update(timestep);
+    
     switch (_hunterGameplay.getStatus()) {
     case HGameController::Status::ABORT:
         _menu.setActive(true);
@@ -333,6 +334,7 @@ void SCApp::updateHGameController(float timestep) {
         _hunterGameplay.setHost(true);
         break;
     case HGameController::Status::RESET:
+        _reset.setScene(int(_hunterGameplay.getWinStatus()));
         _scene = State::RESET;
     case HGameController::Status::WAIT:
     case HGameController::Status::IDLE:
@@ -354,6 +356,9 @@ void SCApp::updateSGameController(float timestep) {
         _scene = State::HOSTGAME;
         _spiritGameplay.setHost(false);
         break;
+    case SGameController::Status::RESET:
+        _reset.setScene(2+int(_hunterGameplay.getWinStatus()));
+        _scene = State::RESET;
     case SGameController::Status::WAIT:
     case SGameController::Status::IDLE:
         // DO NOTHING

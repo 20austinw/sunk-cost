@@ -1209,6 +1209,7 @@ void HGameController::checkLevelLoaded() {
 
         _exitTexture = _assets->get<Texture>("exit");
         _exit = scene2::PolygonNode::allocWithTexture(_exitTexture);
+        _exit->setScale(0.8);
         _exit->setPosition(_exitpos);
 
         //_scene->addChild(_exit);

@@ -40,8 +40,8 @@ using namespace std;
 bool TutorialScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     // Initialize the scene to a locked width
     _dimen = Application::get()->getDisplaySize();
-    _scale = (_dimen.width / 2094 >= _dimen.height / 1041) ? _dimen.width / 2094
-                                  : _dimen.height / 1041;
+    _scale = (_dimen.width / 2532 >= _dimen.height / 1170) ? _dimen.width / 2532
+                                  : _dimen.height / 1170;
     _inputController = InputController::getInstance();
     _inputController->initListeners();
 //    _dimen *= SCENE_HEIGHT / _dimen.height;
@@ -88,16 +88,16 @@ bool TutorialScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _sheets.push_back(assets->get<Texture>("tutorial5"));
     _sheets.push_back(assets->get<Texture>("tutorial6"));
     
-    for (int i = 0; i<6;i++){
+    for (int i = 0; i<7;i++){
         _frames.push_back(scene2::PolygonNode::allocWithTexture(_sheets[i]));
-        _frames[i]->setScale(_scale*1.05);
+        _frames[i]->setScale(_scale);
         _frames[i]->setAnchor(Vec2::ANCHOR_CENTER);
         _frames[i]->setPosition(_dimen/2);
         _frames[i]->setVisible(false);
         _scene->addChild(_frames[i]);
     }
     
-    int page = 0;
+    _page = 0;
     
 //    _frame0 = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("tutorial0"));
 //    _frame0->setScale(0.7);
@@ -161,20 +161,20 @@ bool TutorialScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
    
     _back = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("back_button"));
     _back->setAnchor(Vec2::ANCHOR_CENTER);
-    _back->setScale(0.7);
-    _back->setPosition(200,_dimen.height-100);
+    _back->setScale(0.8);
+    _back->setPosition(250,_dimen.height-100);
     _scene->addChild(_back);
     
     _previous = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("left"));
     _previous->setAnchor(Vec2::ANCHOR_CENTER);
-    _previous->setScale(0.8);
-    _previous->setPosition(100,_dimen.height/2);
+    _previous->setScale(1);
+    _previous->setPosition(250,_dimen.height/2);
     _scene->addChild(_previous);
     
     _next = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("right"));
     _next->setAnchor(Vec2::ANCHOR_CENTER);
     _next->setScale(1);
-    _next->setPosition(_dimen.width-100,_dimen.height/2);
+    _next->setPosition(_dimen.width-200,_dimen.height/2);
     _scene->addChild(_next);
     
     setActive(false);
@@ -184,7 +184,7 @@ bool TutorialScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
 void TutorialScene::update(float dt){
     _inputController->update(dt);
     
-    if(_inputController->didPress() && abs(_inputController->getPosition().x - 100) <100 &&
+    if(_inputController->didPress() && abs(_inputController->getPosition().x - 250) <100 &&
        abs(_inputController->getPosition().y -(_dimen.height/2)) <
        100){
         CULog("PREVIOUS PAGE");
@@ -193,7 +193,7 @@ void TutorialScene::update(float dt){
             _page = _page - 1;
         }
     }
-    else if(_inputController->didPress() && abs(_inputController->getPosition().x - (_dimen.width-100)) <100 &&
+    else if(_inputController->didPress() && abs(_inputController->getPosition().x - (_dimen.width-200)) <100 &&
             abs(_inputController->getPosition().y -_dimen.height/2) <100){
         CULog("NEXT PAGE");
         if(_page<6){

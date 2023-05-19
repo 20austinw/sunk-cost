@@ -16,6 +16,9 @@ class PortraitModel {
 #pragma mark State
   private:
     cugl::Vec2 _position;
+    
+    //0: front; 1: left; 2: right
+    int _type;
 
 #pragma mark Main Functions
   public:
@@ -29,7 +32,10 @@ class PortraitModel {
 
     PortraitModel(){};
 
-    PortraitModel(Vec2 position) { setPosition(position); };
+    PortraitModel(Vec2 position, int type) {
+        setPosition(position);
+        setType(type);
+    };
 
 #pragma mark Getters
   public:
@@ -39,6 +45,10 @@ class PortraitModel {
      * @param position  portrait's new position
      */
     Vec2 getPosition() { return _position; }
+    
+    int getType() {
+        return _type;
+    }
 
 #pragma mark Setters
   public:
@@ -48,5 +58,9 @@ class PortraitModel {
      * @param position portrait position
      */
     void setPosition(cugl::Vec2 position) { _position = position; }
+    
+    void setType(int type) {
+        _type = type;
+    }
 };
 #endif /* PortraitModel_h */

@@ -1027,7 +1027,7 @@ void HGameController::checkLevelLoaded() {
             _portraits->addPortrait(_portraitNodes, i,
                                     _level->getPortaits()[i][0],
                                     _level->getPortaits()[i][1], Vec3(0, 0, -1),
-                                    Vec2::ZERO, true, _level->getBattery());
+                                    Vec2::ZERO, true, _level->getPortraitTypes()[i], _level->getBattery());
             if (i <= 0)
                 continue;
             auto indicator = cugl::scene2::PolygonNode::allocWithTexture(

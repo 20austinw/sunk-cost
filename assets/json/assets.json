@@ -100,6 +100,9 @@
         "painting_animation": {
             "file": "textures/active_portrait.png"
         },
+        "painting_animation_left": {
+            "file": "textures/active_portrait_facing_left.png"
+        },
         "painting_animation_hunter": {
             "file": "textures/active_hunter_por.png"
         },

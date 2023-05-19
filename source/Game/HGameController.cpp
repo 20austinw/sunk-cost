@@ -98,8 +98,8 @@ HGameController::HGameController(
     _unlockbutton->setVisible(true);
     _unlockbutton->activate();
 
-    auto inputController = InputController::getInstance();
-    inputController->initListeners();
+    _inputController = InputController::getInstance();
+    _inputController->initListeners();
 
     // Initialize SpiritController
     _spirit = SpiritController();
@@ -301,7 +301,7 @@ HGameController::HGameController(
     _serializer = NetcodeSerializer::alloc();
     _deserializer = NetcodeDeserializer::alloc();
 
-    //    initJoystick();
+    initJoystick();
     Vec3 currPos = (_hunter->getPosition());
     if (_network) {
         _network->receive([this](const std::string source,
@@ -486,10 +486,10 @@ void HGameController::update(float dt) {
             }
         }
 
-        auto inputController = InputController::getInstance();
 
-        inputController->update(dt);
-        if (inputController->didPressReset()) {
+
+        _inputController->update(dt);
+        if (_inputController->didPressReset()) {
             reset();
         }
         //                if (inputController->didPress() &&
@@ -506,10 +506,10 @@ void HGameController::update(float dt) {
                 _currdoorindex = i;
 
                 if (!_joystickon and
-                    abs(inputController->getPosition().x -
+                    abs(_inputController->getPosition().x -
                         _scene->worldToScreenCoords(_hunter->getPosition()).x) <
                         100 &&
-                    abs(inputController->getPosition().y -
+                    abs(_inputController->getPosition().y -
                         _scene->worldToScreenCoords(_hunter->getPosition()).y) <
                         100) {
                     _triggered = true;
@@ -587,9 +587,9 @@ void HGameController::update(float dt) {
         midx = (int)(currPosAdj.x + 20) / _tileWidth;
         midy = (int)((currPosAdj.y + 20)) / _tileHeight;
 
-        float forward = inputController->getForward();
+        float forward = _inputController->getForward();
 
-        float rightward = inputController->getRight();
+        float rightward = _inputController->getRight();
         _threehearts->setPosition(_scene->getCamera()->getPosition() +
                                                 Vec2(-150 - 850, 500));
         _twohearts->setPosition(_scene->getCamera()->getPosition() +
@@ -781,15 +781,18 @@ void HGameController::update(float dt) {
         //        ea->setPosition(Vec2(a,b));
         _shadow->setPosition(_hunter->getPosition() - Vec2(130, 270));
         updateCamera(dt);
-        cugl::Vec2 center = inputController->getCenter();
+        cugl::Vec2 center = _inputController->getCenter();
         if (center.x < 900) {
-            if (inputController->didPress()) {
+            if (_inputController->didPress()) {
 
-                initJoystick();
-            } else if (inputController->didRelease()) {
-                removeJoystick();
-            } else if (inputController->isTouchDown()) {
-                cugl::Vec2 center = inputController->getCenter();
+                _innerJoystick->setVisible(true);
+                _outerJoystick->setVisible(true);
+            } else if (_inputController->didRelease()) {
+                _innerJoystick->setVisible(false);
+                _outerJoystick->setVisible(false);
+                
+            } else if (_inputController->isTouchDown()) {
+                cugl::Vec2 center = _inputController->getCenter();
                 cugl::Vec2 centerPos =
                     _scene->getCamera()->screenToWorldCoords(center);
                 if (!(_didLose || _didFinalwin)) {
@@ -1351,6 +1354,10 @@ void HGameController::initJoystick() {
     _innerJoystick->setPosition(Vec2(-10000, -10000));
     _outerJoystick->setPosition(Vec2(-10000, -10000));
     _joystickon = true;
+    _outerJoystick ->setVisible(false);
+    _innerJoystick ->setVisible(false);
+
+    
 
     // Reposition the joystick components
 }

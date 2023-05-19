@@ -49,7 +49,12 @@ class TutorialScene : public cugl::Scene2 {
     std::shared_ptr<scene2::PolygonNode> _frame5;
     std::shared_ptr<scene2::PolygonNode> _frame6;
     std::vector<std::shared_ptr<scene2::PolygonNode>> _frames;
+    std::vector<std::shared_ptr<cugl::Texture>> _sheets;
+    float _scale;
     int _page=0;
+    std::shared_ptr<scene2::PolygonNode> _back;
+    std::shared_ptr<scene2::PolygonNode> _previous;
+    std::shared_ptr<scene2::PolygonNode> _next;
 
   public:
 #pragma mark -

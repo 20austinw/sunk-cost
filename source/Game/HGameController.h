@@ -488,6 +488,10 @@ class HGameController {
     void addWallLower(int type, int c, int r);
 
     void addFurnitures(int type, int c, int r);
+    
+    std::vector<Vec2> randomTreasureLocation();
+    
+    Vec2 randomHunterLocation();
 
     void addCandles(int type, int c, int r);
 

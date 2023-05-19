@@ -40,6 +40,8 @@ using namespace std;
 bool TutorialScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     // Initialize the scene to a locked width
     _dimen = Application::get()->getDisplaySize();
+    _scale = (_dimen.width / 2532 >= _dimen.height / 1170) ? _dimen.width / 2532
+                                  : _dimen.height / 1170;
     _inputController = InputController::getInstance();
     _inputController->initListeners();
 //    _dimen *= SCENE_HEIGHT / _dimen.height;
@@ -77,83 +79,103 @@ bool TutorialScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
 
     // Acquire the scene built by the asset loader and resize it the scene
     _scene = cugl::Scene2::alloc(_dimen);
-    _frame0 = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("tutorial0"));
-    _frame0->setScale(0.7);
-    _frame0->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-    _frame0->setPosition(Vec2(200,0));
-    _frame0->setVisible(true);
-    _scene->addChild(_frame0);
+    
+    _sheets.push_back(assets->get<Texture>("tutorial0"));
+    _sheets.push_back(assets->get<Texture>("tutorial1"));
+    _sheets.push_back(assets->get<Texture>("tutorial2"));
+    _sheets.push_back(assets->get<Texture>("tutorial3"));
+    _sheets.push_back(assets->get<Texture>("tutorial4"));
+    _sheets.push_back(assets->get<Texture>("tutorial5"));
+    _sheets.push_back(assets->get<Texture>("tutorial6"));
+    
+    for (int i = 0; i<7;i++){
+        _frames.push_back(scene2::PolygonNode::allocWithTexture(_sheets[i]));
+        _frames[i]->setScale(_scale);
+        _frames[i]->setAnchor(Vec2::ANCHOR_CENTER);
+        _frames[i]->setPosition(_dimen/2);
+        _frames[i]->setVisible(false);
+        _scene->addChild(_frames[i]);
+    }
     
     _page = 0;
     
-    _frame1 = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("tutorial1"));
-    _frame1->setScale(0.7);
-    _frame1->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-    _frame1->setPosition(Vec2(200,0));
-    _frame1->setVisible(false);
-    _scene->addChild(_frame1);
-    
-    _frame2 = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("tutorial2"));
-    _frame2->setScale(0.7);
-    _frame2->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-    _frame2->setPosition(Vec2(200,0));
-    _frame2->setVisible(false);
-    _scene->addChild(_frame2);
-    
-    _frame3 = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("tutorial3"));
-    _frame3->setScale(0.7);
-    _frame3->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-    _frame3->setPosition(Vec2(200,0));
-    _frame3->setVisible(false);
-    _scene->addChild(_frame3);
-    
-    _frame4 = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("tutorial4"));
-    _frame4->setScale(0.7);
-    _frame4->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-    _frame4->setPosition(Vec2(200,0));
-    _frame4->setVisible(false);
-    _scene->addChild(_frame4);
-    
-    _frame5 = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("tutorial5"));
-    _frame5->setScale(0.7);
-    _frame5->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-    _frame5->setPosition(Vec2(200,0));
-    _frame5->setVisible(false);
-    _scene->addChild(_frame5);
-    
-    _frame6 = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("tutorial6"));
-    _frame6->setScale(0.7);
-    _frame6->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
-    _frame6->setPosition(Vec2(200,0));
-    _frame6->setVisible(false);
-    _scene->addChild(_frame6);
-    
-    _frames.push_back(_frame0);
-    _frames.push_back(_frame1);
-    _frames.push_back(_frame2);
-    _frames.push_back(_frame3);
-    _frames.push_back(_frame4);
-    _frames.push_back(_frame5);
-    _frames.push_back(_frame6);
+//    _frame0 = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("tutorial0"));
+//    _frame0->setScale(0.7);
+//    _frame0->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+//    _frame0->setPosition(Vec2(200,0));
+//    _frame0->setVisible(true);
+//    _scene->addChild(_frame0);
+//
+//    _page = 0;
+//
+//    _frame1 = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("tutorial1"));
+//    _frame1->setScale(0.7);
+//    _frame1->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+//    _frame1->setPosition(Vec2(200,0));
+//    _frame1->setVisible(false);
+//    _scene->addChild(_frame1);
+//
+//    _frame2 = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("tutorial2"));
+//    _frame2->setScale(0.7);
+//    _frame2->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+//    _frame2->setPosition(Vec2(200,0));
+//    _frame2->setVisible(false);
+//    _scene->addChild(_frame2);
+//
+//    _frame3 = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("tutorial3"));
+//    _frame3->setScale(0.7);
+//    _frame3->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+//    _frame3->setPosition(Vec2(200,0));
+//    _frame3->setVisible(false);
+//    _scene->addChild(_frame3);
+//
+//    _frame4 = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("tutorial4"));
+//    _frame4->setScale(0.7);
+//    _frame4->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+//    _frame4->setPosition(Vec2(200,0));
+//    _frame4->setVisible(false);
+//    _scene->addChild(_frame4);
+//
+//    _frame5 = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("tutorial5"));
+//    _frame5->setScale(0.7);
+//    _frame5->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+//    _frame5->setPosition(Vec2(200,0));
+//    _frame5->setVisible(false);
+//    _scene->addChild(_frame5);
+//
+//    _frame6 = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("tutorial6"));
+//    _frame6->setScale(0.7);
+//    _frame6->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+//    _frame6->setPosition(Vec2(200,0));
+//    _frame6->setVisible(false);
+//    _scene->addChild(_frame6);
+//
+//    _frames.push_back(_frame0);
+//    _frames.push_back(_frame1);
+//    _frames.push_back(_frame2);
+//    _frames.push_back(_frame3);
+//    _frames.push_back(_frame4);
+//    _frames.push_back(_frame5);
+//    _frames.push_back(_frame6);
 
+   
+    _back = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("back_button"));
+    _back->setAnchor(Vec2::ANCHOR_CENTER);
+    _back->setScale(0.8);
+    _back->setPosition(250,_dimen.height-100);
+    _scene->addChild(_back);
     
-    std::shared_ptr<scene2::PolygonNode> back = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("back_button"));
-    back->setAnchor(Vec2::ANCHOR_CENTER);
-    back->setScale(0.7);
-    back->setPosition(200,_dimen.height-100);
-    _scene->addChild(back);
+    _previous = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("left"));
+    _previous->setAnchor(Vec2::ANCHOR_CENTER);
+    _previous->setScale(1);
+    _previous->setPosition(250,_dimen.height/2);
+    _scene->addChild(_previous);
     
-    std::shared_ptr<scene2::PolygonNode> previous = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("left"));
-    previous->setAnchor(Vec2::ANCHOR_CENTER);
-    previous->setScale(0.8);
-    previous->setPosition(100,_dimen.height/2);
-    _scene->addChild(previous);
-    
-    std::shared_ptr<scene2::PolygonNode> next = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("right"));
-    next->setAnchor(Vec2::ANCHOR_CENTER);
-    next->setScale(1);
-    next->setPosition(_dimen.width-100,_dimen.height/2);
-    _scene->addChild(next);
+    _next = scene2::PolygonNode::allocWithTexture(_assets->get<Texture>("right"));
+    _next->setAnchor(Vec2::ANCHOR_CENTER);
+    _next->setScale(1);
+    _next->setPosition(_dimen.width-200,_dimen.height/2);
+    _scene->addChild(_next);
     
     setActive(false);
     return true;
@@ -162,7 +184,7 @@ bool TutorialScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
 void TutorialScene::update(float dt){
     _inputController->update(dt);
     
-    if(_inputController->didPress() && abs(_inputController->getPosition().x - 100) <100 &&
+    if(_inputController->didPress() && abs(_inputController->getPosition().x - 250) <100 &&
        abs(_inputController->getPosition().y -(_dimen.height/2)) <
        100){
         CULog("PREVIOUS PAGE");
@@ -171,7 +193,7 @@ void TutorialScene::update(float dt){
             _page = _page - 1;
         }
     }
-    else if(_inputController->didPress() && abs(_inputController->getPosition().x - (_dimen.width-100)) <100 &&
+    else if(_inputController->didPress() && abs(_inputController->getPosition().x - (_dimen.width-200)) <100 &&
             abs(_inputController->getPosition().y -_dimen.height/2) <100){
         CULog("NEXT PAGE");
         if(_page<6){

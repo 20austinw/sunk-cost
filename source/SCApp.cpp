@@ -163,6 +163,8 @@ void SCApp::update(float timestep) {
         break;
     case RESET:
         updateResetScene(timestep);
+    case TUTORIAL:
+        updateTutorialScene(timestep);
         break;
     }
 }
@@ -240,6 +242,19 @@ void SCApp::updateResetScene(float timestep) {
     }
 }
 
+void SCApp::updateTutorialScene(float timestep) {
+    _tutorial.update(timestep);
+    switch (_tutorial.getChoice()) {
+    
+    case TutorialScene::Choice::BACK:
+            _scene = State::LOAD;
+        break;
+    case TutorialScene::Choice::NONE:
+        // DO NOTHING
+        break;
+    }
+}
+
 void SCApp::updateLoadingScene(float timestep) {
     if (!_loaded && _loading.isActive()) {
         _loading.update(0.01f);
@@ -250,11 +265,12 @@ void SCApp::updateLoadingScene(float timestep) {
         _hostgame.init(_assets);
         _joingame.init(_assets);
         _spawn.init(_assets);
+        _tutorial.init(_assets);
         _played = false;
         _count = 0;
         _spiritGameplay = SGameController(getDisplaySize(), _assets);
         _hunterGameplay = HGameController(getDisplaySize(), _assets);
-        _menu.setActive(true);
+        _tutorial.setActive(true);
         _scene = State::MENU;
     }
 }
@@ -398,7 +414,11 @@ void SCApp::draw() {
         _hunterGameplay.render(_batch);
         break;
     case RESET:
+//        _hunterGameplay.render(_batch);
         _reset.render(_batch);
+        break;
+    case TUTORIAL:
+        _tutorial.render(_batch);
         break;
     }
 }

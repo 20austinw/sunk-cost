@@ -58,7 +58,7 @@ bool SpawnScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     scene->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
     scene->setPosition(Vec2(0, 0));
     scene->setVisible(true);
-    scene->setScale(Vec2(dimen.width / 1280, dimen.height / 720));
+    scene->setScale(Vec2(dimen.width / scene->getWidth(), dimen.height / scene->getHeight()));
 
     scene->doLayout(); // Repositions the HUD
 

@@ -725,7 +725,7 @@ void SGameController::checkLevelLoaded() {
         
         _spawnNode = scene2::SpriteNode::allocWithSheet(_assets->get<Texture>("spawn"), 5, 5, 25);
         Size dimen = Application::get()->getDisplaySize();
-        _spawnNode->setScale(Vec2(dimen.width / 1280, dimen.height / 720));
+        _spawnNode->setScale((Vec2(dimen.width / _spawnNode->getWidth(), dimen.height / _spawnNode->getHeight()))/getZoom());
         _spawnNode->setFrame(0);
         _spawnNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
         

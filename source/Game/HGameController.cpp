@@ -1195,29 +1195,34 @@ void HGameController::checkLevelLoaded() {
         _treasurepos.emplace_back(Vec2(46*128, (40-1-7)*128));
 
         _treasurepos.emplace_back(Vec2(55*128, (40-1-27)*128));
+        
+        
 
-        _treasure = TreasureController(_assets, _scene->getSize(), PLAYER_SIZE,
-                                       _treasurepos.at(index));
-        _treasure2 = TreasureController(_assets, _scene->getSize(), PLAYER_SIZE,
-                                        _treasurepos.at((index + 1) % 3));
-        _treasure3 = TreasureController(_assets, _scene->getSize(), PLAYER_SIZE,
-                                        _treasurepos.at((index + 2) % 3));
-        CULog("init POS %f", _treasurepos.at(index).x);
-        _treasure.setPosition(_treasurepos.at(index));
-        _treasure.addChildTo(_scene);
-        _treasure2.setPosition(_treasurepos.at((index + 1) % 3));
-        _treasure2.addChildTo(_scene);
-        _treasure3.setPosition(_treasurepos.at((index + 2) % 3));
-        _treasure3.addChildTo(_scene);
-
-        _hunter->setPosition(_hunterspun.at(index));
-        _exitpos = _hunterspun.at(index);
+        Vec2 posxx=randomHunterLocation();
+        _hunter->setPosition(posxx);
+        _exitpos = posxx;
 
         _exitTexture = _assets->get<Texture>("exit");
         _exit = scene2::PolygonNode::allocWithTexture(_exitTexture);
         _exit->setScale(1.3);
         _exit->setPosition(_exitpos);
 
+        
+        std:vector<Vec2> nowtrea=randomTreasureLocation();
+
+        _treasure = TreasureController(_assets, _scene->getSize(), PLAYER_SIZE,
+                                       nowtrea.at(index));
+        _treasure2 = TreasureController(_assets, _scene->getSize(), PLAYER_SIZE,
+                                        nowtrea.at((index + 1) % 3));
+        _treasure3 = TreasureController(_assets, _scene->getSize(), PLAYER_SIZE,
+                                        nowtrea.at((index + 1) % 3));
+
+        _treasure.setPosition(nowtrea.at(index));
+        _treasure.addChildTo(_scene);
+        _treasure2.setPosition(nowtrea.at((index + 1) % 3));
+        _treasure2.addChildTo(_scene);
+        _treasure3.setPosition(nowtrea.at((index + 1) % 3));
+        _treasure3.addChildTo(_scene);
         //_scene->addChild(_exit);
 
         _levelLoaded = true;
@@ -1245,6 +1250,124 @@ void HGameController::initCamera() {
     //    std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
     //        ->setZoom(2.5);
 }
+
+Vec2 HGameController::randomHunterLocation(){
+
+    std::vector<Vec2> boarder = _level->getBoarder();
+    srand(time(NULL));
+    int maxx= -1410065408;
+    int maxy=-1410065408;
+    int minx=1410065407;
+    int miny=1410065407;
+    for (auto i : boarder){
+        if (i.x>maxx){
+            maxx=i.x;
+        }
+        if (i.y>maxy){
+            maxy=i.y;
+        }
+        if (i.x<minx){
+            minx=i.x;
+        }
+        if (i.y<miny){
+            miny=i.y;
+        }
+    }
+    
+    cugl::EarclipTriangulator ea=EarclipTriangulator ();
+    ea.set(boarder);
+    ea.calculate();
+    
+    cugl::Poly2 inside=ea.getPolygon();
+    
+    int huntery = rand() % (maxy-miny)+miny+1;
+    int hunterx = rand() % (maxx-minx)+minx+1;
+
+    
+    for (auto obsta : _obstaclePoly) {
+        while (obsta.contains(Vec2(hunterx,huntery)) or !inside.contains(Vec2(hunterx,huntery))){
+            huntery = rand() % (maxy-miny)+miny+1;
+            hunterx = rand() % (maxx-minx)+minx+1;
+        }
+        
+            
+    }
+    
+    return Vec2(hunterx,huntery);
+}
+
+
+
+std::vector<Vec2> HGameController::randomTreasureLocation(){
+    std::vector<Vec2> treasurepo;
+    std::vector<Vec2> boarder = _level->getBoarder();
+    
+    srand(time(NULL));
+    int maxx= -1410065408;
+    int maxy=-1410065408;
+    int minx=1410065407;
+    int miny=1410065407;
+    for (auto i : boarder){
+        if(i.y<1280){
+            i.y=i.y+20;
+        }
+        if (i.x>maxx){
+            maxx=i.x;
+        }
+        if (i.y>maxy){
+            maxy=i.y;
+        }
+        if (i.x<minx){
+            minx=i.x;
+        }
+        if (i.y<miny){
+            miny=i.y;
+        }
+    }
+    
+    cugl::EarclipTriangulator ea=EarclipTriangulator ();
+    ea.set(boarder);
+    ea.calculate();
+    
+    cugl::Poly2 inside=ea.getPolygon();
+    
+    int huntery = rand() % (maxy-miny)+miny+1;
+    int hunterx = rand() % (maxx-minx)+minx+1;
+
+    
+    for (auto obsta : _obstaclePoly) {
+        while (obsta.contains(Vec2(hunterx,huntery)) or !inside.contains(Vec2(hunterx,huntery)) or sqrt((hunterx-_hunter->getPosition().x)*(hunterx-_hunter->getPosition().x)+(huntery-_hunter->getPosition().y)*(huntery-_hunter->getPosition().y))<3000){
+            huntery = rand() % (maxy-miny)+miny+1;
+            hunterx = rand() % (maxx-minx)+minx+1;
+        }
+    }
+    treasurepo.emplace_back(Vec2(hunterx,huntery));
+    
+    int huntery2 = rand() % (maxy-miny)+miny+1;
+    int hunterx2 = rand() % (maxx-minx)+minx+1;
+    
+    for (auto obsta : _obstaclePoly) {
+        while (obsta.contains(Vec2(hunterx2,huntery2)) or !inside.contains(Vec2(hunterx2,huntery2)) or sqrt((hunterx2-_hunter->getPosition().x)*(hunterx2-_hunter->getPosition().x)+(huntery2-_hunter->getPosition().y)*(huntery2-_hunter->getPosition().y))<3000){
+            huntery2 = rand() % (maxy-miny)+miny+1;
+            hunterx2 = rand() % (maxx-minx)+minx+1;
+        }
+    }
+    treasurepo.emplace_back(Vec2(hunterx2,huntery2));
+    
+    int huntery3 = rand() % (maxy-miny)+miny+1;
+    int hunterx3 = rand() % (maxx-minx)+minx+1;
+    
+    for (auto obsta : _obstaclePoly) {
+        while (obsta.contains(Vec2(hunterx3,huntery3)) or !inside.contains(Vec2(hunterx3,huntery3)) or sqrt((hunterx3-_hunter->getPosition().x)*(hunterx3-_hunter->getPosition().x)+(huntery3-_hunter->getPosition().y)*(huntery3-_hunter->getPosition().y))<3000){
+            huntery3 = rand() % (maxy-miny)+miny+1;
+            hunterx3 = rand() % (maxx-minx)+minx+1;
+        }
+    }
+    treasurepo.emplace_back(Vec2(hunterx3,huntery3));
+    
+    return treasurepo;
+}
+
 
 /**
  * Updates camera based on the position of the controlled player

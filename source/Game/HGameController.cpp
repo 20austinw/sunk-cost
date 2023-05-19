@@ -1111,7 +1111,7 @@ void HGameController::checkLevelLoaded() {
 
         _timerlock = 300;
         _timerLabellock = cugl::scene2::Label::allocWithText(
-            Vec2(200, 200), "5", _assets->get<Font>("pixel32"));
+            Vec2(200, 200), "5", _assets->get<Font>("gamefont"));
         _scene->addChild(_timerLabellock);
         _timerLabellock->setVisible(false);
 

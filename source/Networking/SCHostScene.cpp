@@ -98,7 +98,7 @@ bool HostScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _player = scene2::Label::allocWithText(
         Vec2(Application::get()->getDisplaySize().width / 2,
              Application::get()->getDisplaySize().height / 2 + 150),
-        "0/4 Players Joined", _assets->get<Font>("pixel32"));
+        "0/1 Players Joined", _assets->get<Font>("gamefont"));
     scene->addChild(_player);
     _status = Status::WAIT;
 

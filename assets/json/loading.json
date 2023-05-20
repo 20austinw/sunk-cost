@@ -162,7 +162,7 @@
                             "type": "Button",
                             "data": {
                                 "upnode": "up",
-                                "visible": true,
+                                "visible": false,
                                 "pushsize": true,
                                 "anchor": [
                                     0.5,
@@ -188,7 +188,7 @@
                             "type": "Button",
                             "data": {
                                 "upnode": "up",
-                                "visible": true,
+                                "visible": false,
                                 "pushsize": true,
                                 "anchor": [
                                     0.5,
@@ -215,7 +215,7 @@
                             "type": "Button",
                             "data": {
                                 "upnode": "up",
-                                "visible": true,
+                                "visible": false,
                                 "pushsize": true,
                                 "anchor": [
                                     0.5,

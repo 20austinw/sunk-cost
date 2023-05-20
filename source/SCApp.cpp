@@ -61,6 +61,8 @@ void SCApp::onStartup() {
     // Queue up the other assets
     _assets->loadDirectoryAsync("json/assets.json", nullptr);
     _assets->loadAsync<LevelModel>(LEVEL_FINAL_KEY, LEVEL_FINAL_FILE, nullptr);
+    
+    _scenesInitialized = false;
 
     net::NetworkLayer::start(net::NetworkLayer::Log::INFO);
     AudioEngine::start();
@@ -248,6 +250,10 @@ void SCApp::updateTutorialScene(float timestep) {
     
     case TutorialScene::Choice::BACK:
             _scene = State::LOAD;
+            _tutorial.setActive(false);
+            _loading.setActive(true);
+//            _loaded = true;
+            _loading.resetChoice();
         break;
     case TutorialScene::Choice::NONE:
         // DO NOTHING
@@ -259,20 +265,39 @@ void SCApp::updateLoadingScene(float timestep) {
     if (!_loaded && _loading.isActive()) {
         _loading.update(0.01f);
     } else {
-        _loading.dispose();
-        _menu.init(_assets);
-        _reset.init(_assets);
-        _hostgame.init(_assets);
-        _joingame.init(_assets);
-        _spawn.init(_assets);
-        _tutorial.init(_assets);
+        CULog("init");
+        if (!_scenesInitialized){
+            _menu.init(_assets);
+            _reset.init(_assets);
+            _hostgame.init(_assets);
+            _joingame.init(_assets);
+            _spawn.init(_assets);
+            _tutorial.init(_assets);
+            _scenesInitialized = true;
+        }
         _played = false;
         _count = 0;
         _spiritGameplay = SGameController(getDisplaySize(), _assets);
         _hunterGameplay = HGameController(getDisplaySize(), _assets);
-        _tutorial.setActive(true);
-        _scene = State::MENU;
+        _loading.setActive(false);
+        switch (_loading.getChoice()) {
+                
+               case LoadingScene::Choice::TUTORIAL:
+                    _tutorial.setActive(true);
+                   _scene = State::TUTORIAL;
+                   break;
+               case LoadingScene::Choice::PLAY:
+                   _scene = State::MENU;
+                   _menu.setActive(true);
+               case LoadingScene::Choice::SETTINGS:
+               case LoadingScene::Choice::CREDITS:
+               case LoadingScene::Choice::NONE:
+                   break;
+        }
     }
+   
+    
+    
 }
 
 void SCApp::updateHostScene(float timestep) {

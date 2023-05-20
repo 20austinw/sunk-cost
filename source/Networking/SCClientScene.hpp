@@ -52,6 +52,8 @@ class ClientScene : public cugl::Scene2 {
     std::shared_ptr<cugl::scene2::TextField> _gameid;
     /** The players label (for updating) */
     std::shared_ptr<cugl::scene2::Label> _player;
+    
+    std::shared_ptr<cugl::scene2::Label> _waiting;
 
     /** The network configuration */
     cugl::net::NetcodeConfig _config;
@@ -178,8 +180,7 @@ class ClientScene : public cugl::Scene2 {
      * @param button    The button to modify
      * @param text      The new text value
      */
-    void updateText(const std::shared_ptr<cugl::scene2::Button>& button,
-                    const std::string text);
+    void updateText(const std::string text);
 
     /**
      * Reconfigures the start button for this scene

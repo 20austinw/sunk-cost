@@ -970,8 +970,8 @@
                             0.0
                         ],
                         "size": [
-                            500,
-                            500
+                            700,
+                            650
                         ]
                     },
                     "children": {
@@ -1205,7 +1205,7 @@
                                     "layout": {
                                         "x_anchor": "right",
                                         "y_anchor": "middle",
-                                        "y_offset": -175,
+                                        "y_offset": -155,
                                         "absolute": true
                                     }
 
@@ -1233,7 +1233,7 @@
                                     "layout": {
                                         "x_anchor": "right",
                                         "y_anchor": "middle",
-                                        "y_offset": -175,
+                                        "y_offset": -155,
                                         "absolute": true
                                     }
 
@@ -1261,7 +1261,7 @@
                                     "layout": {
                                         "x_anchor": "right",
                                         "y_anchor": "middle",
-                                        "y_offset": -175,
+                                        "y_offset": -155,
                                         "absolute": true
                                     }
 
@@ -1289,7 +1289,7 @@
                                     "layout": {
                                         "x_anchor": "right",
                                         "y_anchor": "middle",
-                                        "y_offset": -175,
+                                        "y_offset": -155,
                                         "absolute": true
                                     }
 
@@ -1317,7 +1317,7 @@
                                     "layout": {
                                         "x_anchor": "right",
                                         "y_anchor": "middle",
-                                        "y_offset": -175,
+                                        "y_offset": -155,
                                         "absolute": true
                                     }
                                 },
@@ -1352,33 +1352,64 @@
                                 "priority": 2,
                                 "padding": [
                                     0,
-                                    50,
+                                    40,
                                     0,
-                                    0
+                                    10
                                 ]
                             }
                         },
                         "start": {
-                            "type": "Widget",
+                            "type": "Button",
                             "data": {
-                                "key": "textbutton",
-                                "variables": {
-                                    "size": [
-                                        400,
-                                        100
-                                    ],
-                                    "text": "Start Game",
-                                    "color": "#000088"
+                                "upnode": "up",
+                                "visible": true,
+                                "pushsize": true,
+                                "anchor": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": 0.5
+                            },
+                            "children": {
+                                "up": {
+                                    "type": "Image",
+                                    "data": {
+                                        "texture": "join_button"
+                                    }
                                 }
                             },
                             "layout": {
-                                "priority": 3,
+                                "y_anchor": "bottom",
+                                "padding": [0, -200, 0, 0]
+                            }
+                        },
+                        "waiting": {
+                            "type": "Label",
+                            "data": {
+                                "anchor": [0.5, 1.0],
+                                "scale": 1,
+                                "font": "gamefont",
+                                "visible": false,
+                                "text": "Waiting for player...",
                                 "padding": [
+                                    20,
                                     0,
-                                    50,
-                                    0,
-                                    0
+                                    20,
+                                    60
+                                ],
+                                "halign": "center",
+                                "valign": "bottom",
+                                "foreground": [
+                                    255,
+                                    255,
+                                    255,
+                                    255
                                 ]
+                            },
+                            "layout": {
+                                "y_anchor": "bottom",
+                                "y-offset": -475,
+                                "absolute": true
                             }
                         }
                     },

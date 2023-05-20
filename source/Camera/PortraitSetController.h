@@ -223,7 +223,7 @@ class PortraitSetController {
                 } else if (_index == _portraits[i]->getID() &&
                            _portraits[i]->getState() &&
                            _portraits[i]->getBattery() > 0) {
-                    float newBattery = _portraits[i]->getBattery() - 0.75;
+                    float newBattery = _portraits[i]->getBattery() - 1;
                     if (newBattery > 0) {
                         _portraits[i]->updateBattery(newBattery);
                     } else {

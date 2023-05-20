@@ -120,6 +120,8 @@ class SGameController {
     bool _hunterAdded;
 
     int _gameStatus = 0;
+    
+    int _win = 0;
 
 
     std::vector<std::shared_ptr<DoorController>> _doors;
@@ -284,6 +286,10 @@ class SGameController {
      * fully disconnected when ALL scenes have been disconnected.
      */
     void disconnect() { _network = nullptr; }
+    
+    bool getWin(){
+        return _win;
+    }
 
   private:
     void checkLevelLoaded();

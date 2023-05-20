@@ -497,6 +497,7 @@ void SGameController::update(float dt) {
         _timerLabel->setForeground(cugl::Color4::WHITE);
         if (_timeLeft <= 0) {
             transmitSpiritWin();
+            _win = 1;
             _gameStatus = 1;
 //            _endScene = std::make_shared<EndScene>(_scene, _assets, true, true);
 //            _endScene->addChildTo(_scene);

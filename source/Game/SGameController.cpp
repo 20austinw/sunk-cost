@@ -1205,8 +1205,8 @@ void SGameController::beginDetectTrap(){
     // for 3*3 -> generate red cue if is transable -> push to detection -> set false place trap in tile map
     // add detections to fifth layer
     Vec2 gridPos = _tilemap->mapPosToGridPos(Vec2(_hunterXPos, _hunterYPos));
-    for(int x = gridPos.x-1; x < gridPos.x+1; x++){
-        for(int y = gridPos.y-1; y < gridPos.y+1; y++){
+    for(int x = gridPos.x-2; x < gridPos.x+2; x++){
+        for(int y = gridPos.y-2; y < gridPos.y+2; y++){
             if (x >= 0 && y >= 0 &&
                 x < _tilemap->getDimensions().width &&
                 y < _tilemap->getDimensions().height && _tilemap->isTileGridTraversable(x, y)) {

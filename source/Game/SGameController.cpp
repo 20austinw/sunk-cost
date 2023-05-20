@@ -86,7 +86,7 @@ SGameController::SGameController(
         Vec2(0, 0), "              ", _assets->get<Font>("gamefont"));
     _timerScale = _textHeight / _timerLabel->getSize().height * 1.5;
     _sixthLayer->addChild(_timerLabel);
-    _endScene = std::make_shared<EndScene>(_scene, assets, true, true);
+//    _endScene = std::make_shared<EndScene>(_scene, assets, true, true);
 
     _trapTriggered = false;
     _doorUnlocked = false;
@@ -479,10 +479,10 @@ void SGameController::update(float dt) {
             _scene->getCamera()->screenToWorldCoords(Vec2(hPos, vPos)));
         _timerLabel->setForeground(cugl::Color4::WHITE);
         if (_timeLeft <= 0) {
-            _gameStatus = 1;
             transmitSpiritWin();
-            _endScene = std::make_shared<EndScene>(_scene, _assets, true, true);
-            _endScene->addChildTo(_scene);
+            _gameStatus = 1;
+//            _endScene = std::make_shared<EndScene>(_scene, _assets, true, true);
+//            _endScene->addChildTo(_scene);
         }
         _scene->getCamera()->update();
     } else if (_gameStatus == -1) {

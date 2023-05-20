@@ -69,14 +69,6 @@ bool LoadingScene::init(const std::shared_ptr<AssetManager>& assets) {
             }
         });
     
-    _settingsButton = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("load_row1_settings"));
-    _settingsButton->addListener([=](const std::string& name, bool down) {
-        this->_active = down;
-        if (down) {
-            _choice = Choice::SETTINGS;
-        }
-    });
-    
     _creditsButton = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("load_row1_credits"));
     _creditsButton->addListener([=](const std::string& name, bool down) {
         this->_active = down;
@@ -110,7 +102,6 @@ void LoadingScene::dispose() {
     }
     _button = nullptr;
     _creditsButton = nullptr;
-    _settingsButton = nullptr;
     _tutorialButton = nullptr;
     _bar = nullptr;
     _assets = nullptr;
@@ -134,11 +125,9 @@ void LoadingScene::update(float progress) {
             _bar->setVisible(false);
             _button->setVisible(true);
             _creditsButton->setVisible(true);
-            _settingsButton->setVisible(true);
             _tutorialButton->setVisible(true);
             _button->activate();
             _creditsButton->activate();
-            _settingsButton->activate();
             _tutorialButton->activate();
         }
         _bar->setProgress(_progress);

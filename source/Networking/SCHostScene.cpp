@@ -93,8 +93,9 @@ bool HostScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
 
     _codeLines = std::dynamic_pointer_cast<scene2::PolygonNode>(
         _assets->get<scene2::SceneNode>("host_code"));
-    //    _gameid =
-    //    std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("host_center_game_field_text"));
+
+    _waiting = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("host_center_waiting"));
+    
     _player = scene2::Label::allocWithText(
         Vec2(Application::get()->getDisplaySize().width / 2,
              Application::get()->getDisplaySize().height / 2 + 150),
@@ -182,9 +183,9 @@ void HostScene::setActive(bool value) {
  */
 void HostScene::updateText(const std::shared_ptr<scene2::Button>& button,
                            const std::string text) {
-    auto label = std::dynamic_pointer_cast<scene2::Label>(
-        button->getChildByName("up")->getChildByName("label"));
-    label->setText(text);
+//    auto label = std::dynamic_pointer_cast<scene2::Label>(
+//        button->getChildByName("up")->getChildByName("label"));
+//    label->setText(text);
 }
 
 #pragma mark -
@@ -299,11 +300,13 @@ bool HostScene::checkConnection() {
 void HostScene::configureStartButton() {
     // THIS IS WRONG. FIX ME.
     if (_codeDisplayed == false) {
-        updateText(_startgame, "Waiting");
+        _waiting->setVisible(true);
+        _startgame->setVisible(false);
         _startgame->deactivate();
-    } else {
-        updateText(_startgame, "Start Game");
+    } else if (_network->getNumPlayers() > 1) {
+        _waiting->setVisible(false);
         _startgame->activate();
+        _startgame->setVisible(true);
     }
 }
 

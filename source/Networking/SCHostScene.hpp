@@ -50,6 +50,8 @@ class HostScene : public cugl::Scene2 {
     std::shared_ptr<cugl::scene2::Label> _gameid;
     /** The players label (for updating) */
     std::shared_ptr<cugl::scene2::Label> _player;
+    
+    std::shared_ptr<cugl::scene2::Label> _waiting;
 
     /** The network configuration */
     cugl::net::NetcodeConfig _config;

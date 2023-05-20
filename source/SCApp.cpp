@@ -190,6 +190,11 @@ void SCApp::updateMenuScene(float timestep) {
             _scene = State::CLIENT;
             
             break;
+        case MenuScene::Choice::LOAD:
+            _loading.setActive(true);
+            _menu.setActive(false);
+            _scene = State::LOAD;
+            break;
         case MenuScene::Choice::NONE:
             // DO NOTHING
             break;
@@ -286,7 +291,6 @@ void SCApp::updateLoadingScene(float timestep) {
         _spiritGameplay = SGameController(getDisplaySize(), _assets);
         _hunterGameplay = HGameController(getDisplaySize(), _assets);
         switch (_loading.getChoice()) {
-                
             case LoadingScene::Choice::TUTORIAL:
                 _tutorial.setActive(true);
                 _scene = State::TUTORIAL;
@@ -295,7 +299,6 @@ void SCApp::updateLoadingScene(float timestep) {
                 _scene = State::MENU;
                 _menu.setActive(true);
                 break;
-            case LoadingScene::Choice::SETTINGS:
             case LoadingScene::Choice::CREDITS:
                 _scene = State::CREDIT;
                 _credit.setActive(true);
@@ -428,6 +431,7 @@ void SCApp::updateCreditScene(float timestep) {
             break;
     }
 }
+
 /**
  * The method called to draw the application to the screen.
  *
@@ -469,8 +473,6 @@ void SCApp::draw() {
             break;
         case CREDIT:
             _credit.render(_batch);
-            break;
-        case SETTINGS:
             break;
     }
 }

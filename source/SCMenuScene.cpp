@@ -71,6 +71,14 @@ bool MenuScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             _choice = Choice::CLIENT;
         }
     });
+    
+    _backButton = std::dynamic_pointer_cast<scene2::Button>(_assets->get<scene2::SceneNode>("menu_back"));
+    
+    _backButton->addListener([=](const std::string& name, bool down) {
+        if (down) {
+            _choice = Choice::LOAD;
+        }
+    });
 
     addChild(scene);
     setActive(false);
@@ -103,12 +111,15 @@ void MenuScene::setActive(bool value) {
             _choice = NONE;
             _hostbutton->activate();
             _clientbutton->activate();
+            _backButton->activate();
         } else {
             _hostbutton->deactivate();
             _clientbutton->deactivate();
+            _backButton->deactivate();
             // If any were pressed, reset them
             _hostbutton->setDown(false);
             _clientbutton->setDown(false);
+            _backButton->setDown(false);
         }
     }
 }

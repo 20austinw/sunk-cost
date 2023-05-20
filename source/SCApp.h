@@ -49,8 +49,7 @@ class SCApp : public cugl::Application {
 
         RESET,
         TUTORIAL,
-        CREDIT,
-        SETTINGS
+        CREDIT
     };
 
   protected:

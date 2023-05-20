@@ -136,7 +136,7 @@
             "file": "textures/minimap.png"
         },
         "minimaplarge": {
-            "file": "textures/hunter_minimap_big.png"
+            "file": "textures/minimap2.png"
         },
         "button": {
             "file": "textures/button.png"

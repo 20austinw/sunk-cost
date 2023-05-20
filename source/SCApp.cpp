@@ -61,6 +61,8 @@ void SCApp::onStartup() {
     // Queue up the other assets
     _assets->loadDirectoryAsync("json/assets.json", nullptr);
     _assets->loadAsync<LevelModel>(LEVEL_FINAL_KEY, LEVEL_FINAL_FILE, nullptr);
+    
+    _scenesInitialized = false;
 
     net::NetworkLayer::start(net::NetworkLayer::Log::INFO);
     AudioEngine::start();
@@ -212,43 +214,30 @@ void SCApp::updateResetScene(float timestep) {
     switch (_reset.getChoice()) {
     case ResetScene::Choice::LEAVE:
         CULog("leaveeee");
-////        _reset.setActive(false);
+//        _reset.setActive(false);
         _joingame.setActive(false);
         _joingame.dispose();
         _hostgame.setActive(false);
         _hostgame.dispose();
         _played = false;
-//        _spiritGameplay = SGameController(getDisplaySize(), _assets);
-//        _hunterGameplay = HGameController(getDisplaySize(), _assets);
-//                _joingame.setActive(false);
-//        _menu.setActive(true);
-        _scene = State::LOAD;
+        _spiritGameplay = SGameController(getDisplaySize(), _assets);
+        _hunterGameplay = HGameController(getDisplaySize(), _assets);
+        //        _joingame.setActive(false);
+        _menu.setActive(true);
+        _scene = State::MENU;
         break;
     case ResetScene::Choice::REPLAY:
-//        CULog("replayyy");
-////        _reset.setActive(false);
-//        _joingame.setActive(false);
-//        _joingame.dispose();
-//        _hostgame.setActive(false);
-//        _hostgame.dispose();
-//        _spiritGameplay = SGameController(getDisplaySize(), _assets);
-//        _hunterGameplay = HGameController(getDisplaySize(), _assets);
-//        _joingame.setActive(true);
-//        _scene = State::CLIENTGAME;
-//        break;
-            CULog("replayyyy");
-    //        _reset.setActive(false);
-            _joingame.setActive(false);
-            _joingame.dispose();
-            _hostgame.setActive(false);
-            _hostgame.dispose();
-            _played = false;
-            _spiritGameplay = SGameController(getDisplaySize(), _assets);
-            _hunterGameplay = HGameController(getDisplaySize(), _assets);
-            //        _joingame.setActive(false);
-            _menu.setActive(true);
-            _scene = State::MENU;
-            break;
+        CULog("replayyy");
+//        _reset.setActive(false);
+        _joingame.setActive(false);
+        _joingame.dispose();
+        _hostgame.setActive(false);
+        _hostgame.dispose();
+        _spiritGameplay = SGameController(getDisplaySize(), _assets);
+        _hunterGameplay = HGameController(getDisplaySize(), _assets);
+        _joingame.setActive(true);
+        _scene = State::CLIENTGAME;
+        break;
     case ResetScene::Choice::NONE:
         // DO NOTHING
         break;
@@ -261,6 +250,10 @@ void SCApp::updateTutorialScene(float timestep) {
     
     case TutorialScene::Choice::BACK:
             _scene = State::LOAD;
+            _tutorial.setActive(false);
+            _loading.setActive(true);
+//            _loaded = true;
+            _loading.resetChoice();
         break;
     case TutorialScene::Choice::NONE:
         // DO NOTHING
@@ -272,20 +265,39 @@ void SCApp::updateLoadingScene(float timestep) {
     if (!_loaded && _loading.isActive()) {
         _loading.update(0.01f);
     } else {
-        _loading.dispose();
-        _menu.init(_assets);
-        _reset.init(_assets);
-        _hostgame.init(_assets);
-        _joingame.init(_assets);
-        _spawn.init(_assets);
-        _tutorial.init(_assets);
+        CULog("init");
+        if (!_scenesInitialized){
+            _menu.init(_assets);
+            _reset.init(_assets);
+            _hostgame.init(_assets);
+            _joingame.init(_assets);
+            _spawn.init(_assets);
+            _tutorial.init(_assets);
+            _scenesInitialized = true;
+        }
         _played = false;
         _count = 0;
         _spiritGameplay = SGameController(getDisplaySize(), _assets);
         _hunterGameplay = HGameController(getDisplaySize(), _assets);
-        _menu.setActive(true);
-        _scene = State::MENU;
+        _loading.setActive(false);
+        switch (_loading.getChoice()) {
+                
+               case LoadingScene::Choice::TUTORIAL:
+                    _tutorial.setActive(true);
+                   _scene = State::TUTORIAL;
+                   break;
+               case LoadingScene::Choice::PLAY:
+                   _scene = State::MENU;
+                   _menu.setActive(true);
+               case LoadingScene::Choice::SETTINGS:
+               case LoadingScene::Choice::CREDITS:
+               case LoadingScene::Choice::NONE:
+                   break;
+        }
     }
+   
+    
+    
 }
 
 void SCApp::updateHostScene(float timestep) {
@@ -386,7 +398,7 @@ void SCApp::updateSGameController(float timestep) {
         _spiritGameplay.setHost(false);
         break;
     case SGameController::Status::RESET:
-        _reset.setScene(2+int(_spiritGameplay.getWin()));
+        _reset.setScene(2+int(_hunterGameplay.getWinStatus()));
         _scene = State::RESET;
     case SGameController::Status::WAIT:
     case SGameController::Status::IDLE:

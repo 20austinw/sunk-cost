@@ -82,6 +82,8 @@ class SCApp : public cugl::Application {
     SCApp::State _scene;
     int _count;
     bool _played;
+    
+    bool _scenesInitialized;
 
   public:
     /**

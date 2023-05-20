@@ -240,18 +240,10 @@ void TutorialScene::render(std::shared_ptr<cugl::SpriteBatch>& batch) {
  * @param value whether the scene is currently active
  */
 void TutorialScene::setActive(bool value) {
-//    if (isActive() != value) {
-//        Scene2::setActive(value);
-//        if (value) {
-//            _choice = NONE;
-//            _hostbutton->activate();
-//            _clientbutton->activate();
-//        } else {
-//            _hostbutton->deactivate();
-//            _clientbutton->deactivate();
-//            // If any were pressed, reset them
-//            _hostbutton->setDown(false);
-//            _clientbutton->setDown(false);
-//        }
-//    }
+    if (isActive() != value) {
+        Scene2::setActive(value);
+        if (value) {
+            _choice = NONE;
+        }
+    }
 }

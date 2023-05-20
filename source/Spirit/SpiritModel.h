@@ -69,7 +69,7 @@ class SpiritModel {
 
     float _offset;
 
-    float KILL_COOL = 600;
+    float KILL_COOL = 1200;
 
   public:
     /** A public accessible, read-only version of the energy level */

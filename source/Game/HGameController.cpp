@@ -1317,7 +1317,7 @@ std::vector<Vec2> HGameController::randomTreasureLocation(){
     int miny=1410065407;
     for (auto i : boarder){
         if(i.y<1280){
-            i.y=i.y+20;
+            i.y=i.y+60;
         }
         if (i.x>maxx){
             maxx=i.x;
@@ -1344,7 +1344,7 @@ std::vector<Vec2> HGameController::randomTreasureLocation(){
 
     
     for (auto obsta : _obstaclePoly) {
-        while (obsta.contains(Vec2(hunterx,huntery)) or obsta.contains(Vec2(hunterx,huntery) - Vec2(130, 270)+ Vec2(40, 0)) or
+        while (obsta.contains(Vec2(hunterx,huntery)) or obsta.contains(Vec2(hunterx,huntery) - Vec2(130, 270)+ Vec2(40, 0)) or !_tilemap->isTileTraversable(Vec2(hunterx,huntery)) or
                obsta.contains(Vec2(hunterx,huntery) - Vec2(130, 270)- Vec2(40, 0)) or !inside.contains(Vec2(hunterx,huntery)) or !inside.contains(Vec2(hunterx,huntery) - Vec2(130, 270)) or !inside.contains(Vec2(hunterx,huntery) - Vec2(130, 270)+ Vec2(40, 0)) or sqrt((hunterx-_hunter->getPosition().x)*(hunterx-_hunter->getPosition().x)+(huntery-_hunter->getPosition().y)*(huntery-_hunter->getPosition().y))<3000){
             huntery = rand() % (maxy-miny)+miny+1;
             hunterx = rand() % (maxx-minx)+minx+1;
@@ -1356,8 +1356,8 @@ std::vector<Vec2> HGameController::randomTreasureLocation(){
     int hunterx2 = rand() % (maxx-minx)+minx+1;
     
     for (auto obsta : _obstaclePoly) {
-        while (obsta.contains(Vec2(hunterx2,huntery2))  or obsta.contains(Vec2(hunterx2,huntery2) - Vec2(130, 270)+ Vec2(40, 0)) or
-               obsta.contains(Vec2(hunterx2,huntery2) - Vec2(130, 270)- Vec2(40, 0)) or  !inside.contains(Vec2(hunterx2,huntery2)) or !inside.contains(Vec2(hunterx2,huntery2) - Vec2(130, 270)) or !inside.contains(Vec2(hunterx2,huntery2) - Vec2(130, 270)+ Vec2(40, 0)) or sqrt((hunterx2-_hunter->getPosition().x)*(hunterx2-_hunter->getPosition().x)+(huntery2-_hunter->getPosition().y)*(huntery2-_hunter->getPosition().y))<3000 or huntery2==huntery){
+        while (obsta.contains(Vec2(hunterx2,huntery2))  or obsta.contains(Vec2(hunterx2,huntery2) - Vec2(130, 270)+ Vec2(40, 0)) or !_tilemap->isTileTraversable(Vec2(hunterx2,huntery2)) or
+               obsta.contains(Vec2(hunterx2,huntery2) - Vec2(130, 270)- Vec2(40, 0)) or  !inside.contains(Vec2(hunterx2,huntery2)) or !inside.contains(Vec2(hunterx2,huntery2) - Vec2(130, 270)) or !inside.contains(Vec2(hunterx2,huntery2) - Vec2(130, 270)+ Vec2(40, 0)) or sqrt((hunterx2-_hunter->getPosition().x)*(hunterx2-_hunter->getPosition().x)+(huntery2-_hunter->getPosition().y)*(huntery2-_hunter->getPosition().y))<3000 or huntery2==huntery or sqrt((hunterx2-hunterx)*(hunterx2-hunterx)+(huntery2-huntery)*(huntery2-huntery))<2000){
             huntery2 = rand() % (maxy-miny)+miny+1;
             hunterx2 = rand() % (maxx-minx)+minx+1;
         }
@@ -1368,8 +1368,8 @@ std::vector<Vec2> HGameController::randomTreasureLocation(){
     int hunterx3 = rand() % (maxx-minx)+minx+1;
     
     for (auto obsta : _obstaclePoly) {
-        while (obsta.contains(Vec2(hunterx3,huntery3)) or obsta.contains(Vec2(hunterx3,huntery3) - Vec2(130, 270)+ Vec2(40, 0)) or
-               obsta.contains(Vec2(hunterx3,huntery3) - Vec2(130, 270)- Vec2(40, 0)) or !inside.contains(Vec2(hunterx3,huntery3)) or !inside.contains(Vec2(hunterx3,huntery3) - Vec2(130, 270)) or !inside.contains(Vec2(hunterx3,huntery3) - Vec2(130, 270)+ Vec2(40, 0)) or sqrt((hunterx3-_hunter->getPosition().x)*(hunterx3-_hunter->getPosition().x)+(huntery3-_hunter->getPosition().y)*(huntery3-_hunter->getPosition().y))<3000 or huntery3==huntery or huntery3==huntery2){
+        while (obsta.contains(Vec2(hunterx3,huntery3)) or obsta.contains(Vec2(hunterx3,huntery3) - Vec2(130, 270)+ Vec2(40, 0)) or !_tilemap->isTileTraversable(Vec2(hunterx3,huntery3)) or
+               obsta.contains(Vec2(hunterx3,huntery3) - Vec2(130, 270)- Vec2(40, 0)) or !inside.contains(Vec2(hunterx3,huntery3)) or !inside.contains(Vec2(hunterx3,huntery3) - Vec2(130, 270)) or !inside.contains(Vec2(hunterx3,huntery3) - Vec2(130, 270)+ Vec2(40, 0)) or sqrt((hunterx3-_hunter->getPosition().x)*(hunterx3-_hunter->getPosition().x)+(huntery3-_hunter->getPosition().y)*(huntery3-_hunter->getPosition().y))<3000 or huntery3==huntery or huntery3==huntery2 or sqrt((hunterx3-hunterx)*(hunterx3-hunterx)+(huntery3-huntery)*(huntery3-huntery))<2000 or sqrt((hunterx3-hunterx2)*(hunterx3-hunterx2)+(huntery3-huntery2)*(huntery3-huntery2))<2000){
             huntery3 = rand() % (maxy-miny)+miny+1;
             hunterx3 = rand() % (maxx-minx)+minx+1;
         }

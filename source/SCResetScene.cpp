@@ -134,7 +134,7 @@ void ResetScene::update(float dt){
     else if(_inputController->didPress() && abs(_inputController->getPosition().x - (_dimen.width/2+400)) <300 &&
             abs(_inputController->getPosition().y -(_dimen.height/2+400)) <100){
         CULog("replay");
-        _choice = Choice::LEAVE;
+        _choice = Choice::REPLAY;
     }
 
 }

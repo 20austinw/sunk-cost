@@ -102,12 +102,6 @@
         "stutorial5": {
             "file": "textures/s5.png"
         },
-        "hunterorange": {
-            "file": "textures/diver_orange_walking_animation.png"
-        },
-        "huntergreen": {
-            "file": "textures/diver_green_walking_animation.png"
-        },
         "trap": {
             "file": "textures/trap.png"
         },
@@ -122,9 +116,6 @@
         },
         "map": {
             "file": "textures/map.png"
-        },
-        "trap_animation": {
-            "file": "textures/clam_trap.png"
         },
         "trap_animation2": {
             "file": "textures/clam_trap_ani.png"

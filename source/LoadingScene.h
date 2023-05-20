@@ -30,6 +30,17 @@
  * this button will inform the application root to switch to the gameplay mode.
  */
 class LoadingScene : public cugl::Scene2 {
+public:
+    enum Choice {
+        NONE,
+        
+        CREDITS,
+        
+        TUTORIAL,
+        
+        PLAY
+    };
+    
   protected:
     /** The asset manager for loading. */
     std::shared_ptr<cugl::AssetManager> _assets;
@@ -48,12 +59,14 @@ class LoadingScene : public cugl::Scene2 {
     float _progress;
     /** Whether or not the player has pressed play to continue */
     bool _completed;
+    
+    std::shared_ptr<cugl::scene2::Button> _creditsButton;
 
-    int _frameNum = 0;
-
-    std::shared_ptr<cugl::scene2::SpriteNode> _background;
-
-    int _ticks = 0;
+    std::shared_ptr<cugl::scene2::Button> _tutorialButton;
+    
+    Choice _choice;
+    
+    
 
   public:
 #pragma mark -
@@ -109,6 +122,17 @@ class LoadingScene : public cugl::Scene2 {
      * @return true if loading is complete, but the player has not pressed play
      */
     bool isPending() const;
+    
+    /**
+     * Returns the user's menu choice.
+     *
+     * This will return NONE if the user had no yet made a choice.
+     *
+     * @return the user's menu choice.
+     */
+    Choice getChoice() const { return _choice; };
+    
+    void resetChoice() { _choice = Choice::NONE; };
 };
 
 #endif /* __SL_LOADING_SCENE_H__ */

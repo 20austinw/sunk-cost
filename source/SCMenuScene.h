@@ -25,7 +25,9 @@ class MenuScene : public cugl::Scene2 {
         /** User wants to host a game */
         HOST,
         /** User wants to join a game */
-        CLIENT
+        CLIENT,
+        
+        LOAD
     };
 
   protected:
@@ -35,6 +37,8 @@ class MenuScene : public cugl::Scene2 {
     std::shared_ptr<cugl::scene2::Button> _hostbutton;
     /** The menu button for joining a game */
     std::shared_ptr<cugl::scene2::Button> _clientbutton;
+    
+    std::shared_ptr<cugl::scene2::Button> _backButton;
     /** The player menu choice */
     Choice _choice;
 

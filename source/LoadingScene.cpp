@@ -62,17 +62,33 @@ bool LoadingScene::init(const std::shared_ptr<AssetManager>& assets) {
     _button = std::dynamic_pointer_cast<scene2::Button>(
         assets->get<scene2::SceneNode>("load_play"));
     _button->addListener(
-        [=](const std::string& name, bool down) { this->_active = down; });
+        [=](const std::string& name, bool down) {
+            this->_active = down;
+            if (down) {
+                _choice = Choice::PLAY;
+            }
+        });
 
-    _background = std::dynamic_pointer_cast<scene2::SpriteNode>(
-        assets->get<scene2::SceneNode>("load_logo"));
-    _background->setScale(Application::get()->getDisplayHeight() /
-                          (_background->getHeight() * 1.5));
+    _creditsButton = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("load_row1_credits"));
+    _creditsButton->addListener([=](const std::string& name, bool down) {
+        this->_active = down;
+        if (down) {
+            _choice = Choice::CREDITS;
+        }
+    });
+    
+    _tutorialButton = std::dynamic_pointer_cast<scene2::Button>(assets->get<scene2::SceneNode>("load_row1_tutorial"));
+    _tutorialButton->addListener([=](const std::string& name, bool down) {
+        this->_active = down;
+        if (down) {
+            _choice = Choice::TUTORIAL;
+        }
+    });
+
     Application::get()->setClearColor(Color4(192, 192, 192, 255));
     addChild(layer);
 
-    _frameNum = 0;
-    _ticks = 0;
+    _choice = Choice::NONE;
     return true;
 }
 
@@ -85,6 +101,8 @@ void LoadingScene::dispose() {
         _button->deactivate();
     }
     _button = nullptr;
+    _creditsButton = nullptr;
+    _tutorialButton = nullptr;
     _bar = nullptr;
     _assets = nullptr;
     _progress = 0.0f;
@@ -106,22 +124,14 @@ void LoadingScene::update(float progress) {
             _progress = 1.0f;
             _bar->setVisible(false);
             _button->setVisible(true);
+            _creditsButton->setVisible(true);
+            _tutorialButton->setVisible(true);
             _button->activate();
+            _creditsButton->activate();
+            _tutorialButton->activate();
         }
         _bar->setProgress(_progress);
     }
-
-    if (_ticks == 6) {
-        if (_frameNum >= 39) {
-            _frameNum = 0;
-        } else {
-            _frameNum++;
-        }
-        _ticks = 0;
-    }
-
-    _ticks++;
-    _background->setFrame(_frameNum);
 }
 
 /**

@@ -17,7 +17,7 @@ class SpiritView {
   private:
     std::shared_ptr<scene2::PolygonNode> _node;
 
-    std::vector<std::shared_ptr<scene2::SpriteNode>> _locks;
+    std::vector<std::shared_ptr<scene2::PolygonNode>> _locks;
 
     std::vector<std::shared_ptr<scene2::PolygonNode>> _trapButtons;
 
@@ -101,18 +101,14 @@ class SpiritView {
         _lockAsset = assets->get<Texture>("lock_button");
         _trapAsset = assets->get<Texture>("trap_button");
         _killAsset = assets->get<Texture>("kill_button");
-        _lockScaleFactor = _buttonSize / scene2::SpriteNode::allocWithSheet(
-                                             _lockAsset, 2, 8, 12)
-                                             ->getWidth();
+        _lockScaleFactor = _buttonSize / _lockAsset->getSize().width;
         _trapScaleFactor = _buttonSize / _trapAsset->getSize().width;
         _killScaleFactor = _buttonSize / scene2::SpriteNode::allocWithSheet(
-                                             _killAsset, 2, 8, 16)
+                                             _killAsset, 4, 4, 13)
                                              ->getWidth();
-        //        CULog("%f", _scaleFactor);
         for (int i = 0; i < locks; i++) {
             _locks.emplace_back(
-                scene2::SpriteNode::allocWithSheet(_lockAsset, 2, 8, 12));
-            _locks.at(i)->setFrame(0);
+                                scene2::PolygonNode::allocWithTexture(_lockAsset));
             _locks[0]->setScale(_lockScaleFactor / getZoom());
             addExtra(_lockExtra, i + 1);
         }
@@ -124,7 +120,7 @@ class SpiritView {
             addExtra(_trapExtra, i + 1);
         }
 
-        _killButton = scene2::SpriteNode::allocWithSheet(_killAsset, 2, 8, 16);
+        _killButton = scene2::SpriteNode::allocWithSheet(_killAsset, 4, 4, 13);
         _killButton->setFrame(0);
         _killButton->setScale(_killScaleFactor / getZoom());
 
@@ -333,8 +329,7 @@ class SpiritView {
 
     void addNewLock(std::shared_ptr<cugl::scene2::PolygonNode>& node) {
         _locks.emplace_back(
-            scene2::SpriteNode::allocWithSheet(_lockAsset, 2, 8, 12));
-        _locks.at(_locks.size() - 1)->setFrame(0);
+                            scene2::PolygonNode::allocWithTexture(_lockAsset));
         _locks.at(_locks.size() - 1)->setScale(_lockScaleFactor);
         addExtra(_lockExtra, _locks.size());
         node->addChild(_locks.at(_locks.size() - 1));

@@ -162,12 +162,12 @@ void SpiritController::updateKillFrame() {
         _model->setKillCooldown(_model->killCool - 1);
     }
     if (_model->isKillable()) {
-        _view->setKillFrame(15);
+        _view->setKillFrame(12);
         return;
     }
-    float step = _model->getMaxKillCool() / 14;
+    float step = _model->getMaxKillCool() / 11;
     int frame = _model->killCool / step;
-    _view->setKillFrame(15 - frame);
+    _view->setKillFrame(12 - frame);
 }
 
 void SpiritController::updateKillBtnsPos(bool selection) {

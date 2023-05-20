@@ -61,6 +61,8 @@ SGameController::SGameController(
     // Initialize PortraitSetController
     _portraits = std::make_shared<PortraitSetController>(_assets, _scene, 0,
                                                          displaySize);
+        
+        
 
     // Initialize HunterController
 
@@ -86,7 +88,7 @@ SGameController::SGameController(
         Vec2(0, 0), "              ", _assets->get<Font>("gamefont"));
     _timerScale = _textHeight / _timerLabel->getSize().height * 1.5;
     _sixthLayer->addChild(_timerLabel);
-    _endScene = std::make_shared<EndScene>(_scene, assets, true, true);
+//    _endScene = std::make_shared<EndScene>(_scene, assets, true, true);
 
     _trapTriggered = false;
     _doorUnlocked = false;
@@ -146,6 +148,10 @@ void SGameController::update(float dt) {
     inputController->update(dt);
     inputController->readInput();
     
+    if(_spawn){
+        updateSpawn();
+    }
+    
     transmitTimer(_timeLeft);
 
     // Disable indicators by default
@@ -156,51 +162,62 @@ void SGameController::update(float dt) {
     for (auto& shadow : _shadows) {
         shadow->setVisible(false);
     }
+    for (auto& grayshadow : _grayshadows) {
+        grayshadow->setVisible(false);
+    }
 
     if (_gameStatus == 0) {
         _scene->getCamera()->update();
         bool preSelection = _selection;
         // Not in selection phase
-        if (!_viewButton->update()) {
-            _selection = false;
-            _spirit.getView()->setVisible(true);
-            if (_viewButton->getCameraIndex() != -1) {
-                _portraits->setIndex(_viewButton->getCameraIndex());
-//                _shadows[_viewButton->getCameraIndex() - 1]->setVisible(true);
-                transmitActiveCamIndex(_viewButton->getCameraIndex());
-                _scene->getCamera()->setPosition(
-                    _indicators[_portraits->getIndex() - 1]->getPosition());
-                std::dynamic_pointer_cast<OrthographicCamera>(
-                    _scene->getCamera())
-                    ->setZoom(_scene->getSize().width /
-                              _indicators[_portraits->getIndex() - 1]
-                                  ->getSize()
-                                  .width);
+        if(!_spawn){
+            if (!_viewButton->update()) {
+                _selection = false;
+                _spirit.getView()->setVisible(true);
+                if (_viewButton->getCameraIndex() != -1) {
+                    _portraits->setIndex(_viewButton->getCameraIndex());
+                    if (_spirit.getModel()->isOnKill){
+                        _shadows[_viewButton->getCameraIndex() - 1]->setVisible(true);
+                    } else {
+                        _grayshadows[_viewButton->getCameraIndex() - 1]->setVisible(true);
+                    }
+                    _scene->getCamera()->setPosition(
+                        _indicators[_portraits->getIndex() - 1]->getPosition());
+                    std::dynamic_pointer_cast<OrthographicCamera>(
+                        _scene->getCamera())
+                        ->setZoom(_scene->getSize().width /
+                                  _indicators[_portraits->getIndex() - 1]
+                                      ->getSize()
+                                      .width);
+                }
+            }
+            // In selection phase
+            else {
+                _selection = true;
+                _spirit.getView()->setVisible(false);
+                _scene->getCamera()->setPosition(_portraits->getPosition(0));
+                std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
+                    ->setZoom(0.3);
+                auto worldPos = _scene->getCamera()->screenToWorldCoords(
+                    inputController->getTouchPos());
+                auto nearestCameraPos =
+                    _portraits->getPosition(_viewButton->getCameraIndex());
+                if (worldPos.distance(nearestCameraPos) <= 400) {
+                    _indicators[_viewButton->getCameraIndex() - 1]->setVisible(
+                        true);
+                }
             }
         }
-        // In selection phase
-        else {
-            _selection = true;
-            _spirit.getView()->setVisible(false);
-            _scene->getCamera()->setPosition(_portraits->getPosition(0));
-            std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
-                ->setZoom(0.3);
-            auto worldPos = _scene->getCamera()->screenToWorldCoords(
-                inputController->getTouchPos());
-            auto nearestCameraPos =
-                _portraits->getPosition(_viewButton->getCameraIndex());
-            if (worldPos.distance(nearestCameraPos) <= 400) {
-                _indicators[_viewButton->getCameraIndex() - 1]->setVisible(
-                    true);
-            }
+        
+        if(_portraits->getCurState() && !_selection){
+            transmitActiveCamIndex(_portraits->getIndex());
+        }else{
+            transmitActiveCamIndex(-1);
         }
-
-        CULog("%f, %f", _scene->getCamera()->getPosition().x,
-              _scene->getCamera()->getPosition().y);
 
         _scene->getCamera()->update();
 
-        if (preSelection != _selection) {
+        if (!_spawn && preSelection != _selection) {
             // start select- remove hunter
             if (_selection) {
                 for (int n = 0; n < _hunterNodes.size(); n++) {
@@ -217,14 +234,11 @@ void SGameController::update(float dt) {
             }
         }
 
-        _scene->getCamera()->update();
-
-        _scene->getCamera()->update();
-
         // Draw background
         _background->setScale(2 / getZoom());
         _background->setPosition(_scene->getCamera()->screenToWorldCoords(
             Vec2(0, _scene->getSize().height)));
+        
         sortNodes();
 
         AudioEngine::get()->play("theme", _theme, false, 0.5, false);
@@ -263,7 +277,7 @@ void SGameController::update(float dt) {
         // logic for door lock
         if ((inputController->isTouchDown() || _spirit.getModel()->isOnLock) &&
             _spirit.getModel()->doors >= 0 && !_blocked &&
-            !_spirit.getModel()->isOnTrap && !_spirit.getModel()->isOnKill) {
+            !_spirit.getModel()->isOnTrap && !_spirit.getModel()->isOnKill && !_spawn) {
             if (_spirit.getModel()->isOnLock ||
                 _spirit.touchInLockBound(cameraPos)) {
                 canSwitch = false;
@@ -289,7 +303,7 @@ void SGameController::update(float dt) {
                     }
                 }
             }
-        } else if (_blocked && _spirit.getModel()->isOnLock) {
+        } else if (_blocked && _spirit.getModel()->isOnLock && !_spawn) {
             _spirit.getModel()->setLockState(false);
             for (int i = 0; i < _doors.size(); i++) {
                 _doors.at(i)->resetToUnlock();
@@ -299,7 +313,7 @@ void SGameController::update(float dt) {
         // logic for trap placement
         if ((inputController->isTouchDown() || _spirit.getModel()->isOnTrap) &&
             _spirit.getModel()->traps >= 0 && !_spirit.getModel()->isOnLock &&
-            !_blocked && !_spirit.getModel()->isOnKill) {
+            !_blocked && !_spirit.getModel()->isOnKill && !_spawn) {
             if (_spirit.getModel()->isOnTrap ||
                 _spirit.touchInTrapBound(cameraPos)) {
                 canSwitch = false;
@@ -323,7 +337,7 @@ void SGameController::update(float dt) {
                 }
                 endDetectTrap();
             }
-        } else if (_blocked && _spirit.getModel()->isOnTrap) {
+        } else if (_blocked && _spirit.getModel()->isOnTrap && !_spawn) {
             _spirit.getModel()->setTrapState(false);
             endDetectTrap();
         }
@@ -351,7 +365,7 @@ void SGameController::update(float dt) {
         if (!_spirit.getModel()->isKilling() &&
             (inputController->isTouchDown() || _spirit.getModel()->isOnKill) &&
             _spirit.getModel()->isKillable() && !_spirit.getModel()->isOnLock &&
-            !_spirit.getModel()->isOnTrap && !_blocked) {
+            !_spirit.getModel()->isOnTrap && !_blocked && !_spawn) {
             canSwitch = false;
             if (_spirit.getModel()->isOnKill ||
                 _spirit.touchInKillBound(cameraPos)) {
@@ -386,7 +400,7 @@ void SGameController::update(float dt) {
                     _spirit.getView()->setKillFrame(0);
                 }
             }
-        } else if (_blocked && _spirit.getModel()->isOnKill) {
+        } else if (_blocked && _spirit.getModel()->isOnKill && !_spawn) {
             _spirit.getModel()->setKillState(false);
         }
 
@@ -395,7 +409,7 @@ void SGameController::update(float dt) {
             _portraits->removeBlock(_thirdLayer);
             _blocked = false;
         }
-        if (!_portraits->getCurState() && !_selection) {
+        if (!_portraits->getCurState() && !_selection && !_spawn) {
             _portraits->addBlock(_thirdLayer);
             _blocked = true;
         }
@@ -440,19 +454,22 @@ void SGameController::update(float dt) {
             }
         }
 
-        _spirit.updateLocksPos(_selection);
-        _spirit.updateTrapBtnsPos(_selection);
-        _spirit.updateKillBtnsPos(_selection);
+        _spirit.updateLocksPos(_selection || _spawn);
+        _spirit.updateTrapBtnsPos(_selection || _spawn);
+        _spirit.updateKillBtnsPos(_selection || _spawn);
         _spirit.updateKillFrame();
 
         if (!didSwitch) {
             _spirit.decreaseCameraCool();
         }
 
-        // Draw battery (has to come after the minimap update)
-        _portraits->updateBattery(_selection);
+        if (!_spawn){
+            // Draw battery (has to come after the minimap update)
+            _portraits->updateBattery(_selection);
 
-        _portraits->updateBatteryNode(_fifthLayer, 50, _selection);
+            _portraits->updateBatteryNode(_fifthLayer, 50, _selection);
+        }
+        
 
         // Draw timer and alert labels
         string minutes = std::to_string(_timeLeft / 60 / 60);
@@ -479,10 +496,11 @@ void SGameController::update(float dt) {
             _scene->getCamera()->screenToWorldCoords(Vec2(hPos, vPos)));
         _timerLabel->setForeground(cugl::Color4::WHITE);
         if (_timeLeft <= 0) {
-            _gameStatus = 1;
             transmitSpiritWin();
-            _endScene = std::make_shared<EndScene>(_scene, _assets, true, true);
-            _endScene->addChildTo(_scene);
+//            _win = 1;
+            _gameStatus = 1;
+//            _endScene = std::make_shared<EndScene>(_scene, _assets, true, true);
+//            _endScene->addChildTo(_scene);
         }
         _scene->getCamera()->update();
     } else if (_gameStatus == -1) {
@@ -511,7 +529,9 @@ void SGameController::update(float dt) {
 //            _status = ABORT;
 //        }
     }
-    _timeLeft--;
+    if (!_spawn){
+        _timeLeft--;
+    }
 }
 
 /**
@@ -638,19 +658,28 @@ void SGameController::checkLevelLoaded() {
             if (i <= 0)
                 continue;
             auto indicator = cugl::scene2::PolygonNode::allocWithTexture(
-                _assets->get<Texture>("indicator" + to_string(i)));
+                _assets->get<Texture>("redindicator" + to_string(i)));
             indicator->setPosition(_level->getPortaits()[i][2]);
             indicator->setScale(2);
             indicator->setVisible(false);
             _fourthLayer->addChild(indicator);
             _indicators.emplace_back(indicator);
+            
             auto shadow = cugl::scene2::PolygonNode::allocWithTexture(
-                _assets->get<Texture>("shadow" + to_string(i)));
+                _assets->get<Texture>("blackshadow" + to_string(i)));
             shadow->setPosition(_level->getPortaits()[i][2]);
             shadow->setScale(2);
             shadow->setVisible(false);
             _fourthLayer->addChild(shadow);
             _shadows.emplace_back(shadow);
+            
+            auto grayshadow = cugl::scene2::PolygonNode::allocWithTexture(
+                _assets->get<Texture>("shadow" + to_string(i)));
+            grayshadow->setPosition(_level->getPortaits()[i][2]);
+            grayshadow->setScale(2);
+            grayshadow->setVisible(false);
+            _fourthLayer->addChild(grayshadow);
+            _grayshadows.emplace_back(grayshadow);
         }
         _portraits->setMaxbattery(_level->getBattery());
 
@@ -688,16 +717,27 @@ void SGameController::checkLevelLoaded() {
         _portraits->setIndex(4);
         _viewButton->setCameraIndex(4);
         _portraits->setIndex(_viewButton->getCameraIndex());
-//        _shadows[_viewButton->getCameraIndex() - 1]->setVisible(true);
+        _grayshadows[_viewButton->getCameraIndex() - 1]->setVisible(true);
 
         _scene->getCamera()->setPosition(
             _indicators[_portraits->getIndex() - 1]->getPosition());
         std::dynamic_pointer_cast<OrthographicCamera>(_scene->getCamera())
             ->setZoom(_scene->getSize().width /
                       _indicators[_portraits->getIndex() - 1]->getSize().width);
-        _spirit.updateLocksPos(false);
-        _spirit.updateTrapBtnsPos(false);
-        _spirit.updateKillBtnsPos(false);
+//        _spirit.updateLocksPos(false);
+//        _spirit.updateTrapBtnsPos(false);
+//        _spirit.updateKillBtnsPos(false);
+        
+        _spawnNode = scene2::SpriteNode::allocWithSheet(_assets->get<Texture>("spawn"), 5, 5, 25);
+        Size dimen = Application::get()->getDisplaySize();
+        _spawnNode->setScale((Vec2(dimen.width / _spawnNode->getWidth(), dimen.height / _spawnNode->getHeight()))/getZoom());
+        _spawnNode->setFrame(0);
+        _spawnNode->setAnchor(Vec2::ANCHOR_BOTTOM_LEFT);
+        
+        _scene->addChild(_spawnNode);
+        _spawn = true;
+        _ticks = 0;
+        
         _levelLoaded = true;
     }
 }
@@ -871,7 +911,6 @@ void SGameController::addFloorTile(int type, int c, int r) {
 //     }
 //     if (_tilemap->getDimensions().width > c &&
 //         _tilemap->getDimensions().height > r) {
-//         _tilemap->setTileTraversable(c, r, false);
 //     }
 //
 //     int index = type - 1;
@@ -1062,7 +1101,7 @@ void SGameController::addDetails(int type, int c, int r) {
     Vec2 pos(_level->getTileWidth() * c, _level->getTileWidth() * r);
     std::shared_ptr<TileController> tile = std::make_shared<TileController>(
         pos, _level->getTileSize(), Color4::WHITE, false, texture, pos.y);
-    float yPos = getYPos(type, pos.y, tile);
+    float yPos = getYPos(type, pos.y, tile, c, r);
     if (yPos != -FLT_MAX) {
         tile->setYPos(yPos);
     } else {
@@ -1073,12 +1112,13 @@ void SGameController::addDetails(int type, int c, int r) {
 }
 
 float SGameController::getYPos(int type, float pos,
-                               std::shared_ptr<TileController>& tile) {
+                               std::shared_ptr<TileController>& tile, int c, int r) {
     float yPos = pos;
     int tileSize = _level->getTileWidth();
     int index = type;
     if (type < 65) {
         // wall
+        _tilemap->setTileTraversable(c, r, false);
         yPos += 11;
         index -= 1;
         if (index == 0 || index == 1 || index == 8 || index == 9 ||
@@ -1165,8 +1205,8 @@ void SGameController::beginDetectTrap(){
     // for 3*3 -> generate red cue if is transable -> push to detection -> set false place trap in tile map
     // add detections to fifth layer
     Vec2 gridPos = _tilemap->mapPosToGridPos(Vec2(_hunterXPos, _hunterYPos));
-    for(int x = gridPos.x-1; x < gridPos.x+1; x++){
-        for(int y = gridPos.y-1; y < gridPos.y+1; y++){
+    for(int x = gridPos.x-2; x < gridPos.x+2; x++){
+        for(int y = gridPos.y-2; y < gridPos.y+2; y++){
             if (x >= 0 && y >= 0 &&
                 x < _tilemap->getDimensions().width &&
                 y < _tilemap->getDimensions().height && _tilemap->isTileGridTraversable(x, y)) {
@@ -1201,4 +1241,18 @@ void SGameController::updateDetectTrap(){
     }
     _detections.clear();
     beginDetectTrap();
+}
+
+void SGameController::updateSpawn(){
+    _ticks++;
+    _spawnNode->setPosition(_scene->getCamera()->screenToWorldCoords(
+        Vec2(0, _scene->getSize().height)));
+    if(_ticks % 6 == 0){
+        if(_spawnNode->getFrame() < _spawnNode->getSpan()-1){
+            _spawnNode->setFrame(_spawnNode->getFrame()+1);
+        } else {
+            _spawn = false;
+            _scene->removeChild(_spawnNode);
+        }
+    }
 }

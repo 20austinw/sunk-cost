@@ -58,8 +58,8 @@ bool ResetScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     
     _sheets.push_back(assets->get<Texture>("hunter_lose"));
     _sheets.push_back(assets->get<Texture>("hunter_win"));
-    _sheets.push_back(assets->get<Texture>("spirit_win"));
     _sheets.push_back(assets->get<Texture>("spirit_lose"));
+    _sheets.push_back(assets->get<Texture>("spirit_win"));
     
     for (int i = 0; i<4;i++){
         _frames.push_back(scene2::PolygonNode::allocWithTexture(_sheets[i]));

@@ -185,6 +185,8 @@ bool ClientScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
             deleteLastDigit();
         }
     });
+    
+    _waiting = std::dynamic_pointer_cast<scene2::Label>(_assets->get<scene2::SceneNode>("client_center_waiting"));
 
     //    _gameid->addExitListener([this](const std::string& name, const
     //    std::string& value) {
@@ -283,11 +285,8 @@ void ClientScene::setActive(bool value) {
  *
  * @return true if the network connection is still active.
  */
-void ClientScene::updateText(const std::shared_ptr<scene2::Button>& button,
-                             const std::string text) {
-    auto label = std::dynamic_pointer_cast<scene2::Label>(
-        button->getChildByName("up")->getChildByName("label"));
-    label->setText(text);
+void ClientScene::updateText(const std::string text) {
+    _waiting->setText(text);
 }
 
 #pragma mark -
@@ -398,13 +397,18 @@ void ClientScene::configureStartButton() {
     // THIS IS WRONG. FIX ME
     if (_status == Status::IDLE) {
         _startgame->activate();
-        updateText(_startgame, "Start Game");
+        _startgame->setVisible(true);
+        _waiting->setVisible(false);
     } else if (_status == Status::JOIN) {
         _startgame->deactivate();
-        updateText(_startgame, "Connecting");
+        _startgame->setVisible(false);
+        _waiting->setVisible(true);
+        updateText("Connecting...");
     } else if (_status == Status::WAIT) {
         _startgame->deactivate();
-        updateText(_startgame, "Waiting");
+        _startgame->setVisible(false);
+        _waiting->setVisible(true);
+        updateText("Connected");
     }
 }
 
@@ -415,7 +419,7 @@ void ClientScene::addToCode(int i) {
         scene2::PolygonNode::allocWithTexture(numberTexture);
     number->setPosition(
         Vec2(555 + _codePos * 110,
-             Application::get()->getDisplaySize().height / 2 - 60));
+             Application::get()->getDisplaySize().height / 2 - 65));
     number->setScale(0.7);
     addChildWithName(number, "code " + std::to_string(_codePos));
     _code = _code + std::to_string(i);

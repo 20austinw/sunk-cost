@@ -25,7 +25,7 @@ using namespace cugl;
 //#include "TrapController.hpp"
 #include "CollisionController.hpp"
 #include "DoorController.hpp"
-#include "EndScene.h"
+
 #include "TilemapController.h"
 #include "TreasureController.hpp"
 
@@ -298,7 +298,6 @@ class HGameController {
 
     bool _gameStatus = 0;
 
-    std::shared_ptr<EndScene> _endScene;
 
 #pragma mark External References
   private:
@@ -505,7 +504,7 @@ class HGameController {
 
     void modifyTexture(std::shared_ptr<Texture>& texture, int index);
 
-    float getYPos(int type, float pos, std::shared_ptr<TileController>& tile);
+    float getYPos(int type, float pos, std::shared_ptr<TileController>& tile, int c, int r);
 };
 
 #endif /* __HGAME_CONTROLLER_H__ */

@@ -414,7 +414,7 @@ void HGameController::update(float dt) {
 //                std::make_shared<EndScene>(_scene, _assets, false, true);
 //            _endScene->addChildTo(_scene);
             _didLose = true;
-            transmitSpiritWin();
+//            transmitSpiritWin();
             _gameStatus = 1;
         }
 
@@ -481,7 +481,13 @@ void HGameController::update(float dt) {
             _portraits->updatespecific(_indexfromspirit);
             if (_indexfromspirit == 0) {
                 _indicators[_indicators.size() - 1]->setVisible(true);
-            } else {
+            }
+            if (_indexfromspirit == -1) {
+                for(auto id:_indicators){
+                    id->setVisible(false);
+                }
+            }
+            if (_indexfromspirit != 0 && _indexfromspirit != -1) {
                 _indicators[_indexfromspirit - 1]->setVisible(true);
             }
         }
@@ -505,7 +511,7 @@ void HGameController::update(float dt) {
                 _currdoor = _doorslocked[i];
                 _currdoorindex = i;
 
-                if (!_joystickon and
+                if (
                     abs(_inputController->getPosition().x -
                         _scene->worldToScreenCoords(_hunter->getPosition()).x) <
                         100 &&
@@ -1211,17 +1217,17 @@ void HGameController::checkLevelLoaded() {
         std:vector<Vec2> nowtrea=randomTreasureLocation();
 
         _treasure = TreasureController(_assets, _scene->getSize(), PLAYER_SIZE,
-                                       nowtrea.at(index));
+                                       nowtrea.at(0));
         _treasure2 = TreasureController(_assets, _scene->getSize(), PLAYER_SIZE,
-                                        nowtrea.at((index + 1) % 3));
+                                        nowtrea.at(1));
         _treasure3 = TreasureController(_assets, _scene->getSize(), PLAYER_SIZE,
-                                        nowtrea.at((index + 1) % 3));
+                                        nowtrea.at(2));
 
-        _treasure.setPosition(nowtrea.at(index));
+        _treasure.setPosition(nowtrea.at(0));
         _treasure.addChildTo(_scene);
-        _treasure2.setPosition(nowtrea.at((index + 1) % 3));
+        _treasure2.setPosition(nowtrea.at(1));
         _treasure2.addChildTo(_scene);
-        _treasure3.setPosition(nowtrea.at((index + 1) % 3));
+        _treasure3.setPosition(nowtrea.at(2));
         _treasure3.addChildTo(_scene);
         //_scene->addChild(_exit);
 
@@ -1260,6 +1266,18 @@ Vec2 HGameController::randomHunterLocation(){
     int minx=1410065407;
     int miny=1410065407;
     for (auto i : boarder){
+        if(i.y<1280){
+            i.y=i.y+40;
+        }
+        if(i.y>1280){
+            i.y=i.y-40;
+        }
+        if(i.x>1600){
+            i.x=i.x-40;
+        }
+        if(i.x<1600){
+            i.x=i.x+40;
+        }
         if (i.x>maxx){
             maxx=i.x;
         }
@@ -1285,12 +1303,14 @@ Vec2 HGameController::randomHunterLocation(){
 
     
     for (auto obsta : _obstaclePoly) {
-        while (obsta.contains(Vec2(hunterx,huntery)) or !inside.contains(Vec2(hunterx,huntery))){
+        while (obsta.contains(Vec2(hunterx,huntery) - Vec2(130, 270)) or
+               obsta.contains(Vec2(hunterx,huntery) - Vec2(130, 270)+ Vec2(40, 0)) or
+               obsta.contains(Vec2(hunterx,huntery) - Vec2(130, 270)- Vec2(55, 0))
+               or !inside.contains(Vec2(hunterx,huntery)) or !inside.contains(Vec2(hunterx,huntery) - Vec2(130, 270)) or !inside.contains(Vec2(hunterx,huntery) - Vec2(130, 270)+ Vec2(55, 0)) or !inside.contains(Vec2(hunterx,huntery) - Vec2(130, 270)- Vec2(55, 0))){
             huntery = rand() % (maxy-miny)+miny+1;
             hunterx = rand() % (maxx-minx)+minx+1;
         }
         
-            
     }
     
     return Vec2(hunterx,huntery);
@@ -1309,7 +1329,7 @@ std::vector<Vec2> HGameController::randomTreasureLocation(){
     int miny=1410065407;
     for (auto i : boarder){
         if(i.y<1280){
-            i.y=i.y+20;
+            i.y=i.y+35;
         }
         if (i.x>maxx){
             maxx=i.x;
@@ -1336,7 +1356,7 @@ std::vector<Vec2> HGameController::randomTreasureLocation(){
 
     
     for (auto obsta : _obstaclePoly) {
-        while (obsta.contains(Vec2(hunterx,huntery)) or !inside.contains(Vec2(hunterx,huntery)) or sqrt((hunterx-_hunter->getPosition().x)*(hunterx-_hunter->getPosition().x)+(huntery-_hunter->getPosition().y)*(huntery-_hunter->getPosition().y))<3000){
+        while (obsta.contains(Vec2(hunterx,huntery)) or !_tilemap->isTileTraversable(Vec2(hunterx,huntery))  or !inside.contains(Vec2(hunterx,huntery)) or !inside.contains(Vec2(hunterx,huntery) - Vec2(130, 270)) or !inside.contains(Vec2(hunterx,huntery) - Vec2(130, 270)+ Vec2(40, 0)) or sqrt((hunterx-_hunter->getPosition().x)*(hunterx-_hunter->getPosition().x)+(huntery-_hunter->getPosition().y)*(huntery-_hunter->getPosition().y))<1000){
             huntery = rand() % (maxy-miny)+miny+1;
             hunterx = rand() % (maxx-minx)+minx+1;
         }
@@ -1347,7 +1367,8 @@ std::vector<Vec2> HGameController::randomTreasureLocation(){
     int hunterx2 = rand() % (maxx-minx)+minx+1;
     
     for (auto obsta : _obstaclePoly) {
-        while (obsta.contains(Vec2(hunterx2,huntery2)) or !inside.contains(Vec2(hunterx2,huntery2)) or sqrt((hunterx2-_hunter->getPosition().x)*(hunterx2-_hunter->getPosition().x)+(huntery2-_hunter->getPosition().y)*(huntery2-_hunter->getPosition().y))<3000){
+        while (obsta.contains(Vec2(hunterx2,huntery2))or !_tilemap->isTileTraversable(Vec2(hunterx2,huntery2)) or
+                !inside.contains(Vec2(hunterx2,huntery2)) or !inside.contains(Vec2(hunterx2,huntery2) - Vec2(130, 270)) or !inside.contains(Vec2(hunterx2,huntery2) - Vec2(130, 270)+ Vec2(40, 0)) or sqrt((hunterx2-_hunter->getPosition().x)*(hunterx2-_hunter->getPosition().x)+(huntery2-_hunter->getPosition().y)*(huntery2-_hunter->getPosition().y))<1000 or huntery2==huntery or sqrt((hunterx2-hunterx)*(hunterx2-hunterx)+(huntery2-huntery)*(huntery2-huntery))<2000){
             huntery2 = rand() % (maxy-miny)+miny+1;
             hunterx2 = rand() % (maxx-minx)+minx+1;
         }
@@ -1358,7 +1379,8 @@ std::vector<Vec2> HGameController::randomTreasureLocation(){
     int hunterx3 = rand() % (maxx-minx)+minx+1;
     
     for (auto obsta : _obstaclePoly) {
-        while (obsta.contains(Vec2(hunterx3,huntery3)) or !inside.contains(Vec2(hunterx3,huntery3)) or sqrt((hunterx3-_hunter->getPosition().x)*(hunterx3-_hunter->getPosition().x)+(huntery3-_hunter->getPosition().y)*(huntery3-_hunter->getPosition().y))<3000){
+        while (obsta.contains(Vec2(hunterx3,huntery3)) or !_tilemap->isTileTraversable(Vec2(hunterx3,huntery3)) or
+            !inside.contains(Vec2(hunterx3,huntery3)) or !inside.contains(Vec2(hunterx3,huntery3) - Vec2(130, 270)) or !inside.contains(Vec2(hunterx3,huntery3) - Vec2(130, 270)+ Vec2(40, 0)) or sqrt((hunterx3-_hunter->getPosition().x)*(hunterx3-_hunter->getPosition().x)+(huntery3-_hunter->getPosition().y)*(huntery3-_hunter->getPosition().y))<1000 or huntery3==huntery or huntery3==huntery2 or sqrt((hunterx3-hunterx)*(hunterx3-hunterx)+(huntery3-huntery)*(huntery3-huntery))<2000 or sqrt((hunterx3-hunterx2)*(hunterx3-hunterx2)+(huntery3-huntery2)*(huntery3-huntery2))<2000){
             huntery3 = rand() % (maxy-miny)+miny+1;
             hunterx3 = rand() % (maxx-minx)+minx+1;
         }
@@ -1856,7 +1878,7 @@ void HGameController::addDetails(int type, int c, int r) {
     Vec2 pos(_level->getTileWidth() * c, _level->getTileWidth() * r);
     std::shared_ptr<TileController> tile = std::make_shared<TileController>(
         pos, _level->getTileSize(), Color4::WHITE, false, texture, pos.y);
-    float yPos = getYPos(type, pos.y, tile);
+    float yPos = getYPos(type, pos.y, tile, c, r);
     if (yPos != -FLT_MAX) {
         tile->setYPos(yPos);
     } else {
@@ -1867,12 +1889,13 @@ void HGameController::addDetails(int type, int c, int r) {
 }
 
 float HGameController::getYPos(int type, float pos,
-                               std::shared_ptr<TileController>& tile) {
+                               std::shared_ptr<TileController>& tile, int c, int r) {
     float yPos = pos;
     int tileSize = _level->getTileWidth();
     int index = type;
     if (type < 65) {
         // wall
+        _tilemap->setTileTraversable(c, r, false);
         yPos += 11;
         index -= 1;
         if (index == 0 || index == 1 || index == 8 || index == 9 ||

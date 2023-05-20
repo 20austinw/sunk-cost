@@ -110,8 +110,8 @@ class PortraitSetController {
     void initializeSheets(std::shared_ptr<cugl::Texture> green,
                           std::shared_ptr<cugl::Texture> red,
                           std::shared_ptr<cugl::Texture> no) {
-        _greenBattery = scene2::SpriteNode::allocWithSheet(green, 5, 8, 40);
-        _redBattery = scene2::SpriteNode::allocWithSheet(red, 5, 8, 40);
+        _greenBattery = scene2::SpriteNode::allocWithSheet(green, 4, 8, 32);
+        _redBattery = scene2::SpriteNode::allocWithSheet(red, 4, 8, 32);
         _greenBatteryScale = _buttonSize / _greenBattery->getSize().width;
         _redBatteryScale = _buttonSize / _redBattery->getSize().width;
     }
@@ -214,7 +214,7 @@ class PortraitSetController {
                 if (((_index != _portraits[i]->getID()) ||
                      (!_portraits[i]->getState())) &&
                     (_portraits[i]->getBattery() < _maxBattery)) {
-                    float newBattery = _portraits[i]->getBattery() + 1;
+                    float newBattery = _portraits[i]->getBattery() + 1.5;
                     if (newBattery < _maxBattery) {
                         _portraits[i]->updateBattery(newBattery);
                     } else {
@@ -223,7 +223,7 @@ class PortraitSetController {
                 } else if (_index == _portraits[i]->getID() &&
                            _portraits[i]->getState() &&
                            _portraits[i]->getBattery() > 0) {
-                    float newBattery = _portraits[i]->getBattery() - 2;
+                    float newBattery = _portraits[i]->getBattery() - 1;
                     if (newBattery > 0) {
                         _portraits[i]->updateBattery(newBattery);
                     } else {

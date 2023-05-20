@@ -144,6 +144,7 @@ void TilemapController::setTileTraversable(int col, int row, bool b) {
     _tilemap[row][col]->updateTraversable(b);
 }
 
+
 void TilemapController::addDoor(int col, int row,
                                 const std::shared_ptr<Texture>& texture) {
     Vec2 pos(_model->tileSize.width * (col), _model->tileSize.height * row);

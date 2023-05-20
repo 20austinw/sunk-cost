@@ -21,6 +21,7 @@
 #include "SCTutorialScene.hpp"
 #include "SCSpawnScene.hpp"
 #include "SGameController.hpp"
+#include "SCCreditScene.hpp"
 #include <cugl/cugl.h>
 
 /**
@@ -47,7 +48,10 @@ class SCApp : public cugl::Application {
         CLIENTGAME,
 
         RESET,
-        TUTORIAL
+        TUTORIAL,
+
+        CREDIT
+
     };
 
   protected:
@@ -74,6 +78,8 @@ class SCApp : public cugl::Application {
     ResetScene _reset;
     
     TutorialScene _tutorial;
+    
+    CreditScene _credit;
 
     /** Whether or not we have finished loading all assets */
     bool _loaded;
@@ -82,6 +88,8 @@ class SCApp : public cugl::Application {
     SCApp::State _scene;
     int _count;
     bool _played;
+    
+    bool _scenesInitialized;
 
   public:
     /**
@@ -245,6 +253,8 @@ class SCApp : public cugl::Application {
      * @param timestep  The amount of time (in seconds) since the last frame
      */
     void updateClientScene(float timestep);
+    
+    void updateCreditScene(float timestep);
 
     /**
      * The method called to draw the application to the screen.

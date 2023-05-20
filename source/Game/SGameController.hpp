@@ -5,7 +5,6 @@
 
 #include "Button.h"
 #include "DoorController.hpp"
-#include "EndScene.h"
 #include "HunterController.h"
 #include "InputController.h"
 #include "LevelModel.h"
@@ -122,7 +121,6 @@ class SGameController {
 
     int _gameStatus = 0;
 
-    std::shared_ptr<EndScene> _endScene;
 
     std::vector<std::shared_ptr<DoorController>> _doors;
     std::shared_ptr<Font> _font;

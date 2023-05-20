@@ -12,12 +12,6 @@
         "black": {
             "file": "textures/black.png"
         },
-        "green": {
-            "file": "textures/green.png"
-        },
-        "hunter": {
-            "file": "textures/hunter.png"
-        },
         "hunterrunning": {
             "file": "textures/diver_walking_animation.png"
         },
@@ -98,9 +92,6 @@
         },
         "stutorial5": {
             "file": "textures/s5.png"
-        },
-        "trap": {
-            "file": "textures/trap.png"
         },
         "treasure": {
             "file": "textures/treasureasset_1024x1024.png"
@@ -307,21 +298,6 @@
         },
         "hunter_win_part_3": {
             "file": "textures/hunter_win_part_3.png"
-        },
-        "spirit_lose_part_1": {
-            "file": "textures/spirit_lose_part_1.png"
-        },
-        "spirit_lose_part_2": {
-            "file": "textures/spirit_lose_part_2.png"
-        },
-        "spirit_lose_part_3": {
-            "file": "textures/spirit_lose_part_3.png"
-        },
-        "spirit_win_part_1": {
-            "file": "textures/spirit_win_part_1.png"
-        },
-        "spirit_win_part_2": {
-            "file": "textures/spirit_win_part_2.png"
         },
         "final_floor": {
             "file": "textures/floor_tilesheet.png"

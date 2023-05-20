@@ -15,9 +15,6 @@
         "green": {
             "file": "textures/green.png"
         },
-        "blue": {
-            "file": "textures/blue.png"
-        },
         "hunter": {
             "file": "textures/hunter.png"
         },

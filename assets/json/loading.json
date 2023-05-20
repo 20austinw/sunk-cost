@@ -82,8 +82,8 @@
                             0.5
                         ],
                         "scale": 1.5,
-                        "span": 40,
-                        "cols": 4,
+                        "span": 1,
+                        "cols": 1,
                         "frame": 0
                     },
                     "layout": {

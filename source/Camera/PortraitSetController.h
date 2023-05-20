@@ -214,7 +214,7 @@ class PortraitSetController {
                 if (((_index != _portraits[i]->getID()) ||
                      (!_portraits[i]->getState())) &&
                     (_portraits[i]->getBattery() < _maxBattery)) {
-                    float newBattery = _portraits[i]->getBattery() + 1;
+                    float newBattery = _portraits[i]->getBattery() + 1.5;
                     if (newBattery < _maxBattery) {
                         _portraits[i]->updateBattery(newBattery);
                     } else {
@@ -223,7 +223,7 @@ class PortraitSetController {
                 } else if (_index == _portraits[i]->getID() &&
                            _portraits[i]->getState() &&
                            _portraits[i]->getBattery() > 0) {
-                    float newBattery = _portraits[i]->getBattery() - 2;
+                    float newBattery = _portraits[i]->getBattery() - 0.75;
                     if (newBattery > 0) {
                         _portraits[i]->updateBattery(newBattery);
                     } else {

@@ -460,15 +460,12 @@
         },
         "credits": {
             "file": "textures/credits.png"
-<<<<<<< HEAD
         },
         "join_button": {
             "file": "textures/join_button.png"
         },
         "start_button": {
             "file": "textures/start_button.png"
-=======
->>>>>>> xj65-showcase
         }
         
     },

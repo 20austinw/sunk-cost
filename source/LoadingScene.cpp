@@ -93,16 +93,10 @@ bool LoadingScene::init(const std::shared_ptr<AssetManager>& assets) {
         }
     });
 
-    _background = std::dynamic_pointer_cast<scene2::SpriteNode>(
-        assets->get<scene2::SceneNode>("load_logo"));
-    _background->setScale(Application::get()->getDisplayHeight() /
-                          (_background->getHeight() * 1.5));
     Application::get()->setClearColor(Color4(192, 192, 192, 255));
     addChild(layer);
 
     _choice = Choice::NONE;
-    _frameNum = 0;
-    _ticks = 0;
     return true;
 }
 
@@ -149,18 +143,6 @@ void LoadingScene::update(float progress) {
         }
         _bar->setProgress(_progress);
     }
-
-    if (_ticks == 6) {
-        if (_frameNum >= 39) {
-            _frameNum = 0;
-        } else {
-            _frameNum++;
-        }
-        _ticks = 0;
-    }
-
-    _ticks++;
-    _background->setFrame(_frameNum);
 }
 
 /**

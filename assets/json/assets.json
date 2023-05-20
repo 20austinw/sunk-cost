@@ -133,10 +133,10 @@
             "file": "textures/noBattery.png"
         },
         "minimap": {
-            "file": "textures/minimap.png"
+            "file": "textures/minimap_2.png"
         },
         "minimaplarge": {
-            "file": "textures/hunter_minimap_big.png"
+            "file": "textures/minimap_2.png"
         },
         "button": {
             "file": "textures/button.png"

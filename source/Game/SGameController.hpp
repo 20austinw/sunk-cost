@@ -288,7 +288,11 @@ class SGameController {
     void disconnect() { _network = nullptr; }
     
     bool getWin(){
-        return _win;
+        if (_gameStatus == 1){
+            return _gameStatus;
+        }else{
+            return 0;
+        }
     }
 
   private:

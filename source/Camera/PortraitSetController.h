@@ -110,8 +110,8 @@ class PortraitSetController {
     void initializeSheets(std::shared_ptr<cugl::Texture> green,
                           std::shared_ptr<cugl::Texture> red,
                           std::shared_ptr<cugl::Texture> no) {
-        _greenBattery = scene2::SpriteNode::allocWithSheet(green, 5, 8, 40);
-        _redBattery = scene2::SpriteNode::allocWithSheet(red, 5, 8, 40);
+        _greenBattery = scene2::SpriteNode::allocWithSheet(green, 4, 8, 32);
+        _redBattery = scene2::SpriteNode::allocWithSheet(red, 4, 8, 32);
         _greenBatteryScale = _buttonSize / _greenBattery->getSize().width;
         _redBatteryScale = _buttonSize / _redBattery->getSize().width;
     }

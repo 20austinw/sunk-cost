@@ -1285,12 +1285,14 @@ Vec2 HGameController::randomHunterLocation(){
 
     
     for (auto obsta : _obstaclePoly) {
-        while (obsta.contains(Vec2(hunterx,huntery)) or !inside.contains(Vec2(hunterx,huntery))){
+        while (obsta.contains(Vec2(hunterx,huntery) - Vec2(130, 270)) or
+               obsta.contains(Vec2(hunterx,huntery) - Vec2(130, 270)+ Vec2(40, 0)) or
+               obsta.contains(Vec2(hunterx,huntery) - Vec2(130, 270)- Vec2(40, 0))
+               or !inside.contains(Vec2(hunterx,huntery))){
             huntery = rand() % (maxy-miny)+miny+1;
             hunterx = rand() % (maxx-minx)+minx+1;
         }
         
-            
     }
     
     return Vec2(hunterx,huntery);
@@ -1336,7 +1338,9 @@ std::vector<Vec2> HGameController::randomTreasureLocation(){
 
     
     for (auto obsta : _obstaclePoly) {
-        while (obsta.contains(Vec2(hunterx,huntery)) or !inside.contains(Vec2(hunterx,huntery)) or sqrt((hunterx-_hunter->getPosition().x)*(hunterx-_hunter->getPosition().x)+(huntery-_hunter->getPosition().y)*(huntery-_hunter->getPosition().y))<3000){
+        while (obsta.contains(Vec2(hunterx,huntery) - Vec2(130, 270)) or
+               obsta.contains(Vec2(hunterx,huntery) - Vec2(130, 270)+ Vec2(40, 0)) or
+               obsta.contains(Vec2(hunterx,huntery) - Vec2(130, 270)- Vec2(40, 0)) or !inside.contains(Vec2(hunterx,huntery)) or sqrt((hunterx-_hunter->getPosition().x)*(hunterx-_hunter->getPosition().x)+(huntery-_hunter->getPosition().y)*(huntery-_hunter->getPosition().y))<3000){
             huntery = rand() % (maxy-miny)+miny+1;
             hunterx = rand() % (maxx-minx)+minx+1;
         }
@@ -1347,7 +1351,9 @@ std::vector<Vec2> HGameController::randomTreasureLocation(){
     int hunterx2 = rand() % (maxx-minx)+minx+1;
     
     for (auto obsta : _obstaclePoly) {
-        while (obsta.contains(Vec2(hunterx2,huntery2)) or !inside.contains(Vec2(hunterx2,huntery2)) or sqrt((hunterx2-_hunter->getPosition().x)*(hunterx2-_hunter->getPosition().x)+(huntery2-_hunter->getPosition().y)*(huntery2-_hunter->getPosition().y))<3000){
+        while (obsta.contains(Vec2(hunterx2,huntery2) - Vec2(130, 270)) or
+               obsta.contains(Vec2(hunterx2,huntery2) - Vec2(130, 270)+ Vec2(40, 0)) or
+               obsta.contains(Vec2(hunterx2,huntery2) - Vec2(130, 270)- Vec2(40, 0)) or !inside.contains(Vec2(hunterx2,huntery2)) or sqrt((hunterx2-_hunter->getPosition().x)*(hunterx2-_hunter->getPosition().x)+(huntery2-_hunter->getPosition().y)*(huntery2-_hunter->getPosition().y))<3000){
             huntery2 = rand() % (maxy-miny)+miny+1;
             hunterx2 = rand() % (maxx-minx)+minx+1;
         }
@@ -1358,7 +1364,9 @@ std::vector<Vec2> HGameController::randomTreasureLocation(){
     int hunterx3 = rand() % (maxx-minx)+minx+1;
     
     for (auto obsta : _obstaclePoly) {
-        while (obsta.contains(Vec2(hunterx3,huntery3)) or !inside.contains(Vec2(hunterx3,huntery3)) or sqrt((hunterx3-_hunter->getPosition().x)*(hunterx3-_hunter->getPosition().x)+(huntery3-_hunter->getPosition().y)*(huntery3-_hunter->getPosition().y))<3000){
+        while (obsta.contains(Vec2(hunterx3,huntery3) - Vec2(130, 270)) or
+               obsta.contains(Vec2(hunterx3,huntery3) - Vec2(130, 270)+ Vec2(40, 0)) or
+               obsta.contains(Vec2(hunterx3,huntery3) - Vec2(130, 270)- Vec2(40, 0)) or !inside.contains(Vec2(hunterx3,huntery3)) or sqrt((hunterx3-_hunter->getPosition().x)*(hunterx3-_hunter->getPosition().x)+(huntery3-_hunter->getPosition().y)*(huntery3-_hunter->getPosition().y))<3000){
             huntery3 = rand() % (maxy-miny)+miny+1;
             hunterx3 = rand() % (maxx-minx)+minx+1;
         }

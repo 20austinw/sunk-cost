@@ -61,7 +61,7 @@ public:
     bool _completed;
     
     std::shared_ptr<cugl::scene2::Button> _creditsButton;
-    
+
     std::shared_ptr<cugl::scene2::Button> _tutorialButton;
     
     Choice _choice;

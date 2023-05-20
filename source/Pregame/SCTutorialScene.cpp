@@ -87,8 +87,14 @@ bool TutorialScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
     _sheets.push_back(assets->get<Texture>("tutorial4"));
     _sheets.push_back(assets->get<Texture>("tutorial5"));
     _sheets.push_back(assets->get<Texture>("tutorial6"));
+    _sheets.push_back(assets->get<Texture>("stutorial0"));
+    _sheets.push_back(assets->get<Texture>("stutorial1"));
+    _sheets.push_back(assets->get<Texture>("stutorial2"));
+    _sheets.push_back(assets->get<Texture>("stutorial3"));
+    _sheets.push_back(assets->get<Texture>("stutorial4"));
+    _sheets.push_back(assets->get<Texture>("stutorial5"));
     
-    for (int i = 0; i<7;i++){
+    for (int i = 0; i<13;i++){
         _frames.push_back(scene2::PolygonNode::allocWithTexture(_sheets[i]));
         _frames[i]->setScale(_scale);
         _frames[i]->setAnchor(Vec2::ANCHOR_CENTER);
@@ -189,6 +195,7 @@ void TutorialScene::update(float dt){
        100){
         CULog("PREVIOUS PAGE");
         if(_page>0){
+//            _scene->removeChild(_frames[_page]);
             _frames[_page]->setVisible(false);
             _page = _page - 1;
         }
@@ -196,7 +203,8 @@ void TutorialScene::update(float dt){
     else if(_inputController->didPress() && abs(_inputController->getPosition().x - (_dimen.width-200)) <100 &&
             abs(_inputController->getPosition().y -_dimen.height/2) <100){
         CULog("NEXT PAGE");
-        if(_page<6){
+        if(_page<12){
+//            _scene->removeChild(_frames[_page]);
             _frames[_page]->setVisible(false);
             _page = _page + 1;
         }
@@ -205,8 +213,9 @@ void TutorialScene::update(float dt){
             abs(_inputController->getPosition().y -100) <100){
         CULog("QUITTTT ");
         _choice = Choice::BACK;
-    }
+    } 
     _frames[_page]->setVisible(true);
+//    _scene->addChild(_frames[_page]);
 }
 /**
  * Disposes of all (non-static) resources allocated to this mode.

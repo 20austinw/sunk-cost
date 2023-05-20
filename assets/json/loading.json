@@ -155,7 +155,11 @@
                         ]
                     },
                     "children": {
+<<<<<<< HEAD
                         "credits": {
+=======
+                        "settings": {
+>>>>>>> xj65-showcase
                             "type": "Button",
                             "data": {
                                 "upnode": "up",
@@ -178,7 +182,37 @@
                             "layout": {
                                 "x_anchor": "right",
                                 "y_anchor": "bottom",
+<<<<<<< HEAD
                                 "padding": [0, 0, 150, 0],
+=======
+                                "absolute": true
+                            }
+                        },
+                        "credits": {
+                            "type": "Button",
+                            "data": {
+                                "upnode": "up",
+                                "visible": false,
+                                "pushsize": true,
+                                "anchor": [
+                                    0.5,
+                                    0.5
+                                ],
+                                "scale": 0.3
+                            },
+                            "children": {
+                                "up": {
+                                    "type": "Image",
+                                    "data": {
+                                        "texture": "settings_button"
+                                    }
+                                }
+                            },
+                            "layout": {
+                                "x_anchor": "right",
+                                "y_anchor": "bottom",
+                                "padding": [150, 0, 150, 0],
+>>>>>>> xj65-showcase
                                 "absolute": true
                             }
                         },

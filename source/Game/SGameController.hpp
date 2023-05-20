@@ -5,7 +5,6 @@
 
 #include "Button.h"
 #include "DoorController.hpp"
-#include "EndScene.h"
 #include "HunterController.h"
 #include "InputController.h"
 #include "LevelModel.h"
@@ -72,6 +71,8 @@ class SGameController {
 
     // Battery, timer
     std::shared_ptr<cugl::scene2::PolygonNode> _sixthLayer;
+    
+    std::shared_ptr<cugl::scene2::SpriteNode> _spawnNode;
 
     // CONTROLLERS are attached directly to the scene (no pointers)
     /** The controller to manage the ship */
@@ -119,15 +120,16 @@ class SGameController {
     bool _hunterAdded;
 
     int _gameStatus = 0;
+    
+    int _win = 0;
 
-    std::shared_ptr<EndScene> _endScene;
 
     std::vector<std::shared_ptr<DoorController>> _doors;
     std::shared_ptr<Font> _font;
     float _textHeight = 100;
     float _timerScale;
     std::shared_ptr<cugl::scene2::Label> _timerLabel;
-    int _timeLeft = 90 * 60;
+    int _timeLeft = 120 * 60;
 
     /** If hunter trigger the trap */
     bool _trapTriggered;
@@ -170,6 +172,7 @@ class SGameController {
     bool _neverPlayed = true;
     std::vector<std::shared_ptr<cugl::scene2::PolygonNode>> _indicators;
     std::vector<std::shared_ptr<cugl::scene2::PolygonNode>> _shadows;
+    std::vector<std::shared_ptr<cugl::scene2::PolygonNode>> _grayshadows;
 
 #pragma mark External References
   private:
@@ -283,6 +286,14 @@ class SGameController {
      * fully disconnected when ALL scenes have been disconnected.
      */
     void disconnect() { _network = nullptr; }
+    
+    bool getWin(){
+        if (_gameStatus == 1){
+            return _gameStatus;
+        }else{
+            return 0;
+        }
+    }
 
   private:
     void checkLevelLoaded();
@@ -358,13 +369,15 @@ class SGameController {
 
     void modifyTexture(std::shared_ptr<Texture>& texture, int index);
 
-    float getYPos(int type, float pos, std::shared_ptr<TileController>& tile);
+    float getYPos(int type, float pos, std::shared_ptr<TileController>& tile, int c, int r);
     
     void beginDetectTrap();
     
     void updateDetectTrap();
     
     void endDetectTrap();
+    
+    void updateSpawn();
 };
 
 #endif /* SGameController_hpp */

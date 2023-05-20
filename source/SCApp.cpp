@@ -238,7 +238,6 @@ void SCApp::updateResetScene(float timestep) {
             break;
         case ResetScene::Choice::REPLAY:
             CULog("replayyy");
-            //        _reset.setActive(false);
             _joingame.setActive(false);
             _joingame.dispose();
             _hostgame.setActive(false);

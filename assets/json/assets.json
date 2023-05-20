@@ -12,15 +12,6 @@
         "black": {
             "file": "textures/black.png"
         },
-        "green": {
-            "file": "textures/green.png"
-        },
-        "blue": {
-            "file": "textures/blue.png"
-        },
-        "hunter": {
-            "file": "textures/hunter.png"
-        },
         "hunterrunning": {
             "file": "textures/diver_walking_animation.png"
         },
@@ -84,14 +75,23 @@
         "tutorial6": {
             "file": "textures/t6.png"
         },
-        "hunterorange": {
-            "file": "textures/diver_orange_walking_animation.png"
+        "stutorial0": {
+            "file": "textures/s0.png"
         },
-        "huntergreen": {
-            "file": "textures/diver_green_walking_animation.png"
+        "stutorial1": {
+            "file": "textures/s1.png"
         },
-        "trap": {
-            "file": "textures/trap.png"
+        "stutorial2": {
+            "file": "textures/s2.png"
+        },
+        "stutorial3": {
+            "file": "textures/s3.png"
+        },
+        "stutorial4": {
+            "file": "textures/s4.png"
+        },
+        "stutorial5": {
+            "file": "textures/s5.png"
         },
         "treasure": {
             "file": "textures/treasureasset_1024x1024.png"
@@ -101,12 +101,6 @@
         },
         "filter": {
             "file": "textures/filter.png"
-        },
-        "map": {
-            "file": "textures/map.png"
-        },
-        "trap_animation": {
-            "file": "textures/clam_trap.png"
         },
         "trap_animation2": {
             "file": "textures/clam_trap_ani.png"
@@ -139,10 +133,10 @@
             "file": "textures/noBattery.png"
         },
         "minimap": {
-            "file": "textures/minimap.png"
+            "file": "textures/minimap_2.png"
         },
         "minimaplarge": {
-            "file": "textures/hunter_minimap_big.png"
+            "file": "textures/minimap2.png"
         },
         "button": {
             "file": "textures/button.png"
@@ -171,9 +165,6 @@
         "spirit_win_animation": {
             "file": "textures/spirit_end_animation.png"
         },
-        "blur": {
-            "file": "textures/blur.png"
-        },
         "front_lock": {
             "file": "textures/front_lock.png"
         },
@@ -191,12 +182,6 @@
         },
         "door_animation_hunter": {
             "file": "textures/door_closing.png"
-        },
-        "joystick_bottom": {
-            "file": "textures/joystick_bottom.png"
-        },
-        "joystick_top": {
-            "file": "textures/joystick_top.png"
         },
         "extra_1": {
             "file": "textures/extra_item_1.png"
@@ -311,21 +296,6 @@
         "hunter_win_part_3": {
             "file": "textures/hunter_win_part_3.png"
         },
-        "spirit_lose_part_1": {
-            "file": "textures/spirit_lose_part_1.png"
-        },
-        "spirit_lose_part_2": {
-            "file": "textures/spirit_lose_part_2.png"
-        },
-        "spirit_lose_part_3": {
-            "file": "textures/spirit_lose_part_3.png"
-        },
-        "spirit_win_part_1": {
-            "file": "textures/spirit_win_part_1.png"
-        },
-        "spirit_win_part_2": {
-            "file": "textures/spirit_win_part_2.png"
-        },
         "final_floor": {
             "file": "textures/floor_tilesheet.png"
         },
@@ -386,6 +356,72 @@
         "indicator11": {
             "file": "textures/light/11_r11c0_light.png"
         },
+        "redindicator1": {
+            "file": "textures/light/1_r1c0_light_red.png"
+        },
+        "redindicator2": {
+            "file": "textures/light/2_r1c1_light_red.png"
+        },
+        "redindicator3": {
+            "file": "textures/light/3_r2c0_light_red.png"
+        },
+        "redindicator4": {
+            "file": "textures/light/4_r3c0_light_red.png"
+        },
+        "redindicator5": {
+            "file": "textures/light/5_r4c0_light_red.png"
+        },
+        "redindicator6": {
+            "file": "textures/light/6_r5c0_light_red.png"
+        },
+        "redindicator7": {
+            "file": "textures/light/7_r7c0_light_red.png"
+        },
+        "redindicator8": {
+            "file": "textures/light/8_r8c0_light_red.png"
+        },
+        "redindicator9": {
+            "file": "textures/light/9_r8c1_light_red.png"
+        },
+        "redindicator10": {
+            "file": "textures/light/10_r9c0_light_red.png"
+        },
+        "redindicator11": {
+            "file": "textures/light/11_r11c0_light_red.png"
+        },
+        "blackshadow1": {
+            "file": "textures/shadow/1_r1c0_shadow_black.png"
+        },
+        "blackshadow2": {
+            "file": "textures/shadow/2_r1c1_shadow_black.png"
+        },
+        "blackshadow3": {
+            "file": "textures/shadow/3_r2c0_shadow_black.png"
+        },
+        "blackshadow4": {
+            "file": "textures/shadow/4_r3c0_shadow_black.png"
+        },
+        "blackshadow5": {
+            "file": "textures/shadow/5_r4c0_shadow_black.png"
+        },
+        "blackshadow6": {
+            "file": "textures/shadow/6_r5c0_shadow_black.png"
+        },
+        "blackshadow7": {
+            "file": "textures/shadow/7_r7c0_shadow_black.png"
+        },
+        "blackshadow8": {
+            "file": "textures/shadow/8_r8c0_shadow_black.png"
+        },
+        "blackshadow9": {
+            "file": "textures/shadow/9_r8c1_shadow_black.png"
+        },
+        "blackshadow10": {
+            "file": "textures/shadow/10_r9c0_shadow_black.png"
+        },
+        "blackshadow11": {
+            "file": "textures/shadow/11_r11c0_shadow_black.png"
+        },
         "shadow1": {
             "file": "textures/shadow/1_r1c0_shadow.png"
         },
@@ -424,12 +460,15 @@
         },
         "credits": {
             "file": "textures/credits.png"
+<<<<<<< HEAD
         },
         "join_button": {
             "file": "textures/join_button.png"
         },
         "start_button": {
             "file": "textures/start_button.png"
+=======
+>>>>>>> xj65-showcase
         }
         
     },

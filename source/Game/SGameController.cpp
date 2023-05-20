@@ -181,7 +181,6 @@ void SGameController::update(float dt) {
                     } else {
                         _grayshadows[_viewButton->getCameraIndex() - 1]->setVisible(true);
                     }
-                    transmitActiveCamIndex(_viewButton->getCameraIndex());
                     _scene->getCamera()->setPosition(
                         _indicators[_portraits->getIndex() - 1]->getPosition());
                     std::dynamic_pointer_cast<OrthographicCamera>(
@@ -210,6 +209,11 @@ void SGameController::update(float dt) {
             }
         }
         
+        if(_portraits->getCurState() && !_selection){
+            transmitActiveCamIndex(_portraits->getIndex());
+        }else{
+            transmitActiveCamIndex(-1);
+        }
 
         _scene->getCamera()->update();
 
@@ -1242,7 +1246,7 @@ void SGameController::updateSpawn(){
     _ticks++;
     _spawnNode->setPosition(_scene->getCamera()->screenToWorldCoords(
         Vec2(0, _scene->getSize().height)));
-    if(_ticks % 15 == 0){
+    if(_ticks % 6 == 0){
         if(_spawnNode->getFrame() < _spawnNode->getSpan()-1){
             _spawnNode->setFrame(_spawnNode->getFrame()+1);
         } else {

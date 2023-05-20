@@ -481,7 +481,13 @@ void HGameController::update(float dt) {
             _portraits->updatespecific(_indexfromspirit);
             if (_indexfromspirit == 0) {
                 _indicators[_indicators.size() - 1]->setVisible(true);
-            } else {
+            }
+            if (_indexfromspirit == -1) {
+                for(auto id:_indicators){
+                    id->setVisible(false);
+                }
+            }
+            if (_indexfromspirit != 0 && _indexfromspirit != -1) {
                 _indicators[_indexfromspirit - 1]->setVisible(true);
             }
         }

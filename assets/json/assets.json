@@ -102,12 +102,6 @@
         "stutorial5": {
             "file": "textures/s5.png"
         },
-        "hunterorange": {
-            "file": "textures/diver_orange_walking_animation.png"
-        },
-        "huntergreen": {
-            "file": "textures/diver_green_walking_animation.png"
-        },
         "trap": {
             "file": "textures/trap.png"
         },
@@ -119,12 +113,6 @@
         },
         "filter": {
             "file": "textures/filter.png"
-        },
-        "map": {
-            "file": "textures/map.png"
-        },
-        "trap_animation": {
-            "file": "textures/clam_trap.png"
         },
         "trap_animation2": {
             "file": "textures/clam_trap_ani.png"
@@ -192,9 +180,6 @@
         "spirit_win_animation": {
             "file": "textures/spirit_end_animation.png"
         },
-        "blur": {
-            "file": "textures/blur.png"
-        },
         "front_lock": {
             "file": "textures/front_lock.png"
         },
@@ -212,12 +197,6 @@
         },
         "door_animation_hunter": {
             "file": "textures/door_closing.png"
-        },
-        "joystick_bottom": {
-            "file": "textures/joystick_bottom.png"
-        },
-        "joystick_top": {
-            "file": "textures/joystick_top.png"
         },
         "extra_1": {
             "file": "textures/extra_item_1.png"

@@ -511,7 +511,7 @@ void HGameController::update(float dt) {
                 _currdoor = _doorslocked[i];
                 _currdoorindex = i;
 
-                if (!_joystickon and
+                if (
                     abs(_inputController->getPosition().x -
                         _scene->worldToScreenCoords(_hunter->getPosition()).x) <
                         100 &&
@@ -1266,6 +1266,18 @@ Vec2 HGameController::randomHunterLocation(){
     int minx=1410065407;
     int miny=1410065407;
     for (auto i : boarder){
+        if(i.y<1280){
+            i.y=i.y+40;
+        }
+        if(i.y>1280){
+            i.y=i.y-40;
+        }
+        if(i.x>1600){
+            i.x=i.x-40;
+        }
+        if(i.x<1600){
+            i.x=i.x+40;
+        }
         if (i.x>maxx){
             maxx=i.x;
         }
@@ -1294,7 +1306,7 @@ Vec2 HGameController::randomHunterLocation(){
         while (obsta.contains(Vec2(hunterx,huntery) - Vec2(130, 270)) or
                obsta.contains(Vec2(hunterx,huntery) - Vec2(130, 270)+ Vec2(40, 0)) or
                obsta.contains(Vec2(hunterx,huntery) - Vec2(130, 270)- Vec2(55, 0))
-               or !inside.contains(Vec2(hunterx,huntery)) or !inside.contains(Vec2(hunterx,huntery) - Vec2(130, 270)) or !inside.contains(Vec2(hunterx,huntery) - Vec2(130, 270)+ Vec2(55, 0))){
+               or !inside.contains(Vec2(hunterx,huntery)) or !inside.contains(Vec2(hunterx,huntery) - Vec2(130, 270)) or !inside.contains(Vec2(hunterx,huntery) - Vec2(130, 270)+ Vec2(55, 0)) or !inside.contains(Vec2(hunterx,huntery) - Vec2(130, 270)- Vec2(55, 0))){
             huntery = rand() % (maxy-miny)+miny+1;
             hunterx = rand() % (maxx-minx)+minx+1;
         }

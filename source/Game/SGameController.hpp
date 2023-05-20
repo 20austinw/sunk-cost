@@ -369,7 +369,7 @@ class SGameController {
 
     void modifyTexture(std::shared_ptr<Texture>& texture, int index);
 
-    float getYPos(int type, float pos, std::shared_ptr<TileController>& tile);
+    float getYPos(int type, float pos, std::shared_ptr<TileController>& tile, int c, int r);
     
     void beginDetectTrap();
     

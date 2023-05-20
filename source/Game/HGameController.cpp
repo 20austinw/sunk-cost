@@ -414,7 +414,7 @@ void HGameController::update(float dt) {
 //                std::make_shared<EndScene>(_scene, _assets, false, true);
 //            _endScene->addChildTo(_scene);
             _didLose = true;
-            transmitSpiritWin();
+//            transmitSpiritWin();
             _gameStatus = 1;
         }
 
@@ -1866,7 +1866,7 @@ void HGameController::addDetails(int type, int c, int r) {
     Vec2 pos(_level->getTileWidth() * c, _level->getTileWidth() * r);
     std::shared_ptr<TileController> tile = std::make_shared<TileController>(
         pos, _level->getTileSize(), Color4::WHITE, false, texture, pos.y);
-    float yPos = getYPos(type, pos.y, tile);
+    float yPos = getYPos(type, pos.y, tile, c, r);
     if (yPos != -FLT_MAX) {
         tile->setYPos(yPos);
     } else {
@@ -1877,12 +1877,13 @@ void HGameController::addDetails(int type, int c, int r) {
 }
 
 float HGameController::getYPos(int type, float pos,
-                               std::shared_ptr<TileController>& tile) {
+                               std::shared_ptr<TileController>& tile, int c, int r) {
     float yPos = pos;
     int tileSize = _level->getTileWidth();
     int index = type;
     if (type < 65) {
         // wall
+        _tilemap->setTileTraversable(c, r, false);
         yPos += 11;
         index -= 1;
         if (index == 0 || index == 1 || index == 8 || index == 9 ||

@@ -84,6 +84,24 @@
         "tutorial6": {
             "file": "textures/t6.png"
         },
+        "stutorial0": {
+            "file": "textures/s0.png"
+        },
+        "stutorial1": {
+            "file": "textures/s1.png"
+        },
+        "stutorial2": {
+            "file": "textures/s2.png"
+        },
+        "stutorial3": {
+            "file": "textures/s3.png"
+        },
+        "stutorial4": {
+            "file": "textures/s4.png"
+        },
+        "stutorial5": {
+            "file": "textures/s5.png"
+        },
         "hunterorange": {
             "file": "textures/diver_orange_walking_animation.png"
         },

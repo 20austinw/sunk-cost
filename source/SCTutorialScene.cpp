@@ -99,8 +99,8 @@ bool TutorialScene::init(const std::shared_ptr<cugl::AssetManager>& assets) {
         _frames[i]->setScale(_scale);
         _frames[i]->setAnchor(Vec2::ANCHOR_CENTER);
         _frames[i]->setPosition(_dimen/2);
-        _frames[i]->setVisible(false);
-        _scene->addChild(_frames[i]);
+        _frames[i]->setVisible(true);
+//        _scene->addChild(_frames[i]);
     }
     
     _page = 0;
@@ -195,7 +195,8 @@ void TutorialScene::update(float dt){
        100){
         CULog("PREVIOUS PAGE");
         if(_page>0){
-            _frames[_page]->setVisible(false);
+            _scene->removeChild(_frames[_page]);
+//            _frames[_page]->setVisible(false);
             _page = _page - 1;
         }
     }
@@ -203,7 +204,8 @@ void TutorialScene::update(float dt){
             abs(_inputController->getPosition().y -_dimen.height/2) <100){
         CULog("NEXT PAGE");
         if(_page<12){
-            _frames[_page]->setVisible(false);
+            _scene->removeChild(_frames[_page]);
+//            _frames[_page]->setVisible(false);
             _page = _page + 1;
         }
     }
@@ -212,7 +214,8 @@ void TutorialScene::update(float dt){
         CULog("QUITTTT ");
         _choice = Choice::BACK;
     } 
-    _frames[_page]->setVisible(true);
+//    _frames[_page]->setVisible(true);
+    _scene->addChild(_frames[_page]);
 }
 /**
  * Disposes of all (non-static) resources allocated to this mode.
